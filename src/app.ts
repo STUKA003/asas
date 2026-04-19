@@ -22,6 +22,10 @@ import notificationsRouter from './modules/notifications/router'
 
 const app = express()
 
+// Production runs behind Nginx, so Express must trust the first proxy hop
+// to interpret client IPs and forwarded headers correctly.
+app.set('trust proxy', 1)
+
 app.use(helmet())
 app.use(cors({
   origin: process.env.CORS_ORIGIN
