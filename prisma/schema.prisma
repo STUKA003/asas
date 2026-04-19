@@ -1,0 +1,277 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Barbershop {
+  id               String   @id @default(cuid())
+  name             String
+  slug             String   @unique
+  phone            String?
+  address          String?
+  whatsapp         String?
+  instagram        String?
+  logoUrl          String?
+  heroImageUrl     String?
+  heroTitle        String?
+  heroSubtitle     String?
+  heroButtonText   String?
+  aboutText        String?
+  galleryImages    String?
+  promoEnabled     Boolean  @default(false)
+  promoTitle       String?
+  promoText        String?
+  promoButtonText  String?
+  showPlans           Boolean  @default(true)
+  showProducts        Boolean  @default(true)
+  planMemberDiscount  Int      @default(0)
+  slotGranularityMinutes Int   @default(15)
+  accentColor         String   @default("orange")
+  subscriptionPlan   String    @default("FREE")
+  subscriptionEndsAt DateTime?
+  suspended          Boolean   @default(false)
+  suspendedReason    String?
+  createdAt          DateTime  @default(now())
+  updatedAt        DateTime @updatedAt
+
+  users         User[]
+  barbers       Barber[]
+  services      Service[]
+  extras        Extra[]
+  products      Product[]
+  plans         Plan[]
+  customers     Customer[]
+  bookings      Booking[]
+  workingHours  WorkingHours[]
+  blockedTimes  BlockedTime[]
+  notifications Notification[]
+}
+
+model User {
+  id           String     @id @default(cuid())
+  email        String
+  password     String
+  name         String
+  role         String     @default("ADMIN")
+  barbershopId String
+  barbershop   Barbershop @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@unique([email, barbershopId])
+}
+
+
+
+model Barber {
+  id           String     @id @default(cuid())
+  name         String
+  email        String?
+  phone        String?
+  avatar       String?
+  active       Boolean    @default(true)
+  password     String?
+  barbershopId String
+  barbershop   Barbershop @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  workingHours  WorkingHours[]
+  blockedTimes  BlockedTime[]
+  bookings      Booking[]
+  notifications Notification[]
+
+  @@unique([email, barbershopId])
+}
+
+model Service {
+  id           String     @id @default(cuid())
+  name         String
+  description  String?
+  price        Float
+  duration     Int
+  active       Boolean    @default(true)
+  barbershopId String
+  barbershop   Barbershop @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  bookingServices BookingService[]
+  planServices    PlanService[]
+}
+
+model Extra {
+  id           String     @id @default(cuid())
+  name         String
+  description  String?
+  price        Float
+  duration     Int        @default(0)
+  active       Boolean    @default(true)
+  barbershopId String
+  barbershop   Barbershop @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  bookingExtras BookingExtra[]
+}
+
+model Product {
+  id           String     @id @default(cuid())
+  name         String
+  description  String?
+  imageUrl     String?
+  price        Float
+  stock        Int        @default(0)
+  active       Boolean    @default(true)
+  barbershopId String
+  barbershop   Barbershop @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  bookingProducts BookingProduct[]
+}
+
+model Plan {
+  id           String     @id @default(cuid())
+  name         String
+  description  String?
+  price        Float
+  paymentLink  String?
+  intervalDays Int
+  allowedDays  String     @default("1,2,3,4,5,6,0")
+  active       Boolean    @default(true)
+  barbershopId String
+  barbershop   Barbershop @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  customers    Customer[]
+  planServices PlanService[]
+}
+
+model PlanService {
+  id        String  @id @default(cuid())
+  planId    String
+  plan      Plan    @relation(fields: [planId], references: [id], onDelete: Cascade)
+  serviceId String
+  service   Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@unique([planId, serviceId])
+}
+
+model Customer {
+  id           String     @id @default(cuid())
+  name         String
+  email        String?
+  phone        String?
+  notes        String?
+  planId       String?
+  plan         Plan?      @relation(fields: [planId], references: [id])
+  barbershopId String
+  barbershop   Barbershop @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  bookings Booking[]
+
+  @@unique([phone, barbershopId])
+}
+
+model Booking {
+  id            String        @id @default(cuid())
+  startTime     DateTime
+  endTime       DateTime
+  status        String        @default("PENDING")
+  notes         String?
+  totalPrice    Float
+  totalDuration Int
+
+  barberId     String
+  barber       Barber     @relation(fields: [barberId], references: [id])
+  customerId   String
+  customer     Customer   @relation(fields: [customerId], references: [id])
+  barbershopId String
+  barbershop   Barbershop @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
+
+  services BookingService[]
+  extras   BookingExtra[]
+  products BookingProduct[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+
+model BookingService {
+  id        String  @id @default(cuid())
+  bookingId String
+  booking   Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  serviceId String
+  service   Service @relation(fields: [serviceId], references: [id])
+  price     Float
+  duration  Int
+}
+
+model BookingExtra {
+  id        String  @id @default(cuid())
+  bookingId String
+  booking   Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  extraId   String
+  extra     Extra   @relation(fields: [extraId], references: [id])
+  price     Float
+  duration  Int
+}
+
+model BookingProduct {
+  id        String  @id @default(cuid())
+  bookingId String
+  booking   Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  price     Float
+}
+
+model WorkingHours {
+  id           String     @id @default(cuid())
+  dayOfWeek    Int
+  startTime    String
+  endTime      String
+  active       Boolean    @default(true)
+  barberId     String?
+  barber       Barber?    @relation(fields: [barberId], references: [id], onDelete: Cascade)
+  barbershopId String
+  barbershop   Barbershop @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model Notification {
+  id           String     @id @default(cuid())
+  barbershopId String
+  barbershop   Barbershop @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
+  barberId     String
+  barber       Barber     @relation(fields: [barberId], references: [id], onDelete: Cascade)
+  type         String
+  message      String
+  bookingId    String?
+  read         Boolean    @default(false)
+  createdAt    DateTime   @default(now())
+}
+
+model BlockedTime {
+  id           String     @id @default(cuid())
+  startTime    DateTime
+  endTime      DateTime
+  reason       String?
+  barberId     String?
+  barber       Barber?    @relation(fields: [barberId], references: [id], onDelete: Cascade)
+  barbershopId String
+  barbershop   Barbershop @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}

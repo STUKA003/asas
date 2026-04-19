@@ -1,0 +1,1 @@
+ALTER TABLE "Plan" ADD COLUMN "allowedDays" TEXT NOT NULL DEFAULT '1,2,3,4,5,6,0';
