@@ -280,7 +280,7 @@ export default function Customers() {
         </div>
 
         {/* KPI summary */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid gap-4 sm:grid-cols-2">
           <div className="rounded-2xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 shadow-sm">
             <div className="flex items-center gap-3 mb-2">
               <div className="h-9 w-9 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
@@ -302,7 +302,7 @@ export default function Customers() {
         </div>
 
         {/* Filter bar */}
-        <div className="flex flex-col sm:flex-row gap-2">
+        <div className="flex flex-col gap-2 xl:flex-row">
           <div className="relative flex-1">
             <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none" />
             <input
@@ -313,22 +313,22 @@ export default function Customers() {
               className="h-10 w-full pl-9 pr-3 text-sm rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-accent-500 placeholder-zinc-400"
             />
           </div>
-          <Select options={planOptions} value={planId} onChange={(e) => setPlanId(e.target.value)} />
-          <Select options={planStatusOptions} value={hasPlan} onChange={(e) => setHasPlan(e.target.value)} disabled={!!planId} />
+          <Select className="w-full xl:w-52" options={planOptions} value={planId} onChange={(e) => setPlanId(e.target.value)} />
+          <Select className="w-full xl:w-52" options={planStatusOptions} value={hasPlan} onChange={(e) => setHasPlan(e.target.value)} disabled={!!planId} />
           {hasActiveFilters && (
             <Button
               type="button"
               variant="outline"
-              className="gap-1.5 shrink-0"
+              className="gap-1.5 xl:shrink-0"
               onClick={() => { setQuery(''); setPlanId(''); setHasPlan('') }}
             >
               <X size={13} /> Limpar
             </Button>
           )}
-          <Button type="button" variant="outline" className="gap-1.5 shrink-0" onClick={handleExport} disabled={!data.length}>
+          <Button type="button" variant="outline" className="gap-1.5 xl:shrink-0" onClick={handleExport} disabled={!data.length}>
             <Download size={14} /> Exportar CSV
           </Button>
-          <label className="inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-[18px] border border-zinc-200/80 bg-white/80 px-4 text-sm font-semibold text-zinc-700 shadow-[0_12px_24px_-20px_rgba(15,23,42,0.35)] transition-all hover:-translate-y-0.5 hover:bg-white dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-300">
+          <label className="inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-[18px] border border-zinc-200/80 bg-white/80 px-4 py-2 text-sm font-semibold text-zinc-700 shadow-[0_12px_24px_-20px_rgba(15,23,42,0.35)] transition-all hover:-translate-y-0.5 hover:bg-white dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-300">
             <Upload size={14} /> {importMutation.isPending ? 'A importar…' : 'Importar CSV'}
             <input type="file" accept=".csv,text/csv" className="hidden" onChange={handleImport} />
           </label>
@@ -406,7 +406,7 @@ export default function Customers() {
         ) : (
           <div className="space-y-4">
             {/* Top KPIs */}
-            <div className="grid grid-cols-2 gap-3 text-sm">
+            <div className="grid gap-3 text-sm sm:grid-cols-2">
               <div className="bg-zinc-50 dark:bg-zinc-800/50 rounded-xl p-3">
                 <p className="text-zinc-400 text-xs mb-1">Cliente</p>
                 <p className="font-medium text-zinc-900 dark:text-zinc-100">{detail.name}</p>
@@ -479,7 +479,7 @@ export default function Customers() {
                         {editError}
                       </div>
                     ) : null}
-                    <div className="flex gap-2">
+                    <div className="flex flex-col gap-2 sm:flex-row">
                       <Button size="sm" loading={updateCustomerMutation.isPending} onClick={() => updateCustomerMutation.mutate(editForm)}>
                         Guardar
                       </Button>
@@ -546,7 +546,7 @@ export default function Customers() {
                     </Button>
                   </div>
                 ) : (
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <span className="text-sm font-medium">
                       {detail.plan?.name
                         ? <Badge>{detail.plan.name}</Badge>
@@ -569,7 +569,7 @@ export default function Customers() {
               ) : (
                 <div className="space-y-2">
                   {detail.bookings.map((booking) => (
-                    <div key={booking.id} className="flex items-center gap-3 rounded-xl border border-zinc-100 dark:border-zinc-800 px-4 py-3">
+                    <div key={booking.id} className="flex flex-col gap-3 rounded-xl border border-zinc-100 px-4 py-3 dark:border-zinc-800 sm:flex-row sm:items-center">
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
                           {format(new Date(booking.startTime), "dd 'de' MMMM, HH:mm", { locale: pt })}
@@ -590,7 +590,7 @@ export default function Customers() {
                   <p className="text-sm text-red-700 dark:text-red-300 font-medium">
                     Tens a certeza? Esta ação é irreversível.
                   </p>
-                  <div className="flex gap-2">
+                  <div className="flex flex-col gap-2 sm:flex-row">
                     <Button
                       variant="ghost"
                       className="flex-1 bg-red-600 text-white hover:bg-red-700"

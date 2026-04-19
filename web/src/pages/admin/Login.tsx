@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -21,6 +22,7 @@ type FormData = z.infer<typeof schema>
 export default function Login() {
   const navigate = useNavigate()
   const { setAuth } = useAuthStore()
+  const [submitError, setSubmitError] = useState('')
   const { register, handleSubmit, formState: { errors }, setError } = useForm<FormData>({
     resolver: zodResolver(schema),
   })
@@ -28,11 +30,25 @@ export default function Login() {
   const { mutate, isPending } = useMutation({
     mutationFn: (data: FormData) => authApi.login(data),
     onSuccess: (data) => {
+      setSubmitError('')
       setAuth(data.token, data.user)
       navigate('/admin')
     },
-    onError: () => {
+    onError: (error: unknown) => {
+      const message =
+        typeof error === 'object' &&
+        error !== null &&
+        'response' in error &&
+        typeof (error as { response?: { data?: { error?: string } } }).response?.data?.error === 'string'
+          ? (error as { response?: { data?: { error?: string } } }).response!.data!.error!
+          : 'Credenciais inválidas'
+
       setError('password', { message: 'Credenciais inválidas' })
+      setSubmitError(
+        message === 'Invalid credentials'
+          ? 'Slug, e-mail ou password inválidos. Se esta barbearia existia só no teu localhost, ainda não está criada na base de dados da VPS.'
+          : message
+      )
     },
   })
 
@@ -79,7 +95,7 @@ export default function Login() {
             <p className="mt-2 text-sm leading-6 text-zinc-500">Faz login para gerir operação, equipa, clientes e agenda num único sítio.</p>
           </div>
 
-          <form onSubmit={handleSubmit((d) => mutate(d))} className="space-y-4">
+          <form onSubmit={handleSubmit((d) => { setSubmitError(''); mutate(d) })} className="space-y-4">
             <Input
               label="Slug da barbearia"
               placeholder="minha-barbearia"
@@ -100,6 +116,11 @@ export default function Login() {
               error={errors.password?.message}
               {...register('password')}
             />
+            {submitError && (
+              <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300">
+                {submitError}
+              </div>
+            )}
             <Button type="submit" loading={isPending} className="mt-2 w-full">
               Entrar no painel <ArrowRight size={16} />
             </Button>

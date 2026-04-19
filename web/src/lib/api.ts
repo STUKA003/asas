@@ -22,12 +22,24 @@ function isSuperadminRequest(url?: string) {
   return !!url && url.includes('/superadmin')
 }
 
+function isLoginRequest(url?: string) {
+  return !!url && (
+    url.includes('/auth/login') ||
+    url.includes('/barber-auth/login') ||
+    url.includes('/superadmin/auth/login')
+  )
+}
+
 api.interceptors.response.use(
   (res) => res,
   (err) => {
     const requestUrl = err.config?.url as string | undefined
 
     if (err.response?.status === 401) {
+      if (isLoginRequest(requestUrl)) {
+        return Promise.reject(err)
+      }
+
       if (isBarberRequest(requestUrl)) {
         useBarberAuthStore.getState().logout()
         window.location.href = '/barber/login'

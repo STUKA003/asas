@@ -389,7 +389,7 @@ export default function Bookings() {
         {/* ── LIST VIEW ── */}
         {view === 'list' && (
           <>
-            <div className="flex flex-col sm:flex-row gap-2">
+            <div className="flex flex-col gap-2 xl:flex-row">
               <div className="relative flex-1">
                 <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none" />
                 <input
@@ -404,14 +404,14 @@ export default function Bookings() {
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="h-10 px-3 text-sm rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-accent-500 shrink-0"
+                className="h-10 rounded-xl border border-zinc-200 bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-accent-500 dark:border-zinc-700 dark:bg-zinc-900 xl:shrink-0"
               />
-              <Select options={barberOptions} value={barberId} onChange={(e) => setBarberId(e.target.value)} />
-              <Select options={STATUS_OPTIONS} value={status} onChange={(e) => setStatus(e.target.value)} />
+              <Select className="w-full xl:w-52" options={barberOptions} value={barberId} onChange={(e) => setBarberId(e.target.value)} />
+              <Select className="w-full xl:w-52" options={STATUS_OPTIONS} value={status} onChange={(e) => setStatus(e.target.value)} />
               {(query || date || barberId || status) && (
                 <Button
                   type="button" variant="outline"
-                  className="gap-1.5 shrink-0"
+                  className="gap-1.5 xl:shrink-0"
                   onClick={() => { setQuery(''); setDate(''); setBarberId(''); setStatus('') }}
                 >
                   <X size={13} /> Limpar
@@ -462,7 +462,7 @@ export default function Bookings() {
 
           return (
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-3 text-sm">
+              <div className="grid gap-3 text-sm sm:grid-cols-2">
                 <div className="bg-zinc-50 dark:bg-zinc-800/50 rounded-xl p-3">
                   <p className="text-zinc-400 text-xs mb-1">Cliente</p>
                   <p className="font-medium">{detail.customer.name}</p>
@@ -509,7 +509,7 @@ export default function Bookings() {
                   </div>
                 ))}
                 {bookingExtras.map((e) => (
-                  <div key={e.id} className="flex items-center justify-between gap-3 text-zinc-500">
+                  <div key={e.id} className="flex flex-col gap-2 text-zinc-500 sm:flex-row sm:items-center sm:justify-between">
                     <span>+ {e.extra.name}</span>
                     <div className="flex items-center gap-2">
                       <span>{formatCurrency(e.price)}</span>
@@ -525,7 +525,7 @@ export default function Bookings() {
                   </div>
                 ))}
                 {bookingProducts.map((p) => (
-                  <div key={p.id} className="flex items-center justify-between gap-3 text-zinc-500">
+                  <div key={p.id} className="flex flex-col gap-2 text-zinc-500 sm:flex-row sm:items-center sm:justify-between">
                     <span>{p.product.name}</span>
                     <div className="flex items-center gap-2">
                       <span>{formatCurrency(p.price)}</span>
@@ -553,9 +553,10 @@ export default function Bookings() {
                     {addItemsError}
                   </div>
                 )}
-                <div className="flex justify-end">
+                <div className="flex justify-stretch sm:justify-end">
                   <Button
                     variant="secondary"
+                    className="w-full sm:w-auto"
                     loading={addItems.isPending}
                     disabled={!selectedExtraId && !selectedProductId}
                     onClick={() => addItems.mutate({

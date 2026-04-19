@@ -72,7 +72,7 @@ export default function SuperAdminDashboard() {
           <div className="grid gap-5 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,0.85fr)] lg:items-end">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.22em] text-zinc-500">Platform pulse</p>
-              <h1 className="mt-3 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+              <h1 className="mt-3 text-2xl font-semibold tracking-tight text-white sm:text-4xl">
                 Uma visão clara da saúde comercial e operacional da plataforma.
               </h1>
               <p className="mt-4 max-w-2xl text-sm leading-6 text-zinc-400 sm:text-base">
@@ -82,7 +82,7 @@ export default function SuperAdminDashboard() {
 
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
               <div className="rounded-[1.5rem] border border-emerald-400/20 bg-emerald-500/10 p-4">
-                <div className="flex items-center gap-3">
+                <div className="flex items-start gap-3">
                   <div className="rounded-2xl bg-white/10 p-2 text-emerald-200">
                     <BadgeCheck size={16} />
                   </div>
@@ -95,7 +95,7 @@ export default function SuperAdminDashboard() {
                 </div>
               </div>
               <div className="rounded-[1.5rem] border border-blue-400/20 bg-blue-500/10 p-4">
-                <div className="flex items-center gap-3">
+                <div className="flex items-start gap-3">
                   <div className="rounded-2xl bg-white/10 p-2 text-blue-200">
                     <Sparkles size={16} />
                   </div>
@@ -123,9 +123,9 @@ export default function SuperAdminDashboard() {
                   <card.icon size={18} />
                 </div>
               </div>
-              <div className="mt-4 inline-flex items-center gap-1 rounded-full bg-white/8 px-2.5 py-1 text-xs font-semibold text-zinc-300">
+              <div className="mt-4 inline-flex max-w-full items-center gap-1 rounded-full bg-white/8 px-2.5 py-1 text-xs font-semibold text-zinc-300">
                 <ArrowUpRight size={13} />
-                {card.helper}
+                <span className="truncate">{card.helper}</span>
               </div>
               <p className="mt-3 text-sm leading-5 text-zinc-500">{card.microcopy}</p>
             </div>
@@ -134,7 +134,7 @@ export default function SuperAdminDashboard() {
 
         <section className="grid gap-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
           <div className="rounded-[1.75rem] border border-white/10 bg-white/[0.04] p-6 shadow-[0_24px_50px_-36px_rgba(0,0,0,0.7)] backdrop-blur-xl">
-            <div className="flex items-end justify-between gap-4">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.22em] text-zinc-500">Monetização</p>
                 <h2 className="mt-2 text-xl font-semibold tracking-tight text-white">Distribuição de planos</h2>
@@ -150,8 +150,8 @@ export default function SuperAdminDashboard() {
                 const width = totalBarbershops > 0 ? (plan.count / totalBarbershops) * 100 : 0
                 return (
                   <div key={plan.plan} className="rounded-[1.35rem] border border-white/8 bg-black/10 p-4">
-                    <div className="flex items-center justify-between gap-3">
-                      <div className="flex items-center gap-3">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                      <div className="flex flex-wrap items-center gap-3">
                         <div className={`rounded-2xl px-3 py-2 text-sm font-semibold ${PLAN_COLORS[plan.plan] ?? 'bg-zinc-800 text-zinc-300'}`}>
                           {PLAN_LABELS[plan.plan] ?? plan.plan}
                         </div>
@@ -177,7 +177,7 @@ export default function SuperAdminDashboard() {
 
             <div className="mt-6 space-y-3">
               <div className="rounded-[1.35rem] border border-emerald-400/20 bg-emerald-500/10 p-4">
-                <div className="flex items-center gap-3">
+                <div className="flex items-start gap-3">
                   <div className="rounded-2xl bg-white/10 p-2 text-emerald-200">
                     <Layers3 size={16} />
                   </div>
@@ -191,7 +191,7 @@ export default function SuperAdminDashboard() {
               </div>
 
               <div className="rounded-[1.35rem] border border-blue-400/20 bg-blue-500/10 p-4">
-                <div className="flex items-center gap-3">
+                <div className="flex items-start gap-3">
                   <div className="rounded-2xl bg-white/10 p-2 text-blue-200">
                     <TrendingUp size={16} />
                   </div>
@@ -205,7 +205,7 @@ export default function SuperAdminDashboard() {
               </div>
 
               <div className="rounded-[1.35rem] border border-amber-400/20 bg-amber-500/10 p-4">
-                <div className="flex items-center gap-3">
+                <div className="flex items-start gap-3">
                   <div className="rounded-2xl bg-white/10 p-2 text-amber-200">
                     <Sparkles size={16} />
                   </div>

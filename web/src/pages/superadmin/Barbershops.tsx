@@ -2,12 +2,13 @@ import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { format, addMonths, addYears, isPast } from 'date-fns'
 import { pt } from 'date-fns/locale'
-import { Search, Scissors, Calendar, Users, Ban, CheckCircle, ChevronDown, ChevronUp, Plus, X, Trash2, LogIn, AlertTriangle } from 'lucide-react'
+import { Search, Scissors, Calendar, Users, Ban, CheckCircle, ChevronDown, ChevronUp, Plus, Trash2, LogIn, AlertTriangle } from 'lucide-react'
 import { SuperAdminLayout } from '@/components/layout/SuperAdminLayout'
 import { superadminApi } from '@/lib/api'
 import { useSuperAuthStore } from '@/store/superauth'
 import { useAuthStore } from '@/store/auth'
 import { cn } from '@/lib/utils'
+import { Modal } from '@/components/ui/Modal'
 
 type Plan = 'FREE' | 'BASIC' | 'PRO'
 
@@ -94,7 +95,7 @@ function IdentityEditor({ b, token, onDone }: IdentityEditorProps) {
         </button>
       </div>
       {error && <p className="text-xs text-red-400">{error}</p>}
-      <div className="flex gap-2">
+      <div className="flex flex-col gap-2 sm:flex-row">
         <button onClick={() => updateMutation.mutate()} disabled={updateMutation.isPending || !name.trim() || !slug.trim()} className="px-4 py-2 rounded-xl bg-accent-500 hover:bg-accent-600 text-white text-xs font-semibold transition-colors disabled:opacity-50">
           {updateMutation.isPending ? 'A guardar…' : 'Guardar'}
         </button>
@@ -143,7 +144,7 @@ function PlanEditor({ b, token, onDone }: PlanEditorProps) {
           {endsAt && <p className="text-xs text-zinc-500 mt-1">Expira em {format(new Date(endsAt), "d 'de' MMMM yyyy", { locale: pt })}</p>}
         </div>
       )}
-      <div className="flex gap-2">
+      <div className="flex flex-col gap-2 sm:flex-row">
         <button onClick={() => updatePlan.mutate()} disabled={updatePlan.isPending} className="px-4 py-2 rounded-xl bg-accent-500 hover:bg-accent-600 text-white text-xs font-semibold transition-colors disabled:opacity-50">
           {updatePlan.isPending ? 'A guardar…' : 'Guardar'}
         </button>
@@ -180,7 +181,7 @@ function SuspendEditor({ b, token, onDone }: SuspendEditorProps) {
     <div className="mt-3 pt-3 border-t border-zinc-700 space-y-3">
       <p className="text-xs text-zinc-400">Motivo da suspensão (opcional)</p>
       <input type="text" value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Ex: pagamento em atraso" className="w-full h-9 px-3 rounded-xl bg-zinc-800 border border-zinc-600 text-sm text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-red-500" />
-      <div className="flex gap-2">
+      <div className="flex flex-col gap-2 sm:flex-row">
         <button onClick={() => suspendMutation.mutate(true)} disabled={suspendMutation.isPending} className="px-4 py-2 rounded-xl bg-red-800 hover:bg-red-700 text-red-100 text-xs font-semibold transition-colors disabled:opacity-50">
           {suspendMutation.isPending ? 'A suspender…' : 'Suspender'}
         </button>
@@ -219,66 +220,66 @@ function CreateModal({ token, onClose }: { token: string; onClose: () => void })
   const field = 'w-full h-10 px-3 rounded-xl bg-zinc-800 border border-zinc-700 text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-accent-500'
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-      <div className="w-full max-w-md bg-zinc-900 rounded-2xl border border-zinc-700 shadow-2xl">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-800">
-          <h2 className="font-bold text-white">Nova barbearia</h2>
-          <button onClick={onClose} className="text-zinc-500 hover:text-zinc-200 transition-colors"><X size={18} /></button>
+    <Modal open onClose={onClose} title="Nova barbearia" size="md">
+      <div className="space-y-3">
+        <div>
+          <label className="mb-1.5 block text-xs text-zinc-400">Nome da barbearia</label>
+          <input className={field} placeholder="Barbearia do João" value={form.barbershopName} onChange={(e) => set('barbershopName', e.target.value)} />
         </div>
-        <div className="p-6 space-y-3">
-          <div>
-            <label className="block text-xs text-zinc-400 mb-1.5">Nome da barbearia</label>
-            <input className={field} placeholder="Barbearia do João" value={form.barbershopName} onChange={(e) => set('barbershopName', e.target.value)} />
+        <div>
+          <label className="mb-1.5 block text-xs text-zinc-400">Endereço (slug)</label>
+          <div className="flex items-center overflow-hidden rounded-xl border border-zinc-700 bg-zinc-800 focus-within:ring-2 focus-within:ring-accent-500">
+            <span className="pl-3 pr-1 text-[11px] text-zinc-500 select-none sm:text-xs">trimio.app/</span>
+            <input
+              className="h-10 min-w-0 flex-1 pr-3 bg-transparent text-sm text-white focus:outline-none"
+              value={form.slug}
+              onChange={(e) => { setSlugManual(true); setForm((f) => ({ ...f, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '') })) }}
+            />
           </div>
-          <div>
-            <label className="block text-xs text-zinc-400 mb-1.5">Endereço (slug)</label>
-            <div className="flex items-center rounded-xl border border-zinc-700 bg-zinc-800 focus-within:ring-2 focus-within:ring-accent-500 overflow-hidden">
-              <span className="pl-3 pr-1 text-zinc-500 text-xs whitespace-nowrap select-none">trimio.app/</span>
-              <input className="flex-1 h-10 pr-3 bg-transparent text-sm text-white focus:outline-none" value={form.slug}
-                onChange={(e) => { setSlugManual(true); setForm((f) => ({ ...f, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '') })) }} />
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-xs text-zinc-400 mb-1.5">Nome do admin</label>
-              <input className={field} placeholder="João Silva" value={form.adminName} onChange={(e) => set('adminName', e.target.value)} />
-            </div>
-            <div>
-              <label className="block text-xs text-zinc-400 mb-1.5">E-mail do admin</label>
-              <input className={field} type="email" placeholder="joao@email.com" value={form.adminEmail} onChange={(e) => set('adminEmail', e.target.value)} />
-            </div>
-          </div>
-          <div>
-            <label className="block text-xs text-zinc-400 mb-1.5">Password</label>
-            <input className={field} type="password" placeholder="Mínimo 6 caracteres" value={form.adminPassword} onChange={(e) => set('adminPassword', e.target.value)} />
-          </div>
-          <div>
-            <label className="block text-xs text-zinc-400 mb-1.5">Plano inicial</label>
-            <div className="flex gap-2">
-              {ALL_PLANS.map((p) => (
-                <button key={p} onClick={() => setForm((f) => ({ ...f, plan: p }))}
-                  className={cn('flex-1 py-2 rounded-xl text-xs font-semibold transition-all', form.plan === p ? PLAN_STYLES[p].activeButton : PLAN_STYLES[p].button)}>
-                  {PLAN_LABELS[p]}
-                </button>
-              ))}
-            </div>
-          </div>
-          {error && (
-            <div className="flex items-center gap-2 rounded-xl bg-red-900/20 border border-red-800 px-3 py-2">
-              <AlertTriangle size={13} className="text-red-400 shrink-0" />
-              <p className="text-xs text-red-400">{error}</p>
-            </div>
-          )}
-          <button
-            onClick={() => createMutation.mutate()}
-            disabled={createMutation.isPending || !form.barbershopName || !form.slug || !form.adminName || !form.adminEmail || !form.adminPassword}
-            className="w-full py-2.5 rounded-xl bg-accent-500 hover:bg-accent-600 text-white text-sm font-semibold transition-colors disabled:opacity-50 mt-1"
-          >
-            {createMutation.isPending ? 'A criar…' : 'Criar barbearia'}
-          </button>
         </div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div>
+            <label className="mb-1.5 block text-xs text-zinc-400">Nome do admin</label>
+            <input className={field} placeholder="João Silva" value={form.adminName} onChange={(e) => set('adminName', e.target.value)} />
+          </div>
+          <div>
+            <label className="mb-1.5 block text-xs text-zinc-400">E-mail do admin</label>
+            <input className={field} type="email" placeholder="joao@email.com" value={form.adminEmail} onChange={(e) => set('adminEmail', e.target.value)} />
+          </div>
+        </div>
+        <div>
+          <label className="mb-1.5 block text-xs text-zinc-400">Password</label>
+          <input className={field} type="password" placeholder="Mínimo 6 caracteres" value={form.adminPassword} onChange={(e) => set('adminPassword', e.target.value)} />
+        </div>
+        <div>
+          <label className="mb-1.5 block text-xs text-zinc-400">Plano inicial</label>
+          <div className="grid grid-cols-3 gap-2">
+            {ALL_PLANS.map((p) => (
+              <button
+                key={p}
+                onClick={() => setForm((f) => ({ ...f, plan: p }))}
+                className={cn('rounded-xl py-2 text-xs font-semibold transition-all', form.plan === p ? PLAN_STYLES[p].activeButton : PLAN_STYLES[p].button)}
+              >
+                {PLAN_LABELS[p]}
+              </button>
+            ))}
+          </div>
+        </div>
+        {error && (
+          <div className="flex items-center gap-2 rounded-xl border border-red-800 bg-red-900/20 px-3 py-2">
+            <AlertTriangle size={13} className="shrink-0 text-red-400" />
+            <p className="text-xs text-red-400">{error}</p>
+          </div>
+        )}
+        <button
+          onClick={() => createMutation.mutate()}
+          disabled={createMutation.isPending || !form.barbershopName || !form.slug || !form.adminName || !form.adminEmail || !form.adminPassword}
+          className="mt-1 w-full rounded-xl bg-accent-500 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-accent-600 disabled:opacity-50"
+        >
+          {createMutation.isPending ? 'A criar…' : 'Criar barbearia'}
+        </button>
       </div>
-    </div>
+    </Modal>
   )
 }
 
@@ -327,14 +328,14 @@ export default function SuperAdminBarbershops() {
     <SuperAdminLayout>
       <div className="space-y-6">
         {/* Page header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-2xl font-bold">Barbearias</h1>
             <p className="text-zinc-500 text-sm mt-0.5">{barbershops.length} registadas</p>
           </div>
           <button
             onClick={() => setShowCreate(true)}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-accent-500 hover:bg-accent-600 text-white text-sm font-semibold transition-colors"
+            className="flex items-center justify-center gap-2 rounded-xl bg-accent-500 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-accent-600 sm:self-auto"
           >
             <Plus size={15} />
             Nova barbearia
@@ -382,7 +383,7 @@ export default function SuperAdminBarbershops() {
                 >
                   <div className="p-4 sm:p-5">
                     <div className="flex items-start justify-between gap-4">
-                      <div className="flex items-start gap-3 flex-1 min-w-0">
+                      <div className="flex min-w-0 flex-1 items-start gap-3">
                         {/* Icon */}
                         <div className={cn(
                           'w-10 h-10 rounded-xl flex items-center justify-center shrink-0 mt-0.5',
@@ -393,8 +394,8 @@ export default function SuperAdminBarbershops() {
 
                         {/* Main info */}
                         <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-2 flex-wrap mb-0.5">
-                            <p className="font-semibold text-white truncate">{b.name}</p>
+                          <div className="mb-0.5 flex flex-wrap items-center gap-2">
+                            <p className="break-words font-semibold text-white sm:truncate">{b.name}</p>
                             {/* Plan badge */}
                             <span className={cn('inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full font-medium', s.badge)}>
                               <span className={cn('h-1.5 w-1.5 rounded-full', s.dot)} />
@@ -416,7 +417,7 @@ export default function SuperAdminBarbershops() {
                           <p className="text-xs text-zinc-500">/{b.slug}</p>
 
                           {/* Stats row */}
-                          <div className="flex items-center gap-4 mt-2 text-xs text-zinc-500 flex-wrap">
+                          <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-zinc-500">
                             <span className="flex items-center gap-1.5">
                               <Users size={11} className="text-zinc-600" />
                               {b._count.customers} clientes
@@ -450,31 +451,31 @@ export default function SuperAdminBarbershops() {
                     {isExpanded && (
                       <>
                         {editMode === null && (
-                          <div className="mt-4 pt-4 border-t border-zinc-800 flex gap-2 flex-wrap">
+                          <div className="mt-4 flex flex-col gap-2 border-t border-zinc-800 pt-4 sm:flex-row sm:flex-wrap">
                             <button
                               onClick={() => openSupportSession(b.id)}
                               disabled={supportSessionMutation.isPending}
-                              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-accent-500/15 hover:bg-accent-500/25 text-accent-300 text-xs font-medium transition-colors disabled:opacity-50"
+                              className="flex items-center justify-center gap-1.5 rounded-lg bg-accent-500/15 px-3 py-2 text-xs font-medium text-accent-300 transition-colors hover:bg-accent-500/25 disabled:opacity-50 sm:justify-start"
                             >
                               <LogIn size={12} />
                               {supportSessionMutation.isPending ? 'A abrir…' : 'Entrar no painel'}
                             </button>
                             <button
                               onClick={() => setEditMode('identity')}
-                              className="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-medium transition-colors"
+                              className="rounded-lg bg-zinc-800 px-3 py-2 text-xs font-medium text-zinc-300 transition-colors hover:bg-zinc-700"
                             >
                               Editar nome / slug
                             </button>
                             <button
                               onClick={() => setEditMode('plan')}
-                              className="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-medium transition-colors"
+                              className="rounded-lg bg-zinc-800 px-3 py-2 text-xs font-medium text-zinc-300 transition-colors hover:bg-zinc-700"
                             >
                               Alterar plano
                             </button>
                             <button
                               onClick={() => setEditMode('suspend')}
                               className={cn(
-                                'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors',
+                                'flex items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition-colors sm:justify-start',
                                 b.suspended
                                   ? 'bg-emerald-900/30 hover:bg-emerald-900/50 text-emerald-300'
                                   : 'bg-red-900/20 hover:bg-red-900/40 text-red-400'
@@ -486,14 +487,14 @@ export default function SuperAdminBarbershops() {
                             </button>
 
                             {/* Delete */}
-                            <div className="ml-auto">
+                            <div className="sm:ml-auto">
                               {confirmDeleteId === b.id ? (
-                                <div className="flex items-center gap-2">
+                                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                                   <span className="text-xs text-zinc-400">Tens a certeza?</span>
                                   <button
                                     onClick={() => deleteMutation.mutate(b.id)}
                                     disabled={deleteMutation.isPending}
-                                    className="px-3 py-1.5 rounded-lg bg-red-700 hover:bg-red-600 text-white text-xs font-semibold transition-colors disabled:opacity-50"
+                                    className="rounded-lg bg-red-700 px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-red-600 disabled:opacity-50"
                                   >
                                     {deleteMutation.isPending ? 'A apagar…' : 'Apagar'}
                                   </button>
@@ -504,7 +505,7 @@ export default function SuperAdminBarbershops() {
                               ) : (
                                 <button
                                   onClick={() => setConfirmDeleteId(b.id)}
-                                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-zinc-600 hover:bg-zinc-800 hover:text-red-400 text-xs transition-colors"
+                                  className="flex items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-xs text-zinc-600 transition-colors hover:bg-zinc-800 hover:text-red-400 sm:justify-start"
                                 >
                                   <Trash2 size={12} /> Apagar
                                 </button>

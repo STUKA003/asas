@@ -30,18 +30,18 @@ export function Modal({ open, onClose, title, children, size = 'md' }: ModalProp
   if (!open) return null
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm animate-fade-in" onClick={onClose} />
-      <div className={cn('relative w-full bg-white dark:bg-zinc-900 rounded-2xl shadow-xl animate-slide-up', sizes[size])}>
+      <div className={cn('relative flex max-h-[calc(100vh-1.5rem)] w-full flex-col overflow-hidden rounded-2xl bg-white shadow-xl animate-slide-up dark:bg-zinc-900 sm:max-h-[calc(100vh-2rem)]', sizes[size])}>
         {title && (
-          <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-100 dark:border-zinc-800">
+          <div className="flex items-center justify-between border-b border-zinc-100 px-4 py-4 dark:border-zinc-800 sm:px-6">
             <h2 className="text-base font-semibold">{title}</h2>
             <Button variant="ghost" size="sm" onClick={onClose} className="h-8 w-8 p-0">
               <X size={16} />
             </Button>
           </div>
         )}
-        <div className="p-6">{children}</div>
+        <div className="overflow-y-auto p-4 sm:p-6">{children}</div>
       </div>
     </div>,
     document.body
