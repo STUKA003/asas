@@ -33,6 +33,9 @@ model Barbershop {
   accentColor         String   @default("orange")
   subscriptionPlan   String    @default("FREE")
   subscriptionEndsAt DateTime?
+  stripeCustomerId   String?   @unique
+  stripeSubscriptionId String? @unique
+  stripeSubscriptionStatus String?
   suspended          Boolean   @default(false)
   suspendedReason    String?
   createdAt          DateTime  @default(now())
