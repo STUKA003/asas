@@ -15,6 +15,14 @@ import {
 
 export type { Slot }
 
+function parseDateOnly(date: string): Date {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date)
+  if (!match) return new Date(date)
+
+  const [, year, month, day] = match
+  return new Date(Number(year), Number(month) - 1, Number(day), 0, 0, 0, 0)
+}
+
 // ─── Working-hours resolution ────────────────────────────────────────────────
 
 /**
@@ -62,9 +70,7 @@ export async function getAvailableSlots(
   durationMinutes: number,
   granularityMinutes = 15
 ): Promise<Slot[]> {
-  // Normalise to midnight so setHours below is unambiguous
-  const targetDate = new Date(date)
-  targetDate.setHours(0, 0, 0, 0)
+  const targetDate = parseDateOnly(date)
   const dayOfWeek = targetDate.getDay()
 
   const workingHours = await resolveWorkingHours(barberId, barbershopId, dayOfWeek)

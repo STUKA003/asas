@@ -277,3 +277,69 @@ test('public availability and booking flow works end-to-end', { skip: !integrati
   assert.equal(misalignedBooking.response.status, 422)
   assert.match(misalignedBooking.body.error, /outside barber working hours/)
 })
+
+test('public availability respects split barber-specific working hours', { skip: !integrationEnabled }, async () => {
+  const bookingDate = new Date()
+  bookingDate.setDate(bookingDate.getDate() + ((4 - bookingDate.getDay() + 7) % 7 || 7))
+  bookingDate.setHours(0, 0, 0, 0)
+  const dateParam = bookingDate.toISOString().slice(0, 10)
+
+  const shop = await prisma.barbershop.create({
+    data: {
+      name: 'Split Hours Shop',
+      slug: 'split-hours-shop',
+      slotGranularityMinutes: 30,
+    },
+  })
+
+  const barber = await prisma.barber.create({
+    data: {
+      name: 'Rui',
+      barbershopId: shop.id,
+      active: true,
+    },
+  })
+
+  await prisma.workingHours.createMany({
+    data: [
+      {
+        dayOfWeek: 4,
+        startTime: '10:00',
+        endTime: '12:00',
+        active: true,
+        barberId: barber.id,
+        barbershopId: shop.id,
+      },
+      {
+        dayOfWeek: 4,
+        startTime: '14:00',
+        endTime: '18:00',
+        active: true,
+        barberId: barber.id,
+        barbershopId: shop.id,
+      },
+    ],
+  })
+
+  const availability = await jsonRequest(`/api/public/${shop.slug}/availability?barberId=${barber.id}&date=${dateParam}&duration=30`)
+  assert.equal(availability.response.status, 200)
+
+  const slotTimes = availability.body.slots.map((slot: { startTime: string }) =>
+    new Date(slot.startTime).toISOString().slice(11, 16)
+  )
+
+  assert.deepEqual(slotTimes, [
+    '10:00',
+    '10:30',
+    '11:00',
+    '11:30',
+    '14:00',
+    '14:30',
+    '15:00',
+    '15:30',
+    '16:00',
+    '16:30',
+    '17:00',
+    '17:30',
+  ])
+})
