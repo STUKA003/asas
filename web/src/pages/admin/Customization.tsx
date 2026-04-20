@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import axios from 'axios'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
@@ -23,13 +24,13 @@ function readFileAsDataUrl(file: File) {
   })
 }
 
-async function compressImage(file: File) {
+async function compressImage(file: File, usage: 'logo' | 'photo' = 'photo') {
   const source = await readFileAsDataUrl(file)
 
   return new Promise<string>((resolve, reject) => {
     const image = new Image()
     image.onload = () => {
-      const maxSize = 700
+      const maxSize = usage === 'logo' ? 700 : 1200
       const scale = Math.min(1, maxSize / Math.max(image.width, image.height))
       const width = Math.max(1, Math.round(image.width * scale))
       const height = Math.max(1, Math.round(image.height * scale))
@@ -44,7 +45,10 @@ async function compressImage(file: File) {
       }
 
       ctx.drawImage(image, 0, 0, width, height)
-      const result = canvas.toDataURL('image/png')
+      const prefersPng = usage === 'logo' && file.type === 'image/png'
+      const result = prefersPng
+        ? canvas.toDataURL('image/png')
+        : canvas.toDataURL('image/jpeg', 0.72)
 
       if (result.length > 1_500_000) {
         reject(new Error('A imagem continua demasiado grande. Tente uma imagem mais pequena.'))
@@ -56,6 +60,19 @@ async function compressImage(file: File) {
     image.onerror = () => reject(new Error('Nao foi possivel processar a imagem'))
     image.src = source
   })
+}
+
+function getRequestErrorMessage(error: unknown, fallback: string) {
+  if (axios.isAxiosError(error)) {
+    if (error.response?.status === 413) {
+      return 'As imagens são demasiado pesadas para guardar de uma vez. Tente menos fotos de cada vez ou imagens mais leves.'
+    }
+
+    const apiMessage = typeof error.response?.data?.error === 'string' ? error.response.data.error : null
+    if (apiMessage) return apiMessage
+  }
+
+  return error instanceof Error ? error.message : fallback
 }
 
 type FormValues = {
@@ -206,7 +223,7 @@ export default function Customization() {
       queryClient.invalidateQueries({ queryKey: ['barbershop'] })
     },
     onError: (error) => {
-      const message = error instanceof Error ? error.message : 'Nao foi possivel guardar a galeria'
+      const message = getRequestErrorMessage(error, 'Nao foi possivel guardar a galeria')
       setGalleryError(message)
     },
   })
@@ -223,11 +240,11 @@ export default function Customization() {
 
     try {
       setLogoError(null)
-      const dataUrl = await compressImage(file)
+      const dataUrl = await compressImage(file, 'logo')
       setValue('logoUrl', dataUrl, { shouldDirty: true })
       setLogoDirty(true)
     } catch (error) {
-      setLogoError(error instanceof Error ? error.message : 'Nao foi possivel carregar o logo')
+      setLogoError(getRequestErrorMessage(error, 'Nao foi possivel carregar o logo'))
     }
 
     event.target.value = ''
@@ -239,11 +256,11 @@ export default function Customization() {
 
     try {
       setHeroImageError(null)
-      const dataUrl = await compressImage(file)
+      const dataUrl = await compressImage(file, 'photo')
       setValue('heroImageUrl', dataUrl, { shouldDirty: true })
       setHeroImageDirty(true)
     } catch (error) {
-      setHeroImageError(error instanceof Error ? error.message : 'Nao foi possivel carregar a imagem principal')
+      setHeroImageError(getRequestErrorMessage(error, 'Nao foi possivel carregar a imagem principal'))
     }
 
     event.target.value = ''
@@ -263,7 +280,7 @@ export default function Customization() {
         return
       }
 
-      const nextImages = await Promise.all(files.slice(0, availableSlots).map((file) => compressImage(file)))
+      const nextImages = await Promise.all(files.slice(0, availableSlots).map((file) => compressImage(file, 'photo')))
       const updatedImages = [...currentImages, ...nextImages]
       setValue('galleryImages', updatedImages, { shouldDirty: true })
       setGalleryDirty(true)
@@ -273,7 +290,7 @@ export default function Customization() {
         setGalleryError(`Só foram adicionadas ${availableSlots} imagens. O limite é ${MAX_GALLERY_IMAGES}.`)
       }
     } catch (error) {
-      setGalleryError(error instanceof Error ? error.message : 'Nao foi possivel carregar as imagens da galeria')
+      setGalleryError(getRequestErrorMessage(error, 'Nao foi possivel carregar as imagens da galeria'))
     }
 
     event.target.value = ''
