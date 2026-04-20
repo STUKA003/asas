@@ -199,11 +199,15 @@ export default function Customization() {
     },
   })
 
-  const { mutate: mutateGallery, isPending: isSavingGallery } = useMutation({
+  const { mutateAsync: saveGallery, isPending: isSavingGallery } = useMutation({
     mutationFn: (images: string[]) => barbershopApi.update({ galleryImages: images }),
     onSuccess: () => {
       setGalleryDirty(false)
       queryClient.invalidateQueries({ queryKey: ['barbershop'] })
+    },
+    onError: (error) => {
+      const message = error instanceof Error ? error.message : 'Nao foi possivel guardar a galeria'
+      setGalleryError(message)
     },
   })
 
@@ -260,8 +264,10 @@ export default function Customization() {
       }
 
       const nextImages = await Promise.all(files.slice(0, availableSlots).map((file) => compressImage(file)))
-      setValue('galleryImages', [...currentImages, ...nextImages], { shouldDirty: true })
+      const updatedImages = [...currentImages, ...nextImages]
+      setValue('galleryImages', updatedImages, { shouldDirty: true })
       setGalleryDirty(true)
+      await saveGallery(updatedImages)
 
       if (files.length > availableSlots) {
         setGalleryError(`Só foram adicionadas ${availableSlots} imagens. O limite é ${MAX_GALLERY_IMAGES}.`)
@@ -515,10 +521,12 @@ export default function Customization() {
                           <button
                             type="button"
                             className="absolute right-2 top-2 rounded-full bg-black/60 p-2 text-white"
-                            onClick={() => {
+                            onClick={async () => {
                               setGalleryError(null)
-                              setValue('galleryImages', (galleryImages ?? []).filter((_, itemIndex) => itemIndex !== index), { shouldDirty: true })
+                              const updatedImages = (galleryImages ?? []).filter((_, itemIndex) => itemIndex !== index)
+                              setValue('galleryImages', updatedImages, { shouldDirty: true })
                               setGalleryDirty(true)
+                              await saveGallery(updatedImages)
                             }}
                           >
                             <Trash2 size={14} />
@@ -537,17 +545,9 @@ export default function Customization() {
                         Adicionar fotos
                         <input type="file" accept="image/*" multiple className="hidden" onChange={handleGalleryChange} />
                       </label>
-                      <Button
-                        type="button"
-                        size="sm"
-                        loading={isSavingGallery}
-                        disabled={!galleryDirty}
-                        onClick={() => mutateGallery(galleryImages ?? [])}
-                      >
-                        Salvar galeria
-                      </Button>
+                      {isSavingGallery && <span className="inline-flex items-center rounded-xl bg-zinc-100 px-3 py-2 text-sm text-zinc-500 dark:bg-zinc-800 dark:text-zinc-300">A guardar galeria...</span>}
                     </div>
-                    <p className="text-xs text-zinc-400">Até {MAX_GALLERY_IMAGES} imagens. A galeria aparece no site público da barbearia.</p>
+                    <p className="text-xs text-zinc-400">Até {MAX_GALLERY_IMAGES} imagens. A galeria guarda automaticamente ao adicionar ou remover fotos.</p>
                     {galleryError && <p className="text-xs text-red-500">{galleryError}</p>}
                   </div>
                 </div>
