@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Plus, Trash2, Coffee } from 'lucide-react'
+import { Plus, Trash2, Coffee, AlertTriangle } from 'lucide-react'
 import { barbersApi, workingHoursApi } from '@/lib/api'
 import { AdminLayout } from '@/components/layout/AdminLayout'
 import { Card, CardContent } from '@/components/ui/Card'
@@ -110,31 +110,39 @@ export default function Schedule() {
 
   async function applyLunchBreak(dayOfWeek: number) {
     const dayHours = getHoursForDay(dayOfWeek)
-    const firstStart = dayHours[0]?.startTime ?? '09:00'
-    const lastEnd = dayHours[dayHours.length - 1]?.endTime ?? '18:00'
+    // Only makes sense when there's exactly one period to split
+    if (dayHours.length !== 1) return
+
+    const single = dayHours[0]
     const lunchStart = '13:00'
     const lunchEnd = '14:00'
 
-    await Promise.all(dayHours.map((item) => removeMutation.mutateAsync(item.id)))
+    // Period must encompass the lunch slot
+    if (!isBefore(single.startTime, lunchStart) || !isBefore(lunchEnd, single.endTime)) return
 
-    if (isBefore(firstStart, lunchStart)) {
-      await createMutation.mutateAsync({
-        dayOfWeek,
-        startTime: firstStart,
-        endTime: lunchStart,
-        ...(barberId && { barberId }),
-      })
-    }
-
-    if (isBefore(lunchEnd, lastEnd)) {
-      await createMutation.mutateAsync({
-        dayOfWeek,
-        startTime: lunchEnd,
-        endTime: lastEnd,
-        ...(barberId && { barberId }),
-      })
-    }
+    await removeMutation.mutateAsync(single.id)
+    await createMutation.mutateAsync({
+      dayOfWeek,
+      startTime: single.startTime,
+      endTime: lunchStart,
+      ...(barberId && { barberId }),
+    })
+    await createMutation.mutateAsync({
+      dayOfWeek,
+      startTime: lunchEnd,
+      endTime: single.endTime,
+      ...(barberId && { barberId }),
+    })
   }
+
+  // Barbers that have their own specific hours (override shop-wide)
+  const barbersWithOwnHours = useMemo(() => {
+    if (barberId !== '') return []
+    const barberIdsWithHours = new Set(
+      hours.filter((h) => h.barberId != null).map((h) => h.barberId as string)
+    )
+    return barbers.filter((b) => barberIdsWithHours.has(b.id))
+  }, [barberId, hours, barbers])
 
   const barberOptions = [
     { value: '', label: 'Barbearia (padrão)' },
@@ -159,6 +167,18 @@ export default function Schedule() {
             onChange={(e) => setBarberId(e.target.value)}
           />
         </div>
+
+        {barbersWithOwnHours.length > 0 && (
+          <div className="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 dark:border-amber-800 dark:bg-amber-900/20">
+            <AlertTriangle size={16} className="mt-0.5 shrink-0 text-amber-600 dark:text-amber-400" />
+            <div className="text-sm text-amber-800 dark:text-amber-300">
+              <p className="font-medium">Horários próprios ignoram o padrão</p>
+              <p className="mt-0.5 text-xs text-amber-700 dark:text-amber-400">
+                {barbersWithOwnHours.map((b) => b.name).join(', ')} {barbersWithOwnHours.length === 1 ? 'tem' : 'têm'} horário próprio configurado e {barbersWithOwnHours.length === 1 ? 'ignora' : 'ignoram'} estas definições. Para alterar, seleciona {barbersWithOwnHours.length === 1 ? 'esse barbeiro' : 'cada barbeiro'} no selector acima.
+              </p>
+            </div>
+          </div>
+        )}
 
         {isLoading ? <PageLoader /> : (
           <div className="space-y-3">
@@ -195,16 +215,18 @@ export default function Schedule() {
 
                       {active ? (
                         <div className="flex flex-wrap gap-2">
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            className="gap-1.5"
-                            onClick={() => applyLunchBreak(dayOfWeek)}
-                          >
-                            <Coffee size={13} />
-                            Pausa de almoço
-                          </Button>
+                          {dayHours.length === 1 && (
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              className="gap-1.5"
+                              onClick={() => applyLunchBreak(dayOfWeek)}
+                            >
+                              <Coffee size={13} />
+                              Pausa de almoço
+                            </Button>
+                          )}
                           <Button
                             type="button"
                             variant="outline"
