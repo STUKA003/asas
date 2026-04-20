@@ -3,6 +3,7 @@ import { useNavigate, useLocation, Link } from 'react-router-dom'
 import { LayoutDashboard, Building2, LogOut, Shield, Menu } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useSuperAuthStore } from '@/store/superauth'
+import { useInstallBrand } from '@/lib/installBrand'
 
 const nav = [
   { href: '/superadmin',             label: 'Dashboard', icon: LayoutDashboard },
@@ -14,6 +15,7 @@ export function SuperAdminLayout({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate()
   const { logout } = useSuperAuthStore()
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  useInstallBrand('superadmin')
 
   const Sidebar = () => (
     <div className="flex h-full flex-col">

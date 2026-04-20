@@ -8,6 +8,7 @@ import { Avatar } from '@/components/ui/Avatar'
 import { applyAccentColor } from '@/lib/theme'
 import { useEffect as useLayoutEffect } from 'react'
 import { barberAuthApi } from '@/lib/api'
+import { useInstallBrand } from '@/lib/installBrand'
 
 interface BarberLayoutProps {
   children: React.ReactNode
@@ -37,6 +38,7 @@ export function BarberLayout({ children }: BarberLayoutProps) {
       applyAccentColor(barber.barbershop.accentColor)
     }
   }, [barber?.barbershop?.accentColor])
+  useInstallBrand('barber')
 
   const handleLogout = () => { logout(); navigate(`/${slug}/barber/login`) }
 
@@ -87,16 +89,12 @@ export function BarberLayout({ children }: BarberLayoutProps) {
   const Sidebar = () => (
     <div className="flex flex-col h-full">
       <div className="flex items-center gap-2 p-6 pb-4">
-        {barber?.barbershop?.logoUrl ? (
-          <img src={barber.barbershop.logoUrl} alt={barber.barbershop.name} className="h-8 w-8 rounded-lg object-cover" />
-        ) : (
-          <div className="h-8 w-8 bg-accent-500 rounded-lg flex items-center justify-center">
-            <Scissors size={16} className="text-white" />
-          </div>
-        )}
+        <div className="h-8 w-8 bg-accent-500 rounded-lg flex items-center justify-center">
+          <Scissors size={16} className="text-white" />
+        </div>
         <div className="min-w-0">
-          <p className="font-bold truncate">{barber?.barbershop?.name ?? 'Trimio'}</p>
-          <p className="text-xs text-zinc-400 flex items-center gap-1"><User size={10} /> Portal do Barbeiro</p>
+          <p className="font-bold truncate">Trimio Flow</p>
+          <p className="text-xs text-zinc-400 flex items-center gap-1"><User size={10} /> {barber?.barbershop?.name ?? 'Portal do Barbeiro'}</p>
         </div>
       </div>
 
@@ -146,7 +144,7 @@ export function BarberLayout({ children }: BarberLayoutProps) {
           <button onClick={() => setSidebarOpen(true)} className="p-2 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800">
             <Menu size={20} />
           </button>
-          <p className="font-bold truncate max-w-[180px]">{barber?.barbershop?.name ?? 'Trimio'}</p>
+          <p className="font-bold truncate max-w-[180px]">Trimio Flow</p>
           <div className="w-10" />
         </header>
         <main className="flex-1 overflow-y-auto p-4 lg:p-8">{children}</main>

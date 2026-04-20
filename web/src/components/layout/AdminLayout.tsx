@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import {
-  Scissors, LayoutDashboard, Users, Sparkles, Package, CreditCard,
+  Scissors, Building2, LayoutDashboard, Users, Sparkles, Package, CreditCard,
   Calendar, Clock, Palette, LogOut, Menu, ChevronRight, Zap, Lock, Ban, AlertTriangle, ChevronUp, Bell, BarChart2,
   CheckCircle, PartyPopper, XCircle, UserX, RefreshCw,
 } from 'lucide-react'
@@ -14,6 +14,7 @@ import { barbershopApi, notificationsApi } from '@/lib/api'
 import { formatDistanceToNow } from 'date-fns'
 import { pt } from 'date-fns/locale'
 import { applyAccentColor } from '@/lib/theme'
+import { useInstallBrand } from '@/lib/installBrand'
 
 type PlanTier = 'FREE' | 'BASIC' | 'PRO'
 const PLAN_ORDER: Record<PlanTier, number> = { FREE: 0, BASIC: 1, PRO: 2 }
@@ -47,6 +48,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
       applyAccentColor(barbershop.accentColor)
     }
   }, [barbershop?.accentColor])
+  useInstallBrand('admin')
 
   const handleLogout = () => { logout(); navigate('/admin/login') }
 
@@ -309,16 +311,12 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
   const Sidebar = () => (
     <div className="flex flex-col h-full">
       <div className="flex items-center gap-3 p-5 pb-4">
-        {barbershop?.logoUrl ? (
-          <img src={barbershop.logoUrl} alt={barbershop.name} className="h-10 w-10 rounded-2xl object-cover ring-1 ring-zinc-200/70" />
-        ) : (
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-accent-500 shadow-[0_12px_24px_-14px_rgba(var(--accent-600),0.9)]">
-            <Scissors size={16} className="text-white" />
-          </div>
-        )}
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-zinc-950 shadow-[0_12px_24px_-14px_rgba(15,23,42,0.9)]">
+          <Building2 size={16} className="text-white" />
+        </div>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-semibold tracking-tight text-zinc-950">{barbershop?.name ?? 'Trimio'}</p>
-          <p className="text-[11px] text-zinc-500">Painel da barbearia</p>
+          <p className="truncate text-sm font-semibold tracking-tight text-zinc-950">Trimio Studio</p>
+          <p className="text-[11px] text-zinc-500">{barbershop?.name ?? 'Painel da barbearia'}</p>
         </div>
         <NotificationBell />
       </div>
@@ -380,14 +378,10 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
             <Menu size={20} />
           </button>
           <div className="flex items-center gap-2 font-bold tracking-tight">
-            {barbershop?.logoUrl ? (
-              <img src={barbershop.logoUrl} alt={barbershop.name} className="h-6 w-6 rounded-md object-cover" />
-            ) : (
-              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-accent-500 shadow-sm">
-                <Scissors size={12} className="text-white" />
-              </div>
-            )}
-            <span className="truncate max-w-[180px]">{barbershop?.name ?? 'Trimio'}</span>
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-zinc-950 shadow-sm">
+              <Building2 size={12} className="text-white" />
+            </div>
+            <span className="truncate max-w-[180px]">Trimio Studio</span>
           </div>
           <div className="w-10" />
         </header>

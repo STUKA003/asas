@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/Button'
 import { AppMark } from '@/components/ui/AppMark'
 import { ArrowRight, Calendar, Scissors, UserRound } from 'lucide-react'
 import { applyAccentColor, applyPlatformAccent } from '@/lib/theme'
+import { useInstallBrand } from '@/lib/installBrand'
 
 const schema = z.object({
   slug:     z.string().min(1, 'Slug da barbearia obrigatório'),
@@ -45,6 +46,7 @@ export default function BarberLogin() {
   useEffect(() => {
     applyPlatformAccent()
   }, [])
+  useInstallBrand('barber')
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(249,115,22,0.14),transparent_24rem),linear-gradient(180deg,#09090b_0%,#121417_100%)] p-4">

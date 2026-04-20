@@ -5,6 +5,7 @@ import { superadminApi } from '@/lib/api'
 import { useSuperAuthStore } from '@/store/superauth'
 import { applyPlatformAccent } from '@/lib/theme'
 import { AppMark } from '@/components/ui/AppMark'
+import { useInstallBrand } from '@/lib/installBrand'
 
 export default function SuperAdminLogin() {
   const navigate = useNavigate()
@@ -32,6 +33,7 @@ export default function SuperAdminLogin() {
   useEffect(() => {
     applyPlatformAccent()
   }, [])
+  useInstallBrand('superadmin')
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_right,rgba(249,115,22,0.12),transparent_24rem),radial-gradient(circle_at_top_left,rgba(59,130,246,0.09),transparent_28rem),linear-gradient(180deg,#090b10_0%,#11151d_100%)] p-4">

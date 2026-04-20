@@ -7,6 +7,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
 import { authApi } from '@/lib/api'
 import { useAuthStore } from '@/store/auth'
+import { useInstallBrand } from '@/lib/installBrand'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { AppMark } from '@/components/ui/AppMark'
@@ -56,6 +57,7 @@ export default function Login() {
   useEffect(() => {
     applyPlatformAccent()
   }, [])
+  useInstallBrand('admin')
 
   return (
     <div className="min-h-screen bg-[linear-gradient(180deg,#fcfcfb_0%,#f3f4f7_100%)] p-4">
