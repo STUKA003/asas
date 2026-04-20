@@ -18,18 +18,24 @@ const STATUS_STYLES: Record<string, { bar: string; bg: string; text: string }> =
 
 interface DragOver { barberId: string; top: number; label: string }
 
+export interface EffectiveWorkingHour {
+  startTime: string
+  endTime: string
+}
+
 interface Props {
   date: Date
   bookings: Booking[]
   barbers:  Barber[]
   blockedTimes?: BlockedTime[]
+  effectiveHours?: Map<string, EffectiveWorkingHour[]>
   slotGranularityMinutes?: number
   onBookingClick: (b: Booking) => void
   onSlotClick?: (barberId: string, time: string) => void
   onReschedule?: (bookingId: string, newStartTime: string, newBarberId?: string) => void
 }
 
-export function CalendarView({ date, bookings, barbers, blockedTimes = [], slotGranularityMinutes = 15, onBookingClick, onSlotClick, onReschedule }: Props) {
+export function CalendarView({ date, bookings, barbers, blockedTimes = [], effectiveHours, slotGranularityMinutes = 15, onBookingClick, onSlotClick, onReschedule }: Props) {
   const hours       = Array.from({ length: HOUR_END - HOUR_START }, (_, i) => HOUR_START + i)
   const totalHeight = (HOUR_END - HOUR_START) * HOUR_HEIGHT
   const [now, setNow] = useState(() => new Date())
@@ -131,6 +137,35 @@ export function CalendarView({ date, bookings, barbers, blockedTimes = [], slotG
     let total = 0
     for (const char of serviceId) total += char.charCodeAt(0)
     return palette[total % palette.length]
+  }
+
+  function getClosedBands(hours: EffectiveWorkingHour[]): { top: number; height: number }[] {
+    const toMin = (t: string) => { const [h, m] = t.split(':').map(Number); return h * 60 + m }
+    const toTop = (min: number) => Math.max(0, (min - HOUR_START * 60) / 60 * HOUR_HEIGHT)
+    const toH = (from: number, to: number) => {
+      const cFrom = Math.max(HOUR_START * 60, from)
+      const cTo   = Math.min(HOUR_END * 60, to)
+      return Math.max(0, (cTo - cFrom) / 60 * HOUR_HEIGHT)
+    }
+
+    if (hours.length === 0) return [{ top: 0, height: totalHeight }]
+
+    const sorted = [...hours].sort((a, b) => a.startTime.localeCompare(b.startTime))
+    const bands: { top: number; height: number }[] = []
+
+    const firstStart = toMin(sorted[0].startTime)
+    if (firstStart > HOUR_START * 60) bands.push({ top: 0, height: toH(HOUR_START * 60, firstStart) })
+
+    for (let i = 0; i < sorted.length - 1; i++) {
+      const gapStart = toMin(sorted[i].endTime)
+      const gapEnd   = toMin(sorted[i + 1].startTime)
+      if (gapEnd > gapStart) bands.push({ top: toTop(gapStart), height: toH(gapStart, gapEnd) })
+    }
+
+    const lastEnd = toMin(sorted[sorted.length - 1].endTime)
+    if (lastEnd < HOUR_END * 60) bands.push({ top: toTop(lastEnd), height: toH(lastEnd, HOUR_END * 60) })
+
+    return bands
   }
 
   function snapDrop(relY: number, offsetY: number) {
@@ -360,6 +395,15 @@ export function CalendarView({ date, bookings, barbers, blockedTimes = [], slotG
                   <div className="h-[2px] flex-1 bg-red-500/85" />
                 </div>
               )}
+
+              {/* Closed / outside working hours bands */}
+              {effectiveHours && getClosedBands(effectiveHours.get(barber.id) ?? []).map((band, i) => (
+                <div
+                  key={i}
+                  className="pointer-events-none absolute left-0 right-0 z-0 bg-zinc-100/70 dark:bg-zinc-800/50"
+                  style={{ top: band.top, height: band.height }}
+                />
+              ))}
 
               {blocks.map((block) => {
                 const { top, height } = getBlockStyle(block.startTime, block.endTime)

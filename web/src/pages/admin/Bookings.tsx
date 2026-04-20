@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { format, addDays, subDays, isToday, startOfDay, endOfDay } from 'date-fns'
 import { pt } from 'date-fns/locale'
-import { barbersApi, barbershopApi, blockedTimesApi, bookingsApi, extrasApi, productsApi } from '@/lib/api'
+import { barbersApi, barbershopApi, blockedTimesApi, bookingsApi, extrasApi, productsApi, workingHoursApi } from '@/lib/api'
 import { AdminLayout } from '@/components/layout/AdminLayout'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Modal } from '@/components/ui/Modal'
@@ -11,7 +11,7 @@ import { Select } from '@/components/ui/Select'
 import { Input } from '@/components/ui/Input'
 import { StatusBadge } from '@/components/ui/Badge'
 import { DataTable } from '@/components/admin/DataTable'
-import { CalendarView } from '@/components/admin/CalendarView'
+import { CalendarView, type EffectiveWorkingHour } from '@/components/admin/CalendarView'
 import { NewBookingModal } from '@/components/admin/NewBookingModal'
 import { formatCurrency, formatDuration } from '@/lib/utils'
 import { Eye, Trash2, ChevronLeft, ChevronRight, LayoutList, Calendar, Plus, Ban, Search, X } from 'lucide-react'
@@ -80,11 +80,27 @@ export default function Bookings() {
     }) as Promise<BlockedTime[]>,
     enabled: view === 'calendar',
   })
+  const { data: allWorkingHours = [] } = useQuery({
+    queryKey: ['working-hours'],
+    queryFn: () => workingHoursApi.list() as Promise<{ id: string; dayOfWeek: number; startTime: string; endTime: string; barberId: string | null }[]>,
+    enabled: view === 'calendar',
+  })
 
   const { data: barbers = [] } = useQuery({
     queryKey: ['barbers'],
     queryFn: () => barbersApi.list() as Promise<Barber[]>,
   })
+
+  const effectiveHours = useMemo(() => {
+    const dayOfWeek = calDate.getDay()
+    const shopWide = allWorkingHours.filter((h) => h.barberId == null && h.dayOfWeek === dayOfWeek)
+    const map = new Map<string, EffectiveWorkingHour[]>()
+    for (const barber of barbers) {
+      const specific = allWorkingHours.filter((h) => h.barberId === barber.id && h.dayOfWeek === dayOfWeek)
+      map.set(barber.id, specific.length > 0 ? specific : shopWide)
+    }
+    return map
+  }, [allWorkingHours, barbers, calDate])
   const { data: barbershop } = useQuery({
     queryKey: ['barbershop'],
     queryFn: () => barbershopApi.get(),
@@ -331,6 +347,7 @@ export default function Bookings() {
                 bookings={calBookings}
                 barbers={barbers}
                 blockedTimes={blockedTimes}
+                effectiveHours={effectiveHours}
                 slotGranularityMinutes={barbershop?.slotGranularityMinutes ?? 15}
                 onBookingClick={setDetail}
                 onSlotClick={(barberId, time) => setSlotAction({ barberId, time })}
