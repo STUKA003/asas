@@ -8,8 +8,7 @@ import { prisma } from '../lib/prisma'
 import {
   computeAvailableSlots,
   parseTimeStringToEpoch,
-  mergeIntervals,
-  overlapsAny,
+  isSlotAlignedToWindowStart,
   type TimeRange,
   type Slot,
 } from './scheduling'
@@ -38,6 +37,15 @@ async function resolveWorkingHours(
     where: { barbershopId, barberId: null, dayOfWeek, active: true },
     orderBy: { startTime: 'asc' },
   })
+}
+
+async function getSlotGranularityMinutes(barbershopId: string): Promise<number> {
+  const shop = await prisma.barbershop.findUnique({
+    where: { id: barbershopId },
+    select: { slotGranularityMinutes: true },
+  })
+
+  return shop?.slotGranularityMinutes ?? 15
 }
 
 // ─── Public API ──────────────────────────────────────────────────────────────
@@ -194,11 +202,25 @@ export async function validateSlot(
   endTime: Date,
   excludeBookingId?: string
 ): Promise<string | null> {
-  const [withinHours, hasOverlap, isBlocked] = await Promise.all([
-    isWithinWorkingHours(barberId, barbershopId, startTime, endTime),
+  if (startTime.getTime() < Date.now()) return 'Time slot is in the past'
+
+  const [workingHours, granularityMinutes, hasOverlap, isBlocked] = await Promise.all([
+    resolveWorkingHours(barberId, barbershopId, startTime.getDay()),
+    getSlotGranularityMinutes(barbershopId),
     checkOverlap(barberId, startTime, endTime, excludeBookingId),
     checkBlockedTime(barberId, barbershopId, startTime, endTime),
   ])
+
+  const withinHours = workingHours.some((item) => {
+    const whStart = parseTimeStringToEpoch(item.startTime, startTime)
+    const whEnd = parseTimeStringToEpoch(item.endTime, startTime)
+
+    return (
+      startTime.getTime() >= whStart &&
+      endTime.getTime() <= whEnd &&
+      isSlotAlignedToWindowStart(whStart, startTime.getTime(), granularityMinutes)
+    )
+  })
 
   if (!withinHours) return 'Time slot is outside barber working hours'
   if (hasOverlap)   return 'Barber already has a booking in this time slot'

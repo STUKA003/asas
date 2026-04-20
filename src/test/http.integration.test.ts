@@ -178,7 +178,9 @@ test('admin login and customer CRUD flow works end-to-end', { skip: !integration
 })
 
 test('public availability and booking flow works end-to-end', { skip: !integrationEnabled }, async () => {
-  const bookingDate = new Date(2026, 3, 20, 9, 0, 0, 0)
+  const bookingDate = new Date()
+  bookingDate.setDate(bookingDate.getDate() + 2)
+  bookingDate.setHours(9, 0, 0, 0)
   const dateParam = bookingDate.toISOString().slice(0, 10)
 
   const shop = await prisma.barbershop.create({
@@ -257,4 +259,21 @@ test('public availability and booking flow works end-to-end', { skip: !integrati
 
   assert.equal(overlappingBooking.response.status, 422)
   assert.match(overlappingBooking.body.error, /already has a booking|Time slot/)
+
+  const misalignedBooking = await jsonRequest(`/api/public/${shop.slug}/bookings`, {
+    method: 'POST',
+    body: JSON.stringify({
+      barberId: barber.id,
+      serviceIds: [service.id],
+      startTime: new Date(bookingDate.getTime() + 7 * 60 * 1000).toISOString(),
+      customer: {
+        name: 'Cliente Fora da Grelha',
+        phone: '917777777',
+        email: 'fora-grelha@publico.test',
+      },
+    }),
+  })
+
+  assert.equal(misalignedBooking.response.status, 422)
+  assert.match(misalignedBooking.body.error, /outside barber working hours/)
 })

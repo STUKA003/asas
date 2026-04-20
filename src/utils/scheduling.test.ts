@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import {
   computeAvailableSlots,
   computeTotalDuration,
+  isSlotAlignedToWindowStart,
   mergeIntervals,
   overlapsAny,
   parseTimeStringToEpoch,
@@ -114,4 +115,13 @@ test('computeAvailableSlots respects notBefore and duration fit', () => {
     slots.map((slot) => slot.startTime.toISOString()),
     [buildDate(9, 30).toISOString()]
   )
+})
+
+test('isSlotAlignedToWindowStart respects the configured grid', () => {
+  const windowStart = buildDate(9).getTime()
+
+  assert.equal(isSlotAlignedToWindowStart(windowStart, buildDate(9).getTime(), 15), true)
+  assert.equal(isSlotAlignedToWindowStart(windowStart, buildDate(9, 15).getTime(), 15), true)
+  assert.equal(isSlotAlignedToWindowStart(windowStart, buildDate(9, 7).getTime(), 15), false)
+  assert.equal(isSlotAlignedToWindowStart(buildDate(9, 10).getTime(), buildDate(9, 40).getTime(), 15), true)
 })

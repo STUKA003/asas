@@ -44,6 +44,21 @@ export interface Slot {
   endTime: Date
 }
 
+/**
+ * Returns true when slotStart is aligned to the configured grid relative to
+ * the start of a working window.
+ */
+export function isSlotAlignedToWindowStart(
+  windowStart: number,
+  slotStart: number,
+  granularityMinutes: number
+): boolean {
+  const granularityMs = granularityMinutes * 60_000
+  if (granularityMs <= 0) return false
+  if (slotStart < windowStart) return false
+  return (slotStart - windowStart) % granularityMs === 0
+}
+
 // ─── Interval utilities ──────────────────────────────────────────────────────
 
 /**
