@@ -18,7 +18,7 @@ git push origin main
 cd /var/www/trimio
 git pull origin main
 npm install
-npx prisma migrate deploy --schema prisma/postgres/schema.prisma
+npx prisma migrate deploy
 npx prisma generate
 cd web && npm install && npm run build && cd ..
 npm run build
@@ -75,7 +75,7 @@ npm install
 Aplicar migrations PostgreSQL:
 
 ```bash
-npx prisma migrate deploy --schema prisma/postgres/schema.prisma
+npx prisma migrate deploy
 ```
 
 Gerar Prisma Client:
@@ -117,7 +117,7 @@ pm2 logs trimio-api --lines 50
 cd /var/www/trimio
 git pull origin main
 npm install
-npx prisma migrate deploy --schema prisma/postgres/schema.prisma
+npx prisma migrate deploy
 npx prisma generate
 cd web && npm install && npm run build && cd ..
 npm run build
