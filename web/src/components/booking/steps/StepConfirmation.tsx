@@ -5,7 +5,7 @@ import { pt } from 'date-fns/locale'
 import { publicApi } from '@/lib/publicApi'
 import { useTenant } from '@/providers/TenantProvider'
 import { useBookingStore } from '@/store/booking'
-import { formatCurrency, formatDuration } from '@/lib/utils'
+import { formatCurrency, formatDuration, toWallClockDate } from '@/lib/utils'
 import { Button } from '@/components/ui/Button'
 import { Avatar } from '@/components/ui/Avatar'
 import { CheckCircle2, Calendar, Clock, User, Scissors } from 'lucide-react'
@@ -100,7 +100,7 @@ export function StepConfirmation() {
             <p>
               <span className="text-zinc-400">Data:</span>{' '}
               <span className="font-medium">
-                {format(new Date(slot.startTime), "d 'de' MMMM 'às' HH:mm", { locale: pt })}
+                {format(toWallClockDate(slot.startTime), "d 'de' MMMM 'às' HH:mm", { locale: pt })}
               </span>
             </p>
           )}
@@ -139,10 +139,10 @@ export function StepConfirmation() {
             </div>
             <div>
               <p className="font-semibold text-sm capitalize">
-                {format(new Date(slot.startTime), "EEEE, d 'de' MMMM", { locale: pt })}
+                {format(toWallClockDate(slot.startTime), "EEEE, d 'de' MMMM", { locale: pt })}
               </p>
               <div className="flex items-center gap-1 text-xs text-zinc-400 mt-0.5">
-                <Clock size={11} /> {format(new Date(slot.startTime), 'HH:mm')} — {formatDuration(totalDuration)}
+                <Clock size={11} /> {format(toWallClockDate(slot.startTime), 'HH:mm')} — {formatDuration(totalDuration)}
               </div>
             </div>
           </div>

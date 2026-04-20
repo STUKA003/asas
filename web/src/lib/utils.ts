@@ -15,3 +15,17 @@ export function formatDuration(minutes: number) {
   const m = minutes % 60
   return m ? `${h}h ${m}min` : `${h}h`
 }
+
+export function toWallClockDate(value: string | Date) {
+  const date = typeof value === 'string' ? new Date(value) : value
+
+  return new Date(
+    date.getUTCFullYear(),
+    date.getUTCMonth(),
+    date.getUTCDate(),
+    date.getUTCHours(),
+    date.getUTCMinutes(),
+    date.getUTCSeconds(),
+    date.getUTCMilliseconds()
+  )
+}

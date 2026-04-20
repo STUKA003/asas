@@ -5,7 +5,7 @@ import { pt } from 'date-fns/locale'
 import { publicApi } from '@/lib/publicApi'
 import { useTenant } from '@/providers/TenantProvider'
 import { useBookingStore } from '@/store/booking'
-import { cn } from '@/lib/utils'
+import { cn, toWallClockDate } from '@/lib/utils'
 import { Button } from '@/components/ui/Button'
 import { PageLoader } from '@/components/ui/Spinner'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
@@ -35,8 +35,8 @@ export function StepDateTime() {
   })
 
   const slots: TimeSlot[] = data?.slots ?? []
-  const morningSlots = slots.filter((slot) => new Date(slot.startTime).getHours() < 12)
-  const afternoonSlots = slots.filter((slot) => new Date(slot.startTime).getHours() >= 12)
+  const morningSlots = slots.filter((slot) => toWallClockDate(slot.startTime).getHours() < 12)
+  const afternoonSlots = slots.filter((slot) => toWallClockDate(slot.startTime).getHours() >= 12)
 
   // Pré-carrega extras para decidir se deve saltar o passo 3
   const { data: extras } = useQuery({
@@ -123,7 +123,7 @@ export function StepDateTime() {
                   ) : (
                     <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                       {group.items.map((s) => {
-                        const time = format(new Date(s.startTime), 'HH:mm')
+                        const time = format(toWallClockDate(s.startTime), 'HH:mm')
                         const isSelected = slot?.startTime === s.startTime
                         return (
                           <button
