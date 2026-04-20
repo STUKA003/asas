@@ -124,16 +124,7 @@ export default function Schedule() {
   }
 
   async function applyTemplateToDay(dayOfWeek: number) {
-    // When viewing shop-wide, apply to shop-wide (null) AND replace barber-specific records
-    if (barberId === '') {
-      await applyTemplateForTarget(dayOfWeek, null)
-      for (const barber of barbers) {
-        const hasOwn = hours.some((h) => h.barberId === barber.id && h.dayOfWeek === dayOfWeek)
-        if (hasOwn) await applyTemplateForTarget(dayOfWeek, barber.id)
-      }
-    } else {
-      await applyTemplateForTarget(dayOfWeek, barberId || null)
-    }
+    await applyTemplateForTarget(dayOfWeek, barberId || null)
   }
 
   async function applyTemplateToDays(daysOfWeek: number[]) {
@@ -184,13 +175,26 @@ export default function Schedule() {
         </div>
 
         {barbersWithOwnHours.length > 0 && (
-          <div className="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 dark:border-amber-800 dark:bg-amber-900/20">
-            <AlertTriangle size={16} className="mt-0.5 shrink-0 text-amber-600 dark:text-amber-400" />
-            <div className="text-sm text-amber-800 dark:text-amber-300">
-              <p className="font-medium">Horários próprios ignoram o padrão</p>
-              <p className="mt-0.5 text-xs text-amber-700 dark:text-amber-400">
-                {barbersWithOwnHours.map((b) => b.name).join(', ')} {barbersWithOwnHours.length === 1 ? 'tem' : 'têm'} horário próprio configurado e {barbersWithOwnHours.length === 1 ? 'ignora' : 'ignoram'} estas definições. Para alterar, seleciona {barbersWithOwnHours.length === 1 ? 'esse barbeiro' : 'cada barbeiro'} no selector acima.
-              </p>
+          <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 dark:border-amber-800 dark:bg-amber-900/20 space-y-2">
+            <div className="flex items-start gap-3">
+              <AlertTriangle size={16} className="mt-0.5 shrink-0 text-amber-600 dark:text-amber-400" />
+              <div className="text-sm text-amber-800 dark:text-amber-300">
+                <p className="font-medium">Barbeiros com horário próprio (ignoram o padrão)</p>
+                <p className="mt-0.5 text-xs text-amber-700 dark:text-amber-400">
+                  Seleciona o barbeiro no selector acima para editar o horário dele. Ou clica em "Herdar padrão" para remover o horário próprio e usar o da barbearia.
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-2 pl-7">
+              {barbersWithOwnHours.map((b) => (
+                <button
+                  key={b.id}
+                  onClick={() => setBarberId(b.id)}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-amber-300 bg-white px-2.5 py-1 text-xs font-medium text-amber-800 hover:bg-amber-100 transition-colors dark:bg-zinc-900 dark:text-amber-300 dark:border-amber-700"
+                >
+                  {b.name} → editar
+                </button>
+              ))}
             </div>
           </div>
         )}
