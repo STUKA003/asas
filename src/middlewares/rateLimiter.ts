@@ -35,3 +35,9 @@ export const publicWriteLimiter = buildLimiter(
   20,
   'Demasiadas tentativas de submissão. Tenta novamente mais tarde.'
 )
+
+export const authEmailLimiter = buildLimiter(
+  15 * 60 * 1000,
+  10,
+  'Demasiados pedidos relacionados com email. Tenta novamente mais tarde.'
+)

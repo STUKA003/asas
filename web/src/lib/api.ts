@@ -60,6 +60,14 @@ export const authApi = {
   login: (data: { email: string; password: string; slug: string }) =>
     api.post('/auth/login', data).then((r) => r.data),
   register: (data: object) => api.post('/auth/register', data).then((r) => r.data),
+  verifyEmail: (token: string) =>
+    api.post('/auth/verify-email', { token }).then((r) => r.data),
+  resendVerificationEmail: (data: { email: string; slug: string }) =>
+    api.post('/auth/verify-email/resend', data).then((r) => r.data),
+  forgotPassword: (data: { email: string; slug: string }) =>
+    api.post('/auth/forgot-password', data).then((r) => r.data),
+  resetPassword: (data: { token: string; password: string }) =>
+    api.post('/auth/reset-password', data).then((r) => r.data),
   me: () => api.get('/auth/me').then((r) => r.data),
 }
 

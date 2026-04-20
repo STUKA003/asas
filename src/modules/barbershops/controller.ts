@@ -136,49 +136,60 @@ export async function createSubscriptionCheckoutSession(req: Request, res: Respo
     return
   }
 
-  let customerId = shop.stripeCustomerId
+  try {
+    let customerId = shop.stripeCustomerId
 
-  if (!customerId) {
-    const customer = await stripe.customers.create({
-      name: shop.name,
-      metadata: {
-        barbershopId: shop.id,
-        slug: shop.slug,
-      },
-    })
-    customerId = customer.id
+    if (!customerId) {
+      const customer = await stripe.customers.create({
+        name: shop.name,
+        metadata: {
+          barbershopId: shop.id,
+          slug: shop.slug,
+        },
+      })
+      customerId = customer.id
 
-    await prisma.barbershop.update({
-      where: { id: shop.id },
-      data: { stripeCustomerId: customerId },
-    })
-  }
+      await prisma.barbershop.update({
+        where: { id: shop.id },
+        data: { stripeCustomerId: customerId },
+      })
+    }
 
-  const session = await stripe.checkout.sessions.create({
-    mode: 'subscription',
-    customer: customerId,
-    success_url: `${appUrl}/admin/billing?checkout=success`,
-    cancel_url: `${appUrl}/admin/billing?checkout=cancel`,
-    line_items: [
-      {
-        price: checkoutPlan.priceId,
-        quantity: 1,
-      },
-    ],
-    allow_promotion_codes: true,
-    metadata: {
-      barbershopId: shop.id,
-      plan: checkoutPlan.plan,
-    },
-    subscription_data: {
+    const session = await stripe.checkout.sessions.create({
+      mode: 'subscription',
+      customer: customerId,
+      success_url: `${appUrl}/admin/billing?checkout=success`,
+      cancel_url: `${appUrl}/admin/billing?checkout=cancel`,
+      line_items: [
+        {
+          price: checkoutPlan.priceId,
+          quantity: 1,
+        },
+      ],
+      allow_promotion_codes: true,
       metadata: {
         barbershopId: shop.id,
         plan: checkoutPlan.plan,
       },
-    },
-  })
+      subscription_data: {
+        metadata: {
+          barbershopId: shop.id,
+          plan: checkoutPlan.plan,
+        },
+      },
+    })
 
-  res.json({ url: session.url })
+    if (!session.url) {
+      res.status(502).json({ error: 'Stripe checkout session was created without a redirect URL.' })
+      return
+    }
+
+    res.json({ url: session.url })
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unable to create Stripe checkout session'
+    const status = /timeout|timed out|ETIMEDOUT/i.test(message) ? 504 : 502
+    res.status(status).json({ error: `Stripe checkout failed: ${message}` })
+  }
 }
 
 export async function createBillingPortalSession(req: Request, res: Response) {
@@ -205,12 +216,18 @@ export async function createBillingPortalSession(req: Request, res: Response) {
     res.status(503).json({ error: message })
     return
   }
-  const session = await stripe.billingPortal.sessions.create({
-    customer: shop.stripeCustomerId,
-    return_url: `${appUrl}/admin/billing`,
-  })
+  try {
+    const session = await stripe.billingPortal.sessions.create({
+      customer: shop.stripeCustomerId,
+      return_url: `${appUrl}/admin/billing`,
+    })
 
-  res.json({ url: session.url })
+    res.json({ url: session.url })
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unable to create Stripe billing portal session'
+    const status = /timeout|timed out|ETIMEDOUT/i.test(message) ? 504 : 502
+    res.status(status).json({ error: `Stripe billing portal failed: ${message}` })
+  }
 }
 
 export async function updateBarbershop(req: Request, res: Response) {

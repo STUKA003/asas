@@ -5,6 +5,7 @@ import crypto from 'crypto'
 import { z } from 'zod'
 import { prisma } from '../../lib/prisma'
 import { PLAN_LIMITS, type SubscriptionPlan } from '../../lib/plans'
+import { generateAvailableSlug, normalizeSlug } from '../../lib/slug'
 
 function timingSafeEqual(a: string, b: string): boolean {
   try {
@@ -129,7 +130,7 @@ export async function updateBarbershopDetails(req: Request, res: Response) {
 
   const slugInUse = await prisma.barbershop.findFirst({
     where: {
-      slug: parsed.data.slug,
+      slug: normalizeSlug(parsed.data.slug),
       id: { not: req.params.id },
     },
     select: { id: true },
@@ -144,7 +145,7 @@ export async function updateBarbershopDetails(req: Request, res: Response) {
     where: { id: req.params.id },
     data: {
       name: parsed.data.name.trim(),
-      slug: parsed.data.slug.trim(),
+      slug: normalizeSlug(parsed.data.slug),
     },
     select: {
       id: true,
@@ -181,17 +182,27 @@ export async function createBarbershop(req: Request, res: Response) {
   const parsed = createBarbershopSchema.safeParse(req.body)
   if (!parsed.success) { res.status(400).json({ error: parsed.error.flatten() }); return }
 
-  const exists = await prisma.barbershop.findUnique({ where: { slug: parsed.data.slug } })
-  if (exists) { res.status(409).json({ error: 'Este slug já está em uso' }); return }
+  const requestedSlug = normalizeSlug(parsed.data.slug)
+  if (requestedSlug.length < 2) {
+    res.status(400).json({ error: { fieldErrors: { slug: ['O slug tem de ter pelo menos 2 caracteres'] } } })
+    return
+  }
+  const slug = await generateAvailableSlug(requestedSlug)
 
   const hashed = await bcrypt.hash(parsed.data.adminPassword, 10)
   const barbershop = await prisma.barbershop.create({
     data: {
       name: parsed.data.barbershopName,
-      slug: parsed.data.slug,
+      slug,
       subscriptionPlan: parsed.data.plan,
       users: {
-        create: { name: parsed.data.adminName, email: parsed.data.adminEmail, password: hashed, role: 'OWNER' },
+        create: {
+          name: parsed.data.adminName,
+          email: parsed.data.adminEmail,
+          password: hashed,
+          role: 'OWNER',
+          emailVerifiedAt: new Date(),
+        },
       },
     },
     select: {

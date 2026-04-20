@@ -2,6 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { execFileSync } from 'node:child_process'
 import http from 'node:http'
+import crypto from 'node:crypto'
 import bcrypt from 'bcryptjs'
 import path from 'node:path'
 
@@ -18,6 +19,7 @@ if (integrationEnabled) {
   process.env.JWT_SECRET = 'integration-secret'
   process.env.JWT_EXPIRES_IN = '7d'
   process.env.NODE_ENV = 'test'
+  process.env.APP_URL = 'http://127.0.0.1:3000'
 
   execFileSync(
     'npx',
@@ -69,6 +71,7 @@ async function resetDatabase() {
   await prisma.booking.deleteMany()
   await prisma.blockedTime.deleteMany()
   await prisma.workingHours.deleteMany()
+  await prisma.authToken.deleteMany()
   await prisma.customer.deleteMany()
   await prisma.planService.deleteMany()
   await prisma.plan.deleteMany()
@@ -125,6 +128,7 @@ test('admin login and customer CRUD flow works end-to-end', { skip: !integration
           email: 'admin@studiofade.test',
           password: hashedPassword,
           role: 'OWNER',
+          emailVerifiedAt: new Date(),
         },
       },
     },
@@ -175,6 +179,216 @@ test('admin login and customer CRUD flow works end-to-end', { skip: !integration
   assert.equal(listCustomers.response.status, 200)
   assert.equal(listCustomers.body.length, 1)
   assert.equal(listCustomers.body[0].email, 'novo@example.com')
+})
+
+test('register requires email verification before login, and verification unlocks access', { skip: !integrationEnabled }, async () => {
+  const register = await jsonRequest('/api/auth/register', {
+    method: 'POST',
+    body: JSON.stringify({
+      barbershopName: 'Verify Shop',
+      slug: 'verify-shop',
+      name: 'Owner Verify',
+      email: 'owner@verify-shop.test',
+      password: 'segredo123',
+    }),
+  })
+
+  assert.equal(register.response.status, 201)
+  assert.equal(register.body.requiresEmailVerification, true)
+
+  const shop = await prisma.barbershop.findUnique({
+    where: { slug: 'verifyshop' },
+    include: {
+      users: true,
+    },
+  })
+
+  assert.ok(shop)
+  assert.equal(shop.users[0].emailVerifiedAt, null)
+
+  const blockedLogin = await jsonRequest('/api/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({
+      slug: 'verifyshop',
+      email: 'owner@verify-shop.test',
+      password: 'segredo123',
+    }),
+  })
+
+  assert.equal(blockedLogin.response.status, 403)
+
+  const tokenRecord = await prisma.authToken.findFirst({
+    where: {
+      userId: shop.users[0].id,
+      type: 'EMAIL_VERIFICATION',
+      consumedAt: null,
+    },
+    orderBy: { createdAt: 'desc' },
+  })
+
+  assert.ok(tokenRecord)
+  assert.equal(tokenRecord.tokenHash.length, 64)
+
+  const resend = await jsonRequest('/api/auth/verify-email/resend', {
+    method: 'POST',
+    body: JSON.stringify({
+      slug: 'verifyshop',
+      email: 'owner@verify-shop.test',
+    }),
+  })
+
+  assert.equal(resend.response.status, 200)
+
+  const verificationToken = await prisma.authToken.findFirst({
+    where: {
+      userId: shop.users[0].id,
+      type: 'EMAIL_VERIFICATION',
+      consumedAt: null,
+    },
+    orderBy: { createdAt: 'desc' },
+  })
+
+  assert.ok(verificationToken)
+
+  const invalidVerify = await jsonRequest('/api/auth/verify-email', {
+    method: 'POST',
+    body: JSON.stringify({
+      token: 'invalid-token-invalid-token',
+    }),
+  })
+
+  assert.equal(invalidVerify.response.status, 400)
+
+  const rawToken = 'verify-token-12345678901234567890'
+  await prisma.authToken.create({
+    data: {
+      userId: shop.users[0].id,
+      type: 'EMAIL_VERIFICATION',
+      tokenHash: crypto.createHash('sha256').update(rawToken).digest('hex'),
+      expiresAt: new Date(Date.now() + 60 * 60 * 1000),
+    },
+  })
+
+  const verify = await jsonRequest('/api/auth/verify-email', {
+    method: 'POST',
+    body: JSON.stringify({
+      token: rawToken,
+    }),
+  })
+
+  assert.equal(verify.response.status, 200)
+
+  const verifiedUser = await prisma.user.findUnique({ where: { id: shop.users[0].id } })
+  assert.ok(verifiedUser?.emailVerifiedAt)
+
+  const login = await jsonRequest('/api/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({
+      slug: 'verifyshop',
+      email: 'owner@verify-shop.test',
+      password: 'segredo123',
+    }),
+  })
+
+  assert.equal(login.response.status, 200)
+  assert.ok(login.body.token)
+})
+
+test('forgot password issues reset token and reset password updates login credentials', { skip: !integrationEnabled }, async () => {
+  const password = 'segredo123'
+  const hashedPassword = await bcrypt.hash(password, 10)
+
+  const shop = await prisma.barbershop.create({
+    data: {
+      name: 'Reset Shop',
+      slug: 'reset-shop',
+      users: {
+        create: {
+          name: 'Reset Admin',
+          email: 'admin@reset-shop.test',
+          password: hashedPassword,
+          role: 'OWNER',
+          emailVerifiedAt: new Date(),
+        },
+      },
+    },
+    include: {
+      users: true,
+    },
+  })
+
+  const forgot = await jsonRequest('/api/auth/forgot-password', {
+    method: 'POST',
+    body: JSON.stringify({
+      slug: shop.slug,
+      email: 'admin@reset-shop.test',
+    }),
+  })
+
+  assert.equal(forgot.response.status, 200)
+
+  const resetToken = await prisma.authToken.findFirst({
+    where: {
+      userId: shop.users[0].id,
+      type: 'PASSWORD_RESET',
+      consumedAt: null,
+    },
+    orderBy: { createdAt: 'desc' },
+  })
+
+  assert.ok(resetToken)
+
+  const invalidReset = await jsonRequest('/api/auth/reset-password', {
+    method: 'POST',
+    body: JSON.stringify({
+      token: 'invalid-token-invalid-token',
+      password: 'nova-segura',
+    }),
+  })
+
+  assert.equal(invalidReset.response.status, 400)
+
+  const rawToken = 'reset-token-12345678901234567890'
+  await prisma.authToken.create({
+    data: {
+      userId: shop.users[0].id,
+      type: 'PASSWORD_RESET',
+      tokenHash: crypto.createHash('sha256').update(rawToken).digest('hex'),
+      expiresAt: new Date(Date.now() + 30 * 60 * 1000),
+    },
+  })
+
+  const reset = await jsonRequest('/api/auth/reset-password', {
+    method: 'POST',
+    body: JSON.stringify({
+      token: rawToken,
+      password: 'nova-segura',
+    }),
+  })
+
+  assert.equal(reset.response.status, 200)
+
+  const oldLogin = await jsonRequest('/api/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({
+      slug: shop.slug,
+      email: 'admin@reset-shop.test',
+      password,
+    }),
+  })
+
+  assert.equal(oldLogin.response.status, 401)
+
+  const newLogin = await jsonRequest('/api/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({
+      slug: shop.slug,
+      email: 'admin@reset-shop.test',
+      password: 'nova-segura',
+    }),
+  })
+
+  assert.equal(newLogin.response.status, 200)
 })
 
 test('public availability and booking flow works end-to-end', { skip: !integrationEnabled }, async () => {

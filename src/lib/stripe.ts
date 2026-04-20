@@ -23,7 +23,10 @@ export function getStripeClient() {
 }
 
 function createStripeClient() {
-  return new Stripe(requiredEnv('STRIPE_SECRET_KEY'))
+  return new Stripe(requiredEnv('STRIPE_SECRET_KEY'), {
+    maxNetworkRetries: 1,
+    timeout: 10_000,
+  })
 }
 
 export function getStripeWebhookSecret() {

@@ -6,11 +6,10 @@ import { z } from 'zod'
 import { useMutation } from '@tanstack/react-query'
 import { ArrowRight, Check, Globe, Scissors, Sparkles } from 'lucide-react'
 import { authApi } from '@/lib/api'
-import { useAuthStore } from '@/store/auth'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { applyPlatformAccent } from '@/lib/theme'
-
+import { normalizeSlug, slugify } from '@/lib/slug'
 const schema = z.object({
   barbershopName: z.string().min(2, 'Nome da barbearia obrigatório'),
   slug: z
@@ -23,16 +22,6 @@ const schema = z.object({
 })
 type FormData = z.infer<typeof schema>
 
-function slugify(str: string) {
-  return str
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-    .slice(0, 40)
-}
-
 const FEATURES = [
   'Página pública de agendamentos',
   'Painel de gestão completo',
@@ -43,8 +32,8 @@ const FEATURES = [
 
 export default function Register() {
   const navigate = useNavigate()
-  const { setAuth } = useAuthStore()
   const [slugManual, setSlugManual] = useState(false)
+  const [successState, setSuccessState] = useState<{ email: string; slug: string } | null>(null)
 
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -64,8 +53,7 @@ export default function Register() {
   const { mutate, isPending, error: mutationError } = useMutation({
     mutationFn: (data: FormData) => authApi.register(data),
     onSuccess: (data) => {
-      setAuth(data.token, data.user)
-      navigate('/admin')
+      setSuccessState({ email: data.email, slug: data.barbershop.slug })
     },
   })
 
@@ -96,7 +84,26 @@ export default function Register() {
             Começa grátis. Sem cartão de crédito.
           </p>
 
-          <form onSubmit={handleSubmit((d) => mutate(d))} className="space-y-4">
+          {successState ? (
+            <div className="space-y-4">
+              <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-4 text-sm text-emerald-800">
+                Enviámos um email de confirmação para <strong>{successState.email}</strong>. Confirma o email antes de entrares no painel.
+              </div>
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <Button type="button" className="w-full" onClick={() => navigate('/admin/login')}>
+                  Ir para login <ArrowRight size={16} />
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="w-full"
+                  onClick={() => setSuccessState(null)}
+                >
+                  Criar outra conta
+                </Button>
+              </div>
+            </div>
+          ) : <form onSubmit={handleSubmit((d) => mutate(d))} className="space-y-4">
             {/* Barbershop name */}
             <div>
               <label className="block text-sm font-medium mb-1.5">Nome da barbearia</label>
@@ -122,10 +129,10 @@ export default function Register() {
                   className="h-12 flex-1 bg-transparent pr-4 text-sm focus:outline-none"
                   placeholder="minha-barbearia"
                   {...register('slug')}
-                  onChange={(e) => {
-                    setSlugManual(true)
-                    setValue('slug', e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))
-                  }}
+                    onChange={(e) => {
+                      setSlugManual(true)
+                      setValue('slug', normalizeSlug(e.target.value))
+                    }}
                 />
               </div>
               {errors.slug ? (
@@ -170,7 +177,7 @@ export default function Register() {
             <Button type="submit" loading={isPending} className="mt-2 w-full text-base">
               Criar barbearia grátis <ArrowRight size={16} />
             </Button>
-          </form>
+          </form>}
 
           <p className="text-center text-sm text-zinc-500 mt-6">
             Já tens conta?{' '}

@@ -9,6 +9,7 @@ import { useSuperAuthStore } from '@/store/superauth'
 import { useAuthStore } from '@/store/auth'
 import { cn } from '@/lib/utils'
 import { Modal } from '@/components/ui/Modal'
+import { normalizeSlug, slugify } from '@/lib/slug'
 
 type Plan = 'FREE' | 'BASIC' | 'PRO'
 
@@ -85,7 +86,7 @@ function IdentityEditor({ b, token, onDone }: IdentityEditorProps) {
           <input
             type="text"
             value={slug}
-            onChange={(e) => { setSlugManual(true); setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '')) }}
+            onChange={(e) => { setSlugManual(true); setSlug(normalizeSlug(e.target.value)) }}
             className="flex-1 h-10 pr-3 bg-transparent text-sm text-white focus:outline-none"
             placeholder="nome-da-barbearia"
           />
@@ -191,10 +192,6 @@ function SuspendEditor({ b, token, onDone }: SuspendEditorProps) {
   )
 }
 
-function slugify(str: string) {
-  return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40)
-}
-
 function CreateModal({ token, onClose }: { token: string; onClose: () => void }) {
   const qc = useQueryClient()
   const [form, setForm] = useState({ barbershopName: '', slug: '', adminName: '', adminEmail: '', adminPassword: '', plan: 'FREE' as Plan })
@@ -233,7 +230,7 @@ function CreateModal({ token, onClose }: { token: string; onClose: () => void })
             <input
               className="h-10 min-w-0 flex-1 pr-3 bg-transparent text-sm text-white focus:outline-none"
               value={form.slug}
-              onChange={(e) => { setSlugManual(true); setForm((f) => ({ ...f, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '') })) }}
+              onChange={(e) => { setSlugManual(true); setForm((f) => ({ ...f, slug: normalizeSlug(e.target.value) })) }}
             />
           </div>
         </div>

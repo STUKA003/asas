@@ -49,6 +49,8 @@ export default function Login() {
       setSubmitError(
         message === 'Invalid credentials'
           ? 'Slug, e-mail ou password inválidos. Se esta barbearia existia só no teu localhost, ainda não está criada na base de dados da VPS.'
+          : message === 'Email not verified'
+            ? 'Confirma o teu email antes de entrar. Se não recebeste o email, usa o link de reenvio abaixo.'
           : message
       )
     },
@@ -145,6 +147,18 @@ export default function Login() {
             Ainda não tens conta?{' '}
             <Link to="/register" className="font-semibold text-accent-600 hover:underline">
               Criar barbearia grátis
+            </Link>
+          </p>
+          <p className="mt-2 text-center text-sm text-zinc-500">
+            Esqueceste-te da password?{' '}
+            <Link to="/admin/forgot-password" className="font-semibold text-accent-600 hover:underline">
+              Recuperar acesso
+            </Link>
+          </p>
+          <p className="mt-2 text-center text-sm text-zinc-500">
+            Não recebeste o email de confirmação?{' '}
+            <Link to="/admin/resend-verification" className="font-semibold text-accent-600 hover:underline">
+              Reenviar email
             </Link>
           </p>
         </section>

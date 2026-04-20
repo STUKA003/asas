@@ -28,6 +28,10 @@ const Customization = lazy(() => import('@/pages/admin/Customization'))
 const Billing = lazy(() => import('@/pages/admin/Billing'))
 const Reports = lazy(() => import('@/pages/admin/Reports'))
 const Register = lazy(() => import('@/pages/Register'))
+const VerifyEmail = lazy(() => import('@/pages/VerifyEmail'))
+const ForgotPassword = lazy(() => import('@/pages/admin/ForgotPassword'))
+const ResetPassword = lazy(() => import('@/pages/admin/ResetPassword'))
+const ResendVerification = lazy(() => import('@/pages/admin/ResendVerification'))
 const SuperAdminLogin = lazy(() => import('@/pages/superadmin/Login'))
 const SuperAdminDashboard = lazy(() => import('@/pages/superadmin/Dashboard'))
 const SuperAdminBarbershops = lazy(() => import('@/pages/superadmin/Barbershops'))
@@ -90,6 +94,10 @@ export default function App() {
           {/* Admin — no tenant context needed */}
           <Route path="/admin/login" element={withSuspense(<Login />)} />
           <Route path="/register" element={withSuspense(<Register />)} />
+          <Route path="/verify-email" element={withSuspense(<VerifyEmail />)} />
+          <Route path="/admin/forgot-password" element={withSuspense(<ForgotPassword />)} />
+          <Route path="/admin/reset-password" element={withSuspense(<ResetPassword />)} />
+          <Route path="/admin/resend-verification" element={withSuspense(<ResendVerification />)} />
           <Route path="/admin" element={withSuspense(<RequireAuth><Dashboard /></RequireAuth>)} />
           <Route path="/admin/customers" element={withSuspense(<RequireAuth><Customers /></RequireAuth>)} />
           <Route path="/admin/barbers" element={withSuspense(<RequireAuth><Barbers /></RequireAuth>)} />
