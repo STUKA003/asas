@@ -35,7 +35,7 @@ app.use(cors({
   credentials: true,
 }))
 app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), handleStripeWebhook)
-app.use(express.json({ limit: '10mb' }))
+app.use(express.json({ limit: '15mb' }))
 
 app.use('/api/auth', authRouter)
 app.use('/api/public/:slug', publicRouter) // no auth — tenant identified by slug

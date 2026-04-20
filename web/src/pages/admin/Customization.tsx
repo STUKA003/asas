@@ -284,7 +284,14 @@ export default function Customization() {
       const updatedImages = [...currentImages, ...nextImages]
       setValue('galleryImages', updatedImages, { shouldDirty: true })
       setGalleryDirty(true)
-      await saveGallery(updatedImages)
+
+      try {
+        await saveGallery(updatedImages)
+      } catch (saveError) {
+        setValue('galleryImages', currentImages, { shouldDirty: false })
+        setGalleryDirty(false)
+        throw saveError
+      }
 
       if (files.length > availableSlots) {
         setGalleryError(`Só foram adicionadas ${availableSlots} imagens. O limite é ${MAX_GALLERY_IMAGES}.`)
