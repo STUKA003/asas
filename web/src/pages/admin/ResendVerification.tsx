@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { applyPlatformAccent } from '@/lib/theme'
 import { useInstallBrand } from '@/lib/installBrand'
+import { getInboxLink } from '@/lib/emailLinks'
 
 const schema = z.object({
   slug: z.string().min(1, 'Slug obrigatório'),
@@ -21,13 +22,17 @@ type FormData = z.infer<typeof schema>
 
 export default function ResendVerification() {
   const [message, setMessage] = useState('')
+  const [submittedEmail, setSubmittedEmail] = useState('')
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
   })
 
   const mutation = useMutation({
     mutationFn: (data: FormData) => authApi.resendVerificationEmail(data),
-    onSuccess: (data) => setMessage(data.message),
+    onSuccess: (data, variables) => {
+      setMessage(data.message)
+      setSubmittedEmail(variables.email)
+    },
   })
 
   useEffect(() => {
@@ -57,6 +62,13 @@ export default function ResendVerification() {
             <Button type="submit" className="w-full" loading={mutation.isPending}>
               Reenviar email <ArrowRight size={16} />
             </Button>
+            {submittedEmail && (
+              <a href={getInboxLink(submittedEmail)} target="_blank" rel="noreferrer" className="block">
+                <Button type="button" variant="outline" className="w-full">
+                  Abrir caixa de email
+                </Button>
+              </a>
+            )}
           </form>
           <p className="mt-6 text-center text-sm text-zinc-500">
             <Link to="/admin/login" className="font-medium text-accent-600 hover:underline">Voltar ao login</Link>

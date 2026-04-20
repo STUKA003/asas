@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/Button'
 import { AppMark } from '@/components/ui/AppMark'
 import { ArrowRight, Building2, Clock3, ShieldCheck, Sparkles } from 'lucide-react'
 import { applyPlatformAccent } from '@/lib/theme'
+import { getInboxLink } from '@/lib/emailLinks'
 
 const schema = z.object({
   slug:     z.string().min(1),
@@ -25,7 +26,8 @@ export default function Login() {
   const navigate = useNavigate()
   const { setAuth } = useAuthStore()
   const [submitError, setSubmitError] = useState('')
-  const { register, handleSubmit, formState: { errors }, setError } = useForm<FormData>({
+  const [unverifiedEmail, setUnverifiedEmail] = useState('')
+  const { register, handleSubmit, formState: { errors }, setError, getValues } = useForm<FormData>({
     resolver: zodResolver(schema),
   })
 
@@ -33,6 +35,7 @@ export default function Login() {
     mutationFn: (data: FormData) => authApi.login(data),
     onSuccess: (data) => {
       setSubmitError('')
+      setUnverifiedEmail('')
       setAuth(data.token, data.user)
       navigate('/admin')
     },
@@ -46,13 +49,17 @@ export default function Login() {
           : 'Credenciais inválidas'
 
       setError('password', { message: 'Credenciais inválidas' })
+      setUnverifiedEmail('')
       setSubmitError(
         message === 'Invalid credentials'
           ? 'Slug, e-mail ou password inválidos. Se esta barbearia existia só no teu localhost, ainda não está criada na base de dados da VPS.'
           : message === 'Email not verified'
             ? 'Confirma o teu email antes de entrar. Se não recebeste o email, usa o link de reenvio abaixo.'
-          : message
+            : message
       )
+      if (message === 'Email not verified') {
+        setUnverifiedEmail(getValues('email'))
+      }
     },
   })
 
@@ -138,6 +145,13 @@ export default function Login() {
               <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300">
                 {submitError}
               </div>
+            )}
+            {unverifiedEmail && (
+              <a href={getInboxLink(unverifiedEmail)} target="_blank" rel="noreferrer" className="block">
+                <Button type="button" variant="outline" className="w-full">
+                  Abrir caixa de email
+                </Button>
+              </a>
             )}
             <Button type="submit" loading={isPending} className="mt-2 w-full">
               Entrar no painel <ArrowRight size={16} />

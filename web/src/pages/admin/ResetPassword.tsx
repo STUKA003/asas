@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -26,13 +26,17 @@ export default function ResetPassword() {
   const navigate = useNavigate()
   const [params] = useSearchParams()
   const token = params.get('token') ?? ''
+  const [successMessage, setSuccessMessage] = useState('')
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
   })
 
   const mutation = useMutation({
     mutationFn: (data: FormData) => authApi.resetPassword({ token, password: data.password }),
-    onSuccess: () => navigate('/admin/login'),
+    onSuccess: () => {
+      setSuccessMessage('Password atualizada. Já podes entrar com a nova password.')
+      window.setTimeout(() => navigate('/admin/login'), 1200)
+    },
   })
 
   useEffect(() => {
@@ -55,11 +59,18 @@ export default function ResetPassword() {
           />
           <h1 className="mt-8 text-3xl font-semibold text-zinc-950">Escolhe a nova password</h1>
           {!token ? (
-            <p className="mt-3 text-sm text-red-600">O link de recuperação está incompleto.</p>
+            <div className="mt-3 rounded-2xl border border-red-200 bg-red-50 px-4 py-4 text-sm text-red-700">
+              O link de recuperação está incompleto.
+            </div>
           ) : (
             <form onSubmit={handleSubmit((data) => mutation.mutate(data))} className="mt-6 space-y-4">
               <Input label="Nova password" type="password" placeholder="Mínimo 6 caracteres" error={errors.password?.message} {...register('password')} />
               <Input label="Confirmar password" type="password" placeholder="Repete a password" error={errors.confirmPassword?.message} {...register('confirmPassword')} />
+              {successMessage && (
+                <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+                  {successMessage}
+                </div>
+              )}
               {mutation.error && (
                 <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                   {(mutation.error as { response?: { data?: { error?: string } } })?.response?.data?.error ?? 'Não foi possível atualizar a password.'}

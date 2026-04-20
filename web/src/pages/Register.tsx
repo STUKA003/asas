@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { applyPlatformAccent } from '@/lib/theme'
 import { normalizeSlug, slugify } from '@/lib/slug'
+import { getInboxLink } from '@/lib/emailLinks'
 const schema = z.object({
   barbershopName: z.string().min(2, 'Nome da barbearia obrigatório'),
   slug: z
@@ -33,6 +34,7 @@ const FEATURES = [
 export default function Register() {
   const navigate = useNavigate()
   const [slugManual, setSlugManual] = useState(false)
+  const [resendMessage, setResendMessage] = useState('')
   const [successState, setSuccessState] = useState<{ email: string; slug: string } | null>(null)
 
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormData>({
@@ -53,8 +55,14 @@ export default function Register() {
   const { mutate, isPending, error: mutationError } = useMutation({
     mutationFn: (data: FormData) => authApi.register(data),
     onSuccess: (data) => {
+      setResendMessage('')
       setSuccessState({ email: data.email, slug: data.barbershop.slug })
     },
+  })
+
+  const resendVerificationMutation = useMutation({
+    mutationFn: (data: { email: string; slug: string }) => authApi.resendVerificationEmail(data),
+    onSuccess: (data) => setResendMessage(data.message),
   })
 
   const apiError =
@@ -87,17 +95,50 @@ export default function Register() {
           {successState ? (
             <div className="space-y-4">
               <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-4 text-sm text-emerald-800">
-                Enviámos um email de confirmação para <strong>{successState.email}</strong>. Confirma o email antes de entrares no painel.
+                <strong>Conta criada.</strong> Enviámos um email de confirmação para <strong>{successState.email}</strong>. Confirma o email antes de entrares no painel.
+              </div>
+              <div className="rounded-2xl border border-zinc-200/80 bg-white/80 px-4 py-4 text-sm text-zinc-600">
+                <p className="font-medium text-zinc-800">Próximos passos</p>
+                <ol className="mt-2 space-y-1.5 text-sm">
+                  <li>1. Abre a tua caixa de entrada.</li>
+                  <li>2. Procura o email da Trimio.</li>
+                  <li>3. Clica no link de confirmação.</li>
+                  <li>4. Só depois disso consegues entrar no painel.</li>
+                </ol>
+              </div>
+              {resendMessage && (
+                <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-4 text-sm text-emerald-800">
+                  {resendMessage}
+                </div>
+              )}
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <a href={getInboxLink(successState.email)} target="_blank" rel="noreferrer" className="w-full">
+                  <Button type="button" className="w-full">
+                    Abrir email <ArrowRight size={16} />
+                  </Button>
+                </a>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => resendVerificationMutation.mutate(successState)}
+                  loading={resendVerificationMutation.isPending}
+                >
+                  Reenviar email
+                </Button>
               </div>
               <div className="flex flex-col gap-3 sm:flex-row">
-                <Button type="button" className="w-full" onClick={() => navigate('/admin/login')}>
-                  Ir para login <ArrowRight size={16} />
+                <Button type="button" variant="ghost" className="w-full" onClick={() => navigate('/admin/login')}>
+                  Ir para login
                 </Button>
                 <Button
                   type="button"
                   variant="ghost"
                   className="w-full"
-                  onClick={() => setSuccessState(null)}
+                  onClick={() => {
+                    setResendMessage('')
+                    setSuccessState(null)
+                  }}
                 >
                   Criar outra conta
                 </Button>

@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
-import { Building2, MailCheck } from 'lucide-react'
+import { ArrowRight, Building2, MailCheck, RotateCw } from 'lucide-react'
 import { authApi } from '@/lib/api'
 import { AppMark } from '@/components/ui/AppMark'
 import { Button } from '@/components/ui/Button'
@@ -42,20 +42,38 @@ export default function VerifyEmail() {
           </div>
           <h1 className="mt-5 text-3xl font-semibold text-zinc-950">Confirmar email</h1>
           {!token ? (
-            <p className="mt-3 text-sm text-red-600">O link de confirmação está incompleto.</p>
+            <div className="mt-3 rounded-2xl border border-red-200 bg-red-50 px-4 py-4 text-sm text-red-700">
+              O link de confirmação está incompleto. Pede um novo email de confirmação.
+            </div>
           ) : mutation.isPending ? (
-            <p className="mt-3 text-sm text-zinc-600">Estamos a confirmar o teu email…</p>
+            <div className="mt-3 rounded-2xl border border-zinc-200 bg-white/80 px-4 py-4 text-sm text-zinc-600">
+              Estamos a confirmar o teu email…
+            </div>
           ) : mutation.isSuccess ? (
-            <p className="mt-3 text-sm text-zinc-600">Email confirmado. Já podes entrar no painel.</p>
+            <div className="mt-3 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-4 text-sm text-emerald-800">
+              Email confirmado. Já podes entrar no painel.
+            </div>
           ) : (
-            <p className="mt-3 text-sm text-red-600">
+            <div className="mt-3 rounded-2xl border border-red-200 bg-red-50 px-4 py-4 text-sm text-red-700">
               {(mutation.error as { response?: { data?: { error?: string } } })?.response?.data?.error ?? 'Não foi possível confirmar este email.'}
-            </p>
+            </div>
           )}
-          <div className="mt-6">
+          <div className="mt-6 grid gap-3 sm:grid-cols-2">
+            {token && mutation.isError && (
+              <Button type="button" variant="outline" className="w-full" onClick={() => mutation.mutate()}>
+                Tentar de novo <RotateCw size={16} />
+              </Button>
+            )}
+            {(!token || mutation.isError) && (
+              <Link to="/admin/resend-verification" className="block">
+                <Button type="button" variant="outline" className="w-full">
+                  Reenviar email
+                </Button>
+              </Link>
+            )}
             <Link to="/admin/login" className="block">
               <Button type="button" className="w-full">
-                Ir para login
+                Ir para login <ArrowRight size={16} />
               </Button>
             </Link>
           </div>
