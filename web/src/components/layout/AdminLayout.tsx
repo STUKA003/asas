@@ -224,6 +224,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
     const [open, setOpen] = useState(false)
     const ref = useRef<HTMLDivElement>(null)
     const plan = (barbershop?.subscription?.plan ?? 'FREE') as string
+    const billingActive = pathname === '/admin/billing'
 
     useEffect(() => {
       function handleClickOutside(e: MouseEvent) {
@@ -246,9 +247,14 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
             <Link
               to="/admin/billing"
               onClick={() => { setOpen(false); setSidebarOpen(false) }}
-              className="flex items-center gap-3 px-4 py-3 text-sm text-zinc-700 transition-colors hover:bg-zinc-50"
+              className={cn(
+                'flex items-center gap-3 px-4 py-3 text-sm transition-colors',
+                billingActive
+                  ? 'bg-zinc-950 text-white'
+                  : 'text-zinc-700 hover:bg-zinc-50'
+              )}
             >
-              <Zap size={15} className="text-zinc-400" />
+              <Zap size={15} className={billingActive ? 'text-white' : 'text-zinc-400'} />
               Assinatura
             </Link>
             <button

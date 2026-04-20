@@ -223,7 +223,7 @@ export default function Billing() {
         )}
 
         {/* Plan cards */}
-        <div className="grid gap-5 md:grid-cols-3 md:items-end md:pb-0 pt-6">
+        <div className="grid gap-5 pt-2 md:grid-cols-3 md:items-stretch">
           {PLANS.map((plan) => {
             const isCurrent = plan.id === currentPlan
             const isPro = plan.id === 'PRO'
@@ -234,35 +234,38 @@ export default function Billing() {
               <div
                 key={plan.id}
                 className={cn(
-                  'relative flex flex-col rounded-2xl border-2 bg-white dark:bg-zinc-900 p-6 transition-all duration-300',
+                  'relative flex flex-col rounded-2xl border-2 bg-white p-6 transition-all duration-300 dark:bg-zinc-900',
                   isPro
-                    ? 'md:-translate-y-6 border-amber-400 dark:border-amber-500 shadow-[0_32px_64px_-12px_rgba(245,158,11,0.35),0_8px_24px_-4px_rgba(245,158,11,0.15)] z-10'
+                    ? 'border-amber-400 shadow-[0_24px_48px_-20px_rgba(245,158,11,0.28),0_8px_24px_-8px_rgba(245,158,11,0.18)] dark:border-amber-500'
                     : isCurrent
                       ? cn('shadow-lg', s.border)
                       : 'border-zinc-100 dark:border-zinc-800 hover:border-zinc-200 dark:hover:border-zinc-700 shadow-sm'
                 )}
               >
-                {/* Badges — apenas um de cada vez */}
-                {isCurrent ? (
-                  <span className={cn(
-                    'absolute -top-4 left-1/2 -translate-x-1/2 text-xs font-bold px-3.5 py-1.5 rounded-full shadow-sm whitespace-nowrap',
-                    isPro
-                      ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300'
-                      : s.badge
-                  )}>
-                    Plano atual
-                  </span>
-                ) : isPro ? (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 bg-gradient-to-r from-amber-500 to-amber-400 text-white text-xs font-bold px-3.5 py-1.5 rounded-full shadow-lg shadow-amber-500/30 whitespace-nowrap">
-                    <Star size={11} className="fill-white shrink-0" />
-                    Mais recomendado
-                  </div>
-                ) : null}
-
                 {/* Subtle PRO background tint */}
                 {isPro && (
                   <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-amber-50/60 to-transparent dark:from-amber-900/10 pointer-events-none" />
                 )}
+
+                <div className="relative mb-4 flex min-h-8 items-start justify-between gap-3">
+                  {isCurrent ? (
+                    <span className={cn(
+                      'inline-flex items-center rounded-full px-3 py-1 text-xs font-bold shadow-sm',
+                      isPro
+                        ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300'
+                        : s.badge
+                    )}>
+                      Plano atual
+                    </span>
+                  ) : <span />}
+
+                  {isPro && (
+                    <div className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-400 px-3 py-1 text-xs font-bold text-white shadow-lg shadow-amber-500/30">
+                      <Star size={11} className="shrink-0 fill-white" />
+                      Mais recomendado
+                    </div>
+                  )}
+                </div>
 
                 <div className={cn('relative w-10 h-10 rounded-xl flex items-center justify-center mb-4', s.badge)}>
                   <Icon size={20} className={s.icon} />
