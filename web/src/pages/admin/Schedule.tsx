@@ -107,17 +107,32 @@ export default function Schedule() {
     updateMutation.mutate({ id, data: { [field]: value } })
   }
 
-  async function applyTemplateToDay(dayOfWeek: number) {
-    const dayHours = getHoursForDay(dayOfWeek)
+  async function applyTemplateForTarget(dayOfWeek: number, targetBarberId: string | null) {
+    const existing = hours.filter(
+      (item) => item.dayOfWeek === dayOfWeek && (item.barberId ?? null) === targetBarberId
+    )
     const hasPause = isBefore(tplOpen, tplLunchStart) && isBefore(tplLunchEnd, tplClose)
 
-    await Promise.all(dayHours.map((item) => removeMutation.mutateAsync(item.id)))
+    await Promise.all(existing.map((item) => removeMutation.mutateAsync(item.id)))
 
     if (hasPause) {
-      await createMutation.mutateAsync({ dayOfWeek, startTime: tplOpen, endTime: tplLunchStart, ...(barberId && { barberId }) })
-      await createMutation.mutateAsync({ dayOfWeek, startTime: tplLunchEnd, endTime: tplClose, ...(barberId && { barberId }) })
+      await createMutation.mutateAsync({ dayOfWeek, startTime: tplOpen, endTime: tplLunchStart, ...(targetBarberId ? { barberId: targetBarberId } : {}) })
+      await createMutation.mutateAsync({ dayOfWeek, startTime: tplLunchEnd, endTime: tplClose, ...(targetBarberId ? { barberId: targetBarberId } : {}) })
     } else {
-      await createMutation.mutateAsync({ dayOfWeek, startTime: tplOpen, endTime: tplClose, ...(barberId && { barberId }) })
+      await createMutation.mutateAsync({ dayOfWeek, startTime: tplOpen, endTime: tplClose, ...(targetBarberId ? { barberId: targetBarberId } : {}) })
+    }
+  }
+
+  async function applyTemplateToDay(dayOfWeek: number) {
+    // When viewing shop-wide, apply to shop-wide (null) AND replace barber-specific records
+    if (barberId === '') {
+      await applyTemplateForTarget(dayOfWeek, null)
+      for (const barber of barbers) {
+        const hasOwn = hours.some((h) => h.barberId === barber.id && h.dayOfWeek === dayOfWeek)
+        if (hasOwn) await applyTemplateForTarget(dayOfWeek, barber.id)
+      }
+    } else {
+      await applyTemplateForTarget(dayOfWeek, barberId || null)
     }
   }
 
