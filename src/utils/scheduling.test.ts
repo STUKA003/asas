@@ -125,3 +125,50 @@ test('isSlotAlignedToWindowStart respects the configured grid', () => {
   assert.equal(isSlotAlignedToWindowStart(windowStart, buildDate(9, 7).getTime(), 15), false)
   assert.equal(isSlotAlignedToWindowStart(buildDate(9, 10).getTime(), buildDate(9, 40).getTime(), 15), true)
 })
+
+test('split working windows leave gaps unavailable and support half-hour evening windows', () => {
+  const thursdayMorning = computeAvailableSlots({
+    workingWindow: {
+      dayStart: buildDate(10).getTime(),
+      dayEnd: buildDate(12).getTime(),
+    },
+    busyIntervals: [],
+    durationMinutes: 30,
+    granularityMinutes: 30,
+  })
+
+  const thursdayAfternoon = computeAvailableSlots({
+    workingWindow: {
+      dayStart: buildDate(14).getTime(),
+      dayEnd: buildDate(18).getTime(),
+    },
+    busyIntervals: [],
+    durationMinutes: 30,
+    granularityMinutes: 30,
+  })
+
+  const thursdaySlots = [...thursdayMorning, ...thursdayAfternoon].map((slot) =>
+    `${slot.startTime.getUTCHours().toString().padStart(2, '0')}:${slot.startTime.getUTCMinutes().toString().padStart(2, '0')}`
+  )
+
+  assert.deepEqual(thursdaySlots, [
+    '10:00', '10:30', '11:00', '11:30',
+    '14:00', '14:30', '15:00', '15:30',
+    '16:00', '16:30', '17:00', '17:30',
+  ])
+  assert.equal(thursdaySlots.includes('12:00'), false)
+
+  const saturdayEvening = computeAvailableSlots({
+    workingWindow: {
+      dayStart: buildDate(18, 30).getTime(),
+      dayEnd: buildDate(20, 30).getTime(),
+    },
+    busyIntervals: [],
+    durationMinutes: 30,
+    granularityMinutes: 30,
+  }).map((slot) =>
+    `${slot.startTime.getUTCHours().toString().padStart(2, '0')}:${slot.startTime.getUTCMinutes().toString().padStart(2, '0')}`
+  )
+
+  assert.deepEqual(saturdayEvening, ['18:30', '19:00', '19:30', '20:00'])
+})
