@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Plus, Trash2, AlertTriangle, Wand2 } from 'lucide-react'
+import { Plus, Trash2, AlertTriangle } from 'lucide-react'
 import { barbersApi, workingHoursApi } from '@/lib/api'
 import { AdminLayout } from '@/components/layout/AdminLayout'
 import { Card, CardContent } from '@/components/ui/Card'
@@ -20,7 +20,6 @@ interface WorkingHour {
 }
 
 const DAYS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
-const WEEKDAYS = [1, 2, 3, 4, 5]
 
 const TIMES = Array.from({ length: 31 }, (_, index) => {
   const totalMinutes = (7 * 60) + (index * 30)
@@ -35,10 +34,6 @@ function addHours(time: string, hoursToAdd: number) {
   return `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`
 }
 
-function isBefore(a: string, b: string) {
-  return a.localeCompare(b) < 0
-}
-
 function buildDaySummary(dayHours: WorkingHour[]) {
   if (dayHours.length === 0) return 'Fechado'
   return dayHours.map((h) => `${h.startTime}–${h.endTime}`).join('  ·  ')
@@ -47,13 +42,6 @@ function buildDaySummary(dayHours: WorkingHour[]) {
 export default function Schedule() {
   const qc = useQueryClient()
   const [barberId, setBarberId] = useState('')
-
-  // Quick-apply template state
-  const [tplOpen,       setTplOpen]       = useState('09:00')
-  const [tplLunchStart, setTplLunchStart] = useState('13:00')
-  const [tplLunchEnd,   setTplLunchEnd]   = useState('14:00')
-  const [tplClose,      setTplClose]      = useState('18:00')
-  const [tplApplying,   setTplApplying]   = useState(false)
 
   const { data: barbers = [] } = useQuery({
     queryKey: ['barbers'],
@@ -107,37 +95,6 @@ export default function Schedule() {
     updateMutation.mutate({ id, data: { [field]: value } })
   }
 
-  async function applyTemplateForTarget(dayOfWeek: number, targetBarberId: string | null) {
-    const existing = hours.filter(
-      (item) => item.dayOfWeek === dayOfWeek && (item.barberId ?? null) === targetBarberId
-    )
-    const hasPause = isBefore(tplOpen, tplLunchStart) && isBefore(tplLunchEnd, tplClose)
-
-    await Promise.all(existing.map((item) => removeMutation.mutateAsync(item.id)))
-
-    if (hasPause) {
-      await createMutation.mutateAsync({ dayOfWeek, startTime: tplOpen, endTime: tplLunchStart, ...(targetBarberId ? { barberId: targetBarberId } : {}) })
-      await createMutation.mutateAsync({ dayOfWeek, startTime: tplLunchEnd, endTime: tplClose, ...(targetBarberId ? { barberId: targetBarberId } : {}) })
-    } else {
-      await createMutation.mutateAsync({ dayOfWeek, startTime: tplOpen, endTime: tplClose, ...(targetBarberId ? { barberId: targetBarberId } : {}) })
-    }
-  }
-
-  async function applyTemplateToDay(dayOfWeek: number) {
-    await applyTemplateForTarget(dayOfWeek, barberId || null)
-  }
-
-  async function applyTemplateToDays(daysOfWeek: number[]) {
-    setTplApplying(true)
-    try {
-      for (const day of daysOfWeek) {
-        await applyTemplateToDay(day)
-      }
-    } finally {
-      setTplApplying(false)
-    }
-  }
-
   // Barbers that have their own specific hours (override shop-wide)
   const barbersWithOwnHours = useMemo(() => {
     if (barberId !== '') return []
@@ -146,9 +103,6 @@ export default function Schedule() {
     )
     return barbers.filter((b) => barberIdsWithHours.has(b.id))
   }, [barberId, hours, barbers])
-
-  const tplValid = isBefore(tplOpen, tplClose)
-  const tplHasPause = isBefore(tplOpen, tplLunchStart) && isBefore(tplLunchStart, tplLunchEnd) && isBefore(tplLunchEnd, tplClose)
 
   const barberOptions = [
     { value: '', label: 'Barbearia (padrão)' },
@@ -161,7 +115,7 @@ export default function Schedule() {
         <div>
           <h1 className="text-2xl font-bold">Horários de funcionamento</h1>
           <p className="mt-1 text-sm text-zinc-500">
-            Configure os dias e horários de abertura. Use a configuração rápida para aplicar o mesmo horário a vários dias de uma vez.
+            Configure os dias e horários de abertura diretamente em cada dia.
           </p>
         </div>
 
@@ -199,84 +153,6 @@ export default function Schedule() {
           </div>
         )}
 
-        {/* ── Quick-apply template ── */}
-        <Card>
-          <CardContent className="py-4 space-y-4">
-            <div className="flex items-center gap-2">
-              <Wand2 size={15} className="text-accent-500 shrink-0" />
-              <p className="text-sm font-semibold">Configuração rápida</p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              <div className="space-y-1">
-                <p className="text-xs text-zinc-500">Abertura</p>
-                <Select
-                  options={TIMES.map((t) => ({ value: t, label: t }))}
-                  value={tplOpen}
-                  onChange={(e) => setTplOpen(e.target.value)}
-                />
-              </div>
-              <div className="space-y-1">
-                <p className="text-xs text-zinc-500">Início pausa</p>
-                <Select
-                  options={TIMES.map((t) => ({ value: t, label: t }))}
-                  value={tplLunchStart}
-                  onChange={(e) => setTplLunchStart(e.target.value)}
-                />
-              </div>
-              <div className="space-y-1">
-                <p className="text-xs text-zinc-500">Fim pausa</p>
-                <Select
-                  options={TIMES.map((t) => ({ value: t, label: t }))}
-                  value={tplLunchEnd}
-                  onChange={(e) => setTplLunchEnd(e.target.value)}
-                />
-              </div>
-              <div className="space-y-1">
-                <p className="text-xs text-zinc-500">Fecho</p>
-                <Select
-                  options={TIMES.map((t) => ({ value: t, label: t }))}
-                  value={tplClose}
-                  onChange={(e) => setTplClose(e.target.value)}
-                />
-              </div>
-            </div>
-
-            {tplValid && (
-              <p className="text-xs text-zinc-400">
-                Horário: <span className="font-medium text-zinc-600 dark:text-zinc-300">{tplOpen}–{tplHasPause ? tplLunchStart : tplClose}</span>
-                {tplHasPause && (
-                  <> · pausa <span className="font-medium text-zinc-600 dark:text-zinc-300">{tplLunchStart}–{tplLunchEnd}</span> · tarde <span className="font-medium text-zinc-600 dark:text-zinc-300">{tplLunchEnd}–{tplClose}</span></>
-                )}
-              </p>
-            )}
-
-            {!tplValid && (
-              <p className="text-xs text-red-500">A hora de abertura tem de ser anterior à de fecho.</p>
-            )}
-
-            <div className="flex flex-wrap gap-2 pt-1">
-              <Button
-                size="sm"
-                disabled={!tplValid || tplApplying}
-                loading={tplApplying}
-                onClick={() => applyTemplateToDays(WEEKDAYS)}
-              >
-                Aplicar a dias úteis (Seg–Sex)
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                disabled={!tplValid || tplApplying}
-                loading={tplApplying}
-                onClick={() => applyTemplateToDays([0, 1, 2, 3, 4, 5, 6])}
-              >
-                Aplicar a todos os dias
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
         {isLoading ? <PageLoader /> : (
           <div className="space-y-3">
             {DAYS.map((dayLabel, dayOfWeek) => {
@@ -312,17 +188,6 @@ export default function Schedule() {
 
                       {active ? (
                         <div className="flex flex-wrap gap-2">
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            className="gap-1.5"
-                            disabled={!tplValid || tplApplying}
-                            onClick={() => applyTemplateToDay(dayOfWeek)}
-                          >
-                            <Wand2 size={13} />
-                            Aplicar horário
-                          </Button>
                           <Button
                             type="button"
                             variant="outline"
