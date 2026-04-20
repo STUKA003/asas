@@ -173,10 +173,21 @@ export const superadminApi = {
     api.post('/superadmin/auth/login', data).then((r) => r.data),
   stats: (token: string) =>
     api.get('/superadmin/stats', { headers: { Authorization: `Bearer ${token}` } }).then((r) => r.data),
-  listBarbershops: (token: string, q?: string) =>
-    api.get('/superadmin/barbershops', { headers: { Authorization: `Bearer ${token}` }, params: q ? { q } : undefined }).then((r) => r.data),
+  listBarbershops: (token: string, q?: string, verification?: 'all' | 'pending' | 'verified', health?: 'all' | 'active' | 'suspended' | 'unverified' | 'no-plan') =>
+    api.get('/superadmin/barbershops', {
+      headers: { Authorization: `Bearer ${token}` },
+      params: {
+        ...(q ? { q } : {}),
+        ...(verification && verification !== 'all' ? { verification } : {}),
+        ...(health && health !== 'all' ? { health } : {}),
+      },
+    }).then((r) => r.data),
   updateBarbershop: (token: string, id: string, data: { name: string; slug: string }) =>
     api.patch(`/superadmin/barbershops/${id}`, data, { headers: { Authorization: `Bearer ${token}` } }).then((r) => r.data),
+  resendVerification: (token: string, id: string) =>
+    api.post(`/superadmin/barbershops/${id}/resend-verification`, {}, { headers: { Authorization: `Bearer ${token}` } }).then((r) => r.data),
+  verifyOwnerEmail: (token: string, id: string) =>
+    api.patch(`/superadmin/barbershops/${id}/verify-email`, {}, { headers: { Authorization: `Bearer ${token}` } }).then((r) => r.data),
   updateSubscription: (token: string, id: string, data: { plan: string; endsAt?: string | null }) =>
     api.patch(`/superadmin/barbershops/${id}/subscription`, data, { headers: { Authorization: `Bearer ${token}` } }).then((r) => r.data),
   suspend: (token: string, id: string, data: { suspended: boolean; reason?: string }) =>

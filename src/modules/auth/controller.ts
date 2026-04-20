@@ -39,6 +39,37 @@ const resetPasswordSchema = z.object({
   password: z.string().min(6),
 })
 
+function getRequestMeta(req: Request) {
+  return {
+    ipAddress: req.ip || null,
+    userAgent: req.get('user-agent') || null,
+  }
+}
+
+async function logAuthSecurityEvent(input: {
+  type: 'LOGIN_SUCCESS' | 'LOGIN_FAILURE' | 'PASSWORD_RESET_REQUEST'
+  reason?: string
+  email?: string
+  slug?: string
+  userId?: string
+  barbershopId?: string
+  ipAddress?: string | null
+  userAgent?: string | null
+}) {
+  await prisma.authSecurityEvent.create({
+    data: {
+      type: input.type,
+      reason: input.reason,
+      email: input.email,
+      slug: input.slug,
+      userId: input.userId,
+      barbershopId: input.barbershopId,
+      ipAddress: input.ipAddress ?? null,
+      userAgent: input.userAgent ?? null,
+    },
+  })
+}
+
 export async function register(req: Request, res: Response) {
   const parsed = registerSchema.safeParse(req.body)
   if (!parsed.success) {
@@ -94,9 +125,18 @@ export async function login(req: Request, res: Response) {
   }
 
   const { email, password, slug } = parsed.data
+  const requestMeta = getRequestMeta(req)
 
   const barbershop = await prisma.barbershop.findUnique({ where: { slug } })
   if (!barbershop) {
+    await logAuthSecurityEvent({
+      type: 'LOGIN_FAILURE',
+      reason: 'SHOP_NOT_FOUND',
+      email,
+      slug,
+      ipAddress: requestMeta.ipAddress,
+      userAgent: requestMeta.userAgent,
+    })
     res.status(401).json({ error: 'Invalid credentials' })
     return
   }
@@ -106,11 +146,31 @@ export async function login(req: Request, res: Response) {
   })
 
   if (!user || !(await bcrypt.compare(password, user.password))) {
+    await logAuthSecurityEvent({
+      type: 'LOGIN_FAILURE',
+      reason: 'INVALID_CREDENTIALS',
+      email,
+      slug,
+      barbershopId: barbershop.id,
+      userId: user?.id,
+      ipAddress: requestMeta.ipAddress,
+      userAgent: requestMeta.userAgent,
+    })
     res.status(401).json({ error: 'Invalid credentials' })
     return
   }
 
   if (!user.emailVerifiedAt) {
+    await logAuthSecurityEvent({
+      type: 'LOGIN_FAILURE',
+      reason: 'EMAIL_NOT_VERIFIED',
+      email,
+      slug,
+      barbershopId: barbershop.id,
+      userId: user.id,
+      ipAddress: requestMeta.ipAddress,
+      userAgent: requestMeta.userAgent,
+    })
     res.status(403).json({
       error: 'Email not verified',
       message: 'Confirma o teu email antes de entrar.',
@@ -123,6 +183,16 @@ export async function login(req: Request, res: Response) {
     process.env.JWT_SECRET!,
     { expiresIn: process.env.JWT_EXPIRES_IN ?? '7d' } as jwt.SignOptions
   )
+
+  await logAuthSecurityEvent({
+    type: 'LOGIN_SUCCESS',
+    email,
+    slug,
+    barbershopId: barbershop.id,
+    userId: user.id,
+    ipAddress: requestMeta.ipAddress,
+    userAgent: requestMeta.userAgent,
+  })
 
   res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role } })
 }
@@ -193,6 +263,7 @@ export async function forgotPassword(req: Request, res: Response) {
   const shop = await prisma.barbershop.findUnique({
     where: { slug: parsed.data.slug },
     select: {
+      id: true,
       slug: true,
       users: {
         where: { email: parsed.data.email },
@@ -203,12 +274,22 @@ export async function forgotPassword(req: Request, res: Response) {
   })
 
   const user = shop?.users[0]
+  const requestMeta = getRequestMeta(req)
   if (!shop || !user || !user.emailVerifiedAt) {
     res.json({ success: true, message: 'Se a conta existir, enviámos instruções para redefinir a password.' })
     return
   }
 
   await issuePasswordReset(user, shop.slug)
+  await logAuthSecurityEvent({
+    type: 'PASSWORD_RESET_REQUEST',
+    email: user.email,
+    slug: shop.slug,
+    userId: user.id,
+    barbershopId: shop.id,
+    ipAddress: requestMeta.ipAddress,
+    userAgent: requestMeta.userAgent,
+  })
   res.json({ success: true, message: 'Se a conta existir, enviámos instruções para redefinir a password.' })
 }
 

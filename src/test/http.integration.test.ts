@@ -20,6 +20,8 @@ if (integrationEnabled) {
   process.env.JWT_EXPIRES_IN = '7d'
   process.env.NODE_ENV = 'test'
   process.env.APP_URL = 'http://127.0.0.1:3000'
+  process.env.SUPERADMIN_EMAIL = 'superadmin@test.dev'
+  process.env.SUPERADMIN_PASSWORD = 'super-seguro'
 
   execFileSync(
     'npx',
@@ -65,6 +67,7 @@ async function stopServer() {
 async function resetDatabase() {
   if (!prisma) return
   await prisma.notification.deleteMany()
+  await prisma.authSecurityEvent.deleteMany()
   await prisma.bookingProduct.deleteMany()
   await prisma.bookingExtra.deleteMany()
   await prisma.bookingService.deleteMany()
@@ -389,6 +392,105 @@ test('forgot password issues reset token and reset password updates login creden
   })
 
   assert.equal(newLogin.response.status, 200)
+
+  const events = await prisma.authSecurityEvent.findMany({
+    where: { barbershopId: shop.id },
+    orderBy: { createdAt: 'desc' },
+  })
+
+  assert.equal(events.some((event: (typeof events)[number]) => event.type === 'PASSWORD_RESET_REQUEST'), true)
+  assert.equal(events.some((event: (typeof events)[number]) => event.type === 'LOGIN_FAILURE'), true)
+  assert.equal(events.some((event: (typeof events)[number]) => event.type === 'LOGIN_SUCCESS'), true)
+})
+
+test('superadmin can inspect verification status and manually verify or resend owner email', { skip: !integrationEnabled }, async () => {
+  const hashedPassword = await bcrypt.hash('segredo123', 10)
+  const shop = await prisma.barbershop.create({
+    data: {
+      name: 'Pending Shop',
+      slug: 'pending-shop',
+      subscriptionPlan: 'BASIC',
+      subscriptionEndsAt: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
+      users: {
+        create: {
+          name: 'Owner Pending',
+          email: 'owner@pending-shop.test',
+          password: hashedPassword,
+          role: 'OWNER',
+        },
+      },
+    },
+    include: { users: true },
+  })
+
+  await prisma.authSecurityEvent.createMany({
+    data: [
+      {
+        type: 'LOGIN_FAILURE',
+        reason: 'EMAIL_NOT_VERIFIED',
+        email: 'owner@pending-shop.test',
+        slug: shop.slug,
+        userId: shop.users[0].id,
+        barbershopId: shop.id,
+      },
+      {
+        type: 'PASSWORD_RESET_REQUEST',
+        email: 'owner@pending-shop.test',
+        slug: shop.slug,
+        userId: shop.users[0].id,
+        barbershopId: shop.id,
+      },
+    ],
+  })
+
+  const superLogin = await jsonRequest('/api/superadmin/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({
+      email: process.env.SUPERADMIN_EMAIL,
+      password: process.env.SUPERADMIN_PASSWORD,
+    }),
+  })
+
+  assert.equal(superLogin.response.status, 200)
+  const superToken = superLogin.body.token as string
+
+  const pendingList = await jsonRequest('/api/superadmin/barbershops?verification=pending&q=owner@pending-shop.test', {
+    headers: { Authorization: `Bearer ${superToken}` },
+  })
+
+  assert.equal(pendingList.response.status, 200)
+  assert.equal(pendingList.body.length, 1)
+  assert.equal(pendingList.body[0].owner.email, 'owner@pending-shop.test')
+  assert.equal(pendingList.body[0].health.unverifiedEmail, true)
+  assert.equal(pendingList.body[0].security.failedLogins, 1)
+  assert.equal(pendingList.body[0].security.passwordResetRequests, 1)
+
+  const resend = await jsonRequest(`/api/superadmin/barbershops/${shop.id}/resend-verification`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${superToken}` },
+  })
+
+  assert.equal(resend.response.status, 200)
+
+  const verificationToken = await prisma.authToken.findFirst({
+    where: {
+      userId: shop.users[0].id,
+      type: 'EMAIL_VERIFICATION',
+      consumedAt: null,
+    },
+  })
+
+  assert.ok(verificationToken)
+
+  const verify = await jsonRequest(`/api/superadmin/barbershops/${shop.id}/verify-email`, {
+    method: 'PATCH',
+    headers: { Authorization: `Bearer ${superToken}` },
+  })
+
+  assert.equal(verify.response.status, 200)
+
+  const updatedUser = await prisma.user.findUnique({ where: { id: shop.users[0].id } })
+  assert.ok(updatedUser?.emailVerifiedAt)
 })
 
 test('public availability and booking flow works end-to-end', { skip: !integrationEnabled }, async () => {

@@ -6,6 +6,7 @@ import { z } from 'zod'
 import { prisma } from '../../lib/prisma'
 import { PLAN_LIMITS, type SubscriptionPlan } from '../../lib/plans'
 import { generateAvailableSlug, normalizeSlug } from '../../lib/slug'
+import { issueEmailVerification } from '../../lib/auth-tokens'
 
 function timingSafeEqual(a: string, b: string): boolean {
   try {
@@ -59,10 +60,73 @@ export async function stats(req: Request, res: Response) {
 }
 
 export async function listBarbershops(req: Request, res: Response) {
-  const { q } = req.query
+  const q = String(req.query.q ?? '').trim()
+  const verification = String(req.query.verification ?? 'all')
+  const health = String(req.query.health ?? 'all')
 
   const barbershops = await prisma.barbershop.findMany({
-    where: q ? { name: { contains: String(q) } } : undefined,
+    where: {
+      ...(q
+        ? {
+            OR: [
+              { name: { contains: q, mode: 'insensitive' } },
+              { slug: { contains: q, mode: 'insensitive' } },
+              {
+                users: {
+                  some: {
+                    OR: [
+                      { email: { contains: q, mode: 'insensitive' } },
+                      { name: { contains: q, mode: 'insensitive' } },
+                    ],
+                  },
+                },
+              },
+            ],
+          }
+        : {}),
+      ...(verification === 'pending'
+        ? {
+            users: {
+              some: {
+                role: 'OWNER',
+                emailVerifiedAt: null,
+              },
+            },
+          }
+        : verification === 'verified'
+          ? {
+              users: {
+                some: {
+                  role: 'OWNER',
+                  emailVerifiedAt: { not: null },
+                },
+              },
+            }
+          : {}),
+      ...(health === 'suspended'
+        ? { suspended: true }
+        : health === 'unverified'
+          ? {
+              users: {
+                some: {
+                  role: 'OWNER',
+                  emailVerifiedAt: null,
+                },
+              },
+            }
+          : health === 'no-plan'
+            ? { subscriptionPlan: 'FREE' }
+            : health === 'active'
+              ? {
+                  suspended: false,
+                  subscriptionPlan: { not: 'FREE' },
+                  OR: [
+                    { subscriptionEndsAt: null },
+                    { subscriptionEndsAt: { gte: new Date() } },
+                  ],
+                }
+              : {}),
+    },
     select: {
       id: true,
       name: true,
@@ -73,12 +137,128 @@ export async function listBarbershops(req: Request, res: Response) {
       subscriptionPlan: true,
       subscriptionEndsAt: true,
       createdAt: true,
+      stripeSubscriptionStatus: true,
       _count: { select: { barbers: true, bookings: true, customers: true } },
+      users: {
+        where: { role: 'OWNER' },
+        orderBy: { createdAt: 'asc' },
+        take: 1,
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          emailVerifiedAt: true,
+          createdAt: true,
+        },
+      },
     },
     orderBy: { createdAt: 'desc' },
   })
 
-  res.json(barbershops)
+  const ids = barbershops.map((shop) => shop.id)
+  const [recentEvents, eventCounts] = await Promise.all([
+    ids.length
+      ? prisma.authSecurityEvent.findMany({
+          where: { barbershopId: { in: ids } },
+          orderBy: { createdAt: 'desc' },
+          select: {
+            id: true,
+            type: true,
+            reason: true,
+            email: true,
+            createdAt: true,
+            barbershopId: true,
+          },
+        })
+      : Promise.resolve([]),
+    ids.length
+      ? prisma.authSecurityEvent.groupBy({
+          by: ['barbershopId', 'type'],
+          where: { barbershopId: { in: ids } },
+          _count: { _all: true },
+        })
+      : Promise.resolve([]),
+  ])
+
+  const eventsByBarbershop = new Map<string, typeof recentEvents>()
+  for (const event of recentEvents) {
+    if (!event.barbershopId) continue
+    const current = eventsByBarbershop.get(event.barbershopId) ?? []
+    if (current.length < 8) current.push(event)
+    eventsByBarbershop.set(event.barbershopId, current)
+  }
+
+  const countsByBarbershop = new Map<
+    string,
+    { successLogins: number; failedLogins: number; passwordResetRequests: number }
+  >()
+  for (const row of eventCounts) {
+    if (!row.barbershopId) continue
+    const current = countsByBarbershop.get(row.barbershopId) ?? {
+      successLogins: 0,
+      failedLogins: 0,
+      passwordResetRequests: 0,
+    }
+    if (row.type === 'LOGIN_SUCCESS') current.successLogins = row._count._all
+    if (row.type === 'LOGIN_FAILURE') current.failedLogins = row._count._all
+    if (row.type === 'PASSWORD_RESET_REQUEST') current.passwordResetRequests = row._count._all
+    countsByBarbershop.set(row.barbershopId, current)
+  }
+
+  res.json(
+    barbershops.map((shop) => {
+      const owner = shop.users[0] ?? null
+      const expiresAt = shop.subscriptionEndsAt ? new Date(shop.subscriptionEndsAt) : null
+      const subscriptionActive =
+        shop.subscriptionPlan !== 'FREE' &&
+        !shop.suspended &&
+        (!expiresAt || expiresAt >= new Date())
+
+      return {
+        id: shop.id,
+        name: shop.name,
+        slug: shop.slug,
+        phone: shop.phone,
+        suspended: shop.suspended,
+        suspendedReason: shop.suspendedReason,
+        subscriptionPlan: shop.subscriptionPlan,
+        subscriptionEndsAt: shop.subscriptionEndsAt,
+        stripeSubscriptionStatus: shop.stripeSubscriptionStatus,
+        createdAt: shop.createdAt,
+        owner,
+        health: {
+          subscriptionActive,
+          suspended: shop.suspended,
+          unverifiedEmail: !owner?.emailVerifiedAt,
+          noPlan: shop.subscriptionPlan === 'FREE',
+        },
+        security: {
+          ...(countsByBarbershop.get(shop.id) ?? {
+            successLogins: 0,
+            failedLogins: 0,
+            passwordResetRequests: 0,
+          }),
+          latestLoginAt:
+            eventsByBarbershop
+              .get(shop.id)
+              ?.find((event: (typeof recentEvents)[number]) => event.type === 'LOGIN_SUCCESS')
+              ?.createdAt ?? null,
+          latestFailedLoginAt:
+            eventsByBarbershop
+              .get(shop.id)
+              ?.find((event: (typeof recentEvents)[number]) => event.type === 'LOGIN_FAILURE')
+              ?.createdAt ?? null,
+          latestPasswordResetAt:
+            eventsByBarbershop
+              .get(shop.id)
+              ?.find((event: (typeof recentEvents)[number]) => event.type === 'PASSWORD_RESET_REQUEST')
+              ?.createdAt ?? null,
+          recentEvents: eventsByBarbershop.get(shop.id) ?? [],
+        },
+        _count: shop._count,
+      }
+    })
+  )
 }
 
 const subscriptionSchema = z.object({
@@ -261,6 +441,70 @@ export async function getBarbershop(req: Request, res: Response) {
   const limits = PLAN_LIMITS[plan] ?? PLAN_LIMITS.FREE
 
   res.json({ ...barbershop, limits })
+}
+
+export async function verifyOwnerEmail(req: Request, res: Response) {
+  const barbershop = await prisma.barbershop.findUnique({
+    where: { id: req.params.id },
+    select: {
+      id: true,
+      users: {
+        where: { role: 'OWNER' },
+        orderBy: { createdAt: 'asc' },
+        take: 1,
+        select: { id: true, emailVerifiedAt: true },
+      },
+    },
+  })
+
+  const owner = barbershop?.users[0]
+  if (!barbershop || !owner) {
+    res.status(404).json({ error: 'Barbearia ou utilizador administrador não encontrado' })
+    return
+  }
+
+  const updated = await prisma.user.update({
+    where: { id: owner.id },
+    data: { emailVerifiedAt: new Date() },
+    select: { id: true, emailVerifiedAt: true },
+  })
+
+  res.json({ success: true, user: updated })
+}
+
+export async function resendOwnerVerification(req: Request, res: Response) {
+  const barbershop = await prisma.barbershop.findUnique({
+    where: { id: req.params.id },
+    select: {
+      id: true,
+      slug: true,
+      users: {
+        where: { role: 'OWNER' },
+        orderBy: { createdAt: 'asc' },
+        take: 1,
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          emailVerifiedAt: true,
+        },
+      },
+    },
+  })
+
+  const owner = barbershop?.users[0]
+  if (!barbershop || !owner) {
+    res.status(404).json({ error: 'Barbearia ou utilizador administrador não encontrado' })
+    return
+  }
+
+  if (owner.emailVerifiedAt) {
+    res.json({ success: true, message: 'O email desta conta já está confirmado.' })
+    return
+  }
+
+  await issueEmailVerification(owner, barbershop.slug)
+  res.json({ success: true, message: 'Email de confirmação reenviado.' })
 }
 
 export async function createSupportSession(req: Request, res: Response) {

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { format, addMonths, addYears, isPast } from 'date-fns'
 import { pt } from 'date-fns/locale'
-import { Search, Scissors, Calendar, Users, Ban, CheckCircle, ChevronDown, ChevronUp, Plus, Trash2, LogIn, AlertTriangle } from 'lucide-react'
+import { Search, Scissors, Calendar, Users, Ban, CheckCircle, ChevronDown, ChevronUp, Plus, Trash2, LogIn, AlertTriangle, Mail, ShieldCheck, ShieldAlert, RotateCw, KeyRound, UserCheck, CircleOff } from 'lucide-react'
 import { SuperAdminLayout } from '@/components/layout/SuperAdminLayout'
 import { superadminApi } from '@/lib/api'
 import { useSuperAuthStore } from '@/store/superauth'
@@ -38,7 +38,63 @@ interface Barbershop {
   suspended: boolean
   suspendedReason?: string | null
   createdAt: string
+  stripeSubscriptionStatus?: string | null
+  owner: {
+    id: string
+    name: string
+    email: string
+    emailVerifiedAt?: string | null
+    createdAt: string
+  } | null
+  health: {
+    subscriptionActive: boolean
+    suspended: boolean
+    unverifiedEmail: boolean
+    noPlan: boolean
+  }
+  security: {
+    successLogins: number
+    failedLogins: number
+    passwordResetRequests: number
+    latestLoginAt?: string | null
+    latestFailedLoginAt?: string | null
+    latestPasswordResetAt?: string | null
+    recentEvents: Array<{
+      id: string
+      type: 'LOGIN_SUCCESS' | 'LOGIN_FAILURE' | 'PASSWORD_RESET_REQUEST'
+      reason?: string | null
+      email?: string | null
+      createdAt: string
+    }>
+  }
   _count: { barbers: number; bookings: number; customers: number }
+}
+
+type VerificationFilter = 'all' | 'pending' | 'verified'
+type HealthFilter = 'all' | 'active' | 'suspended' | 'unverified' | 'no-plan'
+
+function formatSecurityDate(value?: string | null) {
+  if (!value) return 'Sem registo'
+  return format(new Date(value), "d MMM yyyy, HH:mm", { locale: pt })
+}
+
+function SecurityStat({ icon: Icon, label, value, tone = 'neutral' }: { icon: typeof Calendar; label: string; value: string | number; tone?: 'neutral' | 'good' | 'danger' | 'warn' }) {
+  const tones = {
+    neutral: 'bg-zinc-800 text-zinc-300',
+    good: 'bg-emerald-900/30 text-emerald-300',
+    danger: 'bg-red-900/25 text-red-300',
+    warn: 'bg-amber-900/25 text-amber-300',
+  }
+
+  return (
+    <div className={cn('rounded-xl px-3 py-3', tones[tone])}>
+      <div className="flex items-center gap-2 text-xs opacity-90">
+        <Icon size={12} />
+        {label}
+      </div>
+      <p className="mt-2 text-base font-semibold text-white">{value}</p>
+    </div>
+  )
 }
 
 interface PlanEditorProps { b: Barbershop; token: string; onDone: () => void }
@@ -285,6 +341,8 @@ export default function SuperAdminBarbershops() {
   const { token } = useSuperAuthStore()
   const { setAuth } = useAuthStore()
   const [q, setQ] = useState('')
+  const [verificationFilter, setVerificationFilter] = useState<VerificationFilter>('all')
+  const [healthFilter, setHealthFilter] = useState<HealthFilter>('all')
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [editMode, setEditMode] = useState<'identity' | 'plan' | 'suspend' | null>(null)
   const [showCreate, setShowCreate] = useState(false)
@@ -297,10 +355,18 @@ export default function SuperAdminBarbershops() {
   const supportSessionMutation = useMutation({
     mutationFn: (id: string) => superadminApi.createSupportSession(token!, id),
   })
+  const resendVerificationMutation = useMutation({
+    mutationFn: (id: string) => superadminApi.resendVerification(token!, id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['superadmin'] }),
+  })
+  const verifyEmailMutation = useMutation({
+    mutationFn: (id: string) => superadminApi.verifyOwnerEmail(token!, id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['superadmin'] }),
+  })
 
   const { data: barbershops = [], isLoading } = useQuery<Barbershop[]>({
-    queryKey: ['superadmin', 'barbershops', q],
-    queryFn: () => superadminApi.listBarbershops(token!, q || undefined),
+    queryKey: ['superadmin', 'barbershops', q, verificationFilter, healthFilter],
+    queryFn: () => superadminApi.listBarbershops(token!, q || undefined, verificationFilter, healthFilter),
     enabled: !!token,
   })
 
@@ -348,9 +414,60 @@ export default function SuperAdminBarbershops() {
             type="text"
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Pesquisar barbearia…"
+            placeholder="Pesquisar por nome, slug, email ou dono…"
             className="w-full h-10 pl-10 pr-4 rounded-xl bg-zinc-900 border border-zinc-700 text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-accent-500"
           />
+        </div>
+
+        <div className="grid gap-3 md:grid-cols-2">
+          <div>
+            <p className="mb-2 text-xs uppercase tracking-[0.14em] text-zinc-500">Verificação</p>
+            <div className="flex flex-wrap gap-2">
+              {[
+                { value: 'all', label: 'Todas' },
+                { value: 'pending', label: 'Pendentes' },
+                { value: 'verified', label: 'Verificadas' },
+              ].map((item) => (
+                <button
+                  key={item.value}
+                  onClick={() => setVerificationFilter(item.value as VerificationFilter)}
+                  className={cn(
+                    'rounded-lg px-3 py-1.5 text-xs font-medium transition-colors',
+                    verificationFilter === item.value
+                      ? 'bg-accent-500 text-white'
+                      : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
+                  )}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div>
+            <p className="mb-2 text-xs uppercase tracking-[0.14em] text-zinc-500">Saúde da conta</p>
+            <div className="flex flex-wrap gap-2">
+              {[
+                { value: 'all', label: 'Todas' },
+                { value: 'active', label: 'Subscrição ativa' },
+                { value: 'suspended', label: 'Suspensas' },
+                { value: 'unverified', label: 'Sem email verificado' },
+                { value: 'no-plan', label: 'Sem plano' },
+              ].map((item) => (
+                <button
+                  key={item.value}
+                  onClick={() => setHealthFilter(item.value as HealthFilter)}
+                  className={cn(
+                    'rounded-lg px-3 py-1.5 text-xs font-medium transition-colors',
+                    healthFilter === item.value
+                      ? 'bg-accent-500 text-white'
+                      : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
+                  )}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
         {isLoading ? (
@@ -410,8 +527,19 @@ export default function SuperAdminBarbershops() {
                                 Expirado
                               </span>
                             )}
+                            {b.health.unverifiedEmail && (
+                              <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full font-medium bg-amber-900/60 text-amber-300">
+                                <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
+                                Email pendente
+                              </span>
+                            )}
                           </div>
                           <p className="text-xs text-zinc-500">/{b.slug}</p>
+                          {b.owner && (
+                            <p className="mt-1 text-xs text-zinc-400">
+                              Dono: <span className="text-zinc-300">{b.owner.name}</span> · {b.owner.email}
+                            </p>
+                          )}
 
                           {/* Stats row */}
                           <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-zinc-500">
@@ -430,6 +558,11 @@ export default function SuperAdminBarbershops() {
                             {b.subscriptionEndsAt && plan !== 'FREE' && (
                               <span className={cn(expired ? 'text-orange-400' : 'text-zinc-600')}>
                                 Expira: {format(new Date(b.subscriptionEndsAt), "d MMM yyyy", { locale: pt })}
+                              </span>
+                            )}
+                            {b.security.latestLoginAt && (
+                              <span className="text-zinc-600">
+                                Último login: {format(new Date(b.security.latestLoginAt), "d MMM, HH:mm", { locale: pt })}
                               </span>
                             )}
                           </div>
@@ -455,8 +588,28 @@ export default function SuperAdminBarbershops() {
                               className="flex items-center justify-center gap-1.5 rounded-lg bg-accent-500/15 px-3 py-2 text-xs font-medium text-accent-300 transition-colors hover:bg-accent-500/25 disabled:opacity-50 sm:justify-start"
                             >
                               <LogIn size={12} />
-                              {supportSessionMutation.isPending ? 'A abrir…' : 'Entrar no painel'}
+                              {supportSessionMutation.isPending ? 'A abrir…' : 'Abrir sessão de suporte'}
                             </button>
+                            {b.health.unverifiedEmail && (
+                              <>
+                                <button
+                                  onClick={() => resendVerificationMutation.mutate(b.id)}
+                                  disabled={resendVerificationMutation.isPending}
+                                  className="flex items-center justify-center gap-1.5 rounded-lg bg-zinc-800 px-3 py-2 text-xs font-medium text-zinc-300 transition-colors hover:bg-zinc-700 disabled:opacity-50 sm:justify-start"
+                                >
+                                  <RotateCw size={12} />
+                                  {resendVerificationMutation.isPending ? 'A reenviar…' : 'Reenviar confirmação'}
+                                </button>
+                                <button
+                                  onClick={() => verifyEmailMutation.mutate(b.id)}
+                                  disabled={verifyEmailMutation.isPending}
+                                  className="flex items-center justify-center gap-1.5 rounded-lg bg-emerald-900/30 px-3 py-2 text-xs font-medium text-emerald-300 transition-colors hover:bg-emerald-900/50 disabled:opacity-50 sm:justify-start"
+                                >
+                                  <UserCheck size={12} />
+                                  {verifyEmailMutation.isPending ? 'A confirmar…' : 'Marcar email como verificado'}
+                                </button>
+                              </>
+                            )}
                             <button
                               onClick={() => setEditMode('identity')}
                               className="rounded-lg bg-zinc-800 px-3 py-2 text-xs font-medium text-zinc-300 transition-colors hover:bg-zinc-700"
@@ -510,6 +663,102 @@ export default function SuperAdminBarbershops() {
                             </div>
                           </div>
                         )}
+                        <div className="mt-4 grid gap-4 border-t border-zinc-800 pt-4 xl:grid-cols-[1.05fr_1fr]">
+                          <div className="space-y-4">
+                            <div className="rounded-2xl border border-zinc-800 bg-zinc-950/70 p-4">
+                              <div className="flex items-center gap-2 text-sm font-semibold text-white">
+                                <Mail size={14} className="text-zinc-400" />
+                                Conta admin
+                              </div>
+                              {b.owner ? (
+                                <div className="mt-3 space-y-2 text-sm text-zinc-300">
+                                  <p><span className="text-zinc-500">Nome:</span> {b.owner.name}</p>
+                                  <p><span className="text-zinc-500">Email:</span> {b.owner.email}</p>
+                                  <p>
+                                    <span className="text-zinc-500">Estado:</span>{' '}
+                                    {b.owner.emailVerifiedAt ? (
+                                      <span className="text-emerald-300">Verificado</span>
+                                    ) : (
+                                      <span className="text-amber-300">Pendente</span>
+                                    )}
+                                  </p>
+                                  <p><span className="text-zinc-500">Criada em:</span> {format(new Date(b.owner.createdAt), "d 'de' MMM yyyy", { locale: pt })}</p>
+                                </div>
+                              ) : (
+                                <p className="mt-3 text-sm text-zinc-500">Sem dono associado.</p>
+                              )}
+                            </div>
+                            <div className="rounded-2xl border border-zinc-800 bg-zinc-950/70 p-4">
+                              <div className="flex items-center gap-2 text-sm font-semibold text-white">
+                                <ShieldCheck size={14} className="text-zinc-400" />
+                                Saúde da conta
+                              </div>
+                              <div className="mt-3 flex flex-wrap gap-2">
+                                <span className={cn('rounded-full px-2 py-1 text-xs font-medium', b.health.subscriptionActive ? 'bg-emerald-900/30 text-emerald-300' : 'bg-zinc-800 text-zinc-400')}>
+                                  {b.health.subscriptionActive ? 'Subscrição ativa' : 'Sem subscrição ativa'}
+                                </span>
+                                <span className={cn('rounded-full px-2 py-1 text-xs font-medium', b.health.suspended ? 'bg-red-900/30 text-red-300' : 'bg-zinc-800 text-zinc-400')}>
+                                  {b.health.suspended ? 'Suspensa' : 'Ativa'}
+                                </span>
+                                <span className={cn('rounded-full px-2 py-1 text-xs font-medium', b.health.unverifiedEmail ? 'bg-amber-900/30 text-amber-300' : 'bg-zinc-800 text-zinc-400')}>
+                                  {b.health.unverifiedEmail ? 'Sem email verificado' : 'Email verificado'}
+                                </span>
+                                <span className={cn('rounded-full px-2 py-1 text-xs font-medium', b.health.noPlan ? 'bg-zinc-800 text-zinc-300' : 'bg-blue-900/30 text-blue-300')}>
+                                  {b.health.noPlan ? 'Sem plano' : `Plano ${PLAN_LABELS[plan]}`}
+                                </span>
+                              </div>
+                              {b.stripeSubscriptionStatus && (
+                                <p className="mt-3 text-xs text-zinc-500">
+                                  Stripe: <span className="text-zinc-300">{b.stripeSubscriptionStatus}</span>
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                          <div className="rounded-2xl border border-zinc-800 bg-zinc-950/70 p-4">
+                            <div className="flex items-center gap-2 text-sm font-semibold text-white">
+                              <ShieldAlert size={14} className="text-zinc-400" />
+                              Painel de segurança
+                            </div>
+                            <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                              <SecurityStat icon={ShieldCheck} label="Logins válidos" value={b.security.successLogins} tone="good" />
+                              <SecurityStat icon={ShieldAlert} label="Falhas de login" value={b.security.failedLogins} tone="danger" />
+                              <SecurityStat icon={KeyRound} label="Pedidos reset" value={b.security.passwordResetRequests} tone="warn" />
+                            </div>
+                            <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                              <SecurityStat icon={Calendar} label="Último login" value={formatSecurityDate(b.security.latestLoginAt)} />
+                              <SecurityStat icon={Calendar} label="Última falha" value={formatSecurityDate(b.security.latestFailedLoginAt)} />
+                              <SecurityStat icon={Calendar} label="Último reset" value={formatSecurityDate(b.security.latestPasswordResetAt)} />
+                            </div>
+                            <div className="mt-4">
+                              <p className="text-xs uppercase tracking-[0.14em] text-zinc-500">Atividade recente</p>
+                              <div className="mt-3 space-y-2">
+                                {b.security.recentEvents.length === 0 ? (
+                                  <div className="rounded-xl border border-zinc-800 bg-zinc-900/60 px-3 py-3 text-sm text-zinc-500">
+                                    Sem atividade registada ainda.
+                                  </div>
+                                ) : b.security.recentEvents.map((event) => (
+                                  <div key={event.id} className="flex items-center justify-between gap-3 rounded-xl border border-zinc-800 bg-zinc-900/60 px-3 py-2.5 text-sm">
+                                    <div className="min-w-0">
+                                      <p className="text-zinc-200">
+                                        {event.type === 'LOGIN_SUCCESS'
+                                          ? 'Login com sucesso'
+                                          : event.type === 'LOGIN_FAILURE'
+                                            ? 'Falha de login'
+                                            : 'Pedido de reset password'}
+                                      </p>
+                                      <p className="truncate text-xs text-zinc-500">
+                                        {event.email || b.owner?.email || 'Sem email'}{event.reason ? ` · ${event.reason}` : ''}
+                                      </p>
+                                    </div>
+                                    <p className="shrink-0 text-xs text-zinc-500">
+                                      {format(new Date(event.createdAt), 'd MMM, HH:mm', { locale: pt })}
+                                    </p>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                         {editMode === 'identity' && <IdentityEditor b={b} token={token!} onDone={() => setEditMode(null)} />}
                         {editMode === 'plan' && <PlanEditor b={b} token={token!} onDone={() => setEditMode(null)} />}
                         {editMode === 'suspend' && <SuspendEditor b={b} token={token!} onDone={() => setEditMode(null)} />}

@@ -52,6 +52,7 @@ model Barbershop {
   workingHours  WorkingHours[]
   blockedTimes  BlockedTime[]
   notifications Notification[]
+  authSecurityEvents AuthSecurityEvent[]
 }
 
 model User {
@@ -66,6 +67,7 @@ model User {
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
   authTokens   AuthToken[]
+  authSecurityEvents AuthSecurityEvent[]
 
   @@unique([email, barbershopId])
 }
@@ -73,6 +75,12 @@ model User {
 enum AuthTokenType {
   EMAIL_VERIFICATION
   PASSWORD_RESET
+}
+
+enum AuthSecurityEventType {
+  LOGIN_SUCCESS
+  LOGIN_FAILURE
+  PASSWORD_RESET_REQUEST
 }
 
 model AuthToken {
@@ -86,6 +94,24 @@ model AuthToken {
   createdAt  DateTime      @default(now())
 
   @@index([userId, type])
+}
+
+model AuthSecurityEvent {
+  id           String                @id @default(cuid())
+  type         AuthSecurityEventType
+  reason       String?
+  email        String?
+  slug         String?
+  ipAddress    String?
+  userAgent    String?
+  userId       String?
+  user         User?                 @relation(fields: [userId], references: [id], onDelete: SetNull)
+  barbershopId String?
+  barbershop   Barbershop?           @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
+  createdAt    DateTime              @default(now())
+
+  @@index([barbershopId, type, createdAt])
+  @@index([userId, type, createdAt])
 }
 
 
