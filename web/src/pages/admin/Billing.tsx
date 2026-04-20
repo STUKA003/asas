@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { format } from 'date-fns'
 import { pt } from 'date-fns/locale'
 import { Check, Zap, Crown, Sparkles, CalendarDays, Scissors, Star } from 'lucide-react'
+import { useSearchParams } from 'react-router-dom'
 import { AdminLayout } from '@/components/layout/AdminLayout'
 import { barbershopApi } from '@/lib/api'
 import { cn } from '@/lib/utils'
@@ -108,16 +109,30 @@ function UsageBar({ used, max, label }: { used: number | null; max: number | nul
 
 export default function Billing() {
   const qc = useQueryClient()
+  const [searchParams] = useSearchParams()
   const { data: barbershop } = useQuery({ queryKey: ['barbershop'], queryFn: barbershopApi.get })
   const currentPlan: Plan = barbershop?.subscription?.plan ?? 'FREE'
   const sub = barbershop?.subscription
 
-  const upgrade = useMutation({
-    mutationFn: (plan: Plan) => barbershopApi.updateSubscription({ plan }),
+  const checkout = useMutation({
+    mutationFn: async (plan: Exclude<Plan, 'FREE'>) => {
+      const response = await barbershopApi.createCheckoutSession({ plan })
+      if (response?.url) window.location.href = response.url
+      return response
+    },
+  })
+
+  const portal = useMutation({
+    mutationFn: async () => {
+      const response = await barbershopApi.createPortalSession()
+      if (response?.url) window.location.href = response.url
+      return response
+    },
     onSuccess: () => qc.invalidateQueries({ queryKey: ['barbershop'] }),
   })
 
   const currentPlanData = PLANS.find((p) => p.id === currentPlan)
+  const checkoutStatus = searchParams.get('checkout')
 
   return (
     <AdminLayout>
@@ -126,6 +141,18 @@ export default function Billing() {
           <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">Assinatura</h1>
           <p className="text-zinc-500 text-sm mt-0.5">Gere o teu plano e limites da plataforma.</p>
         </div>
+
+        {checkoutStatus === 'success' && (
+          <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+            Checkout concluído. O plano será sincronizado automaticamente assim que o Stripe confirmar a subscrição.
+          </div>
+        )}
+
+        {checkoutStatus === 'cancel' && (
+          <div className="rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-700">
+            O checkout foi cancelado. Nenhuma alteração foi aplicada.
+          </div>
+        )}
 
         {/* Current plan summary card */}
         {sub && currentPlanData && (
@@ -145,15 +172,26 @@ export default function Billing() {
                   </div>
                 </div>
               </div>
-              {sub.endsAt && (
-                <div className="flex items-center gap-2 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 px-4 py-2.5 text-sm">
-                  <CalendarDays size={14} className="text-zinc-400" />
-                  <span className="text-zinc-500">Válido até</span>
-                  <span className="font-semibold text-zinc-900 dark:text-zinc-100">
-                    {format(new Date(sub.endsAt), "d 'de' MMMM yyyy", { locale: pt })}
-                  </span>
-                </div>
-              )}
+              <div className="flex flex-col items-start gap-3">
+                {sub.endsAt && (
+                  <div className="flex items-center gap-2 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 px-4 py-2.5 text-sm">
+                    <CalendarDays size={14} className="text-zinc-400" />
+                    <span className="text-zinc-500">Válido até</span>
+                    <span className="font-semibold text-zinc-900 dark:text-zinc-100">
+                      {format(new Date(sub.endsAt), "d 'de' MMMM yyyy", { locale: pt })}
+                    </span>
+                  </div>
+                )}
+                {sub.hasCustomer && (
+                  <button
+                    onClick={() => portal.mutate()}
+                    disabled={portal.isPending}
+                    className="rounded-xl border border-zinc-200 px-4 py-2 text-sm font-semibold text-zinc-700 transition hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-60 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+                  >
+                    {portal.isPending ? 'A abrir portal...' : 'Gerir faturação no Stripe'}
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Usage bars */}
@@ -269,8 +307,14 @@ export default function Billing() {
                 </ul>
 
                 <button
-                  disabled={isCurrent || upgrade.isPending}
-                  onClick={() => upgrade.mutate(plan.id)}
+                  disabled={isCurrent || checkout.isPending || portal.isPending}
+                  onClick={() => {
+                    if (plan.id === 'FREE') {
+                      portal.mutate()
+                      return
+                    }
+                    checkout.mutate(plan.id)
+                  }}
                   className={cn(
                     'relative w-full py-2.5 rounded-xl text-sm font-semibold transition-all disabled:cursor-not-allowed',
                     isCurrent
@@ -280,7 +324,13 @@ export default function Billing() {
                         : cn(s.button, 'disabled:opacity-50')
                   )}
                 >
-                  {isCurrent ? 'Plano ativo' : plan.price === 0 ? 'Fazer downgrade' : 'Fazer upgrade'}
+                  {isCurrent
+                    ? 'Plano ativo'
+                    : plan.price === 0
+                      ? 'Gerir no portal'
+                      : checkout.isPending
+                        ? 'A abrir checkout...'
+                        : 'Fazer upgrade'}
                 </button>
               </div>
             )
@@ -288,7 +338,7 @@ export default function Billing() {
         </div>
 
         <p className="text-xs text-zinc-400 text-center">
-          Os pagamentos são processados manualmente. Contacta-nos para ativar um plano pago.
+          Os upgrades e a gestão da assinatura são tratados no Stripe. Cancelamentos e mudanças de método de pagamento ficam no portal de faturação.
         </p>
       </div>
     </AdminLayout>

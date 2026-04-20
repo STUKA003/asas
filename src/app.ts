@@ -19,6 +19,7 @@ import superadminRouter from './modules/superadmin/router'
 import barberAuthRouter from './modules/barber-auth/router'
 import barberPortalRouter from './modules/barber-portal/router'
 import notificationsRouter from './modules/notifications/router'
+import { handleStripeWebhook } from './modules/stripe/controller'
 
 const app = express()
 
@@ -33,6 +34,7 @@ app.use(cors({
     : ['http://localhost:5173', 'http://localhost:3000'],
   credentials: true,
 }))
+app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), handleStripeWebhook)
 app.use(express.json({ limit: '10mb' }))
 
 app.use('/api/auth', authRouter)

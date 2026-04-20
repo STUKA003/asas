@@ -1,5 +1,20 @@
 export interface Barbershop {
   id: string; name: string; slug: string; phone?: string; address?: string; whatsapp?: string; instagram?: string; logoUrl?: string; heroImageUrl?: string; heroTitle?: string; heroSubtitle?: string; heroButtonText?: string; aboutText?: string; galleryImages?: string[]; promoEnabled: boolean; promoTitle?: string; promoText?: string; promoButtonText?: string; showPlans: boolean; showProducts: boolean; planMemberDiscount: number; slotGranularityMinutes: 5 | 10 | 15 | 20 | 30; accentColor: string; plan: 'FREE' | 'BASIC' | 'PRO'
+  subscription?: {
+    plan: 'FREE' | 'BASIC' | 'PRO'
+    paidPlan: 'FREE' | 'BASIC' | 'PRO'
+    endsAt?: string | null
+    expired: boolean
+    stripeStatus?: string | null
+    hasCustomer: boolean
+    hasSubscription: boolean
+    limits: {
+      maxBarbers: number | null
+      maxMonthlyBookings: number | null
+      activeBarbers: number | null
+      monthlyBookings: number | null
+    }
+  }
 }
 export interface Barber {
   id: string; name: string; email?: string; phone?: string; avatar?: string; active: boolean; hasAccess?: boolean

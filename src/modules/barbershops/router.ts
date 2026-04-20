@@ -1,10 +1,16 @@
 import { Router } from 'express'
-import { getMyBarbershop, updateBarbershop, updateSubscription } from './controller'
+import {
+  createBillingPortalSession,
+  createSubscriptionCheckoutSession,
+  getMyBarbershop,
+  updateBarbershop,
+} from './controller'
 
 const router = Router()
 
 router.get('/', getMyBarbershop)
 router.put('/', updateBarbershop)
-router.patch('/subscription', updateSubscription)
+router.post('/subscription/checkout-session', createSubscriptionCheckoutSession)
+router.post('/subscription/portal-session', createBillingPortalSession)
 
 export default router

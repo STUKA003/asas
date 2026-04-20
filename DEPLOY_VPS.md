@@ -58,8 +58,13 @@ DATABASE_URL="postgresql://trimio:MUDA_ISTO@localhost:5432/trimio?schema=public"
 JWT_SECRET="MUDA_PARA_UMA_CHAVE_LONGA"
 JWT_EXPIRES_IN="7d"
 PORT=3000
+APP_URL="https://trimio.pt"
 SUPERADMIN_EMAIL="admin@teudominio.com"
 SUPERADMIN_PASSWORD="MUDA_ISTO"
+STRIPE_SECRET_KEY="sk_live_..."
+STRIPE_WEBHOOK_SECRET="whsec_..."
+STRIPE_PRICE_BASIC_MONTHLY="price_..."
+STRIPE_PRICE_PRO_MONTHLY="price_..."
 ```
 
 ## 6. Build e migrations
@@ -117,3 +122,16 @@ npm run build
 cd web && npm run build && cd ..
 pm2 restart trimio-api
 ```
+
+## 11. Webhook Stripe
+
+Depois de publicar a app, criar no Stripe um webhook para:
+
+- `https://trimio.pt/api/stripe/webhook`
+
+Eventos mínimos:
+
+- `checkout.session.completed`
+- `customer.subscription.created`
+- `customer.subscription.updated`
+- `customer.subscription.deleted`

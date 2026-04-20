@@ -67,8 +67,10 @@ export const authApi = {
 export const barbershopApi = {
   get: () => api.get('/barbershop').then((r) => r.data),
   update: (data: object) => api.put('/barbershop', data).then((r) => r.data),
-  updateSubscription: (data: { plan: string; endsAt?: string }) =>
-    api.patch('/barbershop/subscription', data).then((r) => r.data),
+  createCheckoutSession: (data: { plan: 'BASIC' | 'PRO' }) =>
+    api.post('/barbershop/subscription/checkout-session', data).then((r) => r.data),
+  createPortalSession: () =>
+    api.post('/barbershop/subscription/portal-session').then((r) => r.data),
 }
 
 // -- Generic CRUD factory

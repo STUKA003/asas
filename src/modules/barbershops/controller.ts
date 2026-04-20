@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { z } from 'zod'
 import { prisma } from '../../lib/prisma'
 import { PLAN_LIMITS, getEffectivePlan, type SubscriptionPlan } from '../../lib/plans'
+import { getAppUrl, getPlanCheckoutSummary, getStripeClient } from '../../lib/stripe'
 
 const imageSchema = z.string().refine(
   (value) => value.startsWith('data:image/') || value.startsWith('http://') || value.startsWith('https://'),
@@ -82,6 +83,9 @@ export async function getMyBarbershop(req: Request, res: Response) {
       paidPlan: barbershop.subscriptionPlan,
       endsAt: barbershop.subscriptionEndsAt,
       expired,
+      stripeStatus: barbershop.stripeSubscriptionStatus,
+      hasCustomer: Boolean(barbershop.stripeCustomerId),
+      hasSubscription: Boolean(barbershop.stripeSubscriptionId),
       limits: {
         maxBarbers: serializedMaxBarbers,
         maxMonthlyBookings: serializedMaxMonthlyBookings,
@@ -92,23 +96,121 @@ export async function getMyBarbershop(req: Request, res: Response) {
   })
 }
 
-const subscriptionSchema = z.object({
-  plan: z.enum(['FREE', 'BASIC', 'PRO']),
-  endsAt: z.string().datetime().optional(),
+const checkoutSchema = z.object({
+  plan: z.enum(['BASIC', 'PRO']),
 })
 
-export async function updateSubscription(req: Request, res: Response) {
-  const parsed = subscriptionSchema.safeParse(req.body)
-  if (!parsed.success) { res.status(400).json({ error: parsed.error.flatten() }); return }
+export async function createSubscriptionCheckoutSession(req: Request, res: Response) {
+  const parsed = checkoutSchema.safeParse(req.body)
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.flatten() })
+    return
+  }
 
-  const barbershop = await prisma.barbershop.update({
+  const shop = await prisma.barbershop.findUnique({
     where: { id: req.auth.barbershopId },
-    data: {
-      subscriptionPlan: parsed.data.plan,
-      subscriptionEndsAt: parsed.data.endsAt ? new Date(parsed.data.endsAt) : null,
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      stripeCustomerId: true,
     },
   })
-  res.json({ plan: barbershop.subscriptionPlan, endsAt: barbershop.subscriptionEndsAt })
+
+  if (!shop) {
+    res.status(404).json({ error: 'Barbershop not found' })
+    return
+  }
+
+  let stripe: ReturnType<typeof getStripeClient>
+  let checkoutPlan: ReturnType<typeof getPlanCheckoutSummary>
+  let appUrl: string
+
+  try {
+    stripe = getStripeClient()
+    checkoutPlan = getPlanCheckoutSummary(parsed.data.plan)
+    appUrl = getAppUrl(req)
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Stripe is not configured'
+    res.status(503).json({ error: message })
+    return
+  }
+
+  let customerId = shop.stripeCustomerId
+
+  if (!customerId) {
+    const customer = await stripe.customers.create({
+      name: shop.name,
+      metadata: {
+        barbershopId: shop.id,
+        slug: shop.slug,
+      },
+    })
+    customerId = customer.id
+
+    await prisma.barbershop.update({
+      where: { id: shop.id },
+      data: { stripeCustomerId: customerId },
+    })
+  }
+
+  const session = await stripe.checkout.sessions.create({
+    mode: 'subscription',
+    customer: customerId,
+    success_url: `${appUrl}/admin/billing?checkout=success`,
+    cancel_url: `${appUrl}/admin/billing?checkout=cancel`,
+    line_items: [
+      {
+        price: checkoutPlan.priceId,
+        quantity: 1,
+      },
+    ],
+    allow_promotion_codes: true,
+    metadata: {
+      barbershopId: shop.id,
+      plan: checkoutPlan.plan,
+    },
+    subscription_data: {
+      metadata: {
+        barbershopId: shop.id,
+        plan: checkoutPlan.plan,
+      },
+    },
+  })
+
+  res.json({ url: session.url })
+}
+
+export async function createBillingPortalSession(req: Request, res: Response) {
+  const shop = await prisma.barbershop.findUnique({
+    where: { id: req.auth.barbershopId },
+    select: {
+      stripeCustomerId: true,
+    },
+  })
+
+  if (!shop?.stripeCustomerId) {
+    res.status(409).json({ error: 'Ainda não existe um cliente Stripe associado a esta conta.' })
+    return
+  }
+
+  let stripe: ReturnType<typeof getStripeClient>
+  let appUrl: string
+
+  try {
+    stripe = getStripeClient()
+    appUrl = getAppUrl(req)
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Stripe is not configured'
+    res.status(503).json({ error: message })
+    return
+  }
+  const session = await stripe.billingPortal.sessions.create({
+    customer: shop.stripeCustomerId,
+    return_url: `${appUrl}/admin/billing`,
+  })
+
+  res.json({ url: session.url })
 }
 
 export async function updateBarbershop(req: Request, res: Response) {
