@@ -9,7 +9,8 @@ import { authApi } from '@/lib/api'
 import { useAuthStore } from '@/store/auth'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
-import { ArrowRight, Clock3, Scissors, ShieldCheck, Sparkles } from 'lucide-react'
+import { AppMark } from '@/components/ui/AppMark'
+import { ArrowRight, Building2, Clock3, ShieldCheck, Sparkles } from 'lucide-react'
 import { applyPlatformAccent } from '@/lib/theme'
 
 const schema = z.object({
@@ -60,8 +61,14 @@ export default function Login() {
     <div className="min-h-screen bg-[linear-gradient(180deg,#fcfcfb_0%,#f3f4f7_100%)] p-4">
       <div className="mx-auto grid min-h-[calc(100vh-2rem)] max-w-6xl gap-8 lg:grid-cols-[minmax(0,1.05fr)_28rem] lg:items-center">
         <section className="hidden rounded-[2rem] bg-zinc-950 px-8 py-10 text-white shadow-[0_30px_80px_-40px_rgba(9,9,11,0.6)] lg:block lg:px-12">
-          <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10">
-            <Scissors size={26} className="text-white" />
+          <div className="max-w-sm">
+            <AppMark
+              icon={Building2}
+              eyebrow="Trimio Admin"
+              title="Trimio Studio"
+              subtitle="Operação, equipa, agenda e faturação no mesmo centro de comando."
+              tone="admin"
+            />
           </div>
           <p className="mt-10 text-[11px] font-semibold uppercase tracking-[0.24em] text-zinc-500">Trimio Admin</p>
           <h1 className="mt-4 max-w-xl text-5xl font-semibold leading-[0.96]">Gere a tua operação com mais controlo e melhor presença.</h1>
@@ -87,8 +94,15 @@ export default function Login() {
 
         <section className="surface-panel w-full rounded-[2rem] border border-white/70 p-6 sm:p-8">
           <div className="mb-8">
-            <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-zinc-950">
-              <Scissors size={24} className="text-white" />
+            <div className="max-w-xs">
+              <AppMark
+                icon={Building2}
+                eyebrow="Acesso admin"
+                title="Trimio Studio"
+                subtitle="Gestão central da operação."
+                tone="admin"
+                compact
+              />
             </div>
             <p className="mt-6 text-[11px] font-semibold uppercase tracking-[0.2em] text-zinc-400">Acesso admin</p>
             <h2 className="mt-3 text-3xl font-semibold text-zinc-950">Entrar no painel da tua barbearia</h2>

@@ -343,3 +343,157 @@ test('public availability respects split barber-specific working hours', { skip:
     '17:30',
   ])
 })
+
+test('customer plan lookup requires matching name and public subscribe plan is blocked', { skip: !integrationEnabled }, async () => {
+  const shop = await prisma.barbershop.create({
+    data: {
+      name: 'Plan Shop',
+      slug: 'plan-shop',
+    },
+  })
+
+  const service = await prisma.service.create({
+    data: {
+      name: 'Plano Corte',
+      price: 12,
+      duration: 30,
+      active: true,
+      barbershopId: shop.id,
+    },
+  })
+
+  const plan = await prisma.plan.create({
+    data: {
+      name: 'VIP',
+      price: 29,
+      intervalDays: 30,
+      allowedDays: '1,2,3,4,5,6,0',
+      active: true,
+      barbershopId: shop.id,
+      planServices: {
+        create: [{ serviceId: service.id }],
+      },
+    },
+  })
+
+  await prisma.customer.create({
+    data: {
+      name: 'Cliente Certo',
+      phone: '911111111',
+      barbershopId: shop.id,
+      planId: plan.id,
+    },
+  })
+
+  const wrongNameLookup = await jsonRequest(`/api/public/${shop.slug}/customer-plan`, {
+    method: 'POST',
+    body: JSON.stringify({ phone: '911111111', name: 'Nome Errado' }),
+  })
+
+  assert.equal(wrongNameLookup.response.status, 200)
+  assert.equal(wrongNameLookup.body.customer, null)
+
+  const rightLookup = await jsonRequest(`/api/public/${shop.slug}/customer-plan`, {
+    method: 'POST',
+    body: JSON.stringify({ phone: '911111111', name: 'Cliente Certo' }),
+  })
+
+  assert.equal(rightLookup.response.status, 200)
+  assert.equal(rightLookup.body.customer.name, 'Cliente Certo')
+  assert.equal(rightLookup.body.customer.plan.name, 'VIP')
+
+  const subscribeAttempt = await jsonRequest(`/api/public/${shop.slug}/subscribe-plan`, {
+    method: 'POST',
+    body: JSON.stringify({ planId: plan.id, name: 'Cliente Certo', phone: '911111111' }),
+  })
+
+  assert.equal(subscribeAttempt.response.status, 403)
+})
+
+test('cancelled bookings do not consume monthly booking quota', { skip: !integrationEnabled }, async () => {
+  const bookingDate = new Date()
+  bookingDate.setDate(bookingDate.getDate() + 3)
+  bookingDate.setHours(9, 0, 0, 0)
+
+  const shop = await prisma.barbershop.create({
+    data: {
+      name: 'Quota Shop',
+      slug: 'quota-shop',
+      subscriptionPlan: 'FREE',
+    },
+  })
+
+  const barber = await prisma.barber.create({
+    data: {
+      name: 'Quota Barber',
+      barbershopId: shop.id,
+      active: true,
+    },
+  })
+
+  const service = await prisma.service.create({
+    data: {
+      name: 'Corte',
+      price: 15,
+      duration: 30,
+      active: true,
+      barbershopId: shop.id,
+    },
+  })
+
+  const customer = await prisma.customer.create({
+    data: {
+      name: 'Cliente Quota',
+      phone: '922222222',
+      barbershopId: shop.id,
+    },
+  })
+
+  await prisma.workingHours.create({
+    data: {
+      dayOfWeek: bookingDate.getDay(),
+      startTime: '09:00',
+      endTime: '18:00',
+      active: true,
+      barberId: barber.id,
+      barbershopId: shop.id,
+    },
+  })
+
+  const monthStart = new Date(bookingDate.getFullYear(), bookingDate.getMonth(), 1)
+  const cancelledBookings = Array.from({ length: 30 }, (_, index) => {
+    const startTime = new Date(monthStart)
+    startTime.setDate(monthStart.getDate() + index)
+    startTime.setHours(9, 0, 0, 0)
+    const endTime = new Date(startTime.getTime() + 30 * 60 * 1000)
+
+    return {
+      startTime,
+      endTime,
+      status: 'CANCELLED',
+      totalPrice: 15,
+      totalDuration: 30,
+      barberId: barber.id,
+      customerId: customer.id,
+      barbershopId: shop.id,
+    }
+  })
+
+  await prisma.booking.createMany({ data: cancelledBookings })
+
+  const booking = await jsonRequest(`/api/public/${shop.slug}/bookings`, {
+    method: 'POST',
+    body: JSON.stringify({
+      barberId: barber.id,
+      serviceIds: [service.id],
+      startTime: bookingDate.toISOString(),
+      customer: {
+        name: 'Cliente Quota',
+        phone: '922222222',
+        email: 'quota@test.dev',
+      },
+    }),
+  })
+
+  assert.equal(booking.response.status, 201)
+})

@@ -4,6 +4,7 @@
  * all scheduling math to the pure functions in scheduling.ts.
  */
 
+import { PrismaClient, Prisma } from '@prisma/client'
 import { prisma } from '../lib/prisma'
 import {
   computeAvailableSlots,
@@ -14,6 +15,8 @@ import {
 } from './scheduling'
 
 export type { Slot }
+
+type AvailabilityDbClient = PrismaClient | Prisma.TransactionClient
 
 function parseDateOnly(date: string): Date {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date)
@@ -33,22 +36,23 @@ function parseDateOnly(date: string): Date {
 async function resolveWorkingHours(
   barberId: string,
   barbershopId: string,
-  dayOfWeek: number
+  dayOfWeek: number,
+  db: AvailabilityDbClient = prisma
 ) {
-  const specific = await prisma.workingHours.findMany({
+  const specific = await db.workingHours.findMany({
     where: { barbershopId, barberId, dayOfWeek, active: true },
     orderBy: { startTime: 'asc' },
   })
   if (specific.length > 0) return specific
 
-  return prisma.workingHours.findMany({
+  return db.workingHours.findMany({
     where: { barbershopId, barberId: null, dayOfWeek, active: true },
     orderBy: { startTime: 'asc' },
   })
 }
 
-async function getSlotGranularityMinutes(barbershopId: string): Promise<number> {
-  const shop = await prisma.barbershop.findUnique({
+async function getSlotGranularityMinutes(barbershopId: string, db: AvailabilityDbClient = prisma): Promise<number> {
+  const shop = await db.barbershop.findUnique({
     where: { id: barbershopId },
     select: { slotGranularityMinutes: true },
   })
@@ -136,9 +140,10 @@ export async function checkOverlap(
   barberId: string,
   startTime: Date,
   endTime: Date,
-  excludeBookingId?: string
+  excludeBookingId?: string,
+  db: AvailabilityDbClient = prisma
 ): Promise<boolean> {
-  const booking = await prisma.booking.findFirst({
+  const booking = await db.booking.findFirst({
     where: {
       barberId,
       status: { notIn: ['CANCELLED'] },
@@ -158,9 +163,10 @@ export async function checkBlockedTime(
   barberId: string,
   barbershopId: string,
   startTime: Date,
-  endTime: Date
+  endTime: Date,
+  db: AvailabilityDbClient = prisma
 ): Promise<boolean> {
-  const blocked = await prisma.blockedTime.findFirst({
+  const blocked = await db.blockedTime.findFirst({
     where: {
       barbershopId,
       OR: [{ barberId }, { barberId: null }],
@@ -180,10 +186,11 @@ export async function isWithinWorkingHours(
   barberId: string,
   barbershopId: string,
   startTime: Date,
-  endTime: Date
+  endTime: Date,
+  db: AvailabilityDbClient = prisma
 ): Promise<boolean> {
   const dayOfWeek = startTime.getDay()
-  const workingHours = await resolveWorkingHours(barberId, barbershopId, dayOfWeek)
+  const workingHours = await resolveWorkingHours(barberId, barbershopId, dayOfWeek, db)
   if (workingHours.length === 0) return false
 
   const base = new Date(startTime)
@@ -206,15 +213,16 @@ export async function validateSlot(
   barbershopId: string,
   startTime: Date,
   endTime: Date,
-  excludeBookingId?: string
+  excludeBookingId?: string,
+  db: AvailabilityDbClient = prisma
 ): Promise<string | null> {
   if (startTime.getTime() < Date.now()) return 'Time slot is in the past'
 
   const [workingHours, granularityMinutes, hasOverlap, isBlocked] = await Promise.all([
-    resolveWorkingHours(barberId, barbershopId, startTime.getDay()),
-    getSlotGranularityMinutes(barbershopId),
-    checkOverlap(barberId, startTime, endTime, excludeBookingId),
-    checkBlockedTime(barberId, barbershopId, startTime, endTime),
+    resolveWorkingHours(barberId, barbershopId, startTime.getDay(), db),
+    getSlotGranularityMinutes(barbershopId, db),
+    checkOverlap(barberId, startTime, endTime, excludeBookingId, db),
+    checkBlockedTime(barberId, barbershopId, startTime, endTime, db),
   ])
 
   const withinHours = workingHours.some((item) => {

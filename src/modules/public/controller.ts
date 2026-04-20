@@ -90,18 +90,29 @@ export async function getPlans(req: Request, res: Response) {
   res.json(plans.map(serializePublicPlan))
 }
 
+const customerPlanLookupSchema = z.object({
+  phone: z.string().min(8),
+  name: z.string().min(2),
+})
+
 export async function lookupCustomerPlan(req: Request, res: Response) {
-  const phone = String(req.query.phone ?? '').trim()
-  if (!phone) {
-    res.status(400).json({ error: 'phone is required' })
+  const parsed = customerPlanLookupSchema.safeParse(req.body)
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.flatten() })
     return
   }
 
   const shop = await resolvePublicTenant(req.params.slug)
   if (!shop) { res.status(404).json({ error: 'Barbershop not found' }); return }
 
+  const { phone, name } = parsed.data
+
   const customer = await prisma.customer.findFirst({
-    where: { phone, barbershopId: shop.id },
+    where: {
+      phone,
+      barbershopId: shop.id,
+      name: { equals: name.trim(), mode: 'insensitive' },
+    },
     include: {
       plan: {
         include: {
@@ -139,22 +150,9 @@ export async function subscribePlan(req: Request, res: Response) {
   const parsed = subscribePlanSchema.safeParse(req.body)
   if (!parsed.success) { res.status(400).json({ error: parsed.error.flatten() }); return }
 
-  const shop = await resolvePublicTenant(req.params.slug)
-  if (!shop) { res.status(404).json({ error: 'Barbershop not found' }); return }
-
-  const { planId, name, phone } = parsed.data
-
-  const plan = await prisma.plan.findFirst({ where: { id: planId, barbershopId: shop.id, active: true } })
-  if (!plan) { res.status(404).json({ error: 'Plano não encontrado.' }); return }
-
-  const customer = await prisma.customer.upsert({
-    where: { phone_barbershopId: { phone, barbershopId: shop.id } },
-    update: { planId: plan.id },
-    create: { name, phone, barbershopId: shop.id, planId: plan.id },
-    select: { id: true, name: true, phone: true, planId: true },
+  res.status(403).json({
+    error: 'A subscrição pública de planos está indisponível sem confirmação de pagamento. Usa o link de pagamento da barbearia ou ativa o plano no painel.',
   })
-
-  res.json({ customer, plan: { id: plan.id, name: plan.name } })
 }
 
 export async function getAvailability(req: Request, res: Response) {

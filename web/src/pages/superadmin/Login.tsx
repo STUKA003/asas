@@ -4,6 +4,7 @@ import { ArrowRight, Building2, Shield, TrendingUp } from 'lucide-react'
 import { superadminApi } from '@/lib/api'
 import { useSuperAuthStore } from '@/store/superauth'
 import { applyPlatformAccent } from '@/lib/theme'
+import { AppMark } from '@/components/ui/AppMark'
 
 export default function SuperAdminLogin() {
   const navigate = useNavigate()
@@ -36,8 +37,14 @@ export default function SuperAdminLogin() {
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_right,rgba(249,115,22,0.12),transparent_24rem),radial-gradient(circle_at_top_left,rgba(59,130,246,0.09),transparent_28rem),linear-gradient(180deg,#090b10_0%,#11151d_100%)] p-4">
       <div className="mx-auto grid min-h-[calc(100vh-2rem)] max-w-5xl gap-8 lg:grid-cols-[minmax(0,1fr)_28rem] lg:items-center">
         <section className="hidden rounded-[2rem] border border-white/10 bg-white/[0.04] px-10 py-12 text-white backdrop-blur-xl lg:block">
-          <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-accent-500">
-            <Shield size={26} className="text-white" />
+          <div className="max-w-sm">
+            <AppMark
+              icon={Shield}
+              eyebrow="Trimio Core"
+              title="Trimio Command"
+              subtitle="Controlo global da plataforma, crescimento, faturação e supervisão."
+              tone="superadmin"
+            />
           </div>
           <p className="mt-10 text-[11px] font-semibold uppercase tracking-[0.24em] text-zinc-500">Platform control</p>
           <h1 className="mt-4 max-w-lg text-5xl font-semibold leading-[0.96]">Visão global sobre adoção, operação e crescimento.</h1>
@@ -59,8 +66,15 @@ export default function SuperAdminLogin() {
 
         <section className="w-full rounded-[2rem] border border-white/10 bg-white/[0.05] p-6 shadow-[0_30px_80px_-40px_rgba(0,0,0,0.7)] backdrop-blur-xl sm:p-8">
           <div className="mb-8">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-accent-500">
-              <Shield size={26} className="text-white" />
+            <div className="max-w-xs">
+              <AppMark
+                icon={Shield}
+                eyebrow="Super admin"
+                title="Trimio Command"
+                subtitle="Supervisão da plataforma."
+                tone="superadmin"
+                compact
+              />
             </div>
             <p className="mt-6 text-[11px] font-semibold uppercase tracking-[0.2em] text-zinc-500">Super admin</p>
             <h1 className="mt-3 text-3xl font-semibold text-white">Entrar no controlo da plataforma</h1>

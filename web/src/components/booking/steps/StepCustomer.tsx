@@ -47,10 +47,11 @@ export function StepCustomer() {
     defaultValues: customer ?? { name: '', phone: '', email: '', notes: '' },
   })
   const phone = watch('phone') ?? ''
+  const name = watch('name') ?? ''
   const { data: customerLookup } = useQuery({
-    queryKey: ['public', slug, 'customer-plan', phone],
-    queryFn: () => publicApi(slug).customerPlan(phone.trim()),
-    enabled: !!slug && phone.trim().length >= 8,
+    queryKey: ['public', slug, 'customer-plan', phone, name],
+    queryFn: () => publicApi(slug).customerPlan({ phone: phone.trim(), name: name.trim() }),
+    enabled: !!slug && phone.trim().length >= 8 && name.trim().length >= 2,
   })
 
   const knownCustomer = (customerLookup as CustomerPlanLookup | undefined)?.customer

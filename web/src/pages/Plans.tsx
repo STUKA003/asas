@@ -56,7 +56,7 @@ function SubscribeModal({ plan, slug, onClose }: { plan: Plan; slug: string; onC
             </div>
             <p className="font-bold text-lg">Plano ativado!</p>
             <p className="text-sm text-zinc-500 mt-1">
-              O plano <strong>{plan.name}</strong> foi associado à tua conta.
+              O pedido para <strong>{plan.name}</strong> foi registado.
             </p>
             <Button className="mt-6 w-full" onClick={onClose}>Fechar</Button>
           </div>
@@ -86,6 +86,11 @@ function SubscribeModal({ plan, slug, onClose }: { plan: Plan; slug: string; onC
             {mutation.isError && (
               <p className="text-sm text-red-600 bg-red-50 rounded-xl px-3 py-2">
                 {(mutation.error as { response?: { data?: { error?: string } } })?.response?.data?.error ?? 'Erro ao assinar plano.'}
+              </p>
+            )}
+            {!plan.paymentLink && (
+              <p className="text-sm text-amber-700 bg-amber-50 rounded-xl px-3 py-2">
+                Este plano só pode ser ativado após confirmação de pagamento ou diretamente pela barbearia.
               </p>
             )}
             <Button type="submit" className="w-full" loading={mutation.isPending}>
@@ -199,9 +204,9 @@ export default function Plans() {
                           <Button
                             variant={highlighted ? 'secondary' : 'primary'}
                             className={highlighted ? 'bg-white tenant-ink hover:bg-zinc-100' : ''}
-                            onClick={() => setSelectedPlan(p)}
+                            disabled
                           >
-                            Assinar agora
+                            Pagamento indisponível
                           </Button>
                         )}
                       </div>

@@ -1,4 +1,6 @@
 import { prisma } from '../../lib/prisma'
+import { validateSlot } from '../../utils/availability'
+import { lockBarberForUpdate, lockProductsForUpdate } from '../../lib/transaction-locks'
 
 interface AddBookingItemsInput {
   bookingId: string
@@ -23,6 +25,8 @@ export async function addBookingItemsToBooking(input: AddBookingItemsInput) {
     where: { id: bookingId, barbershopId },
     select: {
       id: true,
+      barberId: true,
+      startTime: true,
       endTime: true,
       totalPrice: true,
       totalDuration: true,
@@ -42,15 +46,29 @@ export async function addBookingItemsToBooking(input: AddBookingItemsInput) {
   if (extras.length !== extraIds.length) throw new Error('EXTRAS_NOT_FOUND')
   if (products.length !== productIds.length) throw new Error('PRODUCTS_NOT_FOUND')
 
-  const unavailableProduct = products.find((product) => product.stock <= 0)
-  if (unavailableProduct) throw new Error(`PRODUCT_OUT_OF_STOCK:${unavailableProduct.name}`)
-
   const addedDuration = extras.reduce((sum, extra) => sum + extra.duration, 0)
   const addedPrice =
     extras.reduce((sum, extra) => sum + Number(extra.price), 0) +
     products.reduce((sum, product) => sum + Number(product.price), 0)
 
   return prisma.$transaction(async (tx) => {
+    await lockBarberForUpdate(tx, booking.barberId)
+    await lockProductsForUpdate(tx, products.map((product) => product.id))
+
+    const nextEndTime = new Date(booking.endTime.getTime() + addedDuration * 60 * 1000)
+
+    if (addedDuration > 0) {
+      const slotError = await validateSlot(
+        booking.barberId,
+        barbershopId,
+        booking.startTime,
+        nextEndTime,
+        booking.id,
+        tx
+      )
+      if (slotError) throw new Error(slotError)
+    }
+
     if (extras.length > 0) {
       await tx.bookingExtra.createMany({
         data: extras.map((extra) => ({
@@ -63,6 +81,17 @@ export async function addBookingItemsToBooking(input: AddBookingItemsInput) {
     }
 
     if (products.length > 0) {
+      for (const product of products) {
+        const updated = await tx.product.updateMany({
+          where: { id: product.id, stock: { gt: 0 } },
+          data: { stock: { decrement: 1 } },
+        })
+
+        if (updated.count === 0) {
+          throw new Error(`PRODUCT_OUT_OF_STOCK:${product.name}`)
+        }
+      }
+
       await tx.bookingProduct.createMany({
         data: products.map((product) => ({
           bookingId: booking.id,
@@ -70,13 +99,6 @@ export async function addBookingItemsToBooking(input: AddBookingItemsInput) {
           price: product.price,
         })),
       })
-
-      for (const product of products) {
-        await tx.product.update({
-          where: { id: product.id },
-          data: { stock: { decrement: 1 } },
-        })
-      }
     }
 
     return tx.booking.update({
@@ -84,7 +106,7 @@ export async function addBookingItemsToBooking(input: AddBookingItemsInput) {
       data: {
         totalPrice: booking.totalPrice + addedPrice,
         totalDuration: booking.totalDuration + addedDuration,
-        endTime: new Date(booking.endTime.getTime() + addedDuration * 60 * 1000),
+        endTime: nextEndTime,
       },
       include,
     })

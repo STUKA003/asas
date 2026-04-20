@@ -7,6 +7,7 @@ import { barberAuthApi } from '@/lib/api'
 import { useBarberAuthStore } from '@/store/barberAuth'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
+import { AppMark } from '@/components/ui/AppMark'
 import { ArrowRight, Calendar, Scissors, UserRound } from 'lucide-react'
 import { applyAccentColor, applyPlatformAccent } from '@/lib/theme'
 
@@ -49,8 +50,14 @@ export default function BarberLogin() {
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(249,115,22,0.14),transparent_24rem),linear-gradient(180deg,#09090b_0%,#121417_100%)] p-4">
       <div className="mx-auto grid min-h-[calc(100vh-2rem)] max-w-5xl gap-8 lg:grid-cols-[minmax(0,1fr)_28rem] lg:items-center">
         <section className="hidden rounded-[2rem] border border-white/10 bg-white/[0.04] px-8 py-10 text-white backdrop-blur-xl lg:block">
-          <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-accent-500">
-            <Scissors size={24} className="text-white" />
+          <div className="max-w-sm">
+            <AppMark
+              icon={Scissors}
+              eyebrow="Trimio Barber"
+              title="Trimio Flow"
+              subtitle="Agenda pessoal, clientes e ritmo diário num espaço focado no barbeiro."
+              tone="barber"
+            />
           </div>
           <p className="mt-10 text-[11px] font-semibold uppercase tracking-[0.22em] text-zinc-500">Portal do barbeiro</p>
           <h1 className="mt-4 max-w-lg text-5xl font-semibold leading-[0.96]">A tua agenda, os teus clientes, o teu ritmo.</h1>
@@ -72,8 +79,15 @@ export default function BarberLogin() {
 
         <section className="w-full rounded-[2rem] border border-white/10 bg-zinc-900/88 p-6 shadow-[0_30px_80px_-42px_rgba(0,0,0,0.75)] backdrop-blur-xl sm:p-8">
           <div className="mb-8">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-accent-500">
-              <Scissors size={24} className="text-white" />
+            <div className="max-w-xs">
+              <AppMark
+                icon={Scissors}
+                eyebrow="Acesso barbeiro"
+                title="Trimio Flow"
+                subtitle="Operação individual do barbeiro."
+                tone="barber"
+                compact
+              />
             </div>
             <p className="mt-6 text-[11px] font-semibold uppercase tracking-[0.2em] text-zinc-500">Acesso exclusivo</p>
             <h1 className="mt-3 text-3xl font-semibold text-white">Entrar no portal do barbeiro</h1>

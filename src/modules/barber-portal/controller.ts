@@ -272,6 +272,10 @@ export async function addBookingItems(req: Request, res: Response) {
     if (!(error instanceof Error)) throw error
     if (error.message === 'EXTRAS_NOT_FOUND') { res.status(422).json({ error: 'One or more extras not found' }); return }
     if (error.message === 'PRODUCTS_NOT_FOUND') { res.status(422).json({ error: 'One or more products not found' }); return }
+    if (error.message.startsWith('Time slot ')) { res.status(422).json({ error: error.message }); return }
+    if (error.message === 'Barber already has a booking in this time slot') { res.status(422).json({ error: error.message }); return }
+    if (error.message === 'Time slot is blocked') { res.status(422).json({ error: error.message }); return }
+    if (error.message === 'Time slot is in the past') { res.status(422).json({ error: error.message }); return }
     if (error.message.startsWith('PRODUCT_OUT_OF_STOCK:')) {
       res.status(422).json({ error: `Product out of stock: ${error.message.split(':').slice(1).join(':')}` })
       return

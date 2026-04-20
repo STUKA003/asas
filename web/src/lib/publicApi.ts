@@ -43,7 +43,7 @@ export function publicApi(slug: string) {
     extras:       ()                              => http.get<Extra[]>(`${base}/extras`).then((r) => r.data),
     products:     ()                              => http.get<Product[]>(`${base}/products`).then((r) => r.data),
     plans:        ()                              => http.get<Plan[]>(`${base}/plans`).then((r) => r.data),
-    customerPlan:  (phone: string)                => http.get<CustomerPlanLookup>(`${base}/customer-plan`, { params: { phone } }).then((r) => r.data),
+    customerPlan:  (p: { phone: string; name: string }) => http.post<CustomerPlanLookup>(`${base}/customer-plan`, p).then((r) => r.data),
     subscribePlan: (p: { planId: string; name: string; phone: string }) => http.post(`${base}/subscribe-plan`, p).then((r) => r.data),
     availability:  (p: AvailabilityParams)        => http.get<AvailabilityResponse>(`${base}/availability`, { params: p }).then((r) => r.data),
     createBooking: (p: CreateBookingPayload)       => http.post(`${base}/bookings`, p).then((r) => r.data),

@@ -1,4 +1,5 @@
 import { Router } from 'express'
+import { publicAvailabilityLimiter, publicLookupLimiter, publicWriteLimiter } from '../../middlewares/rateLimiter'
 import {
   getBarbershop,
   getServices,
@@ -21,9 +22,9 @@ router.get('/barbers',      getBarbers)
 router.get('/extras',       getExtras)
 router.get('/products',     getProducts)
 router.get('/plans',        getPlans)
-router.get('/customer-plan', lookupCustomerPlan)
-router.post('/subscribe-plan', subscribePlan)
-router.get('/availability', getAvailability)
-router.post('/bookings',    createPublicBooking)
+router.post('/customer-plan', publicLookupLimiter, lookupCustomerPlan)
+router.post('/subscribe-plan', publicWriteLimiter, subscribePlan)
+router.get('/availability', publicAvailabilityLimiter, getAvailability)
+router.post('/bookings',    publicWriteLimiter, createPublicBooking)
 
 export default router
