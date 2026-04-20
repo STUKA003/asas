@@ -340,49 +340,47 @@ export default function Bookings() {
               />
             )}
 
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between gap-3 mb-4">
-                  <div>
-                    <p className="font-semibold">Bloqueios do dia</p>
-                    <p className="text-xs text-zinc-400">Use isto para imprevistos, almoço excepcional ou ausência temporária.</p>
-                  </div>
-                  <Button size="sm" variant="outline" className="gap-2" onClick={() => openBlockedModal()}>
-                    <Plus size={14} />
-                    Novo bloqueio
-                  </Button>
+            <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-4 py-4 shadow-sm">
+              <div className="flex items-center justify-between gap-3 mb-3">
+                <div>
+                  <p className="text-sm font-semibold">Horários bloqueados</p>
+                  <p className="text-xs text-zinc-400">Bloqueios pontuais para este dia — ausências, imprevistos ou almoços fora do horário habitual.</p>
                 </div>
+                <Button size="sm" variant="outline" className="gap-1.5 shrink-0" onClick={() => openBlockedModal()}>
+                  <Ban size={13} />
+                  Bloquear
+                </Button>
+              </div>
 
-                {blockedTimes.length === 0 ? (
-                  <p className="py-4 text-sm text-zinc-400 text-center">Sem bloqueios neste dia.</p>
-                ) : (
-                  <div className="space-y-3">
-                    {blockedTimes.map((block) => (
-                      <div key={block.id} className="flex flex-col gap-3 rounded-2xl border border-zinc-100 px-4 py-3 dark:border-zinc-800 sm:flex-row sm:items-center sm:justify-between">
-                        <div>
-                          <p className="text-sm font-medium">
-                            {format(new Date(block.startTime), 'HH:mm')} - {format(new Date(block.endTime), 'HH:mm')}
-                            {' · '}
-                            {block.barber?.name ?? 'Todos os barbeiros'}
+              {blockedTimes.length === 0 ? (
+                <p className="py-3 text-xs text-zinc-400 text-center">Sem bloqueios para este dia.</p>
+              ) : (
+                <div className="space-y-2">
+                  {blockedTimes.map((block) => (
+                    <div key={block.id} className="flex items-center justify-between gap-3 rounded-xl border border-zinc-100 dark:border-zinc-800 px-3 py-2.5">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <span className="shrink-0 h-2 w-2 rounded-full bg-red-400" />
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium leading-tight">
+                            {format(new Date(block.startTime), 'HH:mm')}–{format(new Date(block.endTime), 'HH:mm')}
+                            <span className="ml-2 text-xs font-normal text-zinc-400">{block.barber?.name ?? 'Todos'}</span>
                           </p>
-                          <p className="text-xs text-zinc-400">{block.reason || 'Sem motivo definido'}</p>
+                          {block.reason && <p className="text-xs text-zinc-400 truncate">{block.reason}</p>}
                         </div>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="gap-2 text-red-500 hover:text-red-600"
-                          disabled={removeBlockedTime.isPending}
-                          onClick={() => removeBlockedTime.mutate(block.id)}
-                        >
-                          <Trash2 size={14} />
-                          Remover
-                        </Button>
                       </div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+                      <button
+                        className="shrink-0 text-zinc-400 hover:text-red-500 transition-colors"
+                        disabled={removeBlockedTime.isPending}
+                        onClick={() => removeBlockedTime.mutate(block.id)}
+                        aria-label="Remover bloqueio"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </>
         )}
 
