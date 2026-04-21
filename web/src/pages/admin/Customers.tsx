@@ -5,11 +5,13 @@ import { pt } from 'date-fns/locale'
 import { Users, UserCheck, Search, X, Download, Upload } from 'lucide-react'
 import { customersApi, customersImportApi, plansApi } from '@/lib/api'
 import { AdminLayout } from '@/components/layout/AdminLayout'
+import { PageHeader } from '@/components/layout/PanelShell'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { DataTable } from '@/components/admin/DataTable'
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
+import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { formatCurrency } from '@/lib/utils'
 import { StatusBadge } from '@/components/ui/Badge'
@@ -271,76 +273,81 @@ export default function Customers() {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        {/* Page header */}
-        <div>
-          <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">Clientes</h1>
-          <p className="text-zinc-500 text-sm mt-0.5">
-            {data.length} cliente{data.length !== 1 ? 's' : ''} registado{data.length !== 1 ? 's' : ''}
-          </p>
-        </div>
+        <PageHeader
+          title="Clientes"
+          subtitle={`${data.length} cliente${data.length !== 1 ? 's' : ''} registado${data.length !== 1 ? 's' : ''}. Pesquisa, filtra e abre detalhe sem ruído visual.`}
+          actions={
+            <>
+              <Button type="button" variant="outline" className="gap-1.5" onClick={handleExport} disabled={!data.length}>
+                <Download size={14} /> Exportar CSV
+              </Button>
+              <label className="inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-neutral-200 bg-white px-4 py-2.5 text-sm font-medium text-ink shadow-soft transition hover:bg-neutral-50">
+                <Upload size={14} /> {importMutation.isPending ? 'A importar…' : 'Importar CSV'}
+                <input type="file" accept=".csv,text/csv" className="hidden" onChange={handleImport} />
+              </label>
+            </>
+          }
+        />
 
-        {/* KPI summary */}
         <div className="grid gap-4 sm:grid-cols-2">
-          <div className="rounded-2xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 shadow-sm">
+          <div className="rounded-2xl border border-neutral-200 bg-white p-4 shadow-soft">
             <div className="flex items-center gap-3 mb-2">
-              <div className="h-9 w-9 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-50">
                 <Users size={17} className="text-blue-500" />
               </div>
-              <p className="text-xs text-zinc-500 font-medium">Total de clientes</p>
+              <p className="text-xs font-medium text-ink-muted">Total de clientes</p>
             </div>
-            <p className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{data.length}</p>
+            <p className="text-2xl font-bold text-ink">{data.length}</p>
           </div>
-          <div className="rounded-2xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 shadow-sm">
+          <div className="rounded-2xl border border-neutral-200 bg-white p-4 shadow-soft">
             <div className="flex items-center gap-3 mb-2">
-              <div className="h-9 w-9 rounded-xl bg-violet-50 dark:bg-violet-900/20 flex items-center justify-center">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-neutral-50">
                 <UserCheck size={17} className="text-violet-500" />
               </div>
-              <p className="text-xs text-zinc-500 font-medium">Com plano ativo</p>
+              <p className="text-xs font-medium text-ink-muted">Com plano ativo</p>
             </div>
-            <p className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{withPlanCount}</p>
+            <p className="text-2xl font-bold text-ink">{withPlanCount}</p>
           </div>
         </div>
 
-        {/* Filter bar */}
-        <div className="flex flex-col gap-2 xl:flex-row">
-          <div className="relative flex-1">
-            <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none" />
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Pesquisar nome, telefone ou e-mail…"
-              className="h-10 w-full pl-9 pr-3 text-sm rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-accent-500 placeholder-zinc-400"
-            />
-          </div>
-          <Select className="w-full xl:w-52" options={planOptions} value={planId} onChange={(e) => setPlanId(e.target.value)} />
-          <Select className="w-full xl:w-52" options={planStatusOptions} value={hasPlan} onChange={(e) => setHasPlan(e.target.value)} disabled={!!planId} />
-          {hasActiveFilters && (
-            <Button
-              type="button"
-              variant="outline"
-              className="gap-1.5 xl:shrink-0"
-              onClick={() => { setQuery(''); setPlanId(''); setHasPlan('') }}
-            >
-              <X size={13} /> Limpar
-            </Button>
-          )}
-          <Button type="button" variant="outline" className="gap-1.5 xl:shrink-0" onClick={handleExport} disabled={!data.length}>
-            <Download size={14} /> Exportar CSV
-          </Button>
-          <label className="inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-[18px] border border-zinc-200/80 bg-white/80 px-4 py-2 text-sm font-semibold text-zinc-700 shadow-[0_12px_24px_-20px_rgba(15,23,42,0.35)] transition-all hover:-translate-y-0.5 hover:bg-white dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-300">
-            <Upload size={14} /> {importMutation.isPending ? 'A importar…' : 'Importar CSV'}
-            <input type="file" accept=".csv,text/csv" className="hidden" onChange={handleImport} />
-          </label>
-        </div>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="grid gap-3 xl:grid-cols-[minmax(0,1.5fr)_220px_220px_auto] xl:items-end">
+              <div className="relative">
+                <Search size={15} className="pointer-events-none absolute left-3.5 top-[2.9rem] -translate-y-1/2 text-ink-muted" />
+                <Input
+                  label="Pesquisar"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Nome, telefone ou e-mail"
+                  className="pl-10"
+                />
+              </div>
+              <Select label="Plano" options={planOptions} value={planId} onChange={(e) => setPlanId(e.target.value)} />
+              <Select label="Estado do plano" options={planStatusOptions} value={hasPlan} onChange={(e) => setHasPlan(e.target.value)} disabled={!!planId} />
+              <div className="flex gap-2 xl:justify-end">
+                {hasActiveFilters && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="gap-1.5"
+                    onClick={() => { setQuery(''); setPlanId(''); setHasPlan('') }}
+                  >
+                    <X size={13} /> Limpar
+                  </Button>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {(importMessage || importError) && (
-          <div className={`rounded-2xl border px-4 py-3 text-sm ${importError ? 'border-red-200 bg-red-50 text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300' : 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300'}`}>
+          <div className={`rounded-2xl border px-4 py-3 text-sm ${importError ? 'border-danger-100 bg-danger-50 text-danger-700' : 'border-success-100 bg-success-50 text-success-700'}`}>
             {importError ?? importMessage}
           </div>
         )}
 
-        <div className="rounded-2xl border border-zinc-200/80 bg-white/70 px-4 py-3 text-sm text-zinc-500">
+        <div className="rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm text-ink-muted">
           Formato CSV esperado: `name`, `phone`, `email`, `notes`. Se o telefone já existir, o cliente é atualizado; se não existir, é criado.
         </div>
 
@@ -358,31 +365,34 @@ export default function Customers() {
                   label: 'Cliente',
                   render: (customer) => (
                     <div className="flex items-center gap-3">
-                      <div className="h-8 w-8 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center shrink-0">
-                        <span className="text-xs font-bold text-accent-700 dark:text-accent-300">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-50">
+                        <span className="text-xs font-bold text-primary-700">
                           {customer.name.charAt(0).toUpperCase()}
                         </span>
                       </div>
-                      <span className="font-medium text-zinc-900 dark:text-zinc-100">{customer.name}</span>
+                      <div className="min-w-0">
+                        <span className="block truncate font-medium text-ink">{customer.name}</span>
+                        <span className="block text-xs text-ink-muted">{customer.email || customer.phone || 'Sem contacto principal'}</span>
+                      </div>
                     </div>
                   ),
                 },
                 {
                   key: 'phone',
                   label: 'Telefone',
-                  render: (customer) => <span className="text-zinc-500">{customer.phone || '—'}</span>,
+                  render: (customer) => <span className="text-ink-muted">{customer.phone || '—'}</span>,
                 },
                 {
                   key: 'email',
                   label: 'E-mail',
-                  render: (customer) => <span className="text-zinc-500">{customer.email || '—'}</span>,
+                  render: (customer) => <span className="text-ink-muted">{customer.email || '—'}</span>,
                 },
                 {
                   key: 'plan',
                   label: 'Plano',
                   render: (customer) => customer.plan?.name
                     ? <Badge>{customer.plan.name}</Badge>
-                    : <span className="text-zinc-400 text-xs">—</span>,
+                    : <span className="text-xs text-ink-muted">—</span>,
                 },
               ]}
             />

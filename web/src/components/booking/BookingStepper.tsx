@@ -12,8 +12,21 @@ export function BookingStepper({
 }) {
   return (
     <div className="w-full">
-      {/* Desktop */}
-      <div className="hidden rounded-[1.75rem] border border-white/70 bg-white/75 p-4 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.22)] sm:flex sm:items-center sm:justify-between">
+      <div className="hidden rounded-3xl border border-neutral-200 bg-white p-5 shadow-medium sm:block">
+        <div className="mb-4 flex items-center justify-between">
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-ink-muted">Progresso</p>
+            <p className="mt-1 text-sm font-medium text-ink">Passo {current + 1} de {steps.length}</p>
+          </div>
+          <div className="h-2 w-32 overflow-hidden rounded-full bg-neutral-100">
+            <div
+              className="h-full rounded-full bg-primary-600 transition-all"
+              style={{ width: `${((current + 1) / steps.length) * 100}%` }}
+            />
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between">
         {steps.map((label, i) => {
           const done = i < current
           const clickable = done && !!onStepClick
@@ -23,11 +36,11 @@ export function BookingStepper({
                 <div
                   onClick={() => clickable && onStepClick(i)}
                   className={cn(
-                    'flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold transition-all',
-                    done      && 'bg-zinc-950 text-white',
-                    i === current && 'bg-zinc-950 text-white ring-4 ring-zinc-200/80',
-                    i > current   && 'bg-zinc-100 dark:bg-zinc-800 text-zinc-400',
-                    clickable && 'cursor-pointer hover:brightness-90 active:scale-95',
+                    'flex h-11 w-11 items-center justify-center rounded-full border text-sm font-semibold transition',
+                    done && 'border-primary-600 bg-primary-600 text-white',
+                    i === current && 'border-primary-600 bg-primary-600 text-white ring-4 ring-primary-100',
+                    i > current && 'border-neutral-200 bg-white text-ink-muted',
+                    clickable && 'cursor-pointer hover:brightness-95 active:scale-95',
                   )}
                 >
                   {done ? <Check size={14} /> : i + 1}
@@ -36,29 +49,29 @@ export function BookingStepper({
                   onClick={() => clickable && onStepClick(i)}
                   className={cn(
                     'whitespace-nowrap text-xs font-semibold uppercase tracking-[0.14em] transition-colors',
-                    i <= current ? 'text-zinc-900 dark:text-zinc-100' : 'text-zinc-400',
-                    clickable && 'cursor-pointer hover:text-accent-600',
+                    i <= current ? 'text-ink' : 'text-ink-muted',
+                    clickable && 'cursor-pointer hover:text-primary-700',
                   )}
                 >
                   {label}
                 </span>
               </div>
               {i < steps.length - 1 && (
-                <div className={cn('mx-3 mb-6 h-0.5 flex-1 transition-colors', i < current ? 'bg-zinc-950' : 'bg-zinc-200 dark:bg-zinc-800')} />
+                <div className={cn('mx-3 mb-6 h-0.5 flex-1 transition-colors', i < current ? 'bg-primary-600' : 'bg-neutral-200')} />
               )}
             </div>
           )
         })}
+        </div>
       </div>
 
-      {/* Mobile — tappable completed dots */}
-      <div className="flex items-center gap-3 rounded-[1.5rem] border border-white/70 bg-white/80 p-4 shadow-[0_16px_34px_-24px_rgba(15,23,42,0.2)] sm:hidden">
-        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-zinc-950 text-sm font-bold text-white">
+      <div className="flex items-center gap-3 rounded-3xl border border-neutral-200 bg-white p-4 shadow-soft sm:hidden">
+        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-primary-600 text-sm font-bold text-white">
           {current + 1}
         </div>
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-400">Passo {current + 1} de {steps.length}</p>
-          <p className="text-sm font-semibold text-zinc-950">{steps[current]}</p>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink-muted">Passo {current + 1} de {steps.length}</p>
+          <p className="text-sm font-semibold text-ink">{steps[current]}</p>
         </div>
         <div className="flex-1 ml-2 flex items-center gap-1">
           {steps.map((_, i) => (
@@ -67,9 +80,9 @@ export function BookingStepper({
               onClick={() => i < current && onStepClick?.(i)}
               className={cn(
                 'h-2 rounded-full transition-all',
-                i < current   && 'bg-zinc-950 flex-1 cursor-pointer hover:brightness-90',
-                i === current && 'bg-zinc-950 flex-[2]',
-                i > current   && 'bg-zinc-200 dark:bg-zinc-700 flex-1',
+                i < current && 'bg-primary-600 flex-1 cursor-pointer hover:brightness-90',
+                i === current && 'bg-primary-600 flex-[2]',
+                i > current && 'bg-neutral-200 flex-1',
               )}
             />
           ))}

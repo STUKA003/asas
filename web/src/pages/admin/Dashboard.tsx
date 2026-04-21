@@ -1,8 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
 import { bookingsApi, barbersApi, customersApi } from '@/lib/api'
 import { AdminLayout } from '@/components/layout/AdminLayout'
+import { PageHeader } from '@/components/layout/PanelShell'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { StatusBadge } from '@/components/ui/Badge'
+import { Button } from '@/components/ui/Button'
 import { PageLoader } from '@/components/ui/Spinner'
 import { formatCurrency } from '@/lib/utils'
 import {
@@ -26,6 +28,7 @@ import {
   TriangleAlert,
   Users,
 } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import type { Booking, Barber, Customer } from '@/lib/types'
 
 function getChange(current: number, previous: number) {
@@ -224,6 +227,17 @@ export default function Dashboard() {
   return (
     <AdminLayout>
       <div className="space-y-6 lg:space-y-8">
+        <PageHeader
+          title="Dashboard"
+          subtitle="Visão consolidada do dia, desempenho mensal e sinais rápidos para atuação."
+          actions={
+            <Link to="/admin/bookings">
+              <Button size="sm">Ver agendamentos</Button>
+            </Link>
+          }
+        />
+
+        <section className="grid gap-4 lg:grid-cols-[minmax(0,1.2fr)_20rem]">
         <section className={`relative overflow-hidden rounded-[2rem] border border-white/70 bg-gradient-to-br ${heroToneClasses} from-white via-white to-zinc-50 px-6 py-6 shadow-[0_24px_60px_-34px_rgba(15,23,42,0.35)] sm:px-8 sm:py-8`}>
           <div className="absolute -right-20 top-0 h-52 w-52 rounded-full bg-accent-200/20 blur-3xl" />
           <div className="relative grid gap-6 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,0.9fr)] lg:items-end">
@@ -281,6 +295,33 @@ export default function Dashboard() {
                 </div>
               ))}
             </div>
+          </div>
+        </section>
+
+          <div className="space-y-4">
+            <Card>
+              <CardContent className="pt-6">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-ink-muted">Foco imediato</p>
+                <div className="mt-4 space-y-4">
+                  <div className="rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-4">
+                    <p className="text-sm font-medium text-ink">Agenda por confirmar</p>
+                    <p className="mt-2 text-3xl font-semibold tracking-tight text-ink">{upcoming.length}</p>
+                    <p className="mt-1 text-sm text-ink-muted">Reservas pendentes ou confirmadas para hoje.</p>
+                  </div>
+                  <div className="rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-4">
+                    <p className="text-sm font-medium text-ink">Estado do dia</p>
+                    <p className="mt-2 text-lg font-semibold text-ink">{occupancySignal}</p>
+                    <p className="mt-1 text-sm text-ink-muted">
+                      {occupancySignal === 'Dia forte'
+                        ? 'Prioriza pontualidade e encaixes curtos.'
+                        : occupancySignal === 'Baixa ocupação'
+                          ? 'Bom momento para divulgar horários livres.'
+                          : 'Fluxo estável e margem para extras.'}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </section>
 

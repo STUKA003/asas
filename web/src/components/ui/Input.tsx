@@ -11,9 +11,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ label, error, hint, className, id, ...props }, ref) => {
     const inputId = id ?? label?.toLowerCase().replace(/\s+/g, '-')
     return (
-      <div className="space-y-1.5">
+      <div className="space-y-2">
         {label && (
-          <label htmlFor={inputId} className="block text-[12px] font-semibold uppercase tracking-[0.16em] text-zinc-500 dark:text-zinc-300">
+          <label htmlFor={inputId} className="ui-label">
             {label}
           </label>
         )}
@@ -21,17 +21,14 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           id={inputId}
           className={cn(
-            'block w-full h-12 px-4 text-sm rounded-[18px] border bg-white/90 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 shadow-[0_10px_28px_-22px_rgba(15,23,42,0.3)] transition-all',
-            'focus:outline-none focus:ring-4 focus:ring-accent-100 focus:border-accent-500',
-            error
-              ? 'border-red-400 dark:border-red-500'
-              : 'border-zinc-200/80 dark:border-zinc-700',
+            'ui-control',
+            error && 'ui-control-error',
             className
           )}
           {...props}
         />
-        {error && <p className="text-xs text-red-500">{error}</p>}
-        {hint && !error && <p className="text-xs text-zinc-400">{hint}</p>}
+        {error && <p className="text-xs text-danger-600">{error}</p>}
+        {hint && !error && <p className="text-xs text-ink-muted">{hint}</p>}
       </div>
     )
   }
@@ -46,9 +43,9 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   ({ label, error, className, id, ...props }, ref) => {
     const inputId = id ?? label?.toLowerCase().replace(/\s+/g, '-')
     return (
-      <div className="space-y-1.5">
+      <div className="space-y-2">
         {label && (
-          <label htmlFor={inputId} className="block text-[12px] font-semibold uppercase tracking-[0.16em] text-zinc-500 dark:text-zinc-300">
+          <label htmlFor={inputId} className="ui-label">
             {label}
           </label>
         )}
@@ -56,14 +53,13 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           ref={ref}
           id={inputId}
           className={cn(
-            'block w-full px-4 py-3 text-sm rounded-[18px] border bg-white/90 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 shadow-[0_10px_28px_-22px_rgba(15,23,42,0.3)] transition-all resize-none',
-            'focus:outline-none focus:ring-4 focus:ring-accent-100 focus:border-accent-500',
-            error ? 'border-red-400' : 'border-zinc-200 dark:border-zinc-700',
+            'ui-control min-h-[120px] resize-none py-3',
+            error && 'ui-control-error',
             className
           )}
           {...props}
         />
-        {error && <p className="text-xs text-red-500">{error}</p>}
+        {error && <p className="text-xs text-danger-600">{error}</p>}
       </div>
     )
   }

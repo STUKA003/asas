@@ -1,14 +1,73 @@
-import { useState, useRef, useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { Scissors, LayoutDashboard, Calendar, LogOut, Menu, X, ChevronUp, User } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { Calendar, LayoutDashboard, LogOut, Scissors } from 'lucide-react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { barberAuthApi } from '@/lib/api'
 import { useBarberAuthStore } from '@/store/barberAuth'
 import { Avatar } from '@/components/ui/Avatar'
+import { Button } from '@/components/ui/Button'
 import { applyAccentColor } from '@/lib/theme'
-import { useEffect as useLayoutEffect } from 'react'
-import { barberAuthApi } from '@/lib/api'
 import { useInstallBrand } from '@/lib/installBrand'
+import { PanelShell, type PanelNavSection } from './PanelShell'
+
+const PAGE_META: Record<string, { title: string; subtitle: string }> = {
+  dashboard: { title: 'Dashboard', subtitle: 'Visão rápida do teu dia, agenda e receita.' },
+  schedule: { title: 'Agenda', subtitle: 'Acompanha os teus horários e reservas em curso.' },
+}
+
+function BarberAccountMenu({
+  name,
+  email,
+  onLogout,
+}: {
+  name?: string
+  email?: string
+  onLogout: () => void
+}) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [])
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={() => setOpen((prev) => !prev)}
+        className="inline-flex items-center gap-3 rounded-xl border border-neutral-200 bg-white px-3 py-2 shadow-soft transition hover:border-neutral-300"
+      >
+        <Avatar name={name ?? ''} size="sm" />
+        <div className="hidden text-left sm:block">
+          <p className="max-w-[10rem] truncate text-sm font-medium text-ink">{name}</p>
+          <p className="max-w-[10rem] truncate text-xs text-ink-muted">{email}</p>
+        </div>
+      </button>
+
+      {open ? (
+        <div className="absolute right-0 top-[calc(100%+0.5rem)] w-64 overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-strong">
+          <div className="border-b border-neutral-200 px-4 py-4">
+            <p className="text-sm font-semibold text-ink">{name}</p>
+            <p className="mt-1 text-xs text-ink-muted">{email}</p>
+          </div>
+          <div className="p-2">
+            <button
+              onClick={onLogout}
+              className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-danger-600 transition hover:bg-danger-50"
+            >
+              <LogOut size={16} />
+              Sair
+            </button>
+          </div>
+        </div>
+      ) : null}
+    </div>
+  )
+}
 
 interface BarberLayoutProps {
   children: React.ReactNode
@@ -33,122 +92,65 @@ export function BarberLayout({ children }: BarberLayoutProps) {
     setBarber({ ...meData, barbershopId: meData.barbershopId ?? '' })
   }, [meData, setBarber])
 
-  useLayoutEffect(() => {
-    if (barber?.barbershop?.accentColor) {
-      applyAccentColor(barber.barbershop.accentColor)
-    }
+  useEffect(() => {
+    if (barber?.barbershop?.accentColor) applyAccentColor(barber.barbershop.accentColor)
   }, [barber?.barbershop?.accentColor])
+
   useInstallBrand('barber')
 
-  const handleLogout = () => { logout(); navigate(`/${slug}/barber/login`) }
-
-  const nav = [
-    { href: `/${slug}/barber`,          label: 'Dashboard', icon: LayoutDashboard, exact: true },
-    { href: `/${slug}/barber/schedule`, label: 'Agenda',    icon: Calendar },
-  ]
-
-  const AccountMenu = () => {
-    const [open, setOpen] = useState(false)
-    const ref = useRef<HTMLDivElement>(null)
-
-    useEffect(() => {
-      function handleClick(e: MouseEvent) {
-        if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
-      }
-      document.addEventListener('mousedown', handleClick)
-      return () => document.removeEventListener('mousedown', handleClick)
-    }, [])
-
-    return (
-      <div ref={ref} className="relative p-3 border-t border-zinc-100 dark:border-zinc-800">
-        {open && (
-          <div className="absolute bottom-full left-3 right-3 mb-2 bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-2xl shadow-lg overflow-hidden">
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-3 w-full px-4 py-3 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-            >
-              <LogOut size={15} /> Sair
-            </button>
-          </div>
-        )}
-        <button
-          onClick={() => setOpen(o => !o)}
-          className="flex items-center gap-3 w-full p-2 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors text-left"
-        >
-          <Avatar name={barber?.name ?? ''} size="sm" />
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium truncate">{barber?.name}</p>
-            <p className="text-xs text-zinc-400 truncate">{barber?.email}</p>
-          </div>
-          <ChevronUp size={14} className={cn('text-zinc-400 transition-transform shrink-0', open ? '' : 'rotate-180')} />
-        </button>
-      </div>
-    )
+  const handleLogout = () => {
+    logout()
+    navigate(`/${slug}/barber/login`)
   }
 
-  const Sidebar = () => (
-    <div className="flex flex-col h-full">
-      <div className="flex items-center gap-2 p-6 pb-4">
-        <div className="h-8 w-8 bg-accent-500 rounded-lg flex items-center justify-center">
-          <Scissors size={16} className="text-white" />
-        </div>
-        <div className="min-w-0">
-          <p className="font-bold truncate">Trimio Flow</p>
-          <p className="text-xs text-zinc-400 flex items-center gap-1"><User size={10} /> {barber?.barbershop?.name ?? 'Portal do Barbeiro'}</p>
-        </div>
-      </div>
+  const navSections: PanelNavSection[] = [
+    {
+      label: 'Portal',
+      items: [
+        { href: `/${slug}/barber`, label: 'Dashboard', icon: LayoutDashboard, exact: true },
+        { href: `/${slug}/barber/schedule`, label: 'Agenda', icon: Calendar },
+      ],
+    },
+  ]
 
-      <nav className="flex-1 px-3 space-y-0.5">
-        {nav.map((item) => {
-          const active = item.exact ? pathname === item.href : pathname.startsWith(item.href)
-          return (
-            <Link
-              key={item.href}
-              to={item.href}
-              onClick={() => setSidebarOpen(false)}
-              className={cn(
-                'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors',
-                active
-                  ? 'bg-accent-500 text-white'
-                  : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100'
-              )}
-            >
-              <item.icon size={18} className={!active ? 'text-zinc-400' : ''} />
-              {item.label}
-            </Link>
-          )
-        })}
-      </nav>
-
-      <AccountMenu />
-    </div>
-  )
+  const pageMeta = pathname.endsWith('/schedule') ? PAGE_META.schedule : PAGE_META.dashboard
 
   return (
-    <div className="flex h-screen bg-zinc-50 dark:bg-zinc-950">
-      <aside className="hidden lg:flex w-60 flex-col bg-white dark:bg-zinc-900 border-r border-zinc-100 dark:border-zinc-800 flex-shrink-0">
-        <Sidebar />
-      </aside>
-
-      {sidebarOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="absolute inset-0 bg-black/50" onClick={() => setSidebarOpen(false)} />
-          <aside className="absolute left-0 top-0 bottom-0 w-64 bg-white dark:bg-zinc-900 border-r border-zinc-100 dark:border-zinc-800">
-            <Sidebar />
-          </aside>
+    <PanelShell
+      brand={{
+        name: 'Trimio Flow',
+        subtitle: barber?.barbershop?.name ?? 'Portal do barbeiro',
+        icon: <Scissors size={18} />,
+      }}
+      currentPath={pathname}
+      navSections={navSections}
+      sidebarOpen={sidebarOpen}
+      onSidebarOpen={setSidebarOpen}
+      topbarTitle={pageMeta.title}
+      topbarSubtitle={pageMeta.subtitle}
+      topbarAction={
+        slug ? (
+          <Link to={`/${slug}/barber/schedule`} className="hidden md:block">
+            <Button size="sm" variant="secondary">Abrir agenda</Button>
+          </Link>
+        ) : null
+      }
+      topbarAside={
+        <BarberAccountMenu
+          name={barber?.name}
+          email={barber?.email}
+          onLogout={handleLogout}
+        />
+      }
+      sidebarFooter={
+        <div className="rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-3">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink-muted">Sessão</p>
+          <p className="mt-1 text-sm font-semibold text-ink">Portal do barbeiro</p>
+          <p className="mt-1 text-xs text-ink-muted">Acesso rápido à tua agenda e atividade diária.</p>
         </div>
-      )}
-
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        <header className="lg:hidden flex items-center justify-between h-14 px-4 bg-white dark:bg-zinc-900 border-b border-zinc-100 dark:border-zinc-800">
-          <button onClick={() => setSidebarOpen(true)} className="p-2 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800">
-            <Menu size={20} />
-          </button>
-          <p className="font-bold truncate max-w-[180px]">Trimio Flow</p>
-          <div className="w-10" />
-        </header>
-        <main className="flex-1 overflow-y-auto p-4 lg:p-8">{children}</main>
-      </div>
-    </div>
+      }
+    >
+      {children}
+    </PanelShell>
   )
 }

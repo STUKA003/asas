@@ -11,7 +11,7 @@ import { StepProducts } from '@/components/booking/steps/StepProducts'
 import { StepConfirmation } from '@/components/booking/steps/StepConfirmation'
 import { useBookingStore } from '@/store/booking'
 import { useTenant } from '@/providers/TenantProvider'
-import { Clock3, Scissors, ShieldCheck, Sparkles } from 'lucide-react'
+import { CalendarCheck2, Clock3, Scissors, ShieldCheck, Sparkles } from 'lucide-react'
 
 // Logic: 0=Serviço 1=Barbeiro 2=Data/Hora 3=Extras 4=Dados 5=Produtos 6=Confirmação
 const steps = [StepService, StepBarber, StepDateTime, StepExtras, StepCustomer, StepProducts, StepConfirmation]
@@ -93,6 +93,16 @@ export default function Booking() {
 
             <div className="surface-panel rounded-[2rem] border border-white/70 p-6 sm:p-7">
               <StepComponent />
+            </div>
+
+            <div className="rounded-2xl border border-neutral-200 bg-white px-5 py-4 text-sm text-ink-soft shadow-soft lg:hidden">
+              <div className="flex items-center gap-2 font-medium text-ink">
+                <CalendarCheck2 size={16} className="text-primary-600" />
+                Resumo sempre visível
+              </div>
+              <p className="mt-1 text-sm text-ink-muted">
+                Assim que escolheres um serviço, mostramos aqui os dados principais da tua reserva.
+              </p>
             </div>
           </section>
 

@@ -3,14 +3,36 @@ export default {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
   darkMode: 'class',
   theme: {
+    container: {
+      center: true,
+      padding: {
+        DEFAULT: '1rem',
+        sm: '1.5rem',
+        lg: '2rem',
+        xl: '2rem',
+        '2xl': '2.5rem',
+      },
+    },
     extend: {
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
-        display: ['Manrope', 'Inter', 'system-ui', 'sans-serif'],
+        display: ['Inter', 'system-ui', 'sans-serif'],
       },
       colors: {
+        primary: {
+          50: 'rgb(var(--primary-50) / <alpha-value>)',
+          100: 'rgb(var(--primary-100) / <alpha-value>)',
+          200: 'rgb(var(--primary-200) / <alpha-value>)',
+          300: 'rgb(var(--primary-300) / <alpha-value>)',
+          400: 'rgb(var(--primary-400) / <alpha-value>)',
+          500: 'rgb(var(--primary-500) / <alpha-value>)',
+          600: 'rgb(var(--primary-600) / <alpha-value>)',
+          700: 'rgb(var(--primary-700) / <alpha-value>)',
+          800: 'rgb(var(--primary-800) / <alpha-value>)',
+          900: 'rgb(var(--primary-900) / <alpha-value>)',
+        },
         accent: {
-          50:  'rgb(var(--accent-50) / <alpha-value>)',
+          50: 'rgb(var(--accent-50) / <alpha-value>)',
           100: 'rgb(var(--accent-100) / <alpha-value>)',
           200: 'rgb(var(--accent-200) / <alpha-value>)',
           300: 'rgb(var(--accent-300) / <alpha-value>)',
@@ -21,6 +43,60 @@ export default {
           800: 'rgb(var(--accent-800) / <alpha-value>)',
           900: 'rgb(var(--accent-900) / <alpha-value>)',
         },
+        neutral: {
+          0: 'rgb(var(--surface-0) / <alpha-value>)',
+          50: 'rgb(var(--surface-50) / <alpha-value>)',
+          100: 'rgb(var(--surface-100) / <alpha-value>)',
+          200: 'rgb(var(--surface-200) / <alpha-value>)',
+          300: 'rgb(var(--surface-300) / <alpha-value>)',
+          800: 'rgb(var(--surface-800) / <alpha-value>)',
+          900: 'rgb(var(--surface-900) / <alpha-value>)',
+          950: 'rgb(var(--surface-950) / <alpha-value>)',
+        },
+        ink: {
+          DEFAULT: 'rgb(var(--ink-900) / <alpha-value>)',
+          soft: 'rgb(var(--ink-soft) / <alpha-value>)',
+          muted: 'rgb(var(--ink-muted) / <alpha-value>)',
+          inverse: 'rgb(var(--ink-inverse) / <alpha-value>)',
+        },
+        success: {
+          50: 'rgb(var(--success-50) / <alpha-value>)',
+          100: 'rgb(var(--success-100) / <alpha-value>)',
+          500: 'rgb(var(--success-500) / <alpha-value>)',
+          600: 'rgb(var(--success-600) / <alpha-value>)',
+          700: 'rgb(var(--success-700) / <alpha-value>)',
+        },
+        warning: {
+          50: 'rgb(var(--warning-50) / <alpha-value>)',
+          100: 'rgb(var(--warning-100) / <alpha-value>)',
+          500: 'rgb(var(--warning-500) / <alpha-value>)',
+          600: 'rgb(var(--warning-600) / <alpha-value>)',
+          700: 'rgb(var(--warning-700) / <alpha-value>)',
+        },
+        danger: {
+          50: 'rgb(var(--danger-50) / <alpha-value>)',
+          100: 'rgb(var(--danger-100) / <alpha-value>)',
+          500: 'rgb(var(--danger-500) / <alpha-value>)',
+          600: 'rgb(var(--danger-600) / <alpha-value>)',
+          700: 'rgb(var(--danger-700) / <alpha-value>)',
+        },
+      },
+      spacing: {
+        18: '4.5rem',
+      },
+      borderRadius: {
+        sm: '0.5rem',
+        DEFAULT: '0.75rem',
+        md: '0.875rem',
+        lg: '1rem',
+        xl: '1.25rem',
+        '2xl': '1.5rem',
+        '3xl': '1.75rem',
+      },
+      boxShadow: {
+        soft: '0 1px 2px rgba(16, 24, 40, 0.06), 0 1px 3px rgba(16, 24, 40, 0.1)',
+        medium: '0 10px 24px rgba(16, 24, 40, 0.08), 0 2px 8px rgba(16, 24, 40, 0.06)',
+        strong: '0 20px 48px rgba(16, 24, 40, 0.14), 0 8px 20px rgba(16, 24, 40, 0.08)',
       },
       animation: {
         'fade-in': 'fadeIn 0.2s ease-out',
@@ -28,7 +104,10 @@ export default {
       },
       keyframes: {
         fadeIn: { from: { opacity: 0 }, to: { opacity: 1 } },
-        slideUp: { from: { opacity: 0, transform: 'translateY(8px)' }, to: { opacity: 1, transform: 'translateY(0)' } },
+        slideUp: {
+          from: { opacity: 0, transform: 'translateY(8px)' },
+          to: { opacity: 1, transform: 'translateY(0)' },
+        },
       },
     },
   },

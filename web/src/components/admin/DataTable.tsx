@@ -42,8 +42,8 @@ export function DataTable<T>({ columns, data, loading, keyExtractor, onRowClick,
             key={keyExtractor(row)}
             onClick={() => onRowClick?.(row)}
             className={cn(
-              'rounded-2xl border border-zinc-200/80 bg-white/80 p-4 shadow-[0_18px_34px_-28px_rgba(15,23,42,0.3)] dark:border-zinc-800 dark:bg-zinc-900/60',
-              onRowClick && 'cursor-pointer transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/60'
+              'rounded-2xl border border-neutral-200 bg-white p-4 shadow-soft',
+              onRowClick && 'cursor-pointer transition hover:border-primary-200 hover:shadow-medium'
             )}
           >
             <div className="space-y-3">
@@ -52,13 +52,13 @@ export function DataTable<T>({ columns, data, loading, keyExtractor, onRowClick,
                   key={col.key}
                   className={cn(
                     'grid gap-1.5',
-                    index === 0 ? 'pb-3 border-b border-zinc-100 dark:border-zinc-800' : ''
+                    index === 0 ? 'border-b border-neutral-200 pb-3' : ''
                   )}
                 >
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-400">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-ink-muted">
                     {col.label}
                   </p>
-                  <div className={cn('text-sm text-zinc-700 dark:text-zinc-300', col.className)}>
+                  <div className={cn('text-sm text-ink-soft', col.className)}>
                     {col.render ? col.render(row) : String((row as Record<string, unknown>)[col.key] ?? '')}
                   </div>
                 </div>
@@ -67,7 +67,7 @@ export function DataTable<T>({ columns, data, loading, keyExtractor, onRowClick,
 
             {actions && (
               <div
-                className="mt-4 flex items-center justify-end border-t border-zinc-100 pt-3 dark:border-zinc-800"
+                className="mt-4 flex items-center justify-end border-t border-neutral-200 pt-3"
                 onClick={(e) => e.stopPropagation()}
               >
                 {actions(row)}
@@ -77,15 +77,16 @@ export function DataTable<T>({ columns, data, loading, keyExtractor, onRowClick,
         ))}
       </div>
 
-      <div className="hidden overflow-x-auto -mx-6 md:block">
+      <div className="hidden overflow-hidden rounded-2xl border border-neutral-200 md:block">
+        <div className="overflow-x-auto">
         <table className="w-full min-w-[560px]">
-          <thead>
-            <tr className="border-b border-zinc-100 dark:border-zinc-800">
+          <thead className="bg-neutral-50">
+            <tr className="border-b border-neutral-200">
               {columns.map((col) => (
                 <th
                   key={col.key}
                   className={cn(
-                    'px-6 py-3 text-left text-[11px] font-semibold text-zinc-400 uppercase tracking-widest',
+                    'px-6 py-3.5 text-left text-[11px] font-semibold uppercase tracking-widest text-ink-muted',
                     col.className
                   )}
                 >
@@ -93,7 +94,7 @@ export function DataTable<T>({ columns, data, loading, keyExtractor, onRowClick,
                 </th>
               ))}
               {actions && (
-                <th className="px-6 py-3 text-right text-[11px] font-semibold text-zinc-400 uppercase tracking-widest">
+                <th className="px-6 py-3.5 text-right text-[11px] font-semibold uppercase tracking-widest text-ink-muted">
                   Ações
                 </th>
               )}
@@ -105,18 +106,18 @@ export function DataTable<T>({ columns, data, loading, keyExtractor, onRowClick,
                 key={keyExtractor(row)}
                 onClick={() => onRowClick?.(row)}
                 className={cn(
-                  'border-b border-zinc-50 dark:border-zinc-800/50 transition-colors',
-                  onRowClick && 'cursor-pointer hover:bg-zinc-50/80 dark:hover:bg-zinc-800/30',
+                  'border-b border-neutral-100 transition-colors',
+                  onRowClick && 'cursor-pointer hover:bg-primary-50/40',
                   idx === data.length - 1 && 'border-b-0'
                 )}
               >
                 {columns.map((col) => (
-                  <td key={col.key} className={cn('px-6 py-3.5 text-sm text-zinc-700 dark:text-zinc-300', col.className)}>
+                  <td key={col.key} className={cn('px-6 py-4 text-sm text-ink-soft', col.className)}>
                     {col.render ? col.render(row) : String((row as Record<string, unknown>)[col.key] ?? '')}
                   </td>
                 ))}
                 {actions && (
-                  <td className="px-6 py-3.5 text-right" onClick={(e) => e.stopPropagation()}>
+                  <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
                     {actions(row)}
                   </td>
                 )}
@@ -124,6 +125,7 @@ export function DataTable<T>({ columns, data, loading, keyExtractor, onRowClick,
             ))}
           </tbody>
         </table>
+        </div>
       </div>
     </>
   )
