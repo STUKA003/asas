@@ -10,6 +10,130 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="theme-color" content="#09090b" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      (function () {
+        var path = window.location.pathname || '/'
+        var reserved = { admin: true, superadmin: true, register: true, 'verify-email': true, barber: true }
+        var brand = {
+          title: 'Trimio',
+          shortTitle: 'Trimio',
+          theme: '#09090b',
+          background: '#ffffff',
+          iconPath: '/branding/platform-logo.png',
+          appId: '/',
+          startUrl: '/',
+          scope: '/',
+        }
+
+        if (path === '/admin' || path.indexOf('/admin/') === 0) {
+          brand = {
+            title: 'Trimio Studio',
+            shortTitle: 'Studio',
+            theme: '#09090b',
+            background: '#09090b',
+            iconPath: '/branding/admin-logo.png',
+            appId: '/admin',
+            startUrl: '/admin',
+            scope: '/admin',
+          }
+        } else if (path === '/superadmin' || path.indexOf('/superadmin/') === 0) {
+          brand = {
+            title: 'Trimio Command',
+            shortTitle: 'Command',
+            theme: '#0f172a',
+            background: '#0f172a',
+            iconPath: '/branding/superadmin-logo.png',
+            appId: '/superadmin',
+            startUrl: '/superadmin',
+            scope: '/superadmin',
+          }
+        } else {
+          var barberMatch = path.match(/^\/([^/]+)\/barber(?:\/.*)?$/)
+          if (barberMatch) {
+            var barberBase = '/' + barberMatch[1] + '/barber'
+            brand = {
+              title: 'Trimio Flow',
+              shortTitle: 'Flow',
+              theme: '#f97316',
+              background: '#f97316',
+              iconPath: '/branding/barber-logo.png',
+              appId: barberBase,
+              startUrl: barberBase,
+              scope: barberBase,
+            }
+          } else {
+            var publicMatch = path.match(/^\/([^/]+)(?:\/.*)?$/)
+            var firstSegment = publicMatch && publicMatch[1]
+            if (firstSegment && !reserved[firstSegment]) {
+              var publicBase = '/' + firstSegment
+              brand = {
+                title: 'Trimio Clientes',
+                shortTitle: 'Clientes',
+                theme: '#09090b',
+                background: '#ffffff',
+                iconPath: '/branding/clients-logo.png',
+                appId: publicBase,
+                startUrl: publicBase,
+                scope: publicBase,
+              }
+            }
+          }
+        }
+
+        document.title = brand.title
+
+        function ensureMeta(name, content) {
+          var meta = document.head.querySelector('meta[name="' + name + '"]')
+          if (!meta) {
+            meta = document.createElement('meta')
+            meta.name = name
+            document.head.appendChild(meta)
+          }
+          meta.content = content
+        }
+
+        function ensureLink(rel) {
+          var link = document.head.querySelector('link[rel="' + rel + '"]')
+          if (!link) {
+            link = document.createElement('link')
+            link.rel = rel
+            document.head.appendChild(link)
+          }
+          return link
+        }
+
+        ensureMeta('application-name', brand.title)
+        ensureMeta('apple-mobile-web-app-title', brand.title)
+        ensureMeta('theme-color', brand.theme)
+
+        var icon = ensureLink('icon')
+        icon.href = brand.iconPath
+        icon.type = 'image/png'
+
+        var appleTouchIcon = ensureLink('apple-touch-icon')
+        appleTouchIcon.href = brand.iconPath
+        appleTouchIcon.sizes = '180x180'
+
+        var manifest = {
+          name: brand.title,
+          short_name: brand.shortTitle,
+          id: brand.appId,
+          start_url: brand.startUrl,
+          scope: brand.scope,
+          display: 'standalone',
+          background_color: brand.background,
+          theme_color: brand.theme,
+          icons: [
+            { src: brand.iconPath, sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
+            { src: brand.iconPath, sizes: '192x192', type: 'image/png', purpose: 'any maskable' }
+          ]
+        }
+
+        var manifestLink = ensureLink('manifest')
+        var manifestUrl = URL.createObjectURL(new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' }))
+        manifestLink.href = manifestUrl
+      })()
+    </script>
     <title>Trimio</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
