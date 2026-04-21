@@ -4,21 +4,20 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useMutation } from '@tanstack/react-query'
-import { ArrowRight, Check, Globe, Scissors, Sparkles } from 'lucide-react'
+import { ArrowRight, Check, Globe, Mail, Scissors } from 'lucide-react'
 import { authApi } from '@/lib/api'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { applyPlatformAccent } from '@/lib/theme'
 import { normalizeSlug, slugify } from '@/lib/slug'
 import { getInboxLink } from '@/lib/emailLinks'
+import adminLogo from '@/assets/branding/barbershop-logo.png'
+
 const schema = z.object({
   barbershopName: z.string().min(2, 'Nome da barbearia obrigatório'),
-  slug: z
-    .string()
-    .min(2, 'Mínimo 2 caracteres')
-    .regex(/^[a-z0-9-]+$/, 'Apenas letras minúsculas, números e hífens'),
-  name: z.string().min(2, 'O teu nome é obrigatório'),
-  email: z.string().email('E-mail inválido'),
+  slug: z.string().min(2, 'Mínimo 2 caracteres').regex(/^[a-z0-9-]+$/, 'Apenas letras minúsculas, números e hífens'),
+  name:     z.string().min(2, 'O teu nome é obrigatório'),
+  email:    z.string().email('E-mail inválido'),
   password: z.string().min(6, 'Mínimo 6 caracteres'),
 })
 type FormData = z.infer<typeof schema>
@@ -32,20 +31,18 @@ const FEATURES = [
 ]
 
 export default function Register() {
-  const navigate = useNavigate()
+  const navigate    = useNavigate()
   const [slugManual, setSlugManual] = useState(false)
-  const [resendMessage, setResendMessage] = useState('')
-  const [successState, setSuccessState] = useState<{ email: string; slug: string } | null>(null)
+  const [resendMsg, setResendMsg]   = useState('')
+  const [success, setSuccess]       = useState<{ email: string; slug: string } | null>(null)
 
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: { barbershopName: '', slug: '', name: '', email: '', password: '' },
   })
 
-  const barbershopName = watch('barbershopName')
   const slug = watch('slug')
 
-  // Auto-generate slug from barbershop name
   function handleNameChange(e: React.ChangeEvent<HTMLInputElement>) {
     const val = e.target.value
     setValue('barbershopName', val)
@@ -54,15 +51,12 @@ export default function Register() {
 
   const { mutate, isPending, error: mutationError } = useMutation({
     mutationFn: (data: FormData) => authApi.register(data),
-    onSuccess: (data) => {
-      setResendMessage('')
-      setSuccessState({ email: data.email, slug: data.barbershop.slug })
-    },
+    onSuccess:  (data) => { setResendMsg(''); setSuccess({ email: data.email, slug: data.barbershop.slug }) },
   })
 
-  const resendVerificationMutation = useMutation({
+  const resendMutation = useMutation({
     mutationFn: (data: { email: string; slug: string }) => authApi.resendVerificationEmail(data),
-    onSuccess: (data) => setResendMessage(data.message),
+    onSuccess:  (data) => setResendMsg(data.message),
   })
 
   const apiError =
@@ -70,196 +64,203 @@ export default function Register() {
       ? (mutationError as { response?: { data?: { error?: string } } }).response?.data?.error
       : null
 
-  useEffect(() => {
-    applyPlatformAccent()
-  }, [])
+  useEffect(() => { applyPlatformAccent() }, [])
 
   return (
-    <div className="min-h-screen bg-[linear-gradient(180deg,#fcfcfb_0%,#f3f4f7_100%)] flex">
-      {/* Left — form */}
-      <div className="flex-1 flex items-center justify-center p-6 lg:p-12">
-        <div className="surface-panel w-full max-w-xl rounded-[2rem] border border-white/70 p-6 sm:p-8">
-          <div className="flex items-center gap-2.5 mb-8">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-950">
-              <Scissors size={18} className="text-white" />
-            </div>
-            <span className="font-semibold text-lg text-zinc-950">Trimio</span>
-          </div>
+    <div className="flex min-h-screen">
 
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-zinc-400">Nova barbearia</p>
-          <h1 className="mt-3 text-4xl font-semibold text-zinc-950 mb-1">Cria a tua barbearia</h1>
-          <p className="text-zinc-500 text-sm mb-8">
-            Começa grátis. Sem cartão de crédito.
+      {/* ── Left — dark panel ─────────────────────────── */}
+      <div
+        className="relative hidden w-[46%] shrink-0 flex-col justify-between overflow-hidden p-12 lg:flex xl:p-16"
+        style={{ background: '#0d0d11' }}
+      >
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              'radial-gradient(ellipse 70% 50% at 20% -5%,  rgba(99,102,241,0.16) 0%, transparent 55%),' +
+              'radial-gradient(ellipse 45% 35% at 85% 105%, rgba(79,70,229,0.08) 0%, transparent 50%)',
+          }}
+        />
+
+        {/* Logo */}
+        <div className="relative flex items-center gap-3">
+          <img src={adminLogo} alt="Trimio" className="h-10 w-10 rounded-xl object-contain" />
+          <div>
+            <p className="text-[13px] font-semibold tracking-tight text-white">Trimio Studio</p>
+            <p className="text-[11px] text-white/30">Para barbearias profissionais</p>
+          </div>
+        </div>
+
+        {/* Headline + features */}
+        <div className="relative">
+          <p className="mb-5 text-[10.5px] font-semibold uppercase tracking-[0.2em] text-white/25">
+            Começa hoje
+          </p>
+          <h1 className="max-w-xs text-[2.4rem] font-semibold leading-[1.08] tracking-[-0.04em] text-white">
+            O teu negócio online em minutos.
+          </h1>
+          <p className="mt-5 max-w-sm text-[14px] leading-7 text-white/45">
+            Página de agendamentos, painel de gestão, clientes e relatórios — tudo num único sítio.
           </p>
 
-          {successState ? (
+          <ul className="mt-8 space-y-2.5">
+            {FEATURES.map((f) => (
+              <li key={f} className="flex items-center gap-3 text-[13px] text-white/60">
+                <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary-600/30">
+                  <Check size={10} className="text-primary-300" />
+                </div>
+                {f}
+              </li>
+            ))}
+          </ul>
+
+          <div className="mt-10 rounded-2xl border border-white/[0.07] bg-white/[0.04] px-5 py-4">
+            <p className="text-[12.5px] font-semibold text-white">Plano Grátis incluído</p>
+            <p className="mt-1 text-[12px] leading-5 text-white/40">
+              Começas com 1 barbeiro e 30 agendamentos por mês sem pagar nada. Upgrades a partir de 19€/mês quando quiseres crescer.
+            </p>
+          </div>
+        </div>
+
+        <p className="relative text-[11px] text-white/15">
+          © {new Date().getFullYear()} Trimio · Plataforma de gestão para barbearias
+        </p>
+      </div>
+
+      {/* ── Right — form panel ────────────────────────── */}
+      <div className="flex flex-1 flex-col items-center justify-center bg-white px-6 py-12 sm:px-10">
+        {/* Mobile logo */}
+        <div className="mb-8 flex items-center gap-2.5 lg:hidden">
+          <img src={adminLogo} alt="Trimio" className="h-9 w-9 rounded-xl object-contain" />
+          <span className="text-[14px] font-semibold tracking-tight text-ink">Trimio Studio</span>
+        </div>
+
+        <div className="w-full max-w-md">
+
+          {success ? (
+            /* ── Success state ──────────────────────── */
             <div className="space-y-4">
-              <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-4 text-sm text-emerald-800">
-                <strong>Conta criada.</strong> Enviámos um email de confirmação para <strong>{successState.email}</strong>. Confirma o email antes de entrares no painel.
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-success-100">
+                <Mail size={24} className="text-success-600" />
               </div>
-              <div className="rounded-2xl border border-zinc-200/80 bg-white/80 px-4 py-4 text-sm text-zinc-600">
-                <p className="font-medium text-zinc-800">Próximos passos</p>
-                <ol className="mt-2 space-y-1.5 text-sm">
+              <h2 className="text-[1.65rem] font-semibold tracking-[-0.03em] text-ink">
+                Confirma o teu email
+              </h2>
+              <p className="text-[13.5px] leading-6 text-ink-muted">
+                Enviámos um link de confirmação para <strong className="text-ink">{success.email}</strong>. Confirma antes de entrar no painel.
+              </p>
+
+              <div className="rounded-2xl border border-neutral-200/70 bg-neutral-50 p-4">
+                <p className="text-[13px] font-semibold text-ink">Próximos passos</p>
+                <ol className="mt-2.5 space-y-1.5 text-[13px] text-ink-muted">
                   <li>1. Abre a tua caixa de entrada.</li>
                   <li>2. Procura o email da Trimio.</li>
                   <li>3. Clica no link de confirmação.</li>
-                  <li>4. Só depois disso consegues entrar no painel.</li>
+                  <li>4. Entra no painel com as tuas credenciais.</li>
                 </ol>
               </div>
-              {resendMessage && (
-                <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-4 text-sm text-emerald-800">
-                  {resendMessage}
+
+              {resendMsg && (
+                <div className="rounded-xl border border-success-100 bg-success-50 px-3.5 py-2.5 text-[13px] text-success-700">
+                  {resendMsg}
                 </div>
               )}
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <a href={getInboxLink(successState.email)} target="_blank" rel="noreferrer" className="w-full">
-                  <Button type="button" className="w-full">
-                    Abrir email <ArrowRight size={16} />
+
+              <div className="flex flex-col gap-2.5 pt-1">
+                <a href={getInboxLink(success.email)} target="_blank" rel="noreferrer">
+                  <Button size="lg" className="w-full">
+                    Abrir caixa de email <ArrowRight size={15} />
                   </Button>
                 </a>
                 <Button
-                  type="button"
-                  variant="outline"
+                  variant="secondary"
                   className="w-full"
-                  onClick={() => resendVerificationMutation.mutate(successState)}
-                  loading={resendVerificationMutation.isPending}
+                  onClick={() => resendMutation.mutate(success)}
+                  loading={resendMutation.isPending}
                 >
-                  Reenviar email
+                  Reenviar email de confirmação
                 </Button>
-              </div>
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <Button type="button" variant="ghost" className="w-full" onClick={() => navigate('/admin/login')}>
-                  Ir para login
-                </Button>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  className="w-full"
-                  onClick={() => {
-                    setResendMessage('')
-                    setSuccessState(null)
-                  }}
-                >
-                  Criar outra conta
-                </Button>
+                <div className="flex gap-2.5">
+                  <Button variant="ghost" className="flex-1" onClick={() => navigate('/admin/login')}>
+                    Ir para login
+                  </Button>
+                  <Button variant="ghost" className="flex-1" onClick={() => { setResendMsg(''); setSuccess(null) }}>
+                    Criar outra conta
+                  </Button>
+                </div>
               </div>
             </div>
-          ) : <form onSubmit={handleSubmit((d) => mutate(d))} className="space-y-4">
-            {/* Barbershop name */}
-            <div>
-              <label className="block text-sm font-medium mb-1.5">Nome da barbearia</label>
-              <input
-                placeholder="Barbearia do João"
-                className="w-full h-12 rounded-[18px] border border-zinc-200/80 bg-white/90 px-4 text-sm shadow-[0_10px_28px_-22px_rgba(15,23,42,0.3)] focus:outline-none focus:ring-4 focus:ring-accent-100 focus:border-accent-500"
-                {...register('barbershopName')}
-                onChange={handleNameChange}
-              />
-              {errors.barbershopName && (
-                <p className="text-xs text-red-500 mt-1">{errors.barbershopName.message}</p>
-              )}
-            </div>
-
-            {/* Slug */}
-            <div>
-              <label className="block text-sm font-medium mb-1.5">
-                Endereço do teu site
-              </label>
-              <div className="flex items-center overflow-hidden rounded-[18px] border border-zinc-200/80 bg-white/90 shadow-[0_10px_28px_-22px_rgba(15,23,42,0.3)] focus-within:ring-4 focus-within:ring-accent-100 focus-within:border-accent-500">
-                <span className="whitespace-nowrap select-none pl-4 pr-1 text-sm text-zinc-400">trimio.app/</span>
-                <input
-                  className="h-12 flex-1 bg-transparent pr-4 text-sm focus:outline-none"
-                  placeholder="minha-barbearia"
-                  {...register('slug')}
-                    onChange={(e) => {
-                      setSlugManual(true)
-                      setValue('slug', normalizeSlug(e.target.value))
-                    }}
-                />
-              </div>
-              {errors.slug ? (
-                <p className="text-xs text-red-500 mt-1">{errors.slug.message}</p>
-              ) : slug ? (
-                <p className="text-xs text-zinc-400 mt-1 flex items-center gap-1">
-                  <Globe size={11} /> trimio.app/{slug}
+          ) : (
+            /* ── Form ──────────────────────────────── */
+            <>
+              <div className="mb-8">
+                <Scissors size={28} className="mb-4 text-primary-600" />
+                <h2 className="text-[1.65rem] font-semibold tracking-[-0.03em] text-ink">
+                  Cria a tua barbearia
+                </h2>
+                <p className="mt-1.5 text-[13.5px] leading-6 text-ink-muted">
+                  Começa grátis — sem cartão de crédito.
                 </p>
-              ) : null}
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <Input
-                label="O teu nome"
-                placeholder="João Silva"
-                error={errors.name?.message}
-                {...register('name')}
-              />
-              <Input
-                label="E-mail"
-                type="email"
-                placeholder="joao@email.com"
-                error={errors.email?.message}
-                {...register('email')}
-              />
-            </div>
-
-            <Input
-              label="Password"
-              type="password"
-              placeholder="Mínimo 6 caracteres"
-              error={errors.password?.message}
-              {...register('password')}
-            />
-
-            {apiError && (
-              <div className="rounded-xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 px-3 py-2 text-sm text-red-700 dark:text-red-300">
-                {apiError === 'Slug already taken' ? 'Este endereço já está em uso. Escolhe outro.' : apiError}
               </div>
-            )}
 
-            <Button type="submit" loading={isPending} className="mt-2 w-full text-base">
-              Criar barbearia grátis <ArrowRight size={16} />
-            </Button>
-          </form>}
+              <form onSubmit={handleSubmit((d) => mutate(d))} className="space-y-4">
+                <Input
+                  label="Nome da barbearia"
+                  placeholder="Barbearia do João"
+                  error={errors.barbershopName?.message}
+                  {...register('barbershopName')}
+                  onChange={handleNameChange}
+                />
 
-          <p className="text-center text-sm text-zinc-500 mt-6">
-            Já tens conta?{' '}
-            <Link to="/admin/login" className="text-accent-600 hover:underline font-medium">
-              Entrar
-            </Link>
-          </p>
-        </div>
-      </div>
+                <div className="space-y-1.5">
+                  <label className="ui-label">Endereço do teu site</label>
+                  <div className="flex items-center overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-soft transition-all focus-within:border-primary-400 focus-within:ring-4 focus-within:ring-primary-100/80 hover:border-neutral-300">
+                    <span className="select-none pl-4 pr-1 text-[12.5px] text-ink-muted whitespace-nowrap">trimio.app/</span>
+                    <input
+                      className="h-12 min-w-0 flex-1 pr-4 bg-transparent text-sm text-ink outline-none placeholder-ink-muted/50"
+                      placeholder="minha-barbearia"
+                      {...register('slug')}
+                      onChange={(e) => { setSlugManual(true); setValue('slug', normalizeSlug(e.target.value)) }}
+                    />
+                  </div>
+                  {errors.slug ? (
+                    <p className="text-xs text-danger-600">{errors.slug.message}</p>
+                  ) : slug ? (
+                    <p className="flex items-center gap-1 text-[11.5px] text-ink-muted">
+                      <Globe size={11} /> trimio.app/{slug}
+                    </p>
+                  ) : null}
+                </div>
 
-      {/* Right — features panel (hidden on mobile) */}
-      <div className="hidden lg:flex w-96 xl:w-[460px] bg-zinc-950 flex-col justify-center px-12 text-white">
-        <div className="mb-10">
-          <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10">
-            <Sparkles size={20} className="text-accent-300" />
-          </div>
-          <div className="text-4xl font-semibold leading-tight mb-3 mt-8">
-            O teu negócio online em minutos
-          </div>
-          <p className="text-zinc-300 text-sm leading-relaxed">
-            Cria a tua página de agendamentos, gere os teus barbeiros e clientes, tudo num só lugar.
-          </p>
-        </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <Input label="O teu nome" placeholder="João Silva" error={errors.name?.message} {...register('name')} />
+                  <Input label="E-mail" type="email" placeholder="joao@email.com" error={errors.email?.message} {...register('email')} />
+                </div>
 
-        <ul className="space-y-3.5 mb-12">
-          {FEATURES.map((f) => (
-            <li key={f} className="flex items-center gap-3 text-sm">
-              <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center shrink-0">
-                <Check size={12} className="text-white" />
+                <Input label="Password" type="password" placeholder="Mínimo 6 caracteres" error={errors.password?.message} {...register('password')} />
+
+                {apiError && (
+                  <div className="rounded-xl border border-danger-200/70 bg-danger-50 px-3.5 py-2.5 text-[13px] text-danger-700">
+                    {apiError === 'Slug already taken' ? 'Este endereço já está em uso. Escolhe outro.' : apiError}
+                  </div>
+                )}
+
+                <Button type="submit" loading={isPending} size="lg" className="mt-1 w-full">
+                  Criar barbearia grátis <ArrowRight size={15} />
+                </Button>
+              </form>
+
+              <div className="mt-6 border-t border-neutral-100 pt-5 text-center">
+                <p className="text-[12.5px] text-ink-muted">
+                  Já tens conta?{' '}
+                  <Link to="/admin/login" className="font-semibold text-primary-600 transition-colors hover:text-primary-700">
+                    Entrar
+                  </Link>
+                </p>
               </div>
-              {f}
-            </li>
-          ))}
-        </ul>
-
-        <div className="bg-white/10 rounded-2xl p-5">
-          <p className="text-sm font-semibold mb-1">Plano Grátis incluído</p>
-          <p className="text-zinc-300 text-xs leading-relaxed">
-            Começas com 1 barbeiro e 30 agendamentos por mês sem pagar nada.
-            Quando quiseres crescer, upgrades a partir de 19€/mês.
-          </p>
+            </>
+          )}
         </div>
       </div>
     </div>
