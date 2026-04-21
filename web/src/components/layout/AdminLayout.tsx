@@ -37,6 +37,7 @@ import { PanelShell, type PanelNavSection } from './PanelShell'
 import { applyAccentColor } from '@/lib/theme'
 import { useInstallBrand } from '@/lib/installBrand'
 import { barbershopApi, notificationsApi } from '@/lib/api'
+import adminLogo from '@/assets/branding/barbershop-logo.png'
 
 type PlanTier = 'FREE' | 'BASIC' | 'PRO'
 
@@ -363,6 +364,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
         name: 'Trimio Studio',
         subtitle: barbershop?.name ?? 'Painel da barbearia',
         icon: <Building2 size={18} />,
+        logoSrc: adminLogo,
       }}
       currentPath={pathname}
       navSections={navSections}

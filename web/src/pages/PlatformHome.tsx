@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { applyPlatformAccent } from '@/lib/theme'
+import platformLogo from '@/assets/branding/platform-logo.png'
 
 const features = [
   {
@@ -54,9 +55,11 @@ export default function PlatformHome() {
       <header className="sticky top-0 z-40 border-b border-white/70 bg-white/72 backdrop-blur-xl">
         <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-4 sm:px-6">
           <Link to="/" className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-zinc-950 shadow-[0_18px_30px_-18px_rgba(9,9,11,0.7)]">
-              <Scissors size={18} className="text-white" />
-            </div>
+            <img
+              src={platformLogo}
+              alt="Trimio"
+              className="h-11 w-11 rounded-2xl object-contain shadow-[0_18px_30px_-18px_rgba(9,9,11,0.7)]"
+            />
             <div>
               <p className="text-base font-semibold tracking-tight text-zinc-950">Trimio</p>
               <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-400">Plataforma para barbearias</p>

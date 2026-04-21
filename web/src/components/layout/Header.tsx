@@ -4,6 +4,7 @@ import { CalendarDays, Menu, Scissors, X } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { useTenant } from '@/providers/TenantProvider'
 import { cn } from '@/lib/utils'
+import clientsLogo from '@/assets/branding/clients-logo.png'
 
 export function Header() {
   const [open, setOpen] = useState(false)
@@ -24,15 +25,9 @@ export function Header() {
       <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8">
         <div className="flex h-[4.5rem] items-center justify-between gap-4">
           <Link to={base} className="flex min-w-0 items-center gap-3 text-lg font-bold tracking-tight">
-            {barbershop?.logoUrl ? (
-              <img src={barbershop.logoUrl} alt={barbershop.name} className="h-12 w-auto max-w-[9rem] sm:max-w-[11rem] object-contain shrink-0" />
-            ) : (
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-ink text-white shadow-medium">
-                <Scissors size={16} className="text-white" />
-              </div>
-            )}
+            <img src={clientsLogo} alt="Trimio Clientes" className="h-12 w-12 shrink-0 rounded-2xl object-contain" />
             <div className="hidden min-w-0 sm:block">
-              <span className="block truncate text-sm font-semibold text-ink">{barbershop?.name ?? 'Trimio'}</span>
+              <span className="block truncate text-sm font-semibold text-ink">{barbershop?.name ?? 'Trimio Clientes'}</span>
               <span className="block truncate text-xs font-medium text-ink-muted">Reserva online e gestão clara</span>
             </div>
           </Link>

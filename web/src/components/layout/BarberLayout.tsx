@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/Button'
 import { applyAccentColor } from '@/lib/theme'
 import { useInstallBrand } from '@/lib/installBrand'
 import { PanelShell, type PanelNavSection } from './PanelShell'
+import barberLogo from '@/assets/branding/barber-logo.png'
 
 const PAGE_META: Record<string, { title: string; subtitle: string }> = {
   dashboard: { title: 'Dashboard', subtitle: 'Visão rápida do teu dia, agenda e receita.' },
@@ -121,6 +122,7 @@ export function BarberLayout({ children }: BarberLayoutProps) {
         name: 'Trimio Flow',
         subtitle: barber?.barbershop?.name ?? 'Portal do barbeiro',
         icon: <Scissors size={18} />,
+        logoSrc: barberLogo,
       }}
       currentPath={pathname}
       navSections={navSections}

@@ -1,6 +1,7 @@
 import { Instagram, MessageCircle, Scissors } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useTenant } from '@/providers/TenantProvider'
+import clientsLogo from '@/assets/branding/clients-logo.png'
 
 export function Footer() {
   const { slug, barbershop } = useTenant()
@@ -15,15 +16,9 @@ export function Footer() {
       <div className="mx-auto grid max-w-[1200px] gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,0.7fr)_auto] lg:px-8">
         <div>
           <Link to={`/${slug}`} className="flex items-center gap-3 font-bold">
-          {barbershop?.logoUrl ? (
-            <img src={barbershop.logoUrl} alt={barbershop.name} className="h-7 w-auto max-w-[5rem] object-contain" />
-          ) : (
-            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-ink text-white shadow-soft">
-              <Scissors size={14} className="text-white" />
-            </div>
-          )}
+          <img src={clientsLogo} alt="Trimio Clientes" className="h-9 w-9 rounded-2xl object-contain" />
           <div>
-            <p className="text-sm font-semibold text-ink">{barbershop?.name ?? 'Trimio'}</p>
+            <p className="text-sm font-semibold text-ink">{barbershop?.name ?? 'Trimio Clientes'}</p>
             <p className="text-sm text-ink-muted">Experiência de marcação simples, rápida e organizada.</p>
           </div>
         </Link>

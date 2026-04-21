@@ -22,6 +22,7 @@ interface PanelShellProps {
     name: string
     subtitle: string
     icon: React.ReactNode
+    logoSrc?: string
   }
   currentPath: string
   navSections: PanelNavSection[]
@@ -85,12 +86,20 @@ export function PanelShell({
     <div className="flex h-full flex-col">
       <div className={cn('px-5 py-5', isDark ? 'border-b border-white/10' : 'border-b border-neutral-200')}>
         <div className="flex items-center gap-3">
-          <div className={cn(
-            'flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl text-white shadow-medium',
-            isDark ? 'bg-primary-600' : 'bg-ink'
-          )}>
-            {brand.icon}
-          </div>
+          {brand.logoSrc ? (
+            <img
+              src={brand.logoSrc}
+              alt={brand.name}
+              className="h-11 w-11 shrink-0 rounded-2xl object-contain"
+            />
+          ) : (
+            <div className={cn(
+              'flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl text-white shadow-medium',
+              isDark ? 'bg-primary-600' : 'bg-ink'
+            )}>
+              {brand.icon}
+            </div>
+          )}
           <div className="min-w-0">
             <p className={cn('truncate text-sm font-semibold tracking-tight', isDark ? 'text-white' : 'text-ink')}>{brand.name}</p>
             <p className={cn('mt-1 truncate text-xs', isDark ? 'text-zinc-400' : 'text-ink-muted')}>{brand.subtitle}</p>

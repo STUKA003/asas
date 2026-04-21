@@ -6,6 +6,7 @@ import { Avatar } from '@/components/ui/Avatar'
 import { Button } from '@/components/ui/Button'
 import { PanelShell, type PanelNavSection } from './PanelShell'
 import { useInstallBrand } from '@/lib/installBrand'
+import superadminLogo from '@/assets/branding/superadmin-logo.png'
 
 const PAGE_META: Record<string, { title: string; subtitle: string }> = {
   '/superadmin': {
@@ -94,6 +95,7 @@ export function SuperAdminLayout({ children }: { children: React.ReactNode }) {
         name: 'Trimio Command',
         subtitle: 'Controlo da plataforma',
         icon: <Shield size={18} />,
+        logoSrc: superadminLogo,
       }}
       currentPath={pathname}
       navSections={navSections}
