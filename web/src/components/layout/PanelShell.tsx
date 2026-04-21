@@ -33,6 +33,7 @@ interface PanelShellProps {
   topbarAside?: React.ReactNode
   sidebarFooter?: React.ReactNode
   children: React.ReactNode
+  theme?: 'light' | 'dark'
 }
 
 export function PageHeader({
@@ -67,6 +68,7 @@ export function PanelShell({
   topbarAside,
   sidebarFooter,
   children,
+  theme = 'light',
 }: PanelShellProps) {
   useEffect(() => {
     if (sidebarOpen) document.body.style.overflow = 'hidden'
@@ -74,19 +76,24 @@ export function PanelShell({
     return () => { document.body.style.overflow = '' }
   }, [sidebarOpen])
 
+  const isDark = theme === 'dark'
+
   const isActive = (item: PanelNavItem) =>
     item.exact ? currentPath === item.href : currentPath === item.href || currentPath.startsWith(`${item.href}/`)
 
   const Sidebar = () => (
     <div className="flex h-full flex-col">
-      <div className="border-b border-neutral-200 px-5 py-5">
+      <div className={cn('px-5 py-5', isDark ? 'border-b border-white/10' : 'border-b border-neutral-200')}>
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-ink text-white shadow-medium">
+          <div className={cn(
+            'flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl text-white shadow-medium',
+            isDark ? 'bg-primary-600' : 'bg-ink'
+          )}>
             {brand.icon}
           </div>
           <div className="min-w-0">
-            <p className="truncate text-sm font-semibold tracking-tight text-ink">{brand.name}</p>
-            <p className="mt-1 truncate text-xs text-ink-muted">{brand.subtitle}</p>
+            <p className={cn('truncate text-sm font-semibold tracking-tight', isDark ? 'text-white' : 'text-ink')}>{brand.name}</p>
+            <p className={cn('mt-1 truncate text-xs', isDark ? 'text-zinc-400' : 'text-ink-muted')}>{brand.subtitle}</p>
           </div>
         </div>
       </div>
@@ -96,7 +103,10 @@ export function PanelShell({
           {navSections.map((section, sectionIndex) => (
             <div key={section.label ?? `section-${sectionIndex}`} className="space-y-1.5">
               {section.label ? (
-                <p className="px-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-ink-muted">
+                <p className={cn(
+                  'px-3 text-[11px] font-semibold uppercase tracking-[0.18em]',
+                  isDark ? 'text-zinc-500' : 'text-ink-muted'
+                )}>
                   {section.label}
                 </p>
               ) : null}
@@ -110,14 +120,27 @@ export function PanelShell({
                     className={cn(
                       'group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition',
                       active
-                        ? 'bg-primary-50 text-primary-700 shadow-soft'
+                        ? isDark
+                          ? 'bg-white/10 text-white shadow-soft'
+                          : 'bg-primary-50 text-primary-700 shadow-soft'
                         : item.disabled
-                          ? 'cursor-not-allowed text-ink-muted/60'
-                          : 'text-ink-soft hover:bg-neutral-100 hover:text-ink'
+                          ? isDark
+                            ? 'cursor-not-allowed text-zinc-600'
+                            : 'cursor-not-allowed text-ink-muted/60'
+                          : isDark
+                            ? 'text-zinc-300 hover:bg-white/5 hover:text-white'
+                            : 'text-ink-soft hover:bg-neutral-100 hover:text-ink'
                     )}
                     aria-disabled={item.disabled || undefined}
                   >
-                    <item.icon size={17} className={cn(active ? 'text-primary-600' : 'text-ink-muted group-hover:text-ink')} />
+                    <item.icon
+                      size={17}
+                      className={cn(
+                        active
+                          ? isDark ? 'text-white' : 'text-primary-600'
+                          : isDark ? 'text-zinc-500 group-hover:text-white' : 'text-ink-muted group-hover:text-ink'
+                      )}
+                    />
                     <span className="flex-1 truncate">{item.label}</span>
                     {item.trailing}
                   </Link>
@@ -128,38 +151,52 @@ export function PanelShell({
         </div>
       </nav>
 
-      {sidebarFooter ? <div className="border-t border-neutral-200 px-3 py-3">{sidebarFooter}</div> : null}
+      {sidebarFooter ? <div className={cn('px-3 py-3', isDark ? 'border-t border-white/10' : 'border-t border-neutral-200')}>{sidebarFooter}</div> : null}
     </div>
   )
 
   return (
-    <div className="flex min-h-screen bg-neutral-50">
-      <aside className="hidden w-72 shrink-0 border-r border-neutral-200 bg-white lg:flex">
+    <div className={cn('flex min-h-screen', isDark ? 'bg-[#0b1020]' : 'bg-neutral-50')}>
+      <aside className={cn(
+        'hidden w-72 shrink-0 lg:flex',
+        isDark ? 'border-r border-white/10 bg-[#0f172a]' : 'border-r border-neutral-200 bg-white'
+      )}>
         <Sidebar />
       </aside>
 
       {sidebarOpen ? (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-slate-950/40 backdrop-blur-sm" onClick={() => onSidebarOpen(false)} />
-          <aside className="absolute inset-y-0 left-0 w-[min(88vw,20rem)] border-r border-neutral-200 bg-white shadow-strong">
+          <aside className={cn(
+            'absolute inset-y-0 left-0 w-[min(88vw,20rem)] shadow-strong',
+            isDark ? 'border-r border-white/10 bg-[#0f172a]' : 'border-r border-neutral-200 bg-white'
+          )}>
             <Sidebar />
           </aside>
         </div>
       ) : null}
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-30 border-b border-neutral-200 bg-white/90 backdrop-blur-xl">
+        <header className={cn(
+          'sticky top-0 z-30 backdrop-blur-xl',
+          isDark ? 'border-b border-white/10 bg-[#0b1020]/90' : 'border-b border-neutral-200 bg-white/90'
+        )}>
           <div className="mx-auto flex w-full max-w-[1200px] items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
             <div className="flex min-w-0 items-center gap-3">
               <button
                 onClick={() => onSidebarOpen(true)}
-                className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-neutral-200 bg-white text-ink shadow-soft lg:hidden"
+                className={cn(
+                  'inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl lg:hidden',
+                  isDark
+                    ? 'border border-white/10 bg-white/5 text-white'
+                    : 'border border-neutral-200 bg-white text-ink shadow-soft'
+                )}
               >
                 <Menu size={18} />
               </button>
               <div className="min-w-0">
-                <p className="truncate text-lg font-semibold tracking-tight text-ink">{topbarTitle}</p>
-                {topbarSubtitle ? <p className="truncate text-sm text-ink-muted">{topbarSubtitle}</p> : null}
+                <p className={cn('truncate text-lg font-semibold tracking-tight', isDark ? 'text-white' : 'text-ink')}>{topbarTitle}</p>
+                {topbarSubtitle ? <p className={cn('truncate text-sm', isDark ? 'text-zinc-400' : 'text-ink-muted')}>{topbarSubtitle}</p> : null}
               </div>
             </div>
 

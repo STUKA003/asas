@@ -110,12 +110,13 @@ export function SuperAdminLayout({ children }: { children: React.ReactNode }) {
       }
       topbarAside={<SuperAccountMenu onLogout={() => { logout(); navigate('/superadmin/login') }} />}
       sidebarFooter={
-        <div className="rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink-muted">Escopo</p>
-          <p className="mt-1 text-sm font-semibold text-ink">Operação central</p>
-          <p className="mt-1 text-xs text-ink-muted">Visão transversal sobre crescimento, contas e monetização.</p>
+        <div className="rounded-xl border border-white/10 bg-white/5 px-3 py-3">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">Escopo</p>
+          <p className="mt-1 text-sm font-semibold text-white">Operação central</p>
+          <p className="mt-1 text-xs text-zinc-400">Visão transversal sobre crescimento, contas e monetização.</p>
         </div>
       }
+      theme="dark"
     >
       {children}
     </PanelShell>
