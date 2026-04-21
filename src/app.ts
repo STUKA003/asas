@@ -55,7 +55,7 @@ app.get('/install-manifest.webmanifest', (req, res) => {
     superadmin: { name: 'Trimio Command', shortName: 'Command', theme: '#0f172a', background: '#0f172a', id: '/superadmin', startUrl: '/superadmin', scope: '/superadmin' },
   } as const
 
-  const normalizedSurface =
+  const normalizedSurface: 'platform' | 'admin' | 'superadmin' | 'barber' | 'clients' =
     surface === 'admin' || surface === 'superadmin' || surface === 'barber' || surface === 'clients'
       ? surface
       : 'platform'
@@ -84,6 +84,18 @@ app.get('/install-manifest.webmanifest', (req, res) => {
       theme_color: '#f97316',
       icons: [],
     }
+  } else if (normalizedSurface === 'barber') {
+    manifest = {
+      name: 'Trimio Flow',
+      short_name: 'Flow',
+      id: '/barber/login',
+      start_url: '/barber/login',
+      scope: '/barber',
+      display: 'standalone',
+      background_color: '#f97316',
+      theme_color: '#f97316',
+      icons: [],
+    }
   } else if (normalizedSurface === 'clients' && slug) {
     manifest = {
       name: 'Trimio Clientes',
@@ -97,7 +109,11 @@ app.get('/install-manifest.webmanifest', (req, res) => {
       icons: [],
     }
   } else {
-    const fallback = brandBySurface[normalizedSurface === 'barber' || normalizedSurface === 'clients' ? 'platform' : normalizedSurface]
+    const fallbackKey: 'platform' | 'admin' | 'superadmin' =
+      normalizedSurface === 'admin' || normalizedSurface === 'superadmin'
+        ? normalizedSurface
+        : 'platform'
+    const fallback = brandBySurface[fallbackKey]
     manifest = {
       name: fallback.name,
       short_name: fallback.shortName,

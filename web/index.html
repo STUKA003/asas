@@ -46,6 +46,17 @@
             startUrl: '/superadmin',
             scope: '/superadmin',
           }
+        } else if (path === '/barber/login' || path.indexOf('/barber/') === 0) {
+          brand = {
+            title: 'Trimio Flow',
+            shortTitle: 'Flow',
+            theme: '#f97316',
+            background: '#f97316',
+            iconPath: '/branding/barber-logo.png',
+            appId: '/barber/login',
+            startUrl: '/barber/login',
+            scope: '/barber',
+          }
         } else {
           var barberMatch = path.match(/^\/([^/]+)\/barber(?:\/.*)?$/)
           if (barberMatch) {
@@ -119,6 +130,8 @@
           manifestHref = '/install-manifest.webmanifest?surface=admin'
         } else if (brand.appId === '/superadmin') {
           manifestHref = '/install-manifest.webmanifest?surface=superadmin'
+        } else if (path === '/barber/login' || path.indexOf('/barber/') === 0) {
+          manifestHref = '/install-manifest.webmanifest?surface=barber'
         } else if (path.match(/^\/([^/]+)\/barber(?:\/.*)?$/)) {
           var barberSlug = path.split('/')[1]
           manifestHref = '/install-manifest.webmanifest?surface=barber&slug=' + encodeURIComponent(barberSlug)
