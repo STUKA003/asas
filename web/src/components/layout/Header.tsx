@@ -5,11 +5,13 @@ import { Button } from '@/components/ui/Button'
 import { useTenant } from '@/providers/TenantProvider'
 import { cn } from '@/lib/utils'
 import clientsLogo from '@/assets/branding/clients-logo.png'
+import { useInstallBrand } from '@/lib/installBrand'
 
 export function Header() {
   const [open, setOpen] = useState(false)
   const { pathname } = useLocation()
   const { slug, barbershop } = useTenant()
+  useInstallBrand('clients')
 
   const base = `/${slug}`
   const isFree = barbershop?.plan === 'FREE'

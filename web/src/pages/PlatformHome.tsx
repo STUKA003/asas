@@ -15,6 +15,7 @@ import {
 import { Button } from '@/components/ui/Button'
 import { applyPlatformAccent } from '@/lib/theme'
 import platformLogo from '@/assets/branding/platform-logo.png'
+import { useInstallBrand } from '@/lib/installBrand'
 
 const features = [
   {
@@ -49,6 +50,7 @@ export default function PlatformHome() {
   useEffect(() => {
     applyPlatformAccent()
   }, [])
+  useInstallBrand('platform')
 
   return (
     <div className="min-h-screen bg-[linear-gradient(180deg,#fcfcfb_0%,#f3f4f7_100%)] text-zinc-950">

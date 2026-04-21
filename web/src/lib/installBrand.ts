@@ -1,31 +1,50 @@
 import { useEffect } from 'react'
 
-type InstallBrandId = 'admin' | 'barber' | 'superadmin'
+type InstallBrandId = 'admin' | 'barber' | 'superadmin' | 'clients' | 'platform'
 
-const BRANDS: Record<InstallBrandId, { title: string; shortTitle: string; bg: string; fg: string; glyph: string; theme: string }> = {
+type InstallBrand = {
+  title: string
+  shortTitle: string
+  theme: string
+  background: string
+  iconPath: string
+}
+
+const BRANDS: Record<InstallBrandId, InstallBrand> = {
   admin: {
     title: 'Trimio Studio',
     shortTitle: 'Studio',
-    bg: '#09090b',
-    fg: '#ffffff',
-    glyph: 'TS',
     theme: '#09090b',
+    background: '#09090b',
+    iconPath: '/branding/admin-logo.png',
   },
   barber: {
     title: 'Trimio Flow',
     shortTitle: 'Flow',
-    bg: '#f97316',
-    fg: '#ffffff',
-    glyph: 'TF',
     theme: '#f97316',
+    background: '#f97316',
+    iconPath: '/branding/barber-logo.png',
   },
   superadmin: {
     title: 'Trimio Command',
     shortTitle: 'Command',
-    bg: '#0f172a',
-    fg: '#7dd3fc',
-    glyph: 'TC',
     theme: '#0f172a',
+    background: '#0f172a',
+    iconPath: '/branding/superadmin-logo.png',
+  },
+  clients: {
+    title: 'Trimio Clientes',
+    shortTitle: 'Clientes',
+    theme: '#09090b',
+    background: '#ffffff',
+    iconPath: '/branding/clients-logo.png',
+  },
+  platform: {
+    title: 'Trimio',
+    shortTitle: 'Trimio',
+    theme: '#09090b',
+    background: '#ffffff',
+    iconPath: '/branding/platform-logo.png',
   },
 }
 
@@ -49,28 +68,35 @@ function ensureLink(rel: string) {
   return element
 }
 
-function buildIconDataUrl(brand: typeof BRANDS[InstallBrandId]) {
-  const canvas = document.createElement('canvas')
-  canvas.width = 180
-  canvas.height = 180
-  const ctx = canvas.getContext('2d')
-  if (!ctx) return null
+function ensureManifestLink() {
+  return ensureLink('manifest')
+}
 
-  ctx.fillStyle = brand.bg
-  ctx.fillRect(0, 0, canvas.width, canvas.height)
+function buildManifestUrl(brand: InstallBrand) {
+  const manifest = {
+    name: brand.title,
+    short_name: brand.shortTitle,
+    start_url: window.location.pathname,
+    display: 'standalone',
+    background_color: brand.background,
+    theme_color: brand.theme,
+    icons: [
+      {
+        src: brand.iconPath,
+        sizes: '512x512',
+        type: 'image/png',
+        purpose: 'any maskable',
+      },
+      {
+        src: brand.iconPath,
+        sizes: '192x192',
+        type: 'image/png',
+        purpose: 'any maskable',
+      },
+    ],
+  }
 
-  ctx.fillStyle = 'rgba(255,255,255,0.08)'
-  ctx.beginPath()
-  ctx.arc(142, 40, 34, 0, Math.PI * 2)
-  ctx.fill()
-
-  ctx.fillStyle = brand.fg
-  ctx.font = '700 72px system-ui'
-  ctx.textAlign = 'center'
-  ctx.textBaseline = 'middle'
-  ctx.fillText(brand.glyph, canvas.width / 2, canvas.height / 2 + 4)
-
-  return canvas.toDataURL('image/png')
+  return URL.createObjectURL(new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' }))
 }
 
 export function applyInstallBrand(id: InstallBrandId) {
@@ -79,12 +105,22 @@ export function applyInstallBrand(id: InstallBrandId) {
   ensureMeta('apple-mobile-web-app-title').content = brand.title
   ensureMeta('application-name').content = brand.title
   ensureMeta('theme-color').content = brand.theme
+  ensureMeta('apple-mobile-web-app-capable').content = 'yes'
 
-  const iconUrl = buildIconDataUrl(brand)
-  if (iconUrl) {
-    ensureLink('apple-touch-icon').href = iconUrl
-    ensureLink('icon').href = iconUrl
-  }
+  const appleTouchIcon = ensureLink('apple-touch-icon')
+  appleTouchIcon.href = brand.iconPath
+  appleTouchIcon.sizes = '180x180'
+
+  const icon = ensureLink('icon')
+  icon.href = brand.iconPath
+  icon.type = 'image/png'
+
+  const manifestUrl = buildManifestUrl(brand)
+  const manifestLink = ensureManifestLink()
+  const previousManifestUrl = manifestLink.dataset.objectUrl
+  if (previousManifestUrl) URL.revokeObjectURL(previousManifestUrl)
+  manifestLink.href = manifestUrl
+  manifestLink.dataset.objectUrl = manifestUrl
 }
 
 export function useInstallBrand(id: InstallBrandId) {
