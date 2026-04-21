@@ -5,6 +5,7 @@ import { barbersApi, servicesApi, customersApi, bookingsApi, barbershopApi } fro
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
+import { PhoneInput } from '@/components/ui/PhoneInput'
 import { Select } from '@/components/ui/Select'
 import { formatCurrency, formatDuration } from '@/lib/utils'
 import { UserCheck, UserPlus } from 'lucide-react'
@@ -180,11 +181,11 @@ export function NewBookingModal({ open, onClose, initialDate, initialBarberId, i
 
         {/* Customer */}
         <div className="space-y-2">
-          <Input
+          <PhoneInput
             label="Telefone do cliente"
-            placeholder="+351 912 345 678"
+            placeholder="912 345 678"
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            onChange={setPhone}
           />
 
           {/* Found customer */}

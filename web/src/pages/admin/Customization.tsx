@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 import { barbershopApi } from '@/lib/api'
 import { ACCENT_PRESETS, DEFAULT_ACCENT, applyAccentColor } from '@/lib/theme'
@@ -9,6 +9,7 @@ import { AdminLayout } from '@/components/layout/AdminLayout'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input, Textarea } from '@/components/ui/Input'
+import { PhoneInput } from '@/components/ui/PhoneInput'
 import { PageLoader } from '@/components/ui/Spinner'
 import { ImagePlus, Instagram, Lock, MessageCircle, Scissors, Sparkles, Trash2 } from 'lucide-react'
 
@@ -113,7 +114,7 @@ export default function Customization() {
     queryFn: barbershopApi.get,
   })
 
-  const { register, handleSubmit, reset, watch, setValue } = useForm<FormValues>({
+  const { register, control, handleSubmit, reset, watch, setValue } = useForm<FormValues>({
     defaultValues: {
       name: '',
       phone: '',
@@ -319,11 +320,32 @@ export default function Customization() {
             <form onSubmit={handleSubmit((data) => mutate(data))} className="space-y-4">
               <Input label="Nome da barbearia" {...register('name')} />
               <div className="grid gap-4 sm:grid-cols-2">
-                <Input label="Telefone" {...register('phone')} />
+                <Controller
+                  name="phone"
+                  control={control}
+                  render={({ field }) => (
+                    <PhoneInput
+                      label="Telefone"
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  )}
+                />
                 <Input label="Endereço" {...register('address')} />
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
-                <Input label="WhatsApp" placeholder="+351..." {...register('whatsapp')} />
+                <Controller
+                  name="whatsapp"
+                  control={control}
+                  render={({ field }) => (
+                    <PhoneInput
+                      label="WhatsApp"
+                      placeholder="912 345 678"
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  )}
+                />
                 <Input label="Instagram" placeholder="@minha_barbearia" {...register('instagram')} />
               </div>
               <div className="rounded-xl border border-zinc-200 dark:border-zinc-700 p-4 space-y-3">

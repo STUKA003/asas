@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { useQuery } from '@tanstack/react-query'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -8,6 +8,7 @@ import { useTenant } from '@/providers/TenantProvider'
 import { useBookingStore } from '@/store/booking'
 import { Input, Textarea } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
+import { PhoneInput } from '@/components/ui/PhoneInput'
 import type { CustomerPlanLookup } from '@/lib/types'
 
 const schema = z.object({
@@ -42,7 +43,7 @@ function formatAllowedDays(days: number[]) {
 export function StepCustomer() {
   const { slug, barbershop } = useTenant()
   const { customer, service, date, setCustomer, setCustomerPlan, setStep } = useBookingStore()
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<FormData>({
+  const { register, control, handleSubmit, watch, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: customer ?? { name: '', phone: '', email: '', notes: '' },
   })
@@ -106,11 +107,18 @@ export function StepCustomer() {
           error={errors.name?.message}
           {...register('name')}
         />
-        <Input
-          label="Telefone / WhatsApp"
-          placeholder="+351 912 345 678"
-          error={errors.phone?.message}
-          {...register('phone')}
+        <Controller
+          name="phone"
+          control={control}
+          render={({ field }) => (
+            <PhoneInput
+              label="Telefone / WhatsApp"
+              placeholder="912 345 678"
+              error={errors.phone?.message}
+              value={field.value}
+              onChange={field.onChange}
+            />
+          )}
         />
         <Input
           label="E-mail (opcional)"

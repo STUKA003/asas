@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { barbersApi, barbersPasswordApi, barbershopApi } from '@/lib/api'
@@ -8,6 +8,7 @@ import { AdminLayout } from '@/components/layout/AdminLayout'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
+import { PhoneInput } from '@/components/ui/PhoneInput'
 import { Modal } from '@/components/ui/Modal'
 import { Badge } from '@/components/ui/Badge'
 import { Avatar } from '@/components/ui/Avatar'
@@ -47,7 +48,7 @@ export default function Barbers() {
   const activeBarbers = barbershop?.subscription?.limits?.activeBarbers ?? data.filter(b => b.active).length
   const atLimit       = maxBarbers !== null && activeBarbers >= maxBarbers
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>({
+  const { register, control, handleSubmit, reset, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
   })
 
@@ -178,7 +179,18 @@ export default function Barbers() {
           )}
           <Input label="Nome" placeholder="Joao Silva" error={errors.name?.message} {...register('name')} />
           <Input label="E-mail" type="email" placeholder="joao@example.com" error={errors.email?.message} {...register('email')} />
-          <Input label="Telefone" placeholder="+351 912 345 678" {...register('phone')} />
+          <Controller
+            name="phone"
+            control={control}
+            render={({ field }) => (
+              <PhoneInput
+                label="Telefone"
+                placeholder="912 345 678"
+                value={field.value}
+                onChange={field.onChange}
+              />
+            )}
+          />
           {editing && (
             <label className="flex items-center gap-2 text-sm cursor-pointer">
               <input type="checkbox" className="rounded accent-orange-500" {...register('active')} />

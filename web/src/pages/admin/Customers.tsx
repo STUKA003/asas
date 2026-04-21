@@ -12,6 +12,7 @@ import { DataTable } from '@/components/admin/DataTable'
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
+import { PhoneInput } from '@/components/ui/PhoneInput'
 import { Select } from '@/components/ui/Select'
 import { formatCurrency } from '@/lib/utils'
 import { StatusBadge } from '@/components/ui/Badge'
@@ -453,16 +454,12 @@ export default function Customers() {
                           className="h-10 w-full rounded-xl border border-zinc-200 bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-accent-500 dark:border-zinc-700 dark:bg-zinc-900"
                         />
                       </label>
-                      <label className="space-y-1.5 text-sm">
-                        <span className="text-zinc-500">Telefone</span>
-                        <input
-                          type="text"
-                          value={editForm.phone}
-                          onChange={(e) => setEditForm((current) => ({ ...current, phone: e.target.value }))}
-                          placeholder="Sem telefone"
-                          className="h-10 w-full rounded-xl border border-zinc-200 bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-accent-500 dark:border-zinc-700 dark:bg-zinc-900"
-                        />
-                      </label>
+                      <PhoneInput
+                        label="Telefone"
+                        value={editForm.phone}
+                        onChange={(value) => setEditForm((current) => ({ ...current, phone: value }))}
+                        placeholder="912 345 678"
+                      />
                     </div>
                     <label className="space-y-1.5 text-sm">
                       <span className="text-zinc-500">E-mail</span>

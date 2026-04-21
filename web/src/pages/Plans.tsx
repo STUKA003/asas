@@ -9,6 +9,7 @@ import { Footer } from '@/components/layout/Footer'
 import { PageLoader } from '@/components/ui/Spinner'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
+import { PhoneInput } from '@/components/ui/PhoneInput'
 import { Check, Scissors, X } from 'lucide-react'
 import type { Plan } from '@/lib/types'
 
@@ -74,15 +75,13 @@ function SubscribeModal({ plan, slug, onClose }: { plan: Plan; slug: string; onC
                 required
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Telemóvel</label>
-              <Input
-                placeholder="+351 900 000 000"
-                value={phone}
-                onChange={e => setPhone(e.target.value)}
-                required
-              />
-            </div>
+            <PhoneInput
+              label="Telemóvel"
+              value={phone}
+              onChange={setPhone}
+              placeholder="900 000 000"
+              required
+            />
             {mutation.isError && (
               <p className="text-sm text-red-600 bg-red-50 rounded-xl px-3 py-2">
                 {(mutation.error as { response?: { data?: { error?: string } } })?.response?.data?.error ?? 'Erro ao assinar plano.'}
