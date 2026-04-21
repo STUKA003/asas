@@ -82,7 +82,7 @@ export default function Home() {
                 </div>
 
                 {/* Headline */}
-                <h1 className="max-w-2xl text-balance text-[2.8rem] font-semibold leading-[0.9] tracking-[-0.04em] sm:text-[4.2rem] lg:text-[5rem]">
+                <h1 className="max-w-2xl text-balance text-[2.8rem] font-semibold leading-[0.9] tracking-[-0.04em] text-white sm:text-[4.2rem] lg:text-[5rem]">
                   {heroTitle}
                 </h1>
 
@@ -150,7 +150,7 @@ export default function Home() {
                       <div className="tenant-soft-icon mb-3 flex h-9 w-9 items-center justify-center rounded-xl">
                         <item.icon size={15} />
                       </div>
-                      <p className="text-[18px] font-semibold tracking-tight">{item.value}</p>
+                      <p className="text-[18px] font-semibold tracking-tight text-white">{item.value}</p>
                       <p className="mt-0.5 text-[12px] text-white/40">{item.label}</p>
                     </div>
                   ))}
