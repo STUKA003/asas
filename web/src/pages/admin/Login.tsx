@@ -1,5 +1,4 @@
-import { useEffect } from 'react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -10,10 +9,10 @@ import { useAuthStore } from '@/store/auth'
 import { useInstallBrand } from '@/lib/installBrand'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
-import { AppMark } from '@/components/ui/AppMark'
-import { ArrowRight, Building2, Clock3, ShieldCheck, Sparkles } from 'lucide-react'
+import { ArrowRight, Building2, Calendar, BarChart2, Users } from 'lucide-react'
 import { applyPlatformAccent } from '@/lib/theme'
 import { getInboxLink } from '@/lib/emailLinks'
+import adminLogo from '@/assets/branding/barbershop-logo.png'
 
 const schema = z.object({
   slug:     z.string().min(1),
@@ -22,11 +21,18 @@ const schema = z.object({
 })
 type FormData = z.infer<typeof schema>
 
+const FEATURES = [
+  { icon: Calendar, label: 'Agenda em tempo real', desc: 'Reservas, confirmações e bloqueios num único ecrã.' },
+  { icon: Users,    label: 'Equipa e clientes',    desc: 'Gestão de barbeiros, planos e histórico completo.' },
+  { icon: BarChart2, label: 'Relatórios e receita', desc: 'Leituras operacionais para decisões mais rápidas.' },
+]
+
 export default function Login() {
   const navigate = useNavigate()
   const { setAuth } = useAuthStore()
-  const [submitError, setSubmitError] = useState('')
+  const [submitError, setSubmitError]     = useState('')
   const [unverifiedEmail, setUnverifiedEmail] = useState('')
+
   const { register, handleSubmit, formState: { errors }, setError, getValues } = useForm<FormData>({
     resolver: zodResolver(schema),
   })
@@ -41,8 +47,7 @@ export default function Login() {
     },
     onError: (error: unknown) => {
       const message =
-        typeof error === 'object' &&
-        error !== null &&
+        typeof error === 'object' && error !== null &&
         'response' in error &&
         typeof (error as { response?: { data?: { error?: string } } }).response?.data?.error === 'string'
           ? (error as { response?: { data?: { error?: string } } }).response!.data!.error!
@@ -52,78 +57,110 @@ export default function Login() {
       setUnverifiedEmail('')
       setSubmitError(
         message === 'Invalid credentials'
-          ? 'Slug, e-mail ou password inválidos. Se esta barbearia existia só no teu localhost, ainda não está criada na base de dados da VPS.'
+          ? 'Slug, e-mail ou password inválidos.'
           : message === 'Email not verified'
-            ? 'Confirma o teu email antes de entrar. Se não recebeste o email, usa o link de reenvio abaixo.'
+            ? 'Confirma o teu email antes de entrar.'
             : message
       )
-      if (message === 'Email not verified') {
-        setUnverifiedEmail(getValues('email'))
-      }
+      if (message === 'Email not verified') setUnverifiedEmail(getValues('email'))
     },
   })
 
-  useEffect(() => {
-    applyPlatformAccent()
-  }, [])
+  useEffect(() => { applyPlatformAccent() }, [])
   useInstallBrand('admin')
 
   return (
-    <div className="min-h-screen bg-[linear-gradient(180deg,#fcfcfb_0%,#f3f4f7_100%)] p-4">
-      <div className="mx-auto grid min-h-[calc(100vh-2rem)] max-w-6xl gap-8 lg:grid-cols-[minmax(0,1.05fr)_28rem] lg:items-center">
-        <section className="hidden rounded-[2rem] bg-zinc-950 px-8 py-10 text-white shadow-[0_30px_80px_-40px_rgba(9,9,11,0.6)] lg:block lg:px-12">
-          <div className="max-w-sm">
-            <AppMark
-              icon={Building2}
-              eyebrow="Trimio Admin"
-              title="Trimio Studio"
-              subtitle="Operação, equipa, agenda e faturação no mesmo centro de comando."
-              tone="admin"
-            />
+    <div className="flex min-h-screen">
+
+      {/* ── Left — brand panel ───────────────────────────────── */}
+      <div
+        className="relative hidden w-[52%] shrink-0 flex-col justify-between overflow-hidden p-12 lg:flex xl:p-16"
+        style={{ background: '#0d0d11' }}
+      >
+        {/* Background glow */}
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              'radial-gradient(ellipse 70% 55% at 20% -10%, rgba(99,102,241,0.18) 0%, transparent 60%),' +
+              'radial-gradient(ellipse 50% 40% at 85% 110%, rgba(79,70,229,0.10) 0%, transparent 55%)',
+          }}
+        />
+
+        {/* Top — logo + wordmark */}
+        <div className="relative flex items-center gap-3">
+          <img src={adminLogo} alt="Trimio Studio" className="h-10 w-10 rounded-xl object-contain" />
+          <div>
+            <p className="text-[13px] font-semibold tracking-tight text-white">Trimio Studio</p>
+            <p className="text-[11px] text-white/35">Painel da barbearia</p>
           </div>
-          <p className="mt-10 text-[11px] font-semibold uppercase tracking-[0.24em] text-zinc-500">Trimio Admin</p>
-          <h1 className="mt-4 max-w-xl text-5xl font-semibold leading-[0.96]">Gere a tua operação com mais controlo e melhor presença.</h1>
-          <p className="mt-5 max-w-xl text-base leading-7 text-zinc-300">
-            O painel foi pensado para gerir agenda, clientes, equipa e faturação com uma leitura mais rápida e mais profissional.
+        </div>
+
+        {/* Middle — headline + features */}
+        <div className="relative">
+          <p className="mb-5 text-[10.5px] font-semibold uppercase tracking-[0.2em] text-white/30">
+            Gestão completa
           </p>
-          <div className="mt-10 grid gap-4 sm:grid-cols-3">
-            {[
-              { icon: Clock3, title: 'Agenda viva', text: 'Vê disponibilidade e ritmo diário.' },
-              { icon: ShieldCheck, title: 'Gestão segura', text: 'Acesso centralizado da barbearia.' },
-              { icon: Sparkles, title: 'Marca própria', text: 'Experiência mais premium para clientes.' },
-            ].map((item) => (
-              <div key={item.title} className="rounded-[1.5rem] border border-white/10 bg-white/5 p-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10">
-                  <item.icon size={16} className="text-accent-300" />
+          <h1 className="max-w-xs text-[2.6rem] font-semibold leading-[1.08] tracking-[-0.04em] text-white">
+            Controlo total da tua barbearia.
+          </h1>
+          <p className="mt-5 max-w-sm text-[14px] leading-7 text-white/50">
+            Agenda, clientes, equipa, faturação e relatórios — tudo num único painel desenhado para operar de forma profissional.
+          </p>
+
+          <div className="mt-10 space-y-3">
+            {FEATURES.map((f) => (
+              <div
+                key={f.label}
+                className="flex items-start gap-3.5 rounded-2xl border border-white/[0.07] bg-white/[0.04] px-4 py-3.5"
+              >
+                <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-primary-600/25">
+                  <f.icon size={15} className="text-primary-300" />
                 </div>
-                <p className="mt-4 text-sm font-semibold text-white">{item.title}</p>
-                <p className="mt-2 text-sm leading-6 text-zinc-400">{item.text}</p>
+                <div>
+                  <p className="text-[13px] font-semibold text-white">{f.label}</p>
+                  <p className="mt-0.5 text-[12px] leading-5 text-white/40">{f.desc}</p>
+                </div>
               </div>
             ))}
           </div>
-        </section>
+        </div>
 
-        <section className="surface-panel w-full rounded-[2rem] border border-white/70 p-6 sm:p-8">
+        {/* Bottom — tagline */}
+        <p className="relative text-[11px] text-white/20">
+          © {new Date().getFullYear()} Trimio · Plataforma de gestão para barbearias
+        </p>
+      </div>
+
+      {/* ── Right — form panel ───────────────────────────────── */}
+      <div className="flex flex-1 flex-col items-center justify-center bg-white px-6 py-12 sm:px-10">
+        {/* Mobile logo */}
+        <div className="mb-8 flex items-center gap-2.5 lg:hidden">
+          <img src={adminLogo} alt="Trimio Studio" className="h-9 w-9 rounded-xl object-contain" />
+          <span className="text-[14px] font-semibold tracking-tight text-ink">Trimio Studio</span>
+        </div>
+
+        <div className="w-full max-w-sm">
+          {/* Heading */}
           <div className="mb-8">
-            <div className="max-w-xs">
-              <AppMark
-                icon={Building2}
-                eyebrow="Acesso admin"
-                title="Trimio Studio"
-                subtitle="Gestão central da operação."
-                tone="admin"
-                compact
-              />
-            </div>
-            <p className="mt-6 text-[11px] font-semibold uppercase tracking-[0.2em] text-zinc-400">Acesso admin</p>
-            <h2 className="mt-3 text-3xl font-semibold text-zinc-950">Entrar no painel da tua barbearia</h2>
-            <p className="mt-2 text-sm leading-6 text-zinc-500">Faz login para gerir operação, equipa, clientes e agenda num único sítio.</p>
+            <Building2 size={28} className="mb-4 text-primary-600" />
+            <h2 className="text-[1.65rem] font-semibold tracking-[-0.03em] text-ink">
+              Entra no teu painel
+            </h2>
+            <p className="mt-1.5 text-[13.5px] leading-6 text-ink-muted">
+              Acesso à gestão da tua barbearia.
+            </p>
           </div>
 
-          <form onSubmit={handleSubmit((d) => { setSubmitError(''); mutate(d) })} className="space-y-4">
+          {/* Form */}
+          <form
+            onSubmit={handleSubmit((d) => { setSubmitError(''); mutate(d) })}
+            className="space-y-4"
+          >
             <Input
               label="Slug da barbearia"
               placeholder="minha-barbearia"
+              autoComplete="organization"
               error={errors.slug?.message}
               {...register('slug')}
             />
@@ -131,21 +168,35 @@ export default function Login() {
               label="E-mail"
               type="email"
               placeholder="admin@email.com"
+              autoComplete="email"
               error={errors.email?.message}
               {...register('email')}
             />
-            <Input
-              label="Senha"
-              type="password"
-              placeholder="••••••••"
-              error={errors.password?.message}
-              {...register('password')}
-            />
+            <div className="space-y-1">
+              <Input
+                label="Password"
+                type="password"
+                placeholder="••••••••"
+                autoComplete="current-password"
+                error={errors.password?.message}
+                {...register('password')}
+              />
+              <div className="flex justify-end">
+                <Link
+                  to="/admin/forgot-password"
+                  className="text-[12px] font-medium text-ink-muted transition-colors hover:text-ink"
+                >
+                  Esqueceste a password?
+                </Link>
+              </div>
+            </div>
+
             {submitError && (
-              <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300">
+              <div className="rounded-xl border border-danger-200/70 bg-danger-50 px-3.5 py-2.5 text-[13px] text-danger-700">
                 {submitError}
               </div>
             )}
+
             {unverifiedEmail && (
               <a href={getInboxLink(unverifiedEmail)} target="_blank" rel="noreferrer" className="block">
                 <Button type="button" variant="outline" className="w-full">
@@ -153,29 +204,29 @@ export default function Login() {
                 </Button>
               </a>
             )}
-            <Button type="submit" loading={isPending} className="mt-2 w-full">
-              Entrar no painel <ArrowRight size={16} />
+
+            <Button type="submit" loading={isPending} size="lg" className="mt-1 w-full">
+              Entrar no painel
+              <ArrowRight size={15} />
             </Button>
           </form>
-          <p className="mt-6 text-center text-sm text-zinc-500">
-            Ainda não tens conta?{' '}
-            <Link to="/register" className="font-semibold text-accent-600 hover:underline">
-              Criar barbearia grátis
-            </Link>
-          </p>
-          <p className="mt-2 text-center text-sm text-zinc-500">
-            Esqueceste-te da password?{' '}
-            <Link to="/admin/forgot-password" className="font-semibold text-accent-600 hover:underline">
-              Recuperar acesso
-            </Link>
-          </p>
-          <p className="mt-2 text-center text-sm text-zinc-500">
-            Não recebeste o email de confirmação?{' '}
-            <Link to="/admin/resend-verification" className="font-semibold text-accent-600 hover:underline">
-              Reenviar email
-            </Link>
-          </p>
-        </section>
+
+          {/* Footer links */}
+          <div className="mt-8 space-y-2.5 border-t border-neutral-100 pt-6">
+            <p className="text-center text-[12.5px] text-ink-muted">
+              Ainda não tens conta?{' '}
+              <Link to="/register" className="font-semibold text-primary-600 transition-colors hover:text-primary-700">
+                Criar barbearia grátis
+              </Link>
+            </p>
+            <p className="text-center text-[12.5px] text-ink-muted">
+              Não recebeste o email de confirmação?{' '}
+              <Link to="/admin/resend-verification" className="font-semibold text-primary-600 transition-colors hover:text-primary-700">
+                Reenviar email
+              </Link>
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   )
