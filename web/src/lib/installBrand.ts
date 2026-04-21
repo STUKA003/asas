@@ -72,35 +72,46 @@ function ensureManifestLink() {
   return ensureLink('manifest')
 }
 
-function buildManifestUrl(brand: InstallBrand) {
-  const manifest = {
-    name: brand.title,
-    short_name: brand.shortTitle,
-    start_url: window.location.pathname,
-    display: 'standalone',
-    background_color: brand.background,
-    theme_color: brand.theme,
-    icons: [
-      {
-        src: brand.iconPath,
-        sizes: '512x512',
-        type: 'image/png',
-        purpose: 'any maskable',
-      },
-      {
-        src: brand.iconPath,
-        sizes: '192x192',
-        type: 'image/png',
-        purpose: 'any maskable',
-      },
-    ],
+function normalizePath(path: string) {
+  if (!path || path === '/') return '/'
+  return path.startsWith('/') ? path : `/${path}`
+}
+
+function resolveBrandPaths(id: InstallBrandId, pathname: string) {
+  const safePath = normalizePath(pathname)
+
+  if (id === 'platform') {
+    return { appId: '/', startUrl: '/', scope: '/' }
   }
 
-  return URL.createObjectURL(new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' }))
+  if (id === 'admin') {
+    return { appId: '/admin', startUrl: '/admin', scope: '/admin' }
+  }
+
+  if (id === 'superadmin') {
+    return { appId: '/superadmin', startUrl: '/superadmin', scope: '/superadmin' }
+  }
+
+  if (id === 'barber') {
+    const match = safePath.match(/^\/([^/]+)\/barber(?:\/.*)?$/)
+    const basePath = match ? `/${match[1]}/barber` : '/barber'
+    return { appId: basePath, startUrl: basePath, scope: basePath }
+  }
+
+  if (id === 'clients') {
+    const match = safePath.match(/^\/([^/]+)(?:\/.*)?$/)
+    const reserved = new Set(['admin', 'superadmin', 'register', 'verify-email', 'barber'])
+    const firstSegment = match?.[1]
+    const basePath = firstSegment && !reserved.has(firstSegment) ? `/${firstSegment}` : '/'
+    return { appId: basePath, startUrl: basePath, scope: basePath }
+  }
+
+  return { appId: safePath, startUrl: safePath, scope: safePath }
 }
 
 export function applyInstallBrand(id: InstallBrandId) {
   const brand = BRANDS[id]
+  const pathname = window.location.pathname
   document.title = brand.title
   ensureMeta('apple-mobile-web-app-title').content = brand.title
   ensureMeta('application-name').content = brand.title
@@ -115,7 +126,35 @@ export function applyInstallBrand(id: InstallBrandId) {
   icon.href = brand.iconPath
   icon.type = 'image/png'
 
-  const manifestUrl = buildManifestUrl(brand)
+  const manifestIdentity = resolveBrandPaths(id, pathname)
+  const manifestUrl = (() => {
+    const manifest = {
+      name: brand.title,
+      short_name: brand.shortTitle,
+      id: manifestIdentity.appId,
+      start_url: manifestIdentity.startUrl,
+      scope: manifestIdentity.scope,
+      display: 'standalone',
+      background_color: brand.background,
+      theme_color: brand.theme,
+      icons: [
+        {
+          src: brand.iconPath,
+          sizes: '512x512',
+          type: 'image/png',
+          purpose: 'any maskable',
+        },
+        {
+          src: brand.iconPath,
+          sizes: '192x192',
+          type: 'image/png',
+          purpose: 'any maskable',
+        },
+      ],
+    }
+
+    return URL.createObjectURL(new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' }))
+  })()
   const manifestLink = ensureManifestLink()
   const previousManifestUrl = manifestLink.dataset.objectUrl
   if (previousManifestUrl) URL.revokeObjectURL(previousManifestUrl)
@@ -126,5 +165,5 @@ export function applyInstallBrand(id: InstallBrandId) {
 export function useInstallBrand(id: InstallBrandId) {
   useEffect(() => {
     applyInstallBrand(id)
-  }, [id])
+  }, [id, window.location.pathname])
 }
