@@ -8,6 +8,27 @@ const HOUR_START  = 8
 const HOUR_END    = 21
 const HOUR_HEIGHT = 68
 
+const PLAN_BADGE_COLORS = [
+  'bg-violet-500', 'bg-sky-500', 'bg-emerald-500', 'bg-orange-500',
+  'bg-pink-500',   'bg-teal-500', 'bg-indigo-500', 'bg-rose-500',
+]
+
+function planBadgeColor(planId: string): string {
+  let hash = 0
+  for (let i = 0; i < planId.length; i++) hash = (hash * 31 + planId.charCodeAt(i)) >>> 0
+  return PLAN_BADGE_COLORS[hash % PLAN_BADGE_COLORS.length]
+}
+
+function planAbbr(planName: string): string {
+  return planName
+    .split(/[\s\-+&/]+/)
+    .map(w => w[0])
+    .filter(Boolean)
+    .slice(0, 3)
+    .join('')
+    .toUpperCase()
+}
+
 const STATUS_STYLES: Record<string, { bar: string; bg: string; text: string }> = {
   PENDING:   { bar: 'bg-amber-400', bg: 'bg-amber-50', text: 'text-amber-800' },
   CONFIRMED: { bar: 'bg-blue-500', bg: 'bg-blue-50', text: 'text-blue-800' },
@@ -479,7 +500,7 @@ export function CalendarView({ date, bookings, barbers, blockedTimes = [], effec
                           {format(new Date(bk.startTime), 'HH:mm')} · {bk.customer.name}
                         </p>
                         {bk.customer.plan
-                          ? <span className="shrink-0 text-[9px] font-bold px-1 py-0.5 rounded bg-violet-500 text-white leading-none">P</span>
+                          ? <span className={`shrink-0 text-[9px] font-bold px-1 py-0.5 rounded ${planBadgeColor(bk.customer.plan.id)} text-white leading-none`}>{planAbbr(bk.customer.plan.name)}</span>
                           : <span className="shrink-0 text-[9px] font-bold px-1 py-0.5 rounded bg-zinc-400 text-white leading-none">A</span>
                         }
                       </div>
