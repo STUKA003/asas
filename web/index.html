@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/branding/platform-logo.png" />
     <link rel="apple-touch-icon" href="/branding/platform-logo.png" />
-    <link rel="manifest" href="/manifest.webmanifest" />
     <meta name="application-name" content="Trimio" />
     <meta name="apple-mobile-web-app-title" content="Trimio" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -114,24 +113,22 @@
         appleTouchIcon.href = brand.iconPath
         appleTouchIcon.sizes = '180x180'
 
-        var manifest = {
-          name: brand.title,
-          short_name: brand.shortTitle,
-          id: brand.appId,
-          start_url: brand.startUrl,
-          scope: brand.scope,
-          display: 'standalone',
-          background_color: brand.background,
-          theme_color: brand.theme,
-          icons: [
-            { src: brand.iconPath, sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
-            { src: brand.iconPath, sizes: '192x192', type: 'image/png', purpose: 'any maskable' }
-          ]
-        }
-
         var manifestLink = ensureLink('manifest')
-        var manifestUrl = URL.createObjectURL(new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' }))
-        manifestLink.href = manifestUrl
+        var manifestHref = '/install-manifest.webmanifest?surface=platform'
+        if (brand.appId === '/admin') {
+          manifestHref = '/install-manifest.webmanifest?surface=admin'
+        } else if (brand.appId === '/superadmin') {
+          manifestHref = '/install-manifest.webmanifest?surface=superadmin'
+        } else if (path.match(/^\/([^/]+)\/barber(?:\/.*)?$/)) {
+          var barberSlug = path.split('/')[1]
+          manifestHref = '/install-manifest.webmanifest?surface=barber&slug=' + encodeURIComponent(barberSlug)
+        } else {
+          var publicSlug = path.split('/')[1]
+          if (publicSlug && !reserved[publicSlug]) {
+            manifestHref = '/install-manifest.webmanifest?surface=clients&slug=' + encodeURIComponent(publicSlug)
+          }
+        }
+        manifestLink.href = manifestHref
       })()
     </script>
     <title>Trimio</title>

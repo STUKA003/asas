@@ -37,6 +37,91 @@ app.use(cors({
 app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), handleStripeWebhook)
 app.use(express.json({ limit: '15mb' }))
 
+app.get('/install-manifest.webmanifest', (req, res) => {
+  const surface = typeof req.query.surface === 'string' ? req.query.surface : 'platform'
+  const slug = typeof req.query.slug === 'string' ? req.query.slug.trim() : ''
+
+  const iconPathBySurface = {
+    platform: '/branding/platform-logo.png',
+    admin: '/branding/admin-logo.png',
+    superadmin: '/branding/superadmin-logo.png',
+    barber: '/branding/barber-logo.png',
+    clients: '/branding/clients-logo.png',
+  } as const
+
+  const brandBySurface = {
+    platform: { name: 'Trimio', shortName: 'Trimio', theme: '#09090b', background: '#ffffff', id: '/', startUrl: '/', scope: '/' },
+    admin: { name: 'Trimio Studio', shortName: 'Studio', theme: '#09090b', background: '#09090b', id: '/admin', startUrl: '/admin', scope: '/admin' },
+    superadmin: { name: 'Trimio Command', shortName: 'Command', theme: '#0f172a', background: '#0f172a', id: '/superadmin', startUrl: '/superadmin', scope: '/superadmin' },
+  } as const
+
+  const normalizedSurface =
+    surface === 'admin' || surface === 'superadmin' || surface === 'barber' || surface === 'clients'
+      ? surface
+      : 'platform'
+
+  let manifest: {
+    name: string
+    short_name: string
+    id: string
+    start_url: string
+    scope: string
+    display: string
+    background_color: string
+    theme_color: string
+    icons: Array<{ src: string; sizes: string; type: string; purpose: string }>
+  }
+
+  if (normalizedSurface === 'barber' && slug) {
+    manifest = {
+      name: 'Trimio Flow',
+      short_name: 'Flow',
+      id: `/${slug}/barber`,
+      start_url: `/${slug}/barber`,
+      scope: `/${slug}/barber`,
+      display: 'standalone',
+      background_color: '#f97316',
+      theme_color: '#f97316',
+      icons: [],
+    }
+  } else if (normalizedSurface === 'clients' && slug) {
+    manifest = {
+      name: 'Trimio Clientes',
+      short_name: 'Clientes',
+      id: `/${slug}`,
+      start_url: `/${slug}`,
+      scope: `/${slug}`,
+      display: 'standalone',
+      background_color: '#ffffff',
+      theme_color: '#09090b',
+      icons: [],
+    }
+  } else {
+    const fallback = brandBySurface[normalizedSurface === 'barber' || normalizedSurface === 'clients' ? 'platform' : normalizedSurface]
+    manifest = {
+      name: fallback.name,
+      short_name: fallback.shortName,
+      id: fallback.id,
+      start_url: fallback.startUrl,
+      scope: fallback.scope,
+      display: 'standalone',
+      background_color: fallback.background,
+      theme_color: fallback.theme,
+      icons: [],
+    }
+  }
+
+  const iconPath = iconPathBySurface[normalizedSurface]
+  manifest.icons = [
+    { src: iconPath, sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
+    { src: iconPath, sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
+  ]
+
+  res.type('application/manifest+json')
+  res.setHeader('Cache-Control', 'no-store')
+  res.send(JSON.stringify(manifest))
+})
+
 app.use('/api/auth', authRouter)
 app.use('/api/public/:slug', publicRouter) // no auth — tenant identified by slug
 
