@@ -10,7 +10,7 @@ import { PageLoader } from '@/components/ui/Spinner'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { PhoneInput } from '@/components/ui/PhoneInput'
-import { Check, Scissors, X } from 'lucide-react'
+import { Check, X, Sparkles } from 'lucide-react'
 import type { Plan } from '@/lib/types'
 
 const WEEKDAY_LABELS: Record<number, string> = {
@@ -35,46 +35,50 @@ function SubscribeModal({ plan, slug, onClose }: { plan: Plan; slug: string; onC
   })
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/40" onClick={onClose}>
+    <div
+      className="fixed inset-0 z-50 flex items-end justify-center bg-neutral-950/55 p-4 backdrop-blur-[6px] sm:items-center"
+      onClick={onClose}
+    >
       <div
-        className="w-full max-w-md bg-white dark:bg-zinc-900 rounded-2xl shadow-xl overflow-hidden"
-        onClick={e => e.stopPropagation()}
+        className="w-full max-w-md overflow-hidden rounded-3xl border border-neutral-200/70 bg-white shadow-[0_24px_56px_rgba(0,0,0,0.14)]"
+        onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between px-5 pt-5 pb-4 border-b border-zinc-100 dark:border-zinc-800">
+        <div className="flex items-center justify-between border-b border-neutral-100 px-5 py-4">
           <div>
-            <p className="font-bold text-lg">Assinar plano</p>
-            <p className="text-sm text-zinc-400">{plan.name} · {formatCurrency(plan.price)}</p>
+            <p className="text-[15px] font-semibold text-ink">Assinar plano</p>
+            <p className="text-[12.5px] text-ink-muted">{plan.name} · {formatCurrency(plan.price)}</p>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">
-            <X size={18} />
+          <button
+            onClick={onClose}
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-ink-muted transition-colors hover:bg-neutral-100 hover:text-ink"
+          >
+            <X size={15} />
           </button>
         </div>
 
         {done ? (
-          <div className="px-5 py-8 text-center">
-            <div className="h-14 w-14 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-4">
-              <Check size={28} className="text-emerald-600" />
+          <div className="px-6 py-10 text-center">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-success-100">
+              <Check size={24} className="text-success-600" />
             </div>
-            <p className="font-bold text-lg">Plano ativado!</p>
-            <p className="text-sm text-zinc-500 mt-1">
+            <p className="text-[16px] font-semibold text-ink">Plano ativado!</p>
+            <p className="mt-1.5 text-[13px] text-ink-muted">
               O pedido para <strong>{plan.name}</strong> foi registado.
             </p>
             <Button className="mt-6 w-full" onClick={onClose}>Fechar</Button>
           </div>
         ) : (
           <form
-            className="px-5 py-5 space-y-4"
-            onSubmit={e => { e.preventDefault(); mutation.mutate() }}
+            className="space-y-4 px-5 py-5"
+            onSubmit={(e) => { e.preventDefault(); mutation.mutate() }}
           >
-            <div>
-              <label className="block text-sm font-medium mb-1">Nome</label>
-              <Input
-                placeholder="O teu nome"
-                value={name}
-                onChange={e => setName(e.target.value)}
-                required
-              />
-            </div>
+            <Input
+              label="Nome"
+              placeholder="O teu nome"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
             <PhoneInput
               label="Telemóvel"
               value={phone}
@@ -83,12 +87,12 @@ function SubscribeModal({ plan, slug, onClose }: { plan: Plan; slug: string; onC
               required
             />
             {mutation.isError && (
-              <p className="text-sm text-red-600 bg-red-50 rounded-xl px-3 py-2">
+              <p className="rounded-xl border border-danger-200/70 bg-danger-50 px-3.5 py-2.5 text-[13px] text-danger-700">
                 {(mutation.error as { response?: { data?: { error?: string } } })?.response?.data?.error ?? 'Erro ao assinar plano.'}
               </p>
             )}
             {!plan.paymentLink && (
-              <p className="text-sm text-amber-700 bg-amber-50 rounded-xl px-3 py-2">
+              <p className="rounded-xl border border-warning-200/70 bg-warning-50 px-3.5 py-2.5 text-[13px] text-warning-700">
                 Este plano só pode ser ativado após confirmação de pagamento ou diretamente pela barbearia.
               </p>
             )}
@@ -115,86 +119,111 @@ export default function Plans() {
   const unavailable = barbershop?.plan === 'FREE' || barbershop?.showPlans === false
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex min-h-screen flex-col">
       <Header />
       <main className="flex-1">
-        <section className="max-w-5xl mx-auto px-4 sm:px-6 py-16">
-          {unavailable ? (
-            <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 p-10 text-center">
-              <h1 className="text-3xl font-extrabold">Planos indisponíveis</h1>
-              <p className="mt-3 text-zinc-500">Esta barbearia preferiu não mostrar os planos no site público neste momento.</p>
+
+        {unavailable ? (
+          <section className="mx-auto max-w-xl px-4 py-24 text-center sm:px-6">
+            <div className="ui-card p-10">
+              <h1 className="text-[1.6rem] font-semibold tracking-tight text-ink">Planos indisponíveis</h1>
+              <p className="mt-3 text-[14px] text-ink-muted">
+                Esta barbearia preferiu não mostrar os planos no site público neste momento.
+              </p>
               <Link to={`/${slug}`} className="mt-6 inline-block">
                 <Button>Voltar ao início</Button>
               </Link>
             </div>
-          ) : (
-            <>
-              <div className="text-center mb-12">
-                <div className="mb-4 flex items-center justify-center gap-3">
-                  {barbershop?.logoUrl ? (
-                    <img src={barbershop.logoUrl} alt={barbershop.name} className="h-16 w-auto max-w-[10rem] object-contain" />
-                  ) : (
-                    <div className="tenant-button flex h-14 w-14 items-center justify-center rounded-2xl">
-                      <Scissors size={22} className="text-white" />
-                    </div>
-                  )}
-                  <div className="text-left">
-                    <p className="text-xs uppercase tracking-[0.18em] text-zinc-400">Marca</p>
-                    <p className="font-semibold">{barbershop?.name ?? 'Trimio'}</p>
-                  </div>
-                </div>
-                <h1 className="text-3xl sm:text-4xl font-extrabold">Planos e assinaturas</h1>
-                <p className="text-zinc-500 mt-2">Assine e economize em todo atendimento.</p>
+          </section>
+        ) : (
+          <>
+            {/* ── Page header ──────────────────────────────── */}
+            <div className="border-b border-neutral-100 bg-white px-4 py-12 sm:px-6 sm:py-16">
+              <div className="mx-auto max-w-5xl text-center">
+                <p className="eyebrow mb-3 tenant-ink">Assinaturas</p>
+                <h1 className="text-[2rem] font-semibold tracking-[-0.03em] text-ink sm:text-[2.4rem]">
+                  Planos e assinaturas
+                </h1>
+                <p className="mt-2 text-[14px] leading-6 text-ink-muted">
+                  Assine um plano e poupe em cada visita — serviços incluídos, sem surpresas.
+                </p>
               </div>
+            </div>
 
-              {isLoading ? <PageLoader /> : (
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* ── Plans grid ───────────────────────────────── */}
+            <section className="mx-auto max-w-5xl px-4 py-14 sm:px-6">
+              {isLoading ? (
+                <PageLoader />
+              ) : (
+                <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                   {(plans as Plan[] | undefined)?.map((p, i) => {
                     const highlighted = i === 1
-                    const period = p.intervalDays === 30 ? '/mês' : p.intervalDays === 365 ? '/ano' : `/${p.intervalDays}d`
-                    const features = [
-                      `Dias permitidos: ${formatAllowedDays(p.allowedDays)}`,
-                      `Serviços incluídos: ${p.allowedServices.map((s) => s.name).join(', ') || 'Não definido'}`,
+                    const period =
+                      p.intervalDays === 30  ? '/mês'  :
+                      p.intervalDays === 365 ? '/ano'  :
+                      `/${p.intervalDays}d`
+                    const featuresList = [
+                      `Dias: ${formatAllowedDays(p.allowedDays)}`,
+                      `Serviços: ${p.allowedServices.map((s) => s.name).join(', ') || 'Não definido'}`,
                       '1 marcação ativa por vez',
                     ]
+
                     return (
                       <div
                         key={p.id}
-                        className={`relative rounded-2xl p-6 border-2 flex flex-col ${
+                        className={`relative flex flex-col rounded-2xl p-6 transition-all duration-200 ${
                           highlighted
-                            ? 'tenant-button border-transparent text-white'
-                            : 'border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900'
+                            ? 'bg-[#0d0d11] text-white shadow-[0_12px_32px_rgba(0,0,0,0.2)]'
+                            : 'ui-card hover:-translate-y-0.5'
                         }`}
                       >
                         {highlighted && (
-                          <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-zinc-900 text-white text-xs font-bold px-4 py-1 rounded-full">
-                            MAIS POPULAR
+                          <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
+                            <span className="inline-flex items-center gap-1 rounded-full bg-primary-600 px-3 py-1 text-[10.5px] font-semibold text-white">
+                              <Sparkles size={10} /> Mais popular
+                            </span>
                           </div>
                         )}
-                        <div className="mb-6">
-                          <h3 className="font-bold text-lg">{p.name}</h3>
+
+                        {/* Plan name */}
+                        <div className="mb-5">
+                          <h3 className={`text-[15px] font-semibold ${highlighted ? 'text-white' : 'text-ink'}`}>
+                            {p.name}
+                          </h3>
                           {p.description && (
-                            <p className={`text-sm mt-1 ${highlighted ? 'text-white/70' : 'text-zinc-500'}`}>{p.description}</p>
+                            <p className={`mt-1 text-[13px] leading-5 ${highlighted ? 'text-white/50' : 'text-ink-muted'}`}>
+                              {p.description}
+                            </p>
                           )}
                         </div>
-                        <div className="flex items-end gap-1 mb-6">
-                          <span className="text-4xl font-black">{formatCurrency(p.price)}</span>
-                          <span className={`text-sm mb-1 ${highlighted ? 'text-white/70' : 'text-zinc-400'}`}>{period}</span>
+
+                        {/* Price */}
+                        <div className="mb-6 flex items-end gap-1">
+                          <span className={`text-[2.4rem] font-bold tracking-tight leading-none ${highlighted ? 'text-white' : 'text-ink'}`}>
+                            {formatCurrency(p.price)}
+                          </span>
+                          <span className={`mb-1 text-[13px] ${highlighted ? 'text-white/40' : 'text-ink-muted'}`}>
+                            {period}
+                          </span>
                         </div>
-                        <ul className="space-y-2.5 flex-1 mb-6">
-                          {features.map((feature) => (
-                            <li key={feature} className="flex items-center gap-2 text-sm">
-                              <div className={`h-5 w-5 rounded-full flex items-center justify-center flex-shrink-0 ${highlighted ? 'bg-white/20' : 'tenant-soft-icon'}`}>
-                                <Check size={11} className={highlighted ? 'text-white' : ''} />
+
+                        {/* Features */}
+                        <ul className="mb-6 flex-1 space-y-2.5">
+                          {featuresList.map((feature) => (
+                            <li key={feature} className={`flex items-start gap-2.5 text-[13px] ${highlighted ? 'text-white/70' : 'text-ink-soft'}`}>
+                              <div className={`mt-0.5 flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-full ${highlighted ? 'bg-white/15' : 'tenant-soft-icon'}`}>
+                                <Check size={9} className={highlighted ? 'text-white' : ''} />
                               </div>
                               {feature}
                             </li>
                           ))}
                         </ul>
+
+                        {/* CTA */}
                         {p.paymentLink ? (
                           <Button
                             variant={highlighted ? 'secondary' : 'primary'}
-                            className={highlighted ? 'bg-white tenant-ink hover:bg-zinc-100' : ''}
+                            className={highlighted ? 'bg-white text-[#0d0d11] hover:bg-neutral-100' : ''}
                             onClick={() => window.open(p.paymentLink!, '_blank', 'noopener,noreferrer')}
                           >
                             Assinar agora
@@ -202,7 +231,7 @@ export default function Plans() {
                         ) : (
                           <Button
                             variant={highlighted ? 'secondary' : 'primary'}
-                            className={highlighted ? 'bg-white tenant-ink hover:bg-zinc-100' : ''}
+                            className={highlighted ? 'bg-white/10 text-white/60 cursor-not-allowed' : ''}
                             disabled
                           >
                             Pagamento indisponível
@@ -213,9 +242,10 @@ export default function Plans() {
                   })}
                 </div>
               )}
-            </>
-          )}
-        </section>
+            </section>
+          </>
+        )}
+
       </main>
       <Footer />
 

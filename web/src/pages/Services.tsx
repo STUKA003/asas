@@ -7,7 +7,7 @@ import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { Button } from '@/components/ui/Button'
 import { PageLoader } from '@/components/ui/Spinner'
-import { Clock, ChevronRight, Scissors } from 'lucide-react'
+import { ArrowRight, Clock } from 'lucide-react'
 import type { Service } from '@/lib/types'
 
 export default function Services() {
@@ -20,47 +20,58 @@ export default function Services() {
   })
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex min-h-screen flex-col">
       <Header />
       <main className="flex-1">
-        <section className="max-w-6xl mx-auto px-4 sm:px-6 py-16">
-          <div className="mb-10">
-            <div className="mb-4 flex items-center gap-3">
-              {barbershop?.logoUrl ? (
-                <img src={barbershop.logoUrl} alt={barbershop.name} className="h-16 w-auto max-w-[10rem] object-contain" />
-              ) : (
-                <div className="tenant-button flex h-14 w-14 items-center justify-center rounded-2xl">
-                  <Scissors size={22} className="text-white" />
-                </div>
-              )}
-              <div>
-                <p className="text-xs uppercase tracking-[0.18em] text-zinc-400">Marca</p>
-                <p className="font-semibold">{barbershop?.name ?? 'Trimio'}</p>
-              </div>
-            </div>
-            <h1 className="text-3xl sm:text-4xl font-extrabold">Nossos serviços</h1>
-            <p className="text-zinc-500 mt-2">Escolha o serviço ideal para você.</p>
-          </div>
 
-          {isLoading ? <PageLoader /> : (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {/* ── Page header ──────────────────────────────────── */}
+        <div className="border-b border-neutral-100 bg-white px-4 py-12 sm:px-6 sm:py-16">
+          <div className="mx-auto max-w-6xl">
+            <p className="eyebrow mb-3 tenant-ink">Catálogo</p>
+            <h1 className="text-[2rem] font-semibold tracking-[-0.03em] text-ink sm:text-[2.4rem]">
+              Serviços disponíveis
+            </h1>
+            <p className="mt-2 text-[14px] leading-6 text-ink-muted">
+              Escolha o serviço ideal — veja preços, duração e agende diretamente.
+            </p>
+          </div>
+        </div>
+
+        {/* ── Services grid ────────────────────────────────── */}
+        <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
+          {isLoading ? (
+            <PageLoader />
+          ) : (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {(services as Service[] | undefined)?.map((s) => (
-                <div key={s.id} className="group tenant-card rounded-2xl p-6 transition-all hover:-translate-y-0.5">
-                  <div className="tenant-soft-icon mb-4 flex h-12 w-12 items-center justify-center rounded-xl">
-                    <span className="font-bold text-lg">{s.name[0]}</span>
+                <div
+                  key={s.id}
+                  className="tenant-card group rounded-2xl p-6 transition-all duration-200 hover:-translate-y-0.5"
+                >
+                  {/* Icon */}
+                  <div className="tenant-soft-icon mb-5 flex h-11 w-11 items-center justify-center rounded-xl">
+                    <span className="text-[15px] font-bold">{s.name[0]}</span>
                   </div>
-                  <h3 className="font-bold text-lg">{s.name}</h3>
-                  {s.description && <p className="text-sm text-zinc-500 mt-1 line-clamp-2">{s.description}</p>}
-                  <div className="flex items-center justify-between mt-4 pt-4 border-t border-zinc-50 dark:border-zinc-800">
+
+                  {/* Name + description */}
+                  <h3 className="text-[15px] font-semibold tracking-tight text-ink">{s.name}</h3>
+                  {s.description && (
+                    <p className="mt-1.5 line-clamp-2 text-[13px] leading-5 text-ink-muted">{s.description}</p>
+                  )}
+
+                  {/* Price + CTA */}
+                  <div className="mt-5 flex items-end justify-between border-t border-neutral-100 pt-4">
                     <div>
-                      <p className="tenant-ink text-xl font-black">{formatCurrency(s.price)}</p>
-                      <p className="flex items-center gap-1 text-xs text-zinc-400 mt-0.5">
+                      <p className="tenant-ink text-[22px] font-bold tracking-tight">
+                        {formatCurrency(s.price)}
+                      </p>
+                      <p className="mt-0.5 flex items-center gap-1 text-[11.5px] text-ink-muted">
                         <Clock size={11} /> {formatDuration(s.duration)}
                       </p>
                     </div>
                     <Link to={`/${slug}/booking`}>
-                      <Button size="sm" variant="outline" className="group-hover:tenant-button transition-all">
-                        Agendar <ChevronRight size={14} />
+                      <Button size="sm" variant="secondary" className="gap-1.5">
+                        Agendar <ArrowRight size={13} />
                       </Button>
                     </Link>
                   </div>
@@ -69,6 +80,7 @@ export default function Services() {
             </div>
           )}
         </section>
+
       </main>
       <Footer />
     </div>
