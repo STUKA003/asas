@@ -38,10 +38,7 @@ export async function getBarbers(req: Request, res: Response) {
     select: {
       id: true,
       name: true,
-      email: true,
-      phone: true,
       avatar: true,
-      active: true,
     },
     orderBy: { name: 'asc' },
   })
