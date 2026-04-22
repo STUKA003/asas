@@ -15,13 +15,17 @@ const updateSchema = createSchema.partial().extend({
   active: z.boolean().optional(),
 })
 
+function serializeBarber<T extends { password?: string | null }>(barber: T) {
+  const { password, ...rest } = barber
+  return { ...rest, hasAccess: !!password }
+}
+
 export async function list(req: Request, res: Response) {
   const barbers = await prisma.barber.findMany({
     where: { barbershopId: req.auth.barbershopId },
     orderBy: { name: 'asc' },
   })
-  // Não expor a hash da password — devolver apenas se tem acesso
-  res.json(barbers.map(({ password, ...b }) => ({ ...b, hasAccess: !!password })))
+  res.json(barbers.map(serializeBarber))
 }
 
 export async function get(req: Request, res: Response) {
@@ -30,7 +34,7 @@ export async function get(req: Request, res: Response) {
     include: { workingHours: true },
   })
   if (!barber) { res.status(404).json({ error: 'Not found' }); return }
-  res.json(barber)
+  res.json(serializeBarber(barber))
 }
 
 export async function create(req: Request, res: Response) {
@@ -60,7 +64,7 @@ export async function create(req: Request, res: Response) {
   const barber = await prisma.barber.create({
     data: { ...parsed.data, barbershopId: req.auth.barbershopId },
   })
-  res.status(201).json(barber)
+  res.status(201).json(serializeBarber(barber))
 }
 
 export async function update(req: Request, res: Response) {
@@ -96,7 +100,7 @@ export async function update(req: Request, res: Response) {
   }
 
   const barber = await prisma.barber.update({ where: { id: req.params.id }, data: parsed.data })
-  res.json(barber)
+  res.json(serializeBarber(barber))
 }
 
 export async function setPassword(req: Request, res: Response) {
