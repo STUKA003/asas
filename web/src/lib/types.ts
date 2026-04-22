@@ -33,10 +33,21 @@ export interface Plan {
 }
 export interface Customer {
   id: string; name: string; email?: string; phone?: string; planId?: string; plan?: Plan
+  insights?: {
+    activeBookings: number
+    cancelledBookings: number
+    completedBookings: number
+    lastBookingAt?: string | null
+    lastVisitAt?: string | null
+    noShowBookings: number
+    reliability: 'NEW' | 'TRUSTED' | 'ATTENTION' | 'RISK'
+    totalBookings: number
+    totalSpent: number
+  }
 }
 export interface CustomerDetail extends Customer {
   notes?: string
-  bookings: Array<Pick<Booking, 'id' | 'startTime' | 'status' | 'totalPrice'>>
+  bookings: Array<Pick<Booking, 'id' | 'startTime' | 'status' | 'totalPrice'> & { barber?: Pick<Barber, 'id' | 'name'> }>
 }
 export interface CustomerPlanLookup {
   customer: null | {

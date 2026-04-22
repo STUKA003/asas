@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { Prisma } from '@prisma/client'
 import { prisma } from '../../lib/prisma'
 import { buildCustomerListWhere } from './filters'
+import { computeCustomerInsights } from '../../lib/customer-insights'
 
 const emptyToNull = (value: unknown) => {
   if (typeof value !== 'string') return value
@@ -63,7 +64,35 @@ export async function list(req: Request, res: Response) {
     include: { plan: { select: { id: true, name: true } } },
     orderBy: { name: 'asc' },
   })
-  res.json(items)
+
+  const bookings = await prisma.booking.findMany({
+    where: {
+      barbershopId: req.auth.barbershopId,
+      customerId: { in: items.map((item) => item.id) },
+    },
+    select: {
+      customerId: true,
+      status: true,
+      totalPrice: true,
+      startTime: true,
+    },
+  })
+
+  const bookingsByCustomer = new Map<string, Array<{ startTime: Date; status: string; totalPrice: number }>>()
+  for (const booking of bookings) {
+    const list = bookingsByCustomer.get(booking.customerId) ?? []
+    list.push({
+      startTime: booking.startTime,
+      status: booking.status,
+      totalPrice: booking.totalPrice,
+    })
+    bookingsByCustomer.set(booking.customerId, list)
+  }
+
+  res.json(items.map((item) => ({
+    ...item,
+    insights: computeCustomerInsights(bookingsByCustomer.get(item.id) ?? []),
+  })))
 }
 
 export async function get(req: Request, res: Response) {
@@ -75,13 +104,25 @@ export async function get(req: Request, res: Response) {
           planServices: { include: { service: { select: { id: true, name: true } } } },
         },
       },
-      bookings: { orderBy: { startTime: 'desc' }, take: 10 },
+      bookings: {
+        orderBy: { startTime: 'desc' },
+        take: 10,
+        include: {
+          barber: { select: { id: true, name: true } },
+        },
+      },
     },
   })
   if (!item) { res.status(404).json({ error: 'Not found' }); return }
 
+  const allBookings = await prisma.booking.findMany({
+    where: { customerId: item.id, barbershopId: req.auth.barbershopId },
+    select: { startTime: true, status: true, totalPrice: true },
+  })
+
   res.json({
     ...item,
+    insights: computeCustomerInsights(allBookings),
     plan: item.plan
       ? {
           ...item.plan,

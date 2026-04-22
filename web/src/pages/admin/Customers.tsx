@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { format } from 'date-fns'
 import { pt } from 'date-fns/locale'
-import { Users, UserCheck, Search, X, Download, Upload } from 'lucide-react'
+import { Users, UserCheck, Search, X, Download, Upload, AlertTriangle, ShieldCheck, Sparkles } from 'lucide-react'
 import { customersApi, customersImportApi, plansApi } from '@/lib/api'
 import { AdminLayout } from '@/components/layout/AdminLayout'
 import { PageHeader } from '@/components/layout/PanelShell'
@@ -19,6 +19,27 @@ import { StatusBadge } from '@/components/ui/Badge'
 import type { Customer, CustomerDetail, Plan } from '@/lib/types'
 
 type ImportRow = { name: string; phone?: string; email?: string; notes?: string }
+
+function ReliabilityBadge({ level }: { level?: 'NEW' | 'TRUSTED' | 'ATTENTION' | 'RISK' }) {
+  if (!level) return <span className="text-xs text-ink-muted">—</span>
+
+  const config = {
+    NEW: { label: 'Novo', className: 'border-neutral-200 bg-neutral-100 text-ink-muted', icon: Sparkles },
+    TRUSTED: { label: 'Fiável', className: 'border-success-200 bg-success-50 text-success-700', icon: ShieldCheck },
+    ATTENTION: { label: 'Atenção', className: 'border-warning-200 bg-warning-50 text-warning-700', icon: AlertTriangle },
+    RISK: { label: 'Risco', className: 'border-danger-200 bg-danger-50 text-danger-700', icon: AlertTriangle },
+  } as const
+
+  const item = config[level]
+  const Icon = item.icon
+
+  return (
+    <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-[3px] text-[11.5px] font-medium ${item.className}`}>
+      <Icon size={12} />
+      {item.label}
+    </span>
+  )
+}
 
 function detectDelimiter(line: string) {
   const semicolons = (line.match(/;/g) ?? []).length
@@ -209,9 +230,7 @@ export default function Customers() {
     },
   })
 
-  const totalSpent = detail?.bookings
-    ?.filter((booking) => booking.status === 'COMPLETED')
-    .reduce((sum, booking) => sum + booking.totalPrice, 0) ?? 0
+  const totalSpent = detail?.insights?.totalSpent ?? 0
 
   const planOptions = [
     { value: '', label: 'Todos os planos' },
@@ -395,6 +414,25 @@ export default function Customers() {
                     ? <Badge>{customer.plan.name}</Badge>
                     : <span className="text-xs text-ink-muted">—</span>,
                 },
+                {
+                  key: 'spent',
+                  label: 'Total gasto',
+                  render: (customer) => (
+                    <span className="font-medium text-ink">{formatCurrency(customer.insights?.totalSpent ?? 0)}</span>
+                  ),
+                },
+                {
+                  key: 'lastVisit',
+                  label: 'Última visita',
+                  render: (customer) => customer.insights?.lastVisitAt
+                    ? <span className="text-ink-muted">{format(new Date(customer.insights.lastVisitAt), 'dd/MM/yyyy')}</span>
+                    : <span className="text-xs text-ink-muted">—</span>,
+                },
+                {
+                  key: 'reliability',
+                  label: 'Fiabilidade',
+                  render: (customer) => <ReliabilityBadge level={customer.insights?.reliability} />,
+                },
               ]}
             />
           </CardContent>
@@ -417,7 +455,7 @@ export default function Customers() {
         ) : (
           <div className="space-y-4">
             {/* Top KPIs */}
-            <div className="grid gap-3 text-sm sm:grid-cols-2">
+            <div className="grid gap-3 text-sm sm:grid-cols-2 xl:grid-cols-4">
               <div className="bg-zinc-50 dark:bg-zinc-800/50 rounded-xl p-3">
                 <p className="text-zinc-400 text-xs mb-1">Cliente</p>
                 <p className="font-medium text-zinc-900 dark:text-zinc-100">{detail.name}</p>
@@ -426,7 +464,41 @@ export default function Customers() {
               <div className="bg-zinc-50 dark:bg-zinc-800/50 rounded-xl p-3">
                 <p className="text-zinc-400 text-xs mb-1">Total gasto</p>
                 <p className="font-bold text-lg text-emerald-600">{formatCurrency(totalSpent)}</p>
-                <p className="text-zinc-400 text-xs mt-0.5">{detail.bookings?.filter(b => b.status === 'COMPLETED').length ?? 0} visitas</p>
+                <p className="text-zinc-400 text-xs mt-0.5">{detail.insights?.completedBookings ?? 0} visitas concluídas</p>
+              </div>
+              <div className="bg-zinc-50 dark:bg-zinc-800/50 rounded-xl p-3">
+                <p className="text-zinc-400 text-xs mb-1">Fiabilidade</p>
+                <div className="pt-1">
+                  <ReliabilityBadge level={detail.insights?.reliability} />
+                </div>
+                <p className="text-zinc-400 text-xs mt-2">{detail.insights?.noShowBookings ?? 0} no-show · {detail.insights?.cancelledBookings ?? 0} canceladas</p>
+              </div>
+              <div className="bg-zinc-50 dark:bg-zinc-800/50 rounded-xl p-3">
+                <p className="text-zinc-400 text-xs mb-1">Última visita</p>
+                <p className="font-medium text-zinc-900 dark:text-zinc-100">
+                  {detail.insights?.lastVisitAt
+                    ? format(new Date(detail.insights.lastVisitAt), "dd 'de' MMM", { locale: pt })
+                    : 'Sem visita concluída'}
+                </p>
+                <p className="text-zinc-400 text-xs mt-0.5">{detail.insights?.activeBookings ?? 0} agendamentos ativos</p>
+              </div>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-3">
+              <div className="rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm">
+                <p className="text-xs text-ink-muted uppercase tracking-wide">Histórico total</p>
+                <p className="mt-2 text-xl font-semibold text-ink">{detail.insights?.totalBookings ?? 0}</p>
+                <p className="mt-1 text-xs text-ink-muted">marcações registadas</p>
+              </div>
+              <div className="rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm">
+                <p className="text-xs text-ink-muted uppercase tracking-wide">No-show</p>
+                <p className="mt-2 text-xl font-semibold text-danger-600">{detail.insights?.noShowBookings ?? 0}</p>
+                <p className="mt-1 text-xs text-ink-muted">faltas marcadas</p>
+              </div>
+              <div className="rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm">
+                <p className="text-xs text-ink-muted uppercase tracking-wide">Canceladas</p>
+                <p className="mt-2 text-xl font-semibold text-warning-700">{detail.insights?.cancelledBookings ?? 0}</p>
+                <p className="mt-1 text-xs text-ink-muted">reservas anuladas</p>
               </div>
             </div>
 
@@ -581,7 +653,9 @@ export default function Customers() {
                         <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
                           {format(new Date(booking.startTime), "dd 'de' MMMM, HH:mm", { locale: pt })}
                         </p>
-                        <p className="text-xs text-zinc-400 mt-0.5">{formatCurrency(booking.totalPrice)}</p>
+                        <p className="text-xs text-zinc-400 mt-0.5">
+                          {formatCurrency(booking.totalPrice)}{booking.barber?.name ? ` · ${booking.barber.name}` : ''}
+                        </p>
                       </div>
                       <StatusBadge status={booking.status} />
                     </div>
