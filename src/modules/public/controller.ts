@@ -35,6 +35,14 @@ export async function getBarbers(req: Request, res: Response) {
 
   const barbers = await prisma.barber.findMany({
     where: { barbershopId: shop.id, active: true },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      phone: true,
+      avatar: true,
+      active: true,
+    },
     orderBy: { name: 'asc' },
   })
   res.json(barbers)
