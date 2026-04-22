@@ -58,6 +58,16 @@ export interface Booking {
 }
 export type BookingStatus = 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED' | 'NO_SHOW'
 export interface TimeSlot { startTime: string; endTime: string }
+export interface ManagedBooking extends Booking {
+  customer: Pick<Customer, 'id' | 'name' | 'phone' | 'email'> & { plan?: { id: string; name: string } | null }
+  management: {
+    managementToken: string
+    managementUrl: string
+  }
+  canConfirm: boolean
+  canCancel: boolean
+  canReschedule: boolean
+}
 export interface BlockedTime {
   id: string
   startTime: string

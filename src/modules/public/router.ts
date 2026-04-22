@@ -1,13 +1,18 @@
 import { Router } from 'express'
 import { publicAvailabilityLimiter, publicLookupLimiter, publicWriteLimiter } from '../../middlewares/rateLimiter'
 import {
+  cancelManagedBooking,
+  confirmManagedBooking,
   getBarbershop,
   getServices,
   getBarbers,
   getExtras,
   getProducts,
   getPlans,
+  getManagedBooking,
+  getManagedBookingAvailability,
   lookupCustomerPlan,
+  rescheduleManagedBooking,
   subscribePlan,
   getAvailability,
   createPublicBooking,
@@ -26,5 +31,10 @@ router.post('/customer-plan', publicLookupLimiter, lookupCustomerPlan)
 router.post('/subscribe-plan', publicWriteLimiter, subscribePlan)
 router.get('/availability', publicAvailabilityLimiter, getAvailability)
 router.post('/bookings',    publicWriteLimiter, createPublicBooking)
+router.get('/bookings/manage', publicLookupLimiter, getManagedBooking)
+router.get('/bookings/manage/availability', publicAvailabilityLimiter, getManagedBookingAvailability)
+router.patch('/bookings/manage/confirm', publicWriteLimiter, confirmManagedBooking)
+router.patch('/bookings/manage/cancel', publicWriteLimiter, cancelManagedBooking)
+router.patch('/bookings/manage/reschedule', publicWriteLimiter, rescheduleManagedBooking)
 
 export default router

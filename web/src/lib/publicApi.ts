@@ -3,7 +3,7 @@
  * Used by the public booking flow (no JWT required).
  */
 import axios from 'axios'
-import type { Barbershop, Barber, Service, Extra, Product, Plan, TimeSlot, CustomerPlanLookup } from './types'
+import type { Barbershop, Barber, Service, Extra, Product, Plan, TimeSlot, CustomerPlanLookup, ManagedBooking } from './types'
 
 const http = axios.create({ baseURL: '/api/public' })
 
@@ -34,6 +34,19 @@ interface CreateBookingPayload {
   }
 }
 
+interface ManageBookingPayload {
+  token: string
+}
+
+interface ManageBookingAvailabilityParams {
+  token: string
+  date: string
+}
+
+interface ManageBookingReschedulePayload extends ManageBookingPayload {
+  startTime: string
+}
+
 export function publicApi(slug: string) {
   const base = `/${slug}`
   return {
@@ -47,5 +60,15 @@ export function publicApi(slug: string) {
     subscribePlan: (p: { planId: string; name: string; phone: string }) => http.post(`${base}/subscribe-plan`, p).then((r) => r.data),
     availability:  (p: AvailabilityParams)        => http.get<AvailabilityResponse>(`${base}/availability`, { params: p }).then((r) => r.data),
     createBooking: (p: CreateBookingPayload)       => http.post(`${base}/bookings`, p).then((r) => r.data),
+    managedBooking: (p: ManageBookingPayload) =>
+      http.get<{ booking: ManagedBooking }>(`${base}/bookings/manage`, { params: p }).then((r) => r.data),
+    managedBookingAvailability: (p: ManageBookingAvailabilityParams) =>
+      http.get<AvailabilityResponse>(`${base}/bookings/manage/availability`, { params: p }).then((r) => r.data),
+    confirmManagedBooking: (p: ManageBookingPayload) =>
+      http.patch<{ booking: ManagedBooking }>(`${base}/bookings/manage/confirm`, p).then((r) => r.data),
+    cancelManagedBooking: (p: ManageBookingPayload) =>
+      http.patch<{ booking: ManagedBooking }>(`${base}/bookings/manage/cancel`, p).then((r) => r.data),
+    rescheduleManagedBooking: (p: ManageBookingReschedulePayload) =>
+      http.patch<{ booking: ManagedBooking }>(`${base}/bookings/manage/reschedule`, p).then((r) => r.data),
   }
 }

@@ -9,6 +9,15 @@ type BookingNotificationInput = {
   startTime: Date
 }
 
+type CustomerBookingActionInput = {
+  barberId: string
+  barbershopId: string
+  bookingId: string
+  customerName: string
+  kind: 'cancelled' | 'confirmed' | 'rescheduled'
+  startTime?: Date
+}
+
 function formatTime(date: Date) {
   return date.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })
 }
@@ -24,6 +33,30 @@ export async function notifyBookingCreated(input: BookingNotificationInput) {
       bookingId: input.bookingId,
       type: 'BOOKING_CREATED',
       message,
+    },
+  })
+}
+
+export async function notifyCustomerBookingAction(input: CustomerBookingActionInput) {
+  const details = input.startTime ? ` para as ${formatTime(input.startTime)}` : ''
+  const typeMap = {
+    cancelled: 'BOOKING_CUSTOMER_CANCELLED',
+    confirmed: 'BOOKING_CUSTOMER_CONFIRMED',
+    rescheduled: 'BOOKING_CUSTOMER_RESCHEDULED',
+  } as const
+  const verbMap = {
+    cancelled: 'cancelou',
+    confirmed: 'confirmou',
+    rescheduled: 'remarcou',
+  } as const
+
+  await prisma.notification.create({
+    data: {
+      barbershopId: input.barbershopId,
+      barberId: input.barberId,
+      bookingId: input.bookingId,
+      type: typeMap[input.kind],
+      message: `${input.customerName} ${verbMap[input.kind]} a marcação${details}`,
     },
   })
 }

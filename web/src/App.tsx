@@ -12,6 +12,7 @@ const Home = lazy(() => import('@/pages/Home'))
 const PlatformHome = lazy(() => import('@/pages/PlatformHome'))
 const Services = lazy(() => import('@/pages/Services'))
 const Booking = lazy(() => import('@/pages/Booking'))
+const ManageBooking = lazy(() => import('@/pages/ManageBooking'))
 const Plans = lazy(() => import('@/pages/Plans'))
 const Products = lazy(() => import('@/pages/Products'))
 const Login = lazy(() => import('@/pages/admin/Login'))
@@ -126,6 +127,7 @@ export default function App() {
             <Route index element={withSuspense(<Home />)} />
             <Route path="services" element={withSuspense(<Services />)} />
             <Route path="booking" element={withSuspense(<Booking />)} />
+            <Route path="booking/manage" element={withSuspense(<ManageBooking />)} />
             <Route path="plans" element={withSuspense(<Plans />)} />
             <Route path="products" element={withSuspense(<Products />)} />
           </Route>

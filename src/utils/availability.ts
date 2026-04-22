@@ -72,7 +72,8 @@ export async function getAvailableSlots(
   barbershopId: string,
   date: string,
   durationMinutes: number,
-  granularityMinutes = 15
+  granularityMinutes = 15,
+  excludeBookingId?: string
 ): Promise<Slot[]> {
   const targetDate = parseDateOnly(date)
   const dayOfWeek = targetDate.getDay()
@@ -91,6 +92,7 @@ export async function getAvailableSlots(
       barberId,
       barbershopId,
       status: { notIn: ['CANCELLED'] },
+      ...(excludeBookingId ? { id: { not: excludeBookingId } } : {}),
       startTime: { lt: new Date(latestEnd)   }, // booking starts before window ends
       endTime:   { gt: new Date(earliestStart) }, // booking ends   after window starts
     },

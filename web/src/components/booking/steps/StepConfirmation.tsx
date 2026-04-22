@@ -41,6 +41,7 @@ export function StepConfirmation() {
   const { slug, barbershop } = useTenant()
   const [confirmed, setConfirmed] = useState(false)
   const [bookingError, setBookingError] = useState<string | null>(null)
+  const [managementUrl, setManagementUrl] = useState<string | null>(null)
   const previousStep = 5
 
   const { service, barber, slot, extras, products, customer, customerPlan } = store
@@ -100,8 +101,9 @@ export function StepConfirmation() {
           notes:  customer?.notes,
         },
       }),
-    onSuccess: () => {
+    onSuccess: (data: { management?: { managementUrl?: string } }) => {
       setBookingError(null)
+      setManagementUrl(data.management?.managementUrl ?? null)
       setConfirmed(true)
     },
     onError: (err: unknown) => {
@@ -157,6 +159,11 @@ export function StepConfirmation() {
               Descarregar ficheiro .ics
             </button>
           </div>
+        )}
+        {managementUrl && (
+          <Button onClick={() => { window.location.href = managementUrl }} variant="secondary" className="w-full">
+            Gerir esta reserva
+          </Button>
         )}
         <Button onClick={() => { store.reset(); window.location.href = `/${slug}` }} className="w-full">
           Voltar ao início

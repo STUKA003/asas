@@ -146,10 +146,13 @@ function NotificationBell() {
   const TYPE_CONFIG: Record<string, { icon: React.ElementType; iconClass: string; bg: string }> = {
     BOOKING_CREATED: { icon: Calendar, iconClass: 'text-primary-600', bg: 'bg-primary-50' },
     BOOKING_CONFIRMED: { icon: CheckCircle, iconClass: 'text-success-600', bg: 'bg-success-50' },
+    BOOKING_CUSTOMER_CONFIRMED: { icon: CheckCircle, iconClass: 'text-success-600', bg: 'bg-success-50' },
     BOOKING_COMPLETED: { icon: PartyPopper, iconClass: 'text-primary-600', bg: 'bg-primary-50' },
     BOOKING_CANCELLED: { icon: XCircle, iconClass: 'text-danger-600', bg: 'bg-danger-50' },
+    BOOKING_CUSTOMER_CANCELLED: { icon: XCircle, iconClass: 'text-danger-600', bg: 'bg-danger-50' },
     BOOKING_NO_SHOW: { icon: UserX, iconClass: 'text-warning-600', bg: 'bg-warning-50' },
     BOOKING_RESCHEDULED: { icon: RefreshCw, iconClass: 'text-primary-600', bg: 'bg-primary-50' },
+    BOOKING_CUSTOMER_RESCHEDULED: { icon: RefreshCw, iconClass: 'text-primary-600', bg: 'bg-primary-50' },
   }
 
   return (
