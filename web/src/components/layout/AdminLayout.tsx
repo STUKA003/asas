@@ -38,6 +38,7 @@ import { applyAccentColor } from '@/lib/theme'
 import { useInstallBrand } from '@/lib/installBrand'
 import { barbershopApi, notificationsApi } from '@/lib/api'
 import adminLogo from '@/assets/branding/barbershop-logo.png'
+import { PushToggle } from './PushToggle'
 
 type PlanTier = 'FREE' | 'BASIC' | 'PRO'
 
@@ -389,6 +390,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
       }
       topbarAside={
         <>
+          <PushToggle variant="admin" />
           <NotificationBell />
           <AdminAccountMenu
             userName={user?.name}

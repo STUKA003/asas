@@ -4,6 +4,7 @@ import { prisma } from '../../lib/prisma'
 import { getEffectivePlan } from '../../lib/plans'
 import { validateSlot } from '../../utils/availability'
 import { addBookingItemsToBooking, removeBookingItemFromBooking } from '../bookings/items-service'
+import { sendNotificationPush } from '../../lib/push'
 
 function fmtTime(d: Date) {
   return d.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })
@@ -182,14 +183,23 @@ export async function updateBookingStatus(req: Request, res: Response) {
 
   const updated = await prisma.booking.update({ where: { id: req.params.id }, data: { status } })
 
+  const message = `${booking.barber.name} ${STATUS_LABELS[status] ?? 'alterou'} o agendamento de ${booking.customer.name}`
+
   await prisma.notification.create({
     data: {
       barbershopId,
       barberId,
       type:      `BOOKING_${status}`,
-      message:   `${booking.barber.name} ${STATUS_LABELS[status] ?? 'alterou'} o agendamento de ${booking.customer.name}`,
+      message,
       bookingId: booking.id,
     },
+  })
+
+  await sendNotificationPush({
+    barbershopId,
+    barberId,
+    bookingId: booking.id,
+    body: message,
   })
 
   res.json(updated)
@@ -230,14 +240,23 @@ export async function rescheduleBooking(req: Request, res: Response) {
     data: { startTime: newStart, endTime: newEnd },
   })
 
+  const message = `${booking.barber.name} remarcou o agendamento de ${booking.customer.name} das ${oldTimeStr} para as ${newTimeStr}`
+
   await prisma.notification.create({
     data: {
       barbershopId,
       barberId,
       type:      'BOOKING_RESCHEDULED',
-      message:   `${booking.barber.name} remarcou o agendamento de ${booking.customer.name} das ${oldTimeStr} para as ${newTimeStr}`,
+      message,
       bookingId: booking.id,
     },
+  })
+
+  await sendNotificationPush({
+    barbershopId,
+    barberId,
+    bookingId: booking.id,
+    body: message,
   })
 
   res.json(updated)

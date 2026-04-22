@@ -1,4 +1,5 @@
 import { prisma } from './prisma'
+import { sendNotificationPush } from './push'
 
 type BookingNotificationInput = {
   barberId: string
@@ -35,6 +36,13 @@ export async function notifyBookingCreated(input: BookingNotificationInput) {
       message,
     },
   })
+
+  await sendNotificationPush({
+    barbershopId: input.barbershopId,
+    barberId: input.barberId,
+    bookingId: input.bookingId,
+    body: message,
+  })
 }
 
 export async function notifyCustomerBookingAction(input: CustomerBookingActionInput) {
@@ -58,5 +66,12 @@ export async function notifyCustomerBookingAction(input: CustomerBookingActionIn
       type: typeMap[input.kind],
       message: `${input.customerName} ${verbMap[input.kind]} a marcação${details}`,
     },
+  })
+
+  await sendNotificationPush({
+    barbershopId: input.barbershopId,
+    barberId: input.barberId,
+    bookingId: input.bookingId,
+    body: `${input.customerName} ${verbMap[input.kind]} a marcação${details}`,
   })
 }

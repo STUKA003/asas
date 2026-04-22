@@ -160,12 +160,27 @@ export const barberPortalApi = {
     api.get('/barber-portal/notifications/unread', { headers: barberHttp() }).then((r) => r.data),
   markNotificationsRead: () =>
     api.patch('/barber-portal/notifications/read-all', {}, { headers: barberHttp() }).then((r) => r.data),
+  pushConfig: () =>
+    api.get('/barber-portal/push/config', { headers: barberHttp() }).then((r) => r.data as { enabled: boolean; publicKey: string | null }),
+  pushSubscribe: (subscription: PushSubscriptionJSON) =>
+    api.post('/barber-portal/push/subscriptions', { subscription }, { headers: barberHttp() }).then((r) => r.data),
+  pushUnsubscribe: (endpoint: string) =>
+    api.delete('/barber-portal/push/subscriptions', { headers: barberHttp(), data: { endpoint } }).then((r) => r.data),
 }
 
 export const notificationsApi = {
   list:        () => api.get('/notifications').then((r) => r.data),
   unreadCount: () => api.get('/notifications/unread').then((r) => r.data),
   markAllRead: () => api.patch('/notifications/read-all').then((r) => r.data),
+}
+
+export const pushApi = {
+  config: () =>
+    api.get('/push/config').then((r) => r.data as { enabled: boolean; publicKey: string | null }),
+  subscribe: (subscription: PushSubscriptionJSON) =>
+    api.post('/push/subscriptions', { subscription }).then((r) => r.data),
+  unsubscribe: (endpoint: string) =>
+    api.delete('/push/subscriptions', { data: { endpoint } }).then((r) => r.data),
 }
 
 export const barbersPasswordApi = {

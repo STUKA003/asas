@@ -52,6 +52,7 @@ model Barbershop {
   workingHours  WorkingHours[]
   blockedTimes  BlockedTime[]
   notifications Notification[]
+  pushSubscriptions PushSubscription[]
   authSecurityEvents AuthSecurityEvent[]
 }
 
@@ -68,6 +69,7 @@ model User {
   updatedAt    DateTime   @updatedAt
   authTokens   AuthToken[]
   authSecurityEvents AuthSecurityEvent[]
+  pushSubscriptions PushSubscription[]
 
   @@unique([email, barbershopId])
 }
@@ -133,6 +135,7 @@ model Barber {
   blockedTimes  BlockedTime[]
   bookings      Booking[]
   notifications Notification[]
+  pushSubscriptions PushSubscription[]
 
   @@unique([email, barbershopId])
 }
@@ -310,6 +313,26 @@ model Notification {
   bookingId    String?
   read         Boolean    @default(false)
   createdAt    DateTime   @default(now())
+}
+
+model PushSubscription {
+  id           String     @id @default(cuid())
+  endpoint     String     @unique
+  p256dh       String
+  auth         String
+  contentEncoding String
+  userAgent    String?
+  barbershopId String
+  barbershop   Barbershop @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
+  userId       String?
+  user         User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  barberId     String?
+  barber       Barber?    @relation(fields: [barberId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@index([barbershopId, userId])
+  @@index([barbershopId, barberId])
 }
 
 model BlockedTime {

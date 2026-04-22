@@ -19,6 +19,7 @@ import superadminRouter from './modules/superadmin/router'
 import barberAuthRouter from './modules/barber-auth/router'
 import barberPortalRouter from './modules/barber-portal/router'
 import notificationsRouter from './modules/notifications/router'
+import pushRouter from './modules/push/router'
 import { handleStripeWebhook } from './modules/stripe/controller'
 
 const app = express()
@@ -155,6 +156,7 @@ app.use('/api/superadmin', superadminRouter)
 app.use('/api/barber-auth', barberAuthRouter)
 app.use('/api/barber-portal', barberPortalRouter)
 app.use('/api/notifications', notificationsRouter)
+app.use('/api/push', pushRouter)
 
 app.use((_req, res) => res.status(404).json({ error: 'Route not found' }))
 

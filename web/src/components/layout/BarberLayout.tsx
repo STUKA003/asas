@@ -16,6 +16,7 @@ import barberLogo from '@/assets/branding/barber-logo.png'
 import { cn } from '@/lib/utils'
 import { formatDistanceToNow } from 'date-fns'
 import { pt } from 'date-fns/locale'
+import { PushToggle } from './PushToggle'
 
 const PAGE_META: Record<string, { title: string; subtitle: string }> = {
   dashboard: { title: 'Dashboard', subtitle: 'Visão rápida do teu dia, agenda e receita.' },
@@ -296,6 +297,7 @@ export function BarberLayout({ children }: BarberLayoutProps) {
       }
       topbarAside={
         <div className="flex items-center gap-3">
+          <PushToggle variant="barber" />
           <BarberNotificationBell />
           <BarberAccountMenu
             name={barber?.name}
