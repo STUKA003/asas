@@ -813,3 +813,177 @@ test('cancelled bookings do not consume monthly booking quota', { skip: !integra
 
   assert.equal(booking.response.status, 201)
 })
+
+test('public barber listing only exposes minimal public fields', { skip: !integrationEnabled }, async () => {
+  const shop = await prisma.barbershop.create({
+    data: {
+      name: 'Privacy Shop',
+      slug: 'privacy-shop',
+    },
+  })
+
+  await prisma.barber.create({
+    data: {
+      name: 'Barber Public',
+      email: 'barber@privacy.test',
+      phone: '911111111',
+      avatar: 'https://example.com/avatar.png',
+      password: await bcrypt.hash('segredo123', 10),
+      active: true,
+      barbershopId: shop.id,
+    },
+  })
+
+  const response = await jsonRequest(`/api/public/${shop.slug}/barbers`)
+
+  assert.equal(response.response.status, 200)
+  assert.equal(response.body.length, 1)
+  assert.deepEqual(Object.keys(response.body[0]).sort(), ['avatar', 'id', 'name'])
+  assert.equal(response.body[0].name, 'Barber Public')
+  assert.equal('password' in response.body[0], false)
+  assert.equal('email' in response.body[0], false)
+  assert.equal('phone' in response.body[0], false)
+  assert.equal('active' in response.body[0], false)
+})
+
+test('invalid admin and barber logins return 401', { skip: !integrationEnabled }, async () => {
+  const ownerPassword = await bcrypt.hash('segredo123', 10)
+  const barberPassword = await bcrypt.hash('barber123', 10)
+
+  const shop = await prisma.barbershop.create({
+    data: {
+      name: 'Login Shop',
+      slug: 'login-shop',
+      users: {
+        create: {
+          name: 'Owner Login',
+          email: 'owner@login-shop.test',
+          password: ownerPassword,
+          role: 'OWNER',
+          emailVerifiedAt: new Date(),
+        },
+      },
+    },
+  })
+
+  await prisma.barber.create({
+    data: {
+      name: 'Barber Login',
+      email: 'barber@login-shop.test',
+      password: barberPassword,
+      active: true,
+      barbershopId: shop.id,
+    },
+  })
+
+  const adminLogin = await jsonRequest('/api/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({
+      slug: shop.slug,
+      email: 'owner@login-shop.test',
+      password: 'wrong-pass',
+    }),
+  })
+
+  assert.equal(adminLogin.response.status, 401)
+  assert.equal(adminLogin.body.error, 'Invalid credentials')
+
+  const barberLogin = await jsonRequest('/api/barber-auth/login', {
+    method: 'POST',
+    body: JSON.stringify({
+      slug: shop.slug,
+      email: 'barber@login-shop.test',
+      password: 'wrong-pass',
+    }),
+  })
+
+  assert.equal(barberLogin.response.status, 401)
+  assert.match(barberLogin.body.error, /Credenciais inválidas/)
+})
+
+test('authenticated barber endpoints never return password hashes', { skip: !integrationEnabled }, async () => {
+  const ownerPassword = await bcrypt.hash('segredo123', 10)
+  const barberPassword = await bcrypt.hash('barber123', 10)
+
+  const shop = await prisma.barbershop.create({
+    data: {
+      name: 'Barber CRUD Shop',
+      slug: 'barber-crud-shop',
+      users: {
+        create: {
+          name: 'Owner CRUD',
+          email: 'owner@barber-crud.test',
+          password: ownerPassword,
+          role: 'OWNER',
+          emailVerifiedAt: new Date(),
+        },
+      },
+    },
+  })
+
+  const existingBarber = await prisma.barber.create({
+    data: {
+      name: 'Existing Barber',
+      email: 'existing@barber-crud.test',
+      password: barberPassword,
+      active: true,
+      barbershopId: shop.id,
+    },
+  })
+
+  const login = await jsonRequest('/api/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({
+      slug: shop.slug,
+      email: 'owner@barber-crud.test',
+      password: 'segredo123',
+    }),
+  })
+
+  assert.equal(login.response.status, 200)
+  const token = login.body.token as string
+
+  const listResponse = await jsonRequest('/api/barbers', {
+    headers: { Authorization: `Bearer ${token}` },
+  })
+
+  assert.equal(listResponse.response.status, 200)
+  assert.equal(listResponse.body.length, 1)
+  assert.equal('password' in listResponse.body[0], false)
+  assert.equal(listResponse.body[0].hasAccess, true)
+
+  const getResponse = await jsonRequest(`/api/barbers/${existingBarber.id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  })
+
+  assert.equal(getResponse.response.status, 200)
+  assert.equal('password' in getResponse.body, false)
+  assert.equal(getResponse.body.hasAccess, true)
+
+  const createResponse = await jsonRequest('/api/barbers', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}` },
+    body: JSON.stringify({
+      name: 'New Barber',
+      email: 'new@barber-crud.test',
+      phone: '912222222',
+    }),
+  })
+
+  assert.equal(createResponse.response.status, 201)
+  assert.equal('password' in createResponse.body, false)
+  assert.equal(createResponse.body.hasAccess, false)
+
+  const updateResponse = await jsonRequest(`/api/barbers/${createResponse.body.id}`, {
+    method: 'PUT',
+    headers: { Authorization: `Bearer ${token}` },
+    body: JSON.stringify({
+      active: true,
+      phone: '913333333',
+    }),
+  })
+
+  assert.equal(updateResponse.response.status, 200)
+  assert.equal('password' in updateResponse.body, false)
+  assert.equal(updateResponse.body.hasAccess, false)
+})
