@@ -20,6 +20,15 @@ export function PushToggle({ variant }: { variant: PushVariant }) {
   const [active, setActive] = useState(false)
   const [loading, setLoading] = useState(false)
 
+  if (!supported) {
+    return (
+      <div className="inline-flex items-center gap-2 rounded-xl border border-neutral-200 bg-white px-3 py-2 text-xs text-ink-muted">
+        <ShieldAlert size={14} />
+        Push indisponível neste dispositivo
+      </div>
+    )
+  }
+
   useEffect(() => {
     if (!supported) return
 
@@ -87,11 +96,9 @@ export function PushToggle({ variant }: { variant: PushVariant }) {
     }
   }
 
-  if (!supported) return null
-
   if (config && !config.enabled) {
     return (
-      <div className="hidden items-center gap-2 rounded-xl border border-neutral-200 bg-white px-3 py-2 text-xs text-ink-muted md:flex">
+      <div className="inline-flex items-center gap-2 rounded-xl border border-neutral-200 bg-white px-3 py-2 text-xs text-ink-muted">
         <ShieldAlert size={14} />
         Push não configurado
       </div>
@@ -104,7 +111,7 @@ export function PushToggle({ variant }: { variant: PushVariant }) {
       disabled={loading || permission === 'denied'}
       onClick={active ? handleDisable : handleEnable}
       className={cn(
-        'hidden items-center gap-2 rounded-xl border px-3 py-2 text-sm font-medium shadow-soft transition md:inline-flex',
+        'inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-sm font-medium shadow-soft transition',
         active
           ? 'border-success-200 bg-success-50 text-success-700 hover:bg-success-100'
           : 'border-neutral-200 bg-white text-ink-soft hover:border-neutral-300 hover:text-ink',
