@@ -1,120 +1,215 @@
-# BarberBook
+# Trimio
 
-Sistema SaaS de agendamento para barbearias com:
+Plataforma SaaS de agendamento para barbearias, multi-tenant por `slug`, com quatro superfícies principais:
 
-- site publico por barbearia
+- site público da barbearia
 - painel administrativo da barbearia
 - portal do barbeiro
 - superadmin da plataforma
-- relatorios
-- planos, produtos e extras
-- agenda, bloqueios e disponibilidade
 
-O projeto esta preparado para:
+O sistema foi desenhado para resolver o problema completo da operação, não só a marcação. Além do booking, cobre gestão de clientes, serviços, extras, produtos, planos, disponibilidade, faturação por subscrição e controlo operacional por função.
 
-- desenvolvimento local simples com SQLite
-- publicacao futura em VPS com PostgreSQL
+## O que este sistema faz
 
-## 1. Resumo rapido
+### 1. Site público por barbearia
 
-Cada barbearia tem um `slug`.
+Cada barbearia tem um endereço próprio identificado por `slug`.
 
-Exemplo:
+Exemplos:
 
-- site publico: `www.barberbook.com/fadelab`
-- agendamento: `www.barberbook.com/fadelab/booking`
-- portal do barbeiro: `www.barberbook.com/fadelab/barber`
-- painel admin: `www.barberbook.com/admin`
-- superadmin: `www.barberbook.com/superadmin`
+- `https://trimio.pt/stukabarber`
+- `https://trimio.pt/stukabarber/booking`
+- `https://trimio.pt/stukabarber/plans`
+- `https://trimio.pt/stukabarber/products`
+- `https://trimio.pt/stukabarber/barber/login`
 
-## 2. Stack e linguagens
+No lado público, o sistema suporta:
+
+- homepage da barbearia com branding e conteúdo próprio
+- listagem pública de serviços
+- fluxo de agendamento online passo a passo
+- seleção de barbeiro, data, hora, extras e produtos
+- consulta de disponibilidade em tempo real
+- listagem pública de planos
+- listagem pública de produtos
+- lookup de cliente por nome + telefone para validar plano ativo
+
+### 2. Painel administrativo da barbearia
+
+O painel admin existe para o dono ou equipa da barbearia operar o negócio.
+
+Inclui:
+
+- login e registo da barbearia
+- verificação de email antes do primeiro acesso
+- recuperação de password
+- dashboard operacional
+- CRUD de clientes
+- CRUD de barbeiros
+- CRUD de serviços
+- CRUD de extras
+- CRUD de produtos
+- CRUD de planos
+- gestão de bookings
+- agenda operacional
+- configuração de horários de trabalho
+- bloqueios de agenda
+- personalização da presença pública
+- billing e subscrição
+- relatórios
+
+### 3. Portal do barbeiro
+
+O portal do barbeiro separa o trabalho do profissional da gestão do negócio.
+
+Inclui:
+
+- login próprio do barbeiro
+- dashboard pessoal
+- agenda própria
+- detalhe rápido de marcações
+- notificações
+- remarcação e atualização do estado de bookings dentro do contexto autorizado
+
+### 4. Superadmin da plataforma
+
+O superadmin existe para operar a plataforma Trimio como produto.
+
+Inclui:
+
+- login independente via credenciais de ambiente
+- visão global da plataforma
+- listagem e pesquisa de barbearias
+- estado de verificação de email
+- saúde de subscrição
+- suspensão de lojas
+- eventos de segurança de autenticação
+
+## Porque a arquitetura está organizada assim
+
+O sistema está dividido por superfícies e por contexto de autorização para reduzir acoplamento e risco:
+
+- `public`: tudo o que é acessível por `slug` sem autenticação, com serialização restrita a dados públicos
+- `auth` e módulos administrativos: operações autenticadas por dono/equipa da barbearia
+- `barber-auth` e `barber-portal`: operações autenticadas do barbeiro, isoladas do admin
+- `superadmin`: operações internas da plataforma
+
+Isto existe por três razões:
+
+- separar responsabilidades de produto
+- permitir multi-tenancy simples via `slug`
+- diminuir exposição indevida de dados entre contextos
+
+## Como o sistema funciona
+
+### Multi-tenant por `slug`
+
+Cada pedido público usa o `slug` da URL para resolver a barbearia. Isso permite que um único backend sirva várias lojas com identidade e dados isolados.
+
+### Autenticação por papel
+
+Há três fluxos de autenticação distintos:
+
+- admin da barbearia via `/api/auth`
+- barbeiro via `/api/barber-auth`
+- superadmin via `/api/superadmin`
+
+O admin usa JWT com `userId`, `barbershopId` e `role`. O barbeiro tem autenticação própria. O superadmin usa credenciais globais de ambiente.
+
+### Booking e disponibilidade
+
+A disponibilidade é calculada a partir de:
+
+- horários de trabalho
+- bloqueios
+- bookings já existentes
+- duração total dos serviços e extras
+- granularidade de slot da barbearia
+
+O objetivo é que o slot retornado ao frontend já seja válido do ponto de vista operacional, em vez de delegar a lógica ao cliente.
+
+### Planos e gating funcional
+
+O sistema usa planos `FREE`, `BASIC` e `PRO`.
+
+Limites atuais em [src/lib/plans.ts](/Users/leandrogomes/Desktop/barbearia-agendamento/src/lib/plans.ts:1):
+
+- `FREE`: 1 barbeiro, 30 bookings/mês
+- `BASIC`: 3 barbeiros, bookings ilimitados
+- `PRO`: barbeiros ilimitados, bookings ilimitados
+
+Algumas áreas do frontend usam `PlanGate` para bloquear funcionalidades premium como extras, produtos, planos e relatórios.
+
+### Billing com Stripe
+
+O backend trata:
+
+- criação e sincronização de estado de subscrição
+- mapeamento de `priceId` para plano
+- atualização do plano efetivo da barbearia
+- downgrade para `FREE` quando a subscrição expira ou é cancelada
+- webhook de Stripe em `/api/stripe/webhook`
+
+### Email transacional
+
+O sistema envia emails para:
+
+- verificação de conta
+- recuperação de password
+
+Em desenvolvimento, se `RESEND_API_KEY` e `MAIL_FROM` não existirem, o envio é simulado em consola. Em produção, a configuração é obrigatória.
+
+## Stack técnica
 
 ### Backend
 
-- `TypeScript`
-- `Node.js`
-- `Express`
-- `Prisma ORM`
-- `Zod`
-- `JWT`
-- `bcryptjs`
+- Node.js
+- TypeScript
+- Express
+- Prisma
+- Zod
+- JWT
+- bcryptjs
+- Stripe
 
 ### Frontend
 
-- `TypeScript`
-- `React`
-- `Vite`
-- `React Router`
-- `TanStack Query`
-- `React Hook Form`
-- `Zustand`
-- `Tailwind CSS`
+- React
+- TypeScript
+- Vite
+- React Router
+- TanStack Query
+- React Hook Form
+- Zustand
+- Tailwind CSS
 
 ### Base de dados
 
-- `SQLite` no ambiente local de testes
-- `PostgreSQL` preparado para VPS / producao
+- SQLite para desenvolvimento rápido local
+- PostgreSQL para produção e VPS
 
-## 3. O que o sistema faz
-
-### Site publico da barbearia
-
-- home publica com branding da barbearia
-- listagem de servicos
-- agendamento online
-- venda de planos
-- venda de produtos
-- lookup de cliente por telefone para plano atual
-
-### Painel admin da barbearia
-
-- dashboard
-- clientes
-- barbeiros
-- servicos
-- extras
-- produtos
-- planos
-- agenda
-- horarios de trabalho
-- bloqueios pontuais
-- personalizacao
-- faturacao / billing
-- relatorios
-
-### Portal do barbeiro
-
-- login proprio
-- dashboard
-- agenda
-- notificacoes
-- remarcacao de bookings
-
-### Superadmin da plataforma
-
-- login superadmin
-- dashboard global
-- gestao de barbearias
-
-## 4. Estrutura geral do projeto
+## Estrutura do projeto
 
 ```text
 barbearia-agendamento/
-├── src/                    # backend
-├── web/                    # frontend
-├── prisma/                 # schema SQLite local + dev.db + migrations locais
-├── prisma/postgres/        # schema e migrations PostgreSQL para VPS
-├── restart.sh              # arranque local
-├── internet.sh             # arranque local + Cloudflare tunnel
-├── vps.sh                  # arranque VPS com PostgreSQL
-├── ACESSOS_SISTEMA.md
+├── src/                     # backend
+├── web/                     # frontend React
+├── prisma/                  # schema local
+├── prisma/postgres/         # schema e migrations de produção
+├── deploy/                  # artefactos auxiliares de deploy
+├── restart.sh               # arranque local rápido
+├── internet.sh              # arranque local + túneis Cloudflare
+├── vps.sh                   # arranque estilo VPS com PostgreSQL
+├── ecosystem.config.js      # processo PM2
+├── DEPLOY_VPS.md
+├── UPDATE_VPS.md
 ├── POSTGRESQL_PRODUCAO.md
 └── README.md
 ```
 
-## 5. Estrutura do backend
+## Backend
 
-### Pasta principal
+Estrutura principal:
 
 ```text
 src/
@@ -127,159 +222,36 @@ src/
 └── utils/
 ```
 
-### Ficheiros principais
+Ficheiros centrais:
 
-- [src/server.ts](/Users/leandrogomes/Desktop/barbearia-agendamento/src/server.ts:1)
-  ponto de entrada do servidor
-- [src/app.ts](/Users/leandrogomes/Desktop/barbearia-agendamento/src/app.ts:1)
-  configura Express, CORS, Helmet e routers
+- [src/server.ts](/Users/leandrogomes/Desktop/barbearia-agendamento/src/server.ts:1): arranque do servidor
+- [src/app.ts](/Users/leandrogomes/Desktop/barbearia-agendamento/src/app.ts:1): configuração do Express, CORS, Helmet, manifest e routers
+- [src/lib/prisma.ts](/Users/leandrogomes/Desktop/barbearia-agendamento/src/lib/prisma.ts): cliente Prisma
+- [src/utils/availability.ts](/Users/leandrogomes/Desktop/barbearia-agendamento/src/utils/availability.ts:1): cálculo de disponibilidade
+- [src/utils/scheduling.ts](/Users/leandrogomes/Desktop/barbearia-agendamento/src/utils/scheduling.ts:1): funções puras de agenda
+- [src/modules/bookings/service.ts](/Users/leandrogomes/Desktop/barbearia-agendamento/src/modules/bookings/service.ts:1): regras de criação de booking
 
-### Modulos do backend
+Módulos:
 
-```text
-src/modules/
-├── auth/              # login admin da barbearia
-├── barber-auth/       # login do barbeiro
-├── barber-portal/     # agenda e operacoes do barbeiro
-├── barbers/           # CRUD de barbeiros
-├── barbershops/       # configuracao da barbearia
-├── blocked-times/     # bloqueios na agenda
-├── bookings/          # agendamentos, remarcacao, relatorios
-├── customers/         # clientes
-├── extras/            # extras vendidos no booking
-├── notifications/     # notificacoes
-├── plans/             # planos da barbearia
-├── products/          # produtos
-├── public/            # site publico / booking publico por slug
-├── services/          # servicos
-├── superadmin/        # gestao global da plataforma
-└── working-hours/     # horarios de trabalho
-```
+- `src/modules/auth`: registo, login, verificação de email, forgot/reset password
+- `src/modules/public`: site público, dados públicos, disponibilidade e booking público
+- `src/modules/barbershops`: configuração da barbearia
+- `src/modules/barbers`: gestão de barbeiros
+- `src/modules/services`: gestão de serviços
+- `src/modules/extras`: gestão de extras
+- `src/modules/products`: gestão de produtos
+- `src/modules/plans`: gestão de planos internos da barbearia
+- `src/modules/customers`: gestão de clientes
+- `src/modules/bookings`: bookings, filtros e relatórios
+- `src/modules/working-hours`: horários de trabalho
+- `src/modules/blocked-times`: bloqueios de agenda
+- `src/modules/barber-auth`: login do barbeiro
+- `src/modules/barber-portal`: operações do portal do barbeiro
+- `src/modules/notifications`: notificações
+- `src/modules/stripe`: webhook de billing
+- `src/modules/superadmin`: administração global da plataforma
 
-### Utilitarios importantes
-
-- `src/utils/availability.ts`
-  calcula disponibilidade e valida slots
-- `src/utils/scheduling.ts`
-  funcoes puras de agenda
-- `src/modules/bookings/service.ts`
-  criacao de booking com regras de negocio
-- `src/modules/bookings/reports.ts`
-  agregacoes dos relatorios
-
-## 6. Estrutura do frontend
-
-### Pasta principal
-
-```text
-web/src/
-├── App.tsx
-├── main.tsx
-├── components/
-├── pages/
-├── lib/
-├── providers/
-└── store/
-```
-
-### Paginas principais
-
-#### Publicas
-
-- `web/src/pages/Home.tsx`
-- `web/src/pages/Services.tsx`
-- `web/src/pages/Booking.tsx`
-- `web/src/pages/Plans.tsx`
-- `web/src/pages/Products.tsx`
-
-#### Admin
-
-- `web/src/pages/admin/Dashboard.tsx`
-- `web/src/pages/admin/Customers.tsx`
-- `web/src/pages/admin/Barbers.tsx`
-- `web/src/pages/admin/Services.tsx`
-- `web/src/pages/admin/Extras.tsx`
-- `web/src/pages/admin/Products.tsx`
-- `web/src/pages/admin/Plans.tsx`
-- `web/src/pages/admin/Bookings.tsx`
-- `web/src/pages/admin/Schedule.tsx`
-- `web/src/pages/admin/Customization.tsx`
-- `web/src/pages/admin/Billing.tsx`
-- `web/src/pages/admin/Reports.tsx`
-
-#### Barbeiro
-
-- `web/src/pages/barber/Login.tsx`
-- `web/src/pages/barber/Dashboard.tsx`
-- `web/src/pages/barber/Schedule.tsx`
-
-#### Superadmin
-
-- `web/src/pages/superadmin/Login.tsx`
-- `web/src/pages/superadmin/Dashboard.tsx`
-- `web/src/pages/superadmin/Barbershops.tsx`
-
-### Componentes importantes
-
-- `web/src/components/admin/CalendarView.tsx`
-  agenda principal partilhada
-- `web/src/components/booking/`
-  fluxo de booking publico
-- `web/src/components/layout/`
-  layouts principais
-- `web/src/components/ui/`
-  componentes base da interface
-
-### Estado e API
-
-- `web/src/store/auth.ts`
-- `web/src/store/barberAuth.ts`
-- `web/src/store/superauth.ts`
-- `web/src/lib/api.ts`
-- `web/src/lib/publicApi.ts`
-
-## 7. Rotas principais
-
-### Publicas
-
-- `/:slug`
-- `/:slug/services`
-- `/:slug/booking`
-- `/:slug/plans`
-- `/:slug/products`
-
-### Admin
-
-- `/admin/login`
-- `/admin`
-- `/admin/customers`
-- `/admin/barbers`
-- `/admin/services`
-- `/admin/extras`
-- `/admin/products`
-- `/admin/plans`
-- `/admin/bookings`
-- `/admin/schedule`
-- `/admin/customization`
-- `/admin/billing`
-- `/admin/reports`
-
-### Barbeiro
-
-- `/barber/login`
-- `/:slug/barber/login`
-- `/:slug/barber`
-- `/:slug/barber/schedule`
-
-### Superadmin
-
-- `/superadmin/login`
-- `/superadmin`
-- `/superadmin/barbershops`
-
-## 8. API principal
-
-Rotas configuradas em [src/app.ts](/Users/leandrogomes/Desktop/barbearia-agendamento/src/app.ts:1):
+Rotas base do backend:
 
 - `/api/auth`
 - `/api/public/:slug`
@@ -293,634 +265,278 @@ Rotas configuradas em [src/app.ts](/Users/leandrogomes/Desktop/barbearia-agendam
 - `/api/bookings`
 - `/api/working-hours`
 - `/api/blocked-times`
-- `/api/superadmin`
 - `/api/barber-auth`
 - `/api/barber-portal`
 - `/api/notifications`
+- `/api/superadmin`
+- `/api/stripe/webhook`
 
-## 9. Base de dados
+## Frontend
 
-### Ambiente local
+Estrutura principal:
 
-Em `localhost`, o projeto usa:
-
-- schema local: [prisma/schema.prisma](/Users/leandrogomes/Desktop/barbearia-agendamento/prisma/schema.prisma:1)
-- base local: [prisma/dev.db](/Users/leandrogomes/Desktop/barbearia-agendamento/prisma/dev.db)
-
-Isto e o que torna o desenvolvimento simples e rapido.
-
-### Ambiente VPS / producao
-
-Para VPS com PostgreSQL, o projeto usa:
-
-- schema PostgreSQL: [prisma/postgres/schema.prisma](/Users/leandrogomes/Desktop/barbearia-agendamento/prisma/postgres/schema.prisma:1)
-- migrations PostgreSQL: [prisma/postgres/migrations](/Users/leandrogomes/Desktop/barbearia-agendamento/prisma/postgres/migrations/migration_lock.toml:1)
-
-## 10. Variaveis de ambiente
-
-### Local
-
-Exemplo em [.env.example](/Users/leandrogomes/Desktop/barbearia-agendamento/.env.example:1):
-
-```env
-DATABASE_URL="file:./dev.db"
-JWT_SECRET="your-super-secret-key-change-in-production"
-JWT_EXPIRES_IN="7d"
-PORT=3000
-
-SUPERADMIN_EMAIL="admin@barberbook.app"
-SUPERADMIN_PASSWORD="change-me"
+```text
+web/src/
+├── App.tsx
+├── main.tsx
+├── components/
+├── pages/
+├── lib/
+├── providers/
+└── store/
 ```
 
-### PostgreSQL / VPS
+Páginas principais:
 
-Exemplo em [.env.postgres.example](/Users/leandrogomes/Desktop/barbearia-agendamento/.env.postgres.example:1):
+- públicas:
+  - [web/src/pages/PlatformHome.tsx](/Users/leandrogomes/Desktop/barbearia-agendamento/web/src/pages/PlatformHome.tsx:1)
+  - [web/src/pages/Home.tsx](/Users/leandrogomes/Desktop/barbearia-agendamento/web/src/pages/Home.tsx:1)
+  - [web/src/pages/Booking.tsx](/Users/leandrogomes/Desktop/barbearia-agendamento/web/src/pages/Booking.tsx:1)
+  - [web/src/pages/Services.tsx](/Users/leandrogomes/Desktop/barbearia-agendamento/web/src/pages/Services.tsx:1)
+  - [web/src/pages/Plans.tsx](/Users/leandrogomes/Desktop/barbearia-agendamento/web/src/pages/Plans.tsx:1)
+  - [web/src/pages/Products.tsx](/Users/leandrogomes/Desktop/barbearia-agendamento/web/src/pages/Products.tsx:1)
+- admin:
+  - [web/src/pages/admin/Login.tsx](/Users/leandrogomes/Desktop/barbearia-agendamento/web/src/pages/admin/Login.tsx:1)
+  - [web/src/pages/admin/Dashboard.tsx](/Users/leandrogomes/Desktop/barbearia-agendamento/web/src/pages/admin/Dashboard.tsx:1)
+  - [web/src/pages/admin/Customers.tsx](/Users/leandrogomes/Desktop/barbearia-agendamento/web/src/pages/admin/Customers.tsx:1)
+  - [web/src/pages/admin/Barbers.tsx](/Users/leandrogomes/Desktop/barbearia-agendamento/web/src/pages/admin/Barbers.tsx:1)
+  - [web/src/pages/admin/Bookings.tsx](/Users/leandrogomes/Desktop/barbearia-agendamento/web/src/pages/admin/Bookings.tsx:1)
+  - [web/src/pages/admin/Schedule.tsx](/Users/leandrogomes/Desktop/barbearia-agendamento/web/src/pages/admin/Schedule.tsx:1)
+  - [web/src/pages/admin/Customization.tsx](/Users/leandrogomes/Desktop/barbearia-agendamento/web/src/pages/admin/Customization.tsx:1)
+  - [web/src/pages/admin/Billing.tsx](/Users/leandrogomes/Desktop/barbearia-agendamento/web/src/pages/admin/Billing.tsx:1)
+  - [web/src/pages/admin/Reports.tsx](/Users/leandrogomes/Desktop/barbearia-agendamento/web/src/pages/admin/Reports.tsx:1)
+- barbeiro:
+  - [web/src/pages/barber/Login.tsx](/Users/leandrogomes/Desktop/barbearia-agendamento/web/src/pages/barber/Login.tsx:1)
+  - [web/src/pages/barber/Dashboard.tsx](/Users/leandrogomes/Desktop/barbearia-agendamento/web/src/pages/barber/Dashboard.tsx:1)
+  - [web/src/pages/barber/Schedule.tsx](/Users/leandrogomes/Desktop/barbearia-agendamento/web/src/pages/barber/Schedule.tsx:1)
+- superadmin:
+  - [web/src/pages/superadmin/Login.tsx](/Users/leandrogomes/Desktop/barbearia-agendamento/web/src/pages/superadmin/Login.tsx:1)
+  - [web/src/pages/superadmin/Dashboard.tsx](/Users/leandrogomes/Desktop/barbearia-agendamento/web/src/pages/superadmin/Dashboard.tsx:1)
+  - [web/src/pages/superadmin/Barbershops.tsx](/Users/leandrogomes/Desktop/barbearia-agendamento/web/src/pages/superadmin/Barbershops.tsx:1)
 
-```env
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/barbearia_agendamento?schema=public"
-JWT_SECRET="your-super-secret-key-change-in-production"
-JWT_EXPIRES_IN="7d"
-PORT=3000
+Camadas importantes:
 
-SUPERADMIN_EMAIL="admin@barberbook.app"
-SUPERADMIN_PASSWORD="change-me"
-```
+- [web/src/App.tsx](/Users/leandrogomes/Desktop/barbearia-agendamento/web/src/App.tsx:1): mapa completo de rotas
+- `web/src/store/*`: estado de autenticação e booking
+- `web/src/lib/api.ts`: cliente autenticado
+- `web/src/lib/publicApi.ts`: cliente público por tenant
+- `web/src/providers/TenantProvider.tsx`: resolução do tenant no frontend
 
-## 11. Scripts principais
+## Modelo de dados
 
-### Backend
+Entidades principais no schema PostgreSQL em [prisma/postgres/schema.prisma](/Users/leandrogomes/Desktop/barbearia-agendamento/prisma/postgres/schema.prisma:1):
 
-Do [package.json](/Users/leandrogomes/Desktop/barbearia-agendamento/package.json:1):
+- `Barbershop`: tenant principal
+- `User`: utilizador administrativo da barbearia
+- `Barber`: profissional
+- `Service`: serviço base
+- `Extra`: complemento de booking
+- `Product`: produto vendido ou associado ao booking
+- `Plan`: plano interno da barbearia para clientes
+- `Customer`: cliente final
+- `Booking`: marcação
+- `WorkingHours`: disponibilidade estrutural
+- `BlockedTime`: bloqueio manual
+- `Notification`: notificações
+- `AuthToken`: tokens de verificação e reset
+- `AuthSecurityEvent`: eventos de segurança
 
-- `npm run dev`
-- `npm run build`
-- `npm run start`
-- `npm test`
-- `npm run test:integration`
-- `npm run db:migrate`
-- `npm run db:push`
-- `npm run db:generate`
-- `npm run db:studio`
-- `npm run db:generate:postgres`
-- `npm run db:push:postgres`
-- `npm run db:migrate:postgres`
-- `npm run db:deploy:postgres`
+## Segurança e privacidade
 
-### Frontend
+O sistema já incorpora várias decisões explícitas de segurança:
 
-Do [web/package.json](/Users/leandrogomes/Desktop/barbearia-agendamento/web/package.json:1):
+- verificação de email obrigatória para o owner antes do primeiro login
+- reset de password com token hash guardado na base de dados
+- eventos de segurança de autenticação
+- serialização separada para rotas públicas
+- separação entre auth admin, barber e superadmin
+- `helmet` e `cors` configurados no backend
+- confiança no proxy ativada para produção atrás de Nginx
 
-- `npm run dev`
-- `npm run build`
-- `npm run preview`
+Notas importantes:
 
-## 12. Scripts de arranque
+- os endpoints públicos devem devolver apenas dados estritamente necessários
+- hashes de password não devem sair em respostas HTTP
+- o webhook Stripe usa `express.raw()` para validação correta de assinatura
 
-### `restart.sh`
+## Variáveis de ambiente importantes
 
-Ficheiro: [restart.sh](/Users/leandrogomes/Desktop/barbearia-agendamento/restart.sh:1)
+### Backend base
 
-Serve para desenvolvimento local.
+- `DATABASE_URL`
+- `PORT`
+- `HOST`
+- `JWT_SECRET`
+- `JWT_EXPIRES_IN`
+- `CORS_ORIGIN`
+- `APP_URL`
 
-Faz:
+### Email
 
-- para processos anteriores
-- gera Prisma client
-- faz `db push` local
-- sobe backend
-- sobe frontend
+- `RESEND_API_KEY`
+- `MAIL_FROM`
 
-Uso:
+### Superadmin
 
-```bash
-./restart.sh
-./restart.sh stop
-```
+- `SUPERADMIN_EMAIL`
+- `SUPERADMIN_PASSWORD`
 
-### `internet.sh`
+### Stripe
 
-Ficheiro: [internet.sh](/Users/leandrogomes/Desktop/barbearia-agendamento/internet.sh:1)
+- `STRIPE_SECRET_KEY`
+- `STRIPE_WEBHOOK_SECRET`
+- `STRIPE_PRICE_BASIC_MONTHLY`
+- `STRIPE_PRICE_PRO_MONTHLY`
 
-Serve para testar o sistema localmente mas exposto pela internet com Cloudflare Tunnel.
+### Testes de integração
 
-Faz:
+- `TEST_DATABASE_URL`
 
-- para processos anteriores
-- gera Prisma client
-- faz `db push` local
-- sobe backend
-- sobe frontend
-- abre tunel Cloudflare para API
-- abre tunel Cloudflare para frontend
+Sem `TEST_DATABASE_URL`, a suite HTTP de integração fica em `SKIP`.
 
-Uso:
+## Desenvolvimento local
 
-```bash
-./internet.sh
-./internet.sh stop
-```
+### Requisitos
 
-### `vps.sh`
+- Node.js
+- npm
+- SQLite para desenvolvimento local simples
 
-Ficheiro: [vps.sh](/Users/leandrogomes/Desktop/barbearia-agendamento/vps.sh:1)
-
-Serve para ambiente de VPS com PostgreSQL.
-
-Faz:
-
-- valida que o `.env` esta com `DATABASE_URL` PostgreSQL
-- gera Prisma client PostgreSQL
-- aplica migrations PostgreSQL
-- builda backend
-- builda frontend
-- sobe backend em modo producao
-- sobe frontend em modo preview
-
-Uso:
-
-```bash
-./vps.sh
-./vps.sh stop
-```
-
-## 13. Como correr em localhost
-
-### Backend + frontend com o script pronto
-
-```bash
-./restart.sh
-```
-
-### Ou manualmente
-
-#### Backend
+### Instalação
 
 ```bash
 npm install
+cd web && npm install
+cd ..
+```
+
+### Arranque manual
+
+Backend:
+
+```bash
 npm run db:generate
 npm run db:push
 npm run dev
 ```
 
-#### Frontend
+Frontend:
 
 ```bash
 cd web
-npm install
 npm run dev
 ```
 
-## 14. Como correr com internet publica
+### Arranque rápido com script
 
-Requisitos:
+```bash
+./restart.sh
+```
 
-- binario `cloudflared`
+Isto prepara Prisma local, arranca backend em `http://localhost:3000` e frontend em `http://localhost:5173`.
 
-Depois:
+### Exposição pública temporária
 
 ```bash
 ./internet.sh
 ```
 
-## 15. Como preparar para VPS
+Este script abre túneis Cloudflare para backend e frontend local.
 
-### 1. Configurar `.env`
+## Build e testes
 
-Usar PostgreSQL:
-
-```bash
-cp .env.postgres.example .env
-```
-
-### 2. Subir sistema
+Backend:
 
 ```bash
-./vps.sh
+npm run build
 ```
 
-### 3. Opcional
+Frontend:
 
-Na VPS real, normalmente vais querer:
+```bash
+cd web
+npm run build
+```
 
-- `Nginx`
-- `PM2` ou `systemd`
-- dominio real
-- SSL
-
-## 16. Testes
-
-### Testes existentes
-
-- testes unitarios de funcoes de agenda
-- testes HTTP de integracao preparados para PostgreSQL
-
-Ficheiros:
-
-- [src/utils/scheduling.test.ts](/Users/leandrogomes/Desktop/barbearia-agendamento/src/utils/scheduling.test.ts:1)
-- [src/test/http.integration.test.ts](/Users/leandrogomes/Desktop/barbearia-agendamento/src/test/http.integration.test.ts:1)
-
-### Executar testes
+Testes:
 
 ```bash
 npm test
 ```
 
-### Testes de integracao PostgreSQL
+Integração HTTP:
 
 ```bash
-TEST_DATABASE_URL="postgresql://user:pass@host:5432/barbearia_test?schema=public" npm run test:integration
+TEST_DATABASE_URL="postgresql://..." npm run test:integration
 ```
 
-## 17. Planos do sistema
+Hoje a suite inclui:
 
-O sistema tem controlo por plano para funcionalidades da barbearia:
+- testes unitários de scheduling
+- testes HTTP end-to-end do backend quando existe `TEST_DATABASE_URL`
 
-- `FREE`
-- `BASIC`
-- `PRO`
+## Produção e VPS
 
-Exemplos de gating:
+O projeto está preparado para produção com PostgreSQL.
 
-- extras, produtos, planos e relatorios exigem pelo menos `BASIC`
-- personalizacao mais avancada exige `PRO`
+Ficheiros úteis:
 
-No frontend isso e controlado por:
-
-- [web/src/components/admin/PlanGate.tsx](/Users/leandrogomes/Desktop/barbearia-agendamento/web/src/components/admin/PlanGate.tsx:1)
-
-## 18. Funcionalidades importantes implementadas
-
-### Agenda
-
-- granularidade configuravel por barbearia
-- horarios de trabalho
-- pausas de almoco por divisao de turnos
-- bloqueios pontuais
-- remarcacao
-- disponibilidade por barbeiro
-
-### Clientes
-
-- CRUD de clientes
-- edicao de telefone, email e notas
-- relacao com planos
-- historico de bookings
-
-### Bookings
-
-- booking publico
-- booking interno
-- remarcacao
-- status
-- extras e produtos associados
-
-### Relatorios
-
-- relatorio geral
-- relatorio de planos
-- PDF
-
-### Planos
-
-- planos da barbearia
-- servicos incluidos
-- dias permitidos
-- link Stripe por plano
-
-## 19. Acessos
-
-Consulta tambem:
-
-- [ACESSOS_SISTEMA.md](/Users/leandrogomes/Desktop/barbearia-agendamento/ACESSOS_SISTEMA.md:1)
-
-## 20. Documentacao adicional
-
+- [DEPLOY_VPS.md](/Users/leandrogomes/Desktop/barbearia-agendamento/DEPLOY_VPS.md:1)
+- [UPDATE_VPS.md](/Users/leandrogomes/Desktop/barbearia-agendamento/UPDATE_VPS.md:1)
 - [POSTGRESQL_PRODUCAO.md](/Users/leandrogomes/Desktop/barbearia-agendamento/POSTGRESQL_PRODUCAO.md:1)
+- [ecosystem.config.js](/Users/leandrogomes/Desktop/barbearia-agendamento/ecosystem.config.js:1)
 
-## 21. Estado atual da arquitetura
-
-### O que esta bom
-
-- stack moderna e simples
-- separacao backend / frontend
-- multi-tenant por slug
-- scripts claros para local, internet e VPS
-- caminho PostgreSQL preparado
-
-### O que ainda pode evoluir
-
-- mais testes E2E completos
-- deploy com PM2 ou systemd
-- Nginx na VPS
-- monitorizacao
-- backups automatizados
-
-## 22. Deploy em VPS para produção (500+ barbearias)
-
-> Fazer isto quando tiveres o VPS. Por ordem.
-
-### Infraestrutura necessária (Hetzner)
-
-| Servidor | Plano | RAM / CPU | Custo | Para quê |
-|---|---|---|---|---|
-| App | CX42 | 16GB / 8 vCPU | ~16€/mês | Node.js + Nginx |
-| Base de dados | CPX31 | 8GB / 4 vCPU | ~10€/mês | PostgreSQL + PgBouncer |
-| Cache | CX22 | 4GB / 2 vCPU | ~4€/mês | Redis |
-
-**Total: ~30€/mês.** Aguenta bem as primeiras centenas de barbearias.
-
-Cloudflare (gratuito) à frente de tudo: DNS + SSL + CDN + DDoS + WAF.
-
----
-
-### Passo 1 — Servidor de base de dados (CPX31)
-
-```bash
-# instalar PostgreSQL
-sudo apt update && sudo apt install -y postgresql postgresql-contrib
-
-# criar base de dados
-sudo -u postgres psql -c "CREATE DATABASE barberbook;"
-sudo -u postgres psql -c "CREATE USER barberbook WITH PASSWORD 'password_forte_aqui';"
-sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE barberbook TO barberbook;"
-
-# instalar PgBouncer (connection pooling — obrigatório com PM2 cluster)
-sudo apt install -y pgbouncer
-```
-
-Configurar `/etc/pgbouncer/pgbouncer.ini`:
-
-```ini
-[databases]
-barberbook = host=127.0.0.1 port=5432 dbname=barberbook
-
-[pgbouncer]
-listen_port = 6432
-listen_addr = 127.0.0.1
-auth_type = md5
-auth_file = /etc/pgbouncer/userlist.txt
-pool_mode = transaction
-max_client_conn = 500
-default_pool_size = 25
-```
-
-```bash
-# reiniciar pgbouncer
-sudo systemctl restart pgbouncer
-sudo systemctl enable pgbouncer
-```
-
----
-
-### Passo 2 — Servidor Redis (CX22)
-
-```bash
-sudo apt update && sudo apt install -y redis-server
-
-# editar /etc/redis/redis.conf
-# bind 127.0.0.1   (só aceita ligações locais)
-# requirepass password_forte_aqui
-
-sudo systemctl restart redis
-sudo systemctl enable redis
-```
-
-Depois atualizar o rate limiter em `src/middlewares/rateLimiter.ts` para usar Redis em vez de memória in-process:
-
-```bash
-npm install rate-limit-redis ioredis
-```
-
-> Sem isto, com PM2 cluster cada worker tem rate limit separado — não funciona corretamente.
-
----
-
-### Passo 3 — Servidor da aplicação (CX42)
-
-```bash
-# instalar Node.js 20
-curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-sudo apt install -y nodejs
-
-# instalar PM2
-npm install -g pm2
-
-# instalar Nginx
-sudo apt install -y nginx
-```
-
-Clonar o projeto:
-
-```bash
-git clone <repo> /var/www/barberbook
-cd /var/www/barberbook
-npm install
-cd web && npm install && npm run build && cd ..
-```
-
-Configurar `.env` com PostgreSQL via PgBouncer:
-
-```env
-DATABASE_URL="postgresql://barberbook:password_forte_aqui@IP_DB_SERVER:6432/barberbook?pgbouncer=true&connection_limit=1"
-JWT_SECRET="chave_super_secreta_longa_aqui"
-JWT_EXPIRES_IN="7d"
-PORT=3000
-SUPERADMIN_EMAIL="admin@teudominio.com"
-SUPERADMIN_PASSWORD="password_forte_aqui"
-```
-
-> O `?pgbouncer=true&connection_limit=1` é obrigatório no Prisma quando usas PgBouncer em transaction mode.
-
-Aplicar migrations e arrancar:
+Arranque tipo VPS:
 
 ```bash
 ./vps.sh
 ```
 
----
+O processo PM2 de produção está definido como:
 
-### Passo 4 — PM2 em cluster mode
+- nome: `trimio-api`
+- script: `dist/server.js`
 
-Criar `ecosystem.config.js` na raiz:
+## Rotas principais do frontend
 
-```js
-module.exports = {
-  apps: [{
-    name: 'barberbook',
-    script: 'dist/server.js',
-    instances: 'max',
-    exec_mode: 'cluster',
-    env: {
-      NODE_ENV: 'production',
-      PORT: 3000,
-    },
-  }]
-}
-```
+- `/`: homepage da plataforma
+- `/register`: criação de nova barbearia
+- `/verify-email`: confirmação de email
+- `/admin/login`: login admin
+- `/admin/*`: painel da barbearia
+- `/superadmin/login`: login superadmin
+- `/superadmin/*`: painel superadmin
+- `/:slug`: homepage pública da barbearia
+- `/:slug/booking`: booking público
+- `/:slug/plans`: planos públicos
+- `/:slug/products`: produtos públicos
+- `/:slug/barber/login`: login do barbeiro
+- `/:slug/barber`: portal do barbeiro
 
-```bash
-pm2 start ecosystem.config.js
-pm2 save
-pm2 startup   # faz o PM2 arrancar automaticamente após reboot
-```
+## Estado atual do produto
 
----
+O projeto já é mais do que um MVP visual. Tem base real de operação:
 
-### Passo 5 — Nginx
+- multi-tenant
+- autenticação por papel
+- onboarding com verificação de email
+- recuperação de password
+- booking público funcional
+- disponibilidade calculada no backend
+- gating por plano
+- billing por Stripe
+- superadmin com visibilidade operacional
+- portal do barbeiro separado
 
-Criar `/etc/nginx/sites-available/barberbook`:
+As áreas que normalmente merecem evolução contínua são:
 
-```nginx
-server {
-    listen 80;
-    server_name teudominio.com www.teudominio.com;
+- maior cobertura de testes de integração
+- observabilidade e métricas
+- mais automação de billing e notificações
+- endurecimento contínuo de privacidade de dados
 
-    # ficheiros estáticos do React (servidos pelo Nginx diretamente, sem tocar no Node)
-    root /var/www/barberbook/web/dist;
-    index index.html;
+## Resumo
 
-    # API → Node.js
-    location /api/ {
-        proxy_pass http://127.0.0.1:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_cache_bypass $http_upgrade;
-    }
+Trimio é uma plataforma de gestão e agendamento para barbearias em que cada loja tem o seu próprio tenant, presença pública e operação interna, enquanto a plataforma mantém controlo global via superadmin.
 
-    # tudo o resto → React (SPA routing)
-    location / {
-        try_files $uri $uri/ /index.html;
-    }
-}
-```
-
-```bash
-sudo ln -s /etc/nginx/sites-available/barberbook /etc/nginx/sites-enabled/
-sudo nginx -t
-sudo systemctl restart nginx
-sudo systemctl enable nginx
-```
-
----
-
-### Passo 6 — Cloudflare
-
-1. Adicionar o domínio no Cloudflare
-2. DNS → A record apontando para o IP do servidor app (CX42)
-3. SSL/TLS → modo **Full (strict)**
-4. Speed → Auto Minify → ativar JS, CSS, HTML
-5. Caching → Cache Level → Standard
-
-O SSL é tratado pelo Cloudflare — o Nginx só precisa de ouvir na porta 80.
-
----
-
-### Passo 7 — Backups automáticos da base de dados
-
-No servidor de DB (CPX31), criar `/etc/cron.daily/backup-barberbook`:
-
-```bash
-#!/bin/bash
-DATE=$(date +%Y%m%d_%H%M)
-BACKUP_DIR="/var/backups/barberbook"
-mkdir -p $BACKUP_DIR
-
-pg_dump -U barberbook barberbook | gzip > "$BACKUP_DIR/backup_$DATE.sql.gz"
-
-# guardar só os últimos 30 dias
-find $BACKUP_DIR -name "*.sql.gz" -mtime +30 -delete
-```
-
-```bash
-sudo chmod +x /etc/cron.daily/backup-barberbook
-```
-
-> Para mais segurança, enviar os backups para Cloudflare R2 com `rclone`.
-
----
-
-### Passo 8 — Migrar imagens de base64 para Cloudflare R2
-
-**Este é o problema mais urgente.** Atualmente as imagens de produtos são guardadas como base64 no PostgreSQL. Com muitas barbearias isso torna a DB enorme e as queries lentas.
-
-**Ativar R2 no Cloudflare:**
-1. Cloudflare Dashboard → R2 → Create bucket → `barberbook-images`
-2. Criar API token com permissão de leitura/escrita no bucket
-3. Anotar: Account ID, Access Key ID, Secret Access Key, bucket name
-
-**Instalar SDK:**
-```bash
-npm install @aws-sdk/client-s3 @aws-sdk/lib-storage
-```
-
-**Adicionar ao `.env`:**
-```env
-R2_ACCOUNT_ID="account_id_aqui"
-R2_ACCESS_KEY_ID="access_key_aqui"
-R2_SECRET_ACCESS_KEY="secret_key_aqui"
-R2_BUCKET_NAME="barberbook-images"
-R2_PUBLIC_URL="https://pub-XXXX.r2.dev"
-```
-
-**Substituir o upload no controller de produtos** para fazer upload para R2 e guardar só a URL pública em vez do base64.
-
----
-
-### Passo 9 — Verificar que está tudo a funcionar
-
-```bash
-# verificar PM2
-pm2 status
-pm2 logs barberbook --lines 50
-
-# verificar Nginx
-sudo nginx -t
-sudo systemctl status nginx
-
-# verificar PostgreSQL + PgBouncer
-sudo systemctl status postgresql
-sudo systemctl status pgbouncer
-
-# verificar Redis
-redis-cli ping   # deve responder PONG
-
-# teste da API
-curl https://teudominio.com/api/public/health
-```
-
----
-
-### Resumo do setup completo
-
-```
-Cloudflare (grátis)
-  DNS + SSL + CDN + DDoS + WAF + R2 (imagens)
-        ↓
-  [App — CX42 ~16€/mês]
-  Nginx → serve ficheiros React estáticos
-  PM2 cluster → Node.js em todos os cores
-        ↓                    ↓
-  [DB — CPX31 ~10€/mês]   [Cache — CX22 ~4€/mês]
-  PostgreSQL               Redis
-  PgBouncer                rate limiting centralizado
-```
-
-## 22. Resumo final
-
-Este projeto e um sistema completo de agendamento para barbearias em modelo SaaS.
-
-Hoje ele esta organizado para:
-
-- testar facilmente em `localhost`
-- expor temporariamente pela internet com Cloudflare
-- migrar depois para uma VPS com PostgreSQL
-
-Se pegares neste projeto, a regra pratica e esta:
-
-- queres testar localmente: `./restart.sh`
-- queres mostrar pela internet a partir da tua maquina: `./internet.sh`
-- queres subir em VPS com PostgreSQL: `./vps.sh`
+Foi construída assim porque o problema real não é apenas “marcar horas”. É alinhar captação, operação, disponibilidade, equipa, recorrência e monetização num único sistema.
