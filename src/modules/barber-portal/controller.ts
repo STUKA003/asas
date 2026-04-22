@@ -5,9 +5,10 @@ import { getEffectivePlan } from '../../lib/plans'
 import { validateSlot } from '../../utils/availability'
 import { addBookingItemsToBooking, removeBookingItemFromBooking } from '../bookings/items-service'
 import { sendNotificationPush } from '../../lib/push'
+import { formatStoredWallClockTime } from '../../lib/datetime'
 
 function fmtTime(d: Date) {
-  return d.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })
+  return formatStoredWallClockTime(d)
 }
 
 const STATUS_LABELS: Record<string, string> = {

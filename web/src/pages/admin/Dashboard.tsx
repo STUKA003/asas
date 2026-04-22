@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { StatusBadge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { PageLoader } from '@/components/ui/Spinner'
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, toWallClockDate } from '@/lib/utils'
 import { addDays, endOfMonth, format, isWithinInterval, startOfMonth, subMonths } from 'date-fns'
 import { pt } from 'date-fns/locale'
 import {
@@ -53,8 +53,8 @@ export default function Dashboard() {
   const prevMonthStart     = startOfMonth(subMonths(now, 1))
   const prevMonthEnd       = endOfMonth(subMonths(now, 1))
 
-  const thisMonth   = allBookings.filter((b) => isWithinInterval(new Date(b.startTime), { start: monthStart, end: monthEnd }))
-  const prevMonth   = allBookings.filter((b) => isWithinInterval(new Date(b.startTime), { start: prevMonthStart, end: prevMonthEnd }))
+  const thisMonth   = allBookings.filter((b) => isWithinInterval(toWallClockDate(b.startTime), { start: monthStart, end: monthEnd }))
+  const prevMonth   = allBookings.filter((b) => isWithinInterval(toWallClockDate(b.startTime), { start: prevMonthStart, end: prevMonthEnd }))
 
   const completedThis = thisMonth.filter((b) => b.status === 'COMPLETED')
   const completedPrev = prevMonth.filter((b) => b.status === 'COMPLETED')
@@ -98,7 +98,7 @@ export default function Dashboard() {
 
   const dailyDistribution = Array.from({ length: 7 }).map((_, i) => {
     const day = addDays(monthStart, i)
-    const count = thisMonth.filter((b) => format(new Date(b.startTime), 'yyyy-MM-dd') === format(day, 'yyyy-MM-dd')).length
+    const count = thisMonth.filter((b) => format(toWallClockDate(b.startTime), 'yyyy-MM-dd') === format(day, 'yyyy-MM-dd')).length
     return { day: format(day, 'EEE', { locale: pt }), fullDay: format(day, 'EEEE', { locale: pt }), bookings: count }
   })
   const busiestDay = [...dailyDistribution].sort((a, b) => b.bookings - a.bookings)[0]
@@ -353,7 +353,7 @@ export default function Dashboard() {
                     >
                       <div className="flex h-11 w-11 shrink-0 flex-col items-center justify-center rounded-xl bg-ink text-white">
                         <span className="text-[9px] uppercase tracking-[0.12em] text-white/40">hora</span>
-                        <span className="text-[13px] font-semibold">{format(new Date(booking.startTime), 'HH:mm')}</span>
+                        <span className="text-[13px] font-semibold">{format(toWallClockDate(booking.startTime), 'HH:mm')}</span>
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center justify-between gap-2">

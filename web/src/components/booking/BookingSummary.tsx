@@ -1,6 +1,6 @@
 import { useBookingStore } from '@/store/booking'
 import { useTenant } from '@/providers/TenantProvider'
-import { formatCurrency, formatDuration } from '@/lib/utils'
+import { formatCurrency, formatDuration, toWallClockDate } from '@/lib/utils'
 import { BadgeCheck, CalendarDays, Clock, DollarSign, Sparkles, User } from 'lucide-react'
 
 export function BookingSummary() {
@@ -25,7 +25,7 @@ export function BookingSummary() {
   const lines = [
     barber ? { icon: User, label: 'Profissional', value: barber.name } : null,
     date ? { icon: CalendarDays, label: 'Data', value: new Date(date).toLocaleDateString('pt-PT', { day: '2-digit', month: 'long' }) } : null,
-    slot ? { icon: Clock, label: 'Hora', value: new Date(slot.startTime).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' }) } : null,
+    slot ? { icon: Clock, label: 'Hora', value: toWallClockDate(slot.startTime).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' }) } : null,
   ].filter(Boolean) as Array<{ icon: typeof User; label: string; value: string }>
 
   return (

@@ -69,8 +69,8 @@ export function StepConfirmation() {
           customer?.phone ? `Contacto: ${customer.phone}.` : null,
         ].filter(Boolean).join(' '),
         location: barbershop?.address || barbershop?.name || 'Barbearia',
-        startTime: new Date(slot.startTime),
-        endTime: new Date(new Date(slot.startTime).getTime() + totalDuration * 60 * 1000),
+        startTime: toWallClockDate(slot.startTime),
+        endTime: new Date(toWallClockDate(slot.startTime).getTime() + totalDuration * 60 * 1000),
       }
 
   const calendarPlatform = detectCalendarPlatform()

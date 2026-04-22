@@ -13,7 +13,7 @@ import { StatusBadge } from '@/components/ui/Badge'
 import { DataTable } from '@/components/admin/DataTable'
 import { CalendarView, type EffectiveWorkingHour } from '@/components/admin/CalendarView'
 import { NewBookingModal } from '@/components/admin/NewBookingModal'
-import { formatCurrency, formatDuration } from '@/lib/utils'
+import { formatCurrency, formatDuration, toWallClockDate } from '@/lib/utils'
 import { Eye, Trash2, ChevronLeft, ChevronRight, LayoutList, Calendar, Plus, Ban, Search, X } from 'lucide-react'
 import type { Barber, BlockedTime, Booking, BookingStatus, Extra, Product } from '@/lib/types'
 
@@ -379,7 +379,7 @@ export default function Bookings() {
                         <span className="shrink-0 h-2 w-2 rounded-full bg-red-400" />
                         <div className="min-w-0">
                           <p className="text-sm font-medium leading-tight">
-                            {format(new Date(block.startTime), 'HH:mm')}–{format(new Date(block.endTime), 'HH:mm')}
+                            {format(toWallClockDate(block.startTime), 'HH:mm')}–{format(toWallClockDate(block.endTime), 'HH:mm')}
                             <span className="ml-2 text-xs font-normal text-zinc-400">{block.barber?.name ?? 'Todos'}</span>
                           </p>
                           {block.reason && <p className="text-xs text-zinc-400 truncate">{block.reason}</p>}
@@ -446,8 +446,8 @@ export default function Bookings() {
                       key: 'startTime', label: 'Data / Hora',
                       render: (b) => (
                         <div>
-                          <p className="font-medium">{format(new Date(b.startTime), 'dd/MM/yyyy')}</p>
-                          <p className="text-xs text-zinc-400">{format(new Date(b.startTime), 'HH:mm')} — {formatDuration(b.totalDuration)}</p>
+                          <p className="font-medium">{format(toWallClockDate(b.startTime), 'dd/MM/yyyy')}</p>
+                          <p className="text-xs text-zinc-400">{format(toWallClockDate(b.startTime), 'HH:mm')} — {formatDuration(b.totalDuration)}</p>
                         </div>
                       ),
                     },
@@ -495,7 +495,7 @@ export default function Bookings() {
                 </div>
                 <div className="bg-zinc-50 dark:bg-zinc-800/50 rounded-xl p-3">
                   <p className="text-zinc-400 text-xs mb-1">Data / Hora</p>
-                  <p className="font-medium">{format(new Date(detail.startTime), "dd 'de' MMM, HH:mm", { locale: pt })}</p>
+                  <p className="font-medium">{format(toWallClockDate(detail.startTime), "dd 'de' MMM, HH:mm", { locale: pt })}</p>
                   <p className="text-zinc-400 text-xs">{formatDuration(detail.totalDuration)}</p>
                 </div>
                 <div className="bg-zinc-50 dark:bg-zinc-800/50 rounded-xl p-3">

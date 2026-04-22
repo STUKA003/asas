@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { format, isToday } from 'date-fns'
-import { cn } from '@/lib/utils'
-import { formatCurrency } from '@/lib/utils'
+import { cn, formatCurrency, toWallClockDate } from '@/lib/utils'
 import type { Booking, Barber, BlockedTime } from '@/lib/types'
 
 const HOUR_START  = 8
@@ -121,7 +120,7 @@ export function CalendarView({ date, bookings, barbers, blockedTimes = [], effec
   }, [blockedTimes, barbers])
 
   function getStyle(bk: Booking) {
-    const d    = new Date(bk.startTime)
+    const d    = toWallClockDate(bk.startTime)
     const mins = d.getHours() * 60 + d.getMinutes() - HOUR_START * 60
     return {
       top:    Math.max(0, (mins / 60) * HOUR_HEIGHT),
@@ -130,8 +129,8 @@ export function CalendarView({ date, bookings, barbers, blockedTimes = [], effec
   }
 
   function getBlockStyle(startTime: string, endTime: string) {
-    const start = new Date(startTime)
-    const end = new Date(endTime)
+    const start = toWallClockDate(startTime)
+    const end = toWallClockDate(endTime)
     const startMinutes = start.getHours() * 60 + start.getMinutes() - HOUR_START * 60
     const durationMinutes = Math.max(15, (end.getTime() - start.getTime()) / (1000 * 60))
 
@@ -440,7 +439,7 @@ export function CalendarView({ date, bookings, barbers, blockedTimes = [], effec
                     </div>
                     {height > 30 ? (
                       <div className="px-2 text-[10px] text-red-600/80">
-                        {format(new Date(block.startTime), 'HH:mm')} - {format(new Date(block.endTime), 'HH:mm')}
+                        {format(toWallClockDate(block.startTime), 'HH:mm')} - {format(toWallClockDate(block.endTime), 'HH:mm')}
                         {block.reason ? ` · ${block.reason}` : ''}
                       </div>
                     ) : null}
@@ -490,14 +489,14 @@ export function CalendarView({ date, bookings, barbers, blockedTimes = [], effec
                       'transition-all duration-150'
                     )}
                     style={{ top: top + 1, height, touchAction: onReschedule ? 'none' : 'auto' }}
-                    title={`${bk.customer.name} · ${bk.services[0]?.service.name ?? 'Serviço'} · ${format(new Date(bk.startTime), 'HH:mm')}`}
+                    title={`${bk.customer.name} · ${bk.services[0]?.service.name ?? 'Serviço'} · ${format(toWallClockDate(bk.startTime), 'HH:mm')}`}
                   >
                     <div className={cn('w-1 shrink-0 rounded-l-xl', s.bar)} />
                     <div className={cn('min-w-0 flex-1 px-2 py-1.5', s.bg, s.text)}>
                       <div className="flex items-center gap-1.5">
                         <div className={`h-2.5 w-2.5 shrink-0 rounded-full bg-gradient-to-br ${serviceTone(bk.services[0]?.serviceId)}`} />
                         <p className="flex-1 truncate text-[11px] font-bold leading-tight">
-                          {format(new Date(bk.startTime), 'HH:mm')} · {bk.customer.name}
+                          {format(toWallClockDate(bk.startTime), 'HH:mm')} · {bk.customer.name}
                         </p>
                         {bk.customer.plan
                           ? <span className={`shrink-0 text-[9px] font-bold px-1 py-0.5 rounded ${planBadgeColor(bk.customer.plan.id)} text-white leading-none`}>{planAbbr(bk.customer.plan.name)}</span>

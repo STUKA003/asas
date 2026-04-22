@@ -1,5 +1,6 @@
 import { prisma } from './prisma'
 import { sendNotificationPush } from './push'
+import { formatStoredWallClockTime } from './datetime'
 
 type BookingNotificationInput = {
   barberId: string
@@ -20,7 +21,7 @@ type CustomerBookingActionInput = {
 }
 
 function formatTime(date: Date) {
-  return date.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })
+  return formatStoredWallClockTime(date)
 }
 
 export async function notifyBookingCreated(input: BookingNotificationInput) {

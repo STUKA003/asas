@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { StatusBadge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { PageLoader } from '@/components/ui/Spinner'
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, toWallClockDate } from '@/lib/utils'
 import { useBarberAuthStore } from '@/store/barberAuth'
 import type { Booking } from '@/lib/types'
 
@@ -170,7 +170,7 @@ export default function BarberDashboard() {
                   <div key={b.id} className="flex items-center gap-3 rounded-xl px-3 py-3 transition-colors hover:bg-zinc-50">
                     <div className="w-12 shrink-0 text-center">
                       <span className="text-sm font-bold text-zinc-800">
-                        {format(new Date(b.startTime), 'HH:mm')}
+                        {format(toWallClockDate(b.startTime), 'HH:mm')}
                       </span>
                     </div>
                     <div className="min-w-0 flex-1">

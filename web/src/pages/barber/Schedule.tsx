@@ -11,7 +11,7 @@ import { BookingModal } from '@/pages/barber/BookingModal'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { PageLoader } from '@/components/ui/Spinner'
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, toWallClockDate } from '@/lib/utils'
 import { useBarberAuthStore } from '@/store/barberAuth'
 import type { Barber, Booking, BookingStatus, Extra, Product } from '@/lib/types'
 
@@ -137,7 +137,7 @@ export default function BarberSchedule() {
       invalidate()
       setFeedback({
         type: 'success',
-        message: `Agendamento movido para ${format(new Date(variables.startTime), "d MMM 'às' HH:mm", { locale: pt })}.`,
+        message: `Agendamento movido para ${format(toWallClockDate(variables.startTime), "d MMM 'às' HH:mm", { locale: pt })}.`,
       })
     },
     onError: (err: unknown) => {
@@ -317,7 +317,7 @@ export default function BarberSchedule() {
           <div className="rounded-2xl border border-neutral-200/70 bg-white p-4 shadow-soft lg:p-6">
             <CalendarView
               date={anchor}
-              bookings={bookings.filter((booking) => isSameDay(new Date(booking.startTime), anchor))}
+              bookings={bookings.filter((booking) => isSameDay(toWallClockDate(booking.startTime), anchor))}
               barbers={barberCalendarBarbers}
               slotGranularityMinutes={snapMinutes}
               onBookingClick={setModalBooking}
@@ -338,7 +338,7 @@ export default function BarberSchedule() {
               </div>
 
               {days.map((d, dayIdx) => {
-                const dayBookings = bookings.filter((b) => isSameDay(new Date(b.startTime), d))
+                const dayBookings = bookings.filter((b) => isSameDay(toWallClockDate(b.startTime), d))
                 const isCurrentDay = isToday(d)
                 const nowMin = minutesFromDayStart(now)
 
@@ -398,8 +398,8 @@ export default function BarberSchedule() {
                     )}
 
                     {dayBookings.map((b) => {
-                      const start = new Date(b.startTime)
-                      const end = new Date(b.endTime)
+                      const start = toWallClockDate(b.startTime)
+                      const end = toWallClockDate(b.endTime)
                       const topMin = minutesFromDayStart(start)
                       const durationMin = (end.getTime() - start.getTime()) / 60000
                       const top = (topMin / 60) * HOUR_HEIGHT

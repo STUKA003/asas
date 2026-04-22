@@ -2,7 +2,7 @@ import { format } from 'date-fns'
 import { pt } from 'date-fns/locale'
 import { Clock, Euro, Phone, Trash2 } from 'lucide-react'
 import type { Booking, BookingStatus, Extra, Product } from '@/lib/types'
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, toWallClockDate } from '@/lib/utils'
 import { StatusBadge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Select } from '@/components/ui/Select'
@@ -56,8 +56,8 @@ export function BookingModal({
   onAddItems,
   onRemoveItem,
 }: BookingModalProps) {
-  const start = new Date(booking.startTime)
-  const end = new Date(booking.endTime)
+  const start = toWallClockDate(booking.startTime)
+  const end = toWallClockDate(booking.endTime)
   const actions = STATUS_ACTIONS[booking.status] ?? []
   const extraOptions = [
     { value: '', label: 'Selecionar extra' },

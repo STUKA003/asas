@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { PhoneInput } from '@/components/ui/PhoneInput'
 import { Select } from '@/components/ui/Select'
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, toWallClockDate } from '@/lib/utils'
 import { StatusBadge } from '@/components/ui/Badge'
 import type { Customer, CustomerDetail, Plan } from '@/lib/types'
 
@@ -651,7 +651,7 @@ export default function Customers() {
                     <div key={booking.id} className="flex flex-col gap-3 rounded-xl border border-zinc-100 px-4 py-3 dark:border-zinc-800 sm:flex-row sm:items-center">
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                          {format(new Date(booking.startTime), "dd 'de' MMMM, HH:mm", { locale: pt })}
+                          {format(toWallClockDate(booking.startTime), "dd 'de' MMMM, HH:mm", { locale: pt })}
                         </p>
                         <p className="text-xs text-zinc-400 mt-0.5">
                           {formatCurrency(booking.totalPrice)}{booking.barber?.name ? ` · ${booking.barber.name}` : ''}
