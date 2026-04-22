@@ -6,6 +6,7 @@ import { createBooking } from '../bookings/service'
 import { getEffectivePlan } from '../../lib/plans'
 import { normalizePublicShop, resolvePublicTenant } from './tenant'
 import { serializeCustomerPlanLookup, serializePublicPlan } from './serializers'
+import { notifyBookingCreated } from '../../lib/booking-notifications'
 
 // ─── Public handlers ─────────────────────────────────────────────────────────
 
@@ -242,6 +243,14 @@ export async function createPublicBooking(req: Request, res: Response) {
       productIds:   productIds ?? [],
       startTime:    new Date(startTime),
       notes:        customerData.notes,
+    })
+    await notifyBookingCreated({
+      barbershopId: shop.id,
+      barberId: booking.barber.id,
+      bookingId: booking.id,
+      customerName: booking.customer.name,
+      source: 'public',
+      startTime: new Date(booking.startTime),
     })
     res.status(201).json(booking)
   } catch (err: unknown) {

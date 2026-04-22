@@ -5,6 +5,7 @@ import { getAvailableSlots, validateSlot } from '../../utils/availability'
 import { createBooking } from './service'
 import { addBookingItemsToBooking, removeBookingItemFromBooking } from './items-service'
 import { buildBookingListWhere } from './filters'
+import { notifyBookingCreated } from '../../lib/booking-notifications'
 
 const createSchema = z.object({
   barberId: z.string(),
@@ -82,6 +83,14 @@ export async function create(req: Request, res: Response) {
       ...parsed.data,
       startTime: new Date(parsed.data.startTime),
       barbershopId: req.auth.barbershopId,
+    })
+    await notifyBookingCreated({
+      barbershopId: req.auth.barbershopId,
+      barberId: booking.barber.id,
+      bookingId: booking.id,
+      customerName: booking.customer.name,
+      source: 'admin',
+      startTime: new Date(booking.startTime),
     })
     res.status(201).json(booking)
   } catch (err: unknown) {

@@ -128,6 +128,7 @@ function NotificationBell() {
     if (!open && unread > 0) {
       await notificationsApi.markAllRead()
       qc.invalidateQueries({ queryKey: ['notifications'] })
+      qc.invalidateQueries({ queryKey: ['notifications', 'unread'] })
     }
   }
 
@@ -143,6 +144,7 @@ function NotificationBell() {
   })()
 
   const TYPE_CONFIG: Record<string, { icon: React.ElementType; iconClass: string; bg: string }> = {
+    BOOKING_CREATED: { icon: Calendar, iconClass: 'text-primary-600', bg: 'bg-primary-50' },
     BOOKING_CONFIRMED: { icon: CheckCircle, iconClass: 'text-success-600', bg: 'bg-success-50' },
     BOOKING_COMPLETED: { icon: PartyPopper, iconClass: 'text-primary-600', bg: 'bg-primary-50' },
     BOOKING_CANCELLED: { icon: XCircle, iconClass: 'text-danger-600', bg: 'bg-danger-50' },
@@ -182,6 +184,7 @@ function NotificationBell() {
                     onClick={() => {
                       notificationsApi.markAllRead()
                       qc.invalidateQueries({ queryKey: ['notifications'] })
+                      qc.invalidateQueries({ queryKey: ['notifications', 'unread'] })
                     }}
                     className="text-xs font-medium text-ink-muted transition hover:text-ink"
                   >

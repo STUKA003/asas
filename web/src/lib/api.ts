@@ -154,6 +154,12 @@ export const barberPortalApi = {
     api.patch(`/barber-portal/bookings/${id}/items`, data, { headers: barberHttp() }).then((r) => r.data),
   removeItem: (id: string, data: { type: 'extra' | 'product'; itemId: string }) =>
     api.patch(`/barber-portal/bookings/${id}/items/remove`, data, { headers: barberHttp() }).then((r) => r.data),
+  notifications: () =>
+    api.get('/barber-portal/notifications', { headers: barberHttp() }).then((r) => r.data),
+  unreadNotifications: () =>
+    api.get('/barber-portal/notifications/unread', { headers: barberHttp() }).then((r) => r.data),
+  markNotificationsRead: () =>
+    api.patch('/barber-portal/notifications/read-all', {}, { headers: barberHttp() }).then((r) => r.data),
 }
 
 export const notificationsApi = {

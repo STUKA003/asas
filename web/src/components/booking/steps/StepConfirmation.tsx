@@ -6,9 +6,10 @@ import { publicApi } from '@/lib/publicApi'
 import { useTenant } from '@/providers/TenantProvider'
 import { useBookingStore } from '@/store/booking'
 import { formatCurrency, formatDuration, toWallClockDate } from '@/lib/utils'
+import { buildGoogleCalendarUrl, detectCalendarPlatform, downloadIcsFile } from '@/lib/calendar'
 import { Button } from '@/components/ui/Button'
 import { Avatar } from '@/components/ui/Avatar'
-import { CheckCircle2, Calendar, Clock, User, Scissors } from 'lucide-react'
+import { CheckCircle2, Calendar, Clock, Download, ExternalLink, User, Scissors } from 'lucide-react'
 
 function getBookingErrorMessage(err: unknown) {
   const apiMessage =
@@ -56,6 +57,33 @@ export function StepConfirmation() {
 
   const totalDuration =
     (service?.duration ?? 0) + extras.reduce((s, e) => s + e.duration, 0)
+
+  const calendarEvent = !slot || !service || !barber
+    ? null
+    : {
+        title: `${service.name} com ${barber.name}`,
+        description: [
+          `Reserva em ${barbershop?.name ?? 'Trimio'}.`,
+          customer?.name ? `Cliente: ${customer.name}.` : null,
+          customer?.phone ? `Contacto: ${customer.phone}.` : null,
+        ].filter(Boolean).join(' '),
+        location: barbershop?.address || barbershop?.name || 'Barbearia',
+        startTime: new Date(slot.startTime),
+        endTime: new Date(new Date(slot.startTime).getTime() + totalDuration * 60 * 1000),
+      }
+
+  const calendarPlatform = detectCalendarPlatform()
+
+  function handleCalendarAction() {
+    if (!calendarEvent) return
+
+    if (calendarPlatform === 'ios') {
+      downloadIcsFile(calendarEvent, 'reserva-trimio.ics')
+      return
+    }
+
+    window.open(buildGoogleCalendarUrl(calendarEvent), '_blank', 'noopener,noreferrer')
+  }
 
   const { mutate, isPending } = useMutation({
     mutationFn: () =>
@@ -105,6 +133,31 @@ export function StepConfirmation() {
             </p>
           )}
         </div>
+        {calendarEvent && (
+          <div className="space-y-2">
+            <Button onClick={handleCalendarAction} className="w-full">
+              {calendarPlatform === 'ios' ? <Download size={16} /> : <Calendar size={16} />}
+              {calendarPlatform === 'ios' ? 'Guardar no Calendário' : 'Adicionar ao Google Calendar'}
+            </Button>
+            {calendarPlatform === 'ios' ? (
+              <p className="text-xs text-zinc-500">
+                No iPhone ou iPad vais descarregar um ficheiro de calendário para abrir na app Calendário.
+              </p>
+            ) : (
+              <p className="text-xs text-zinc-500">
+                No Android abrimos o Google Calendar com a reserva pronta para guardar.
+              </p>
+            )}
+            <button
+              type="button"
+              onClick={() => calendarEvent && downloadIcsFile(calendarEvent, 'reserva-trimio.ics')}
+              className="inline-flex items-center justify-center gap-2 text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-800"
+            >
+              <ExternalLink size={14} />
+              Descarregar ficheiro .ics
+            </button>
+          </div>
+        )}
         <Button onClick={() => { store.reset(); window.location.href = `/${slug}` }} className="w-full">
           Voltar ao início
         </Button>

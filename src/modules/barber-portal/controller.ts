@@ -315,3 +315,41 @@ export async function removeBookingItem(req: Request, res: Response) {
     throw error
   }
 }
+
+export async function listNotifications(req: Request, res: Response) {
+  const notifications = await prisma.notification.findMany({
+    where: {
+      barbershopId: req.barberAuth.barbershopId,
+      barberId: req.barberAuth.barberId,
+    },
+    orderBy: { createdAt: 'desc' },
+    take: 60,
+  })
+
+  res.json(notifications)
+}
+
+export async function unreadNotificationsCount(req: Request, res: Response) {
+  const count = await prisma.notification.count({
+    where: {
+      barbershopId: req.barberAuth.barbershopId,
+      barberId: req.barberAuth.barberId,
+      read: false,
+    },
+  })
+
+  res.json({ count })
+}
+
+export async function markAllNotificationsRead(req: Request, res: Response) {
+  await prisma.notification.updateMany({
+    where: {
+      barbershopId: req.barberAuth.barbershopId,
+      barberId: req.barberAuth.barberId,
+      read: false,
+    },
+    data: { read: true },
+  })
+
+  res.json({ ok: true })
+}
