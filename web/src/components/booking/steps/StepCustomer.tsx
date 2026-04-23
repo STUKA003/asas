@@ -1,6 +1,7 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useQuery } from '@tanstack/react-query'
+import { useSearchParams } from 'react-router-dom'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { publicApi } from '@/lib/publicApi'
@@ -10,15 +11,6 @@ import { Input, Textarea } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { PhoneInput } from '@/components/ui/PhoneInput'
 import type { CustomerPlanLookup } from '@/lib/types'
-
-const schema = z.object({
-  attendeeName: z.string().min(2, 'Nome da pessoa atendida obrigatório'),
-  email: z.string().min(1, 'E-mail obrigatório').email('E-mail inválido'),
-  name:  z.string().min(2, 'Nome do responsável obrigatório'),
-  notes: z.string().optional(),
-  phone: z.string().min(10, 'Telefone obrigatório'),
-})
-type FormData = z.infer<typeof schema>
 
 const WEEKDAY_LABELS: Record<number, string> = {
   0: 'Domingo',
@@ -41,36 +33,80 @@ function formatAllowedDays(days: number[]) {
   return normalized.map((day) => WEEKDAY_LABELS[day]).join(', ')
 }
 
+const baseSchema = {
+  email: z.string().min(1, 'E-mail obrigatório').email('E-mail inválido'),
+  name:  z.string().min(2, 'Nome obrigatório'),
+  notes: z.string().optional(),
+  phone: z.string().min(10, 'Telefone obrigatório'),
+}
+
+const regularSchema = z.object(baseSchema)
+const addAnotherSchema = z.object({
+  ...baseSchema,
+  attendeeName: z.string().min(2, 'Nome da pessoa atendida obrigatório'),
+})
+
+type FormData = z.infer<typeof regularSchema> & { attendeeName?: string }
+
 export function StepCustomer() {
   const { slug, barbershop } = useTenant()
   const { customer, service, date, setCustomer, setCustomerPlan, setStep } = useBookingStore()
-  const { register, control, handleSubmit, setValue, watch, formState: { errors } } = useForm<FormData>({
+  const [searchParams] = useSearchParams()
+  const responsibleToken = searchParams.get('responsibleToken') ?? ''
+  const isAddAnother = !!responsibleToken
+
+  const schema = useMemo(() => isAddAnother ? addAnotherSchema : regularSchema, [isAddAnother])
+
+  const { register, control, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: customer ?? { attendeeName: '', email: '', name: '', notes: '', phone: '' },
+    defaultValues: customer
+      ? { attendeeName: customer.attendeeName !== customer.name ? customer.attendeeName : '', email: customer.email, name: customer.name, notes: customer.notes, phone: customer.phone }
+      : { attendeeName: '', email: '', name: '', notes: '', phone: '' },
   })
+
+  const { data: responsibleBooking } = useQuery({
+    queryKey: ['manage', slug, responsibleToken],
+    queryFn: () => publicApi(slug).managedBooking({ token: responsibleToken }),
+    enabled: !!slug && !!responsibleToken,
+  })
+
+  useEffect(() => {
+    if (responsibleBooking?.booking?.customer && !customer) {
+      const c = responsibleBooking.booking.customer
+      reset({
+        name: c.name,
+        phone: c.phone ?? '',
+        email: c.email ?? '',
+        attendeeName: '',
+        notes: '',
+      })
+    }
+  }, [responsibleBooking, customer, reset])
+
   const phone = watch('phone') ?? ''
   const name = watch('name') ?? ''
   const attendeeName = watch('attendeeName') ?? ''
-  const shouldLookupPlan = attendeeName.trim().toLowerCase() === name.trim().toLowerCase()
+  const lookupName = isAddAnother ? name : name
+  const shouldLookupPlan = !isAddAnother && phone.trim().length >= 8 && name.trim().length >= 2
+
   const { data: customerLookup } = useQuery({
-    queryKey: ['public', slug, 'customer-plan', phone, name],
-    queryFn: () => publicApi(slug).customerPlan({ phone: phone.trim(), name: name.trim() }),
-    enabled: !!slug && shouldLookupPlan && phone.trim().length >= 8 && name.trim().length >= 2,
+    queryKey: ['public', slug, 'customer-plan', phone, lookupName],
+    queryFn: () => publicApi(slug).customerPlan({ phone: phone.trim(), name: lookupName.trim() }),
+    enabled: !!slug && shouldLookupPlan,
   })
 
   const knownCustomer = shouldLookupPlan ? (customerLookup as CustomerPlanLookup | undefined)?.customer : null
   const plan = knownCustomer?.plan ?? null
 
-  // Atualiza o plano no store assim que o lookup resolve — o BookingSummary fica logo correto
   useEffect(() => {
     setCustomerPlan(plan)
   }, [plan]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (!attendeeName.trim()) {
-      setValue('attendeeName', name, { shouldValidate: true })
+    if (!isAddAnother && !attendeeName.trim()) {
+      setValue('attendeeName', name, { shouldValidate: false })
     }
-  }, [attendeeName, name, setValue])
+  }, [isAddAnother, attendeeName, name, setValue])
 
   const selectedDay = date ? new Date(date).getDay() : null
   const hasInvalidDay = !!plan && selectedDay !== null && !plan.allowedDays.includes(selectedDay)
@@ -98,7 +134,10 @@ export function StepCustomer() {
 
   const onSubmit = (data: FormData) => {
     if (blockingMessage) return
-    setCustomer(data)
+    setCustomer({
+      ...data,
+      attendeeName: data.attendeeName?.trim() || data.name,
+    })
     setStep(hasProducts ? 5 : 6)
   }
 
@@ -110,35 +149,40 @@ export function StepCustomer() {
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <Input
-          label="Nome do responsável"
+          label="O teu nome"
           placeholder="Joao Silva"
           error={errors.name?.message}
+          disabled={isAddAnother}
           {...register('name')}
         />
-        <Input
-          label="Nome da pessoa atendida"
-          placeholder="Miguel Silva"
-          error={errors.attendeeName?.message}
-          {...register('attendeeName')}
-        />
+        {isAddAnother && (
+          <Input
+            label="Nome da pessoa atendida"
+            placeholder="Miguel Silva"
+            error={(errors as { attendeeName?: { message?: string } }).attendeeName?.message}
+            {...register('attendeeName')}
+          />
+        )}
         <Controller
           name="phone"
           control={control}
           render={({ field }) => (
             <PhoneInput
-              label="Telefone / WhatsApp do responsável"
+              label="Telefone / WhatsApp"
               placeholder="912 345 678"
               error={errors.phone?.message}
               value={field.value}
               onChange={field.onChange}
+              disabled={isAddAnother}
             />
           )}
         />
         <Input
-          label="E-mail do responsável"
+          label="E-mail"
           type="email"
           placeholder="joao@example.com"
           error={errors.email?.message}
+          disabled={isAddAnother}
           {...register('email')}
         />
         <Textarea

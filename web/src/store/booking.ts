@@ -9,7 +9,7 @@ interface CustomerInfo {
   phone: string
 }
 
-export interface BookingPartyItem {
+export interface BookingDraft {
   attendeeName: string
   barber: Barber
   date: string
@@ -27,16 +27,12 @@ export interface BookingPartyItem {
 interface CustomerPlanInfo { id: string; name: string; allowedServices: { id: string; name: string }[] }
 
 interface BookingStore {
-  addPartyBooking: (booking: BookingPartyItem) => void
   barber: Barber | null
   customer: CustomerInfo | null
   customerPlan: CustomerPlanInfo | null
   date: string | null
   extras: Extra[]
-  party: BookingPartyItem[]
   products: Product[]
-  removePartyBooking: (index: number) => void
-  resetCurrentBooking: (options?: { attendeeName?: string }) => void
   reset:          () => void
   service: Service | null
   setBarber:      (b: Barber)   => void
@@ -54,42 +50,29 @@ interface BookingStore {
 
 const initial = {
   step: 0, service: null, barber: null, date: null,
-  slot: null, extras: [], customer: null, customerPlan: null, products: [], party: [],
+  slot: null, extras: [], customer: null, customerPlan: null, products: [],
 }
 
-export const useBookingStore = create<BookingStore>((set, get) => ({
+export const useBookingStore = create<BookingStore>((set) => ({
   ...initial,
-  addPartyBooking: (booking) => set({ party: [...get().party, booking] }),
   setStep:    (step)    => set({ step }),
   setService: (service) => set({ service, barber: null, date: null, slot: null }),
   setBarber:  (barber)  => set({ barber, date: null, slot: null }),
   setDate:    (date)    => set({ date, slot: null }),
   setSlot:    (slot)    => set({ slot }),
   toggleExtra: (extra) => {
-    const has = get().extras.find((e) => e.id === extra.id)
-    set({ extras: has ? get().extras.filter((e) => e.id !== extra.id) : [...get().extras, extra] })
+    set((state) => {
+      const has = state.extras.find((e) => e.id === extra.id)
+      return { extras: has ? state.extras.filter((e) => e.id !== extra.id) : [...state.extras, extra] }
+    })
   },
   setCustomer:     (customer)     => set({ customer }),
   setCustomerPlan: (customerPlan) => set({ customerPlan }),
   toggleProduct: (product) => {
-    const has = get().products.find((p) => p.id === product.id)
-    set({ products: has ? get().products.filter((p) => p.id !== product.id) : [...get().products, product] })
+    set((state) => {
+      const has = state.products.find((p) => p.id === product.id)
+      return { products: has ? state.products.filter((p) => p.id !== product.id) : [...state.products, product] }
+    })
   },
-  removePartyBooking: (index) => set({ party: get().party.filter((_, itemIndex) => itemIndex !== index) }),
-  resetCurrentBooking: (options) => set((state) => ({
-    service: null,
-    barber: null,
-    date: null,
-    slot: null,
-    extras: [],
-    products: [],
-    customerPlan: null,
-    customer: state.customer
-      ? {
-          ...state.customer,
-          attendeeName: options?.attendeeName ?? '',
-        }
-      : state.customer,
-  })),
   reset: () => set(initial),
 }))

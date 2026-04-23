@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { format } from 'date-fns'
 import { pt } from 'date-fns/locale'
-import { Calendar, CheckCircle2, Clock3, Copy, RefreshCw, Scissors, XCircle } from 'lucide-react'
+import { Calendar, CheckCircle2, Clock3, Copy, Plus, RefreshCw, Scissors, XCircle } from 'lucide-react'
 import { useSearchParams } from 'react-router-dom'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
@@ -164,6 +164,14 @@ export default function ManageBooking() {
                       >
                         <Copy size={16} />
                         Copiar link desta reserva
+                      </Button>
+                      <Button
+                        variant="secondary"
+                        onClick={() => { window.location.href = `/${slug}/booking?responsibleToken=${token}` }}
+                        className="w-full"
+                      >
+                        <Plus size={16} />
+                        Adicionar outra pessoa
                       </Button>
                       <Button
                         onClick={() => confirmMutation.mutate()}
