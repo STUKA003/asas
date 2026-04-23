@@ -3,7 +3,7 @@
  * Used by the public booking flow (no JWT required).
  */
 import axios from 'axios'
-import type { Barbershop, Barber, Service, Extra, Product, Plan, TimeSlot, CustomerPlanLookup, ManagedBooking } from './types'
+import type { Barbershop, Barber, Service, Extra, Product, Plan, TimeSlot, CustomerPlanLookup, CustomerBookingLookup, ManagedBooking } from './types'
 
 const http = axios.create({ baseURL: '/api/public' })
 
@@ -57,6 +57,7 @@ export function publicApi(slug: string) {
     products:     ()                              => http.get<Product[]>(`${base}/products`).then((r) => r.data),
     plans:        ()                              => http.get<Plan[]>(`${base}/plans`).then((r) => r.data),
     customerPlan:  (p: { phone: string; name: string }) => http.post<CustomerPlanLookup>(`${base}/customer-plan`, p).then((r) => r.data),
+    customerBookings: (p: { phone: string; name: string }) => http.post<CustomerBookingLookup>(`${base}/customer-bookings`, p).then((r) => r.data),
     subscribePlan: (p: { planId: string; name: string; phone: string }) => http.post(`${base}/subscribe-plan`, p).then((r) => r.data),
     availability:  (p: AvailabilityParams)        => http.get<AvailabilityResponse>(`${base}/availability`, { params: p }).then((r) => r.data),
     createBooking: (p: CreateBookingPayload)       => http.post(`${base}/bookings`, p).then((r) => r.data),

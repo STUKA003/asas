@@ -46,6 +46,7 @@ const Home = lazyWithRetry(() => import('@/pages/Home'))
 const PlatformHome = lazyWithRetry(() => import('@/pages/PlatformHome'))
 const Services = lazyWithRetry(() => import('@/pages/Services'))
 const Booking = lazyWithRetry(() => import('@/pages/Booking'))
+const MyBookings = lazyWithRetry(() => import('@/pages/MyBookings'))
 const ManageBooking = lazyWithRetry(() => import('@/pages/ManageBooking'))
 const Plans = lazyWithRetry(() => import('@/pages/Plans'))
 const Products = lazyWithRetry(() => import('@/pages/Products'))
@@ -205,6 +206,7 @@ export default function App() {
             <Route index element={withSuspense(<Home />)} />
             <Route path="services" element={withSuspense(<Services />)} />
             <Route path="booking" element={withSuspense(<Booking />)} />
+            <Route path="my-bookings" element={withSuspense(<MyBookings />)} />
             <Route path="booking/manage" element={withSuspense(<ManageBooking />)} />
             <Route path="plans" element={withSuspense(<Plans />)} />
             <Route path="products" element={withSuspense(<Products />)} />

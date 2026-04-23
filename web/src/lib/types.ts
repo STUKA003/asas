@@ -80,6 +80,10 @@ export interface ManagedBooking extends Booking {
   canCancel: boolean
   canReschedule: boolean
 }
+export interface CustomerBookingLookup {
+  customer: null | Pick<Customer, 'id' | 'name' | 'phone' | 'email'>
+  bookings: ManagedBooking[]
+}
 export interface BlockedTime {
   id: string
   startTime: string

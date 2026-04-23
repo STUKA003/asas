@@ -12,6 +12,7 @@ import {
   getManagedBooking,
   getManagedBookingAvailability,
   lookupCustomerPlan,
+  lookupCustomerBookings,
   rescheduleManagedBooking,
   subscribePlan,
   getAvailability,
@@ -28,6 +29,7 @@ router.get('/extras',       getExtras)
 router.get('/products',     getProducts)
 router.get('/plans',        getPlans)
 router.post('/customer-plan', publicLookupLimiter, lookupCustomerPlan)
+router.post('/customer-bookings', publicLookupLimiter, lookupCustomerBookings)
 router.post('/subscribe-plan', publicWriteLimiter, subscribePlan)
 router.get('/availability', publicAvailabilityLimiter, getAvailability)
 router.post('/bookings',    publicWriteLimiter, createPublicBooking)

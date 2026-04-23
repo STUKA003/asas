@@ -838,6 +838,95 @@ test('cancelled bookings do not consume monthly booking quota', { skip: !integra
   assert.equal(booking.response.status, 201)
 })
 
+test('public customer booking lookup returns managed bookings for the matching customer', { skip: !integrationEnabled }, async () => {
+  const bookingDate = new Date()
+  bookingDate.setDate(bookingDate.getDate() + 2)
+  bookingDate.setHours(11, 0, 0, 0)
+
+  const shop = await prisma.barbershop.create({
+    data: {
+      name: 'Lookup Shop',
+      slug: 'lookup-shop',
+    },
+  })
+
+  const barber = await prisma.barber.create({
+    data: {
+      name: 'Barber Lookup',
+      barbershopId: shop.id,
+      active: true,
+    },
+  })
+
+  const service = await prisma.service.create({
+    data: {
+      name: 'Corte premium',
+      price: 20,
+      duration: 45,
+      active: true,
+      barbershopId: shop.id,
+    },
+  })
+
+  const customer = await prisma.customer.create({
+    data: {
+      name: 'Cliente Lookup',
+      phone: '+351911222333',
+      email: 'cliente.lookup@test.dev',
+      barbershopId: shop.id,
+    },
+  })
+
+  const booking = await prisma.booking.create({
+    data: {
+      startTime: bookingDate,
+      endTime: new Date(bookingDate.getTime() + 45 * 60 * 1000),
+      status: 'PENDING',
+      totalPrice: 20,
+      totalDuration: 45,
+      barberId: barber.id,
+      customerId: customer.id,
+      barbershopId: shop.id,
+      services: {
+        create: [
+          {
+            price: 20,
+            duration: 45,
+            serviceId: service.id,
+          },
+        ],
+      },
+    },
+    include: {
+      services: true,
+    },
+  })
+
+  const wrongLookup = await jsonRequest(`/api/public/${shop.slug}/customer-bookings`, {
+    method: 'POST',
+    body: JSON.stringify({ phone: '+351911222333', name: 'Outro Nome' }),
+  })
+
+  assert.equal(wrongLookup.response.status, 200)
+  assert.equal(wrongLookup.body.customer, null)
+  assert.deepEqual(wrongLookup.body.bookings, [])
+
+  const rightLookup = await jsonRequest(`/api/public/${shop.slug}/customer-bookings`, {
+    method: 'POST',
+    body: JSON.stringify({ phone: '+351911222333', name: 'Cliente Lookup' }),
+  })
+
+  assert.equal(rightLookup.response.status, 200)
+  assert.equal(rightLookup.body.customer.name, 'Cliente Lookup')
+  assert.equal(rightLookup.body.bookings.length, 1)
+  assert.equal(rightLookup.body.bookings[0].id, booking.id)
+  assert.equal(rightLookup.body.bookings[0].barber.name, 'Barber Lookup')
+  assert.equal(rightLookup.body.bookings[0].services[0].service.name, 'Corte premium')
+  assert.equal(typeof rightLookup.body.bookings[0].management.managementToken, 'string')
+  assert.equal(rightLookup.body.bookings[0].canCancel, true)
+  assert.equal(rightLookup.body.bookings[0].canReschedule, true)
+})
+
 test('public barber listing only exposes minimal public fields', { skip: !integrationEnabled }, async () => {
   const shop = await prisma.barbershop.create({
     data: {

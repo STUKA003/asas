@@ -118,6 +118,11 @@ const customerPlanLookupSchema = z.object({
   name: z.string().min(2),
 })
 
+const customerBookingsLookupSchema = z.object({
+  phone: z.string().min(8),
+  name: z.string().min(2),
+})
+
 export async function lookupCustomerPlan(req: Request, res: Response) {
   const parsed = customerPlanLookupSchema.safeParse(req.body)
   if (!parsed.success) {
@@ -159,6 +164,55 @@ export async function lookupCustomerPlan(req: Request, res: Response) {
   }
 
   res.json({ customer: serializeCustomerPlanLookup(customer) })
+}
+
+export async function lookupCustomerBookings(req: Request, res: Response) {
+  const parsed = customerBookingsLookupSchema.safeParse(req.body)
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.flatten() })
+    return
+  }
+
+  const shop = await resolvePublicTenant(req.params.slug)
+  if (!shop) { res.status(404).json({ error: 'Barbershop not found' }); return }
+
+  const customer = await prisma.customer.findFirst({
+    where: {
+      phone: parsed.data.phone,
+      barbershopId: shop.id,
+      name: { equals: parsed.data.name.trim(), mode: 'insensitive' },
+    },
+    select: { id: true, name: true, phone: true, email: true },
+  })
+
+  if (!customer) {
+    res.json({ customer: null, bookings: [] })
+    return
+  }
+
+  const bookings = await prisma.booking.findMany({
+    where: {
+      customerId: customer.id,
+      barbershopId: shop.id,
+    },
+    include: {
+      barber: { select: { id: true, name: true } },
+      customer: { select: { id: true, name: true, phone: true, email: true } },
+      services: { include: { service: { select: { id: true, name: true } } } },
+      extras: { include: { extra: { select: { id: true, name: true } } } },
+      products: { include: { product: { select: { id: true, name: true } } } },
+    },
+    orderBy: [
+      { startTime: 'asc' },
+      { createdAt: 'desc' },
+    ],
+    take: 12,
+  })
+
+  res.json({
+    customer,
+    bookings: bookings.map((booking) => serializeManagedBooking(req.params.slug, booking)),
+  })
 }
 
 const subscribePlanSchema = z.object({
