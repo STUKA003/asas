@@ -5,7 +5,7 @@ import { prisma } from '../../lib/prisma'
 import { getAvailableSlots, validateSlot } from '../../utils/availability'
 import { createBooking } from '../bookings/service'
 import { getEffectivePlan } from '../../lib/plans'
-import { normalizePublicShop, resolvePublicTenant } from './tenant'
+import { resolvePublicTenant } from './tenant'
 import { serializeCustomerPlanLookup, serializePublicPlan } from './serializers'
 import { notifyBookingCreated, notifyCustomerBookingAction } from '../../lib/booking-notifications'
 import { issueBookingManagementToken, verifyBookingManagementToken } from '../../lib/booking-management'
@@ -37,13 +37,17 @@ const availabilityQuerySchema = z.object({
   duration: z.coerce.number().int().positive(),
 })
 
+function setPublicReadCache(res: Response, seconds = 60) {
+  res.setHeader('Cache-Control', `public, max-age=${seconds}, s-maxage=${seconds}, stale-while-revalidate=300`)
+}
+
 // ─── Public handlers ─────────────────────────────────────────────────────────
 
 export async function getBarbershop(req: Request, res: Response) {
   const shop = await resolvePublicTenant(req.params.slug)
   if (!shop) { res.status(404).json({ error: 'Barbershop not found' }); return }
-  const normalized = normalizePublicShop(shop)
-  const { subscriptionPlan, subscriptionEndsAt, ...publicShop } = normalized
+  const { subscriptionPlan, subscriptionEndsAt, ...publicShop } = shop
+  setPublicReadCache(res)
   res.json({ ...publicShop, plan: getEffectivePlan(subscriptionPlan, subscriptionEndsAt) })
 }
 
@@ -55,6 +59,7 @@ export async function getServices(req: Request, res: Response) {
     where: { barbershopId: shop.id, active: true },
     orderBy: { name: 'asc' },
   })
+  setPublicReadCache(res)
   res.json(services)
 }
 
@@ -67,6 +72,7 @@ export async function getBarbers(req: Request, res: Response) {
     select: { id: true, name: true, avatar: true },
     orderBy: { name: 'asc' },
   })
+  setPublicReadCache(res)
   res.json(barbers)
 }
 
@@ -75,6 +81,7 @@ export async function getExtras(req: Request, res: Response) {
   if (!shop) { res.status(404).json({ error: 'Barbershop not found' }); return }
 
   if (getEffectivePlan(shop.subscriptionPlan, shop.subscriptionEndsAt) === 'FREE') {
+    setPublicReadCache(res)
     res.json([])
     return
   }
@@ -83,27 +90,29 @@ export async function getExtras(req: Request, res: Response) {
     where: { barbershopId: shop.id, active: true },
     orderBy: { name: 'asc' },
   })
+  setPublicReadCache(res)
   res.json(extras)
 }
 
 export async function getProducts(req: Request, res: Response) {
   const shop = await resolvePublicTenant(req.params.slug)
   if (!shop) { res.status(404).json({ error: 'Barbershop not found' }); return }
-  if (shop.showProducts === false) { res.json([]); return }
-  if (getEffectivePlan(shop.subscriptionPlan, shop.subscriptionEndsAt) === 'FREE') { res.json([]); return }
+  if (shop.showProducts === false) { setPublicReadCache(res); res.json([]); return }
+  if (getEffectivePlan(shop.subscriptionPlan, shop.subscriptionEndsAt) === 'FREE') { setPublicReadCache(res); res.json([]); return }
 
   const products = await prisma.product.findMany({
     where: { barbershopId: shop.id, active: true },
     orderBy: { name: 'asc' },
   })
+  setPublicReadCache(res)
   res.json(products)
 }
 
 export async function getPlans(req: Request, res: Response) {
   const shop = await resolvePublicTenant(req.params.slug)
   if (!shop) { res.status(404).json({ error: 'Barbershop not found' }); return }
-  if (shop.showPlans === false) { res.json([]); return }
-  if (getEffectivePlan(shop.subscriptionPlan, shop.subscriptionEndsAt) === 'FREE') { res.json([]); return }
+  if (shop.showPlans === false) { setPublicReadCache(res); res.json([]); return }
+  if (getEffectivePlan(shop.subscriptionPlan, shop.subscriptionEndsAt) === 'FREE') { setPublicReadCache(res); res.json([]); return }
 
   const plans = await prisma.plan.findMany({
     where: { barbershopId: shop.id, active: true },
@@ -117,6 +126,7 @@ export async function getPlans(req: Request, res: Response) {
     },
     orderBy: { name: 'asc' },
   })
+  setPublicReadCache(res)
   res.json(plans.map(serializePublicPlan))
 }
 
