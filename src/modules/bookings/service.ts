@@ -4,6 +4,7 @@ import { getPlanLimits, getEffectivePlan } from '../../lib/plans'
 import { lockBarberForUpdate, lockProductsForUpdate } from '../../lib/transaction-locks'
 
 interface CreateBookingInput {
+  attendeeName?: string
   barbershopId: string
   barberId: string
   customerId: string
@@ -15,7 +16,7 @@ interface CreateBookingInput {
 }
 
 export async function createBooking(input: CreateBookingInput) {
-  const { barbershopId, barberId, customerId, serviceIds, extraIds = [], productIds = [], startTime, notes } = input
+  const { attendeeName, barbershopId, barberId, customerId, serviceIds, extraIds = [], productIds = [], startTime, notes } = input
 
   const [barber, customer, services, extras, products] = await Promise.all([
     prisma.barber.findFirst({ where: { id: barberId, barbershopId, active: true } }),
@@ -133,6 +134,7 @@ export async function createBooking(input: CreateBookingInput) {
       data: {
         startTime,
         endTime,
+        attendeeName: attendeeName?.trim() || undefined,
         notes,
         totalPrice,
         totalDuration,

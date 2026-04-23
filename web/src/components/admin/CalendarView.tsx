@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { WheelEvent as ReactWheelEvent } from 'react'
 import { format, isToday } from 'date-fns'
-import { cn, formatCurrency, redirectVerticalWheelToParent, toWallClockDate } from '@/lib/utils'
+import { cn, formatCurrency, getBookingClientName, redirectVerticalWheelToParent, toWallClockDate } from '@/lib/utils'
 import type { Booking, Barber, BlockedTime } from '@/lib/types'
 
 const HOUR_START  = 8
@@ -498,14 +498,14 @@ export function CalendarView({ date, bookings, barbers, blockedTimes = [], effec
                       'transition-all duration-150'
                     )}
                     style={{ top: top + 1, height, touchAction: onReschedule ? 'none' : 'auto' }}
-                    title={`${bk.customer.name} · ${bk.services[0]?.service.name ?? 'Serviço'} · ${format(toWallClockDate(bk.startTime), 'HH:mm')}`}
+                    title={`${getBookingClientName(bk)} · ${bk.services[0]?.service.name ?? 'Serviço'} · ${format(toWallClockDate(bk.startTime), 'HH:mm')}`}
                   >
                     <div className={cn('w-1 shrink-0 rounded-l-xl', s.bar)} />
                     <div className={cn('min-w-0 flex-1 px-2 py-1.5', s.bg, s.text)}>
                       <div className="flex items-center gap-1.5">
                         <div className={`h-2.5 w-2.5 shrink-0 rounded-full bg-gradient-to-br ${serviceTone(bk.services[0]?.serviceId)}`} />
                         <p className="flex-1 truncate text-[11px] font-bold leading-tight">
-                          {format(toWallClockDate(bk.startTime), 'HH:mm')} · {bk.customer.name}
+                          {format(toWallClockDate(bk.startTime), 'HH:mm')} · {getBookingClientName(bk)}
                         </p>
                         {bk.customer.plan
                           ? <span className={`shrink-0 text-[9px] font-bold px-1 py-0.5 rounded ${planBadgeColor(bk.customer.plan.id)} text-white leading-none`}>{planAbbr(bk.customer.plan.name)}</span>

@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/Button'
 import { StatusBadge } from '@/components/ui/Badge'
 import { PageLoader } from '@/components/ui/Spinner'
 import { publicApi } from '@/lib/publicApi'
-import { formatDuration, toWallClockDate } from '@/lib/utils'
+import { formatDuration, getBookingClientName, toWallClockDate } from '@/lib/utils'
 import { useTenant } from '@/providers/TenantProvider'
 
 function getApiErrorMessage(error: unknown) {
@@ -146,7 +146,10 @@ export default function ManageBooking() {
                       <p className="flex items-center gap-2"><Calendar size={15} className="text-primary-600" /> {format(toWallClockDate(booking.startTime), "EEEE, d 'de' MMMM", { locale: pt })}</p>
                       <p className="flex items-center gap-2"><Clock3 size={15} className="text-primary-600" /> {format(toWallClockDate(booking.startTime), 'HH:mm')} · {formatDuration(booking.totalDuration)}</p>
                       <p><span className="text-ink-muted">Barbeiro:</span> {booking.barber.name}</p>
-                      <p><span className="text-ink-muted">Cliente:</span> {booking.customer.name}</p>
+                      <p><span className="text-ink-muted">Cliente:</span> {getBookingClientName(booking)}</p>
+                      {booking.attendeeName && booking.attendeeName !== booking.customer.name ? (
+                        <p><span className="text-ink-muted">Responsável:</span> {booking.customer.name}</p>
+                      ) : null}
                       {booking.customer.phone ? <p><span className="text-ink-muted">Contacto:</span> {booking.customer.phone}</p> : null}
                     </div>
                   </div>

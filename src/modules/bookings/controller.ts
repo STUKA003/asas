@@ -88,7 +88,7 @@ export async function create(req: Request, res: Response) {
       barbershopId: req.auth.barbershopId,
       barberId: booking.barber.id,
       bookingId: booking.id,
-      customerName: booking.customer.name,
+      customerName: booking.attendeeName?.trim() || booking.customer.name,
       source: 'admin',
       startTime: new Date(booking.startTime),
     })

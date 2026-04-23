@@ -45,6 +45,9 @@ export function StepConfirmation() {
   const previousStep = 5
 
   const { service, barber, slot, extras, products, customer, customerPlan } = store
+  const bookingClientName = customer?.attendeeName || customer?.name || ''
+  const responsibleName = customer?.name || ''
+  const isManagedByResponsible = !!customer?.isForSomeoneElse && customer.attendeeName !== customer.name
 
   const planServiceIds = new Set(customerPlan?.allowedServices.map((s) => s.id) ?? [])
   const discount = barbershop?.planMemberDiscount ?? 0
@@ -65,7 +68,8 @@ export function StepConfirmation() {
         title: `${service.name} com ${barber.name}`,
         description: [
           `Reserva em ${barbershop?.name ?? 'Trimio'}.`,
-          customer?.name ? `Cliente: ${customer.name}.` : null,
+          bookingClientName ? `Cliente: ${bookingClientName}.` : null,
+          isManagedByResponsible ? `Responsável: ${responsibleName}.` : null,
           customer?.phone ? `Contacto: ${customer.phone}.` : null,
         ].filter(Boolean).join(' '),
         location: barbershop?.address || barbershop?.name || 'Barbearia',
@@ -95,9 +99,10 @@ export function StepConfirmation() {
         productIds: products.map((p) => p.id),
         startTime:  slot!.startTime,
         customer: {
+          attendeeName: customer!.attendeeName,
           name:   customer!.name,
           phone:  customer!.phone,
-          email:  customer?.email || undefined,
+          email:  customer!.email,
           notes:  customer?.notes,
         },
       }),
@@ -124,10 +129,14 @@ export function StepConfirmation() {
           <p className="text-zinc-500 mt-2">Seu horário foi confirmado com sucesso.</p>
         </div>
         <div className="tenant-card rounded-2xl p-4 text-left space-y-2 text-sm">
-          <p><span className="text-zinc-400">Serviço:</span> <span className="font-medium">{service?.name}</span></p>
-          <p><span className="text-zinc-400">Barbeiro:</span> <span className="font-medium">{barber?.name}</span></p>
-          {slot && (
-            <p>
+              <p><span className="text-zinc-400">Serviço:</span> <span className="font-medium">{service?.name}</span></p>
+              <p><span className="text-zinc-400">Barbeiro:</span> <span className="font-medium">{barber?.name}</span></p>
+              <p><span className="text-zinc-400">Reserva em nome de:</span> <span className="font-medium">{bookingClientName}</span></p>
+              {isManagedByResponsible ? (
+                <p><span className="text-zinc-400">Responsável:</span> <span className="font-medium">{responsibleName}</span></p>
+              ) : null}
+              {slot && (
+                <p>
               <span className="text-zinc-400">Data:</span>{' '}
               <span className="font-medium">
                 {format(toWallClockDate(slot.startTime), "d 'de' MMMM 'às' HH:mm", { locale: pt })}
@@ -214,7 +223,10 @@ export function StepConfirmation() {
               <User size={18} className="text-blue-600" />
             </div>
             <div>
-              <p className="font-semibold text-sm">{customer.name}</p>
+              <p className="font-semibold text-sm">{bookingClientName}</p>
+              {isManagedByResponsible ? (
+                <p className="text-xs text-zinc-400">Responsável: {responsibleName}</p>
+              ) : null}
               <p className="text-xs text-zinc-400">{customer.phone}</p>
             </div>
           </div>

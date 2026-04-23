@@ -13,7 +13,7 @@ import { StatusBadge } from '@/components/ui/Badge'
 import { DataTable } from '@/components/admin/DataTable'
 import { CalendarView, type EffectiveWorkingHour } from '@/components/admin/CalendarView'
 import { NewBookingModal } from '@/components/admin/NewBookingModal'
-import { formatCurrency, formatDuration, toWallClockDate } from '@/lib/utils'
+import { formatCurrency, formatDuration, getBookingClientName, toWallClockDate } from '@/lib/utils'
 import { Eye, Trash2, ChevronLeft, ChevronRight, LayoutList, Calendar, Plus, Ban, Search, X } from 'lucide-react'
 import type { Barber, BlockedTime, Booking, BookingStatus, Extra, Product } from '@/lib/types'
 
@@ -451,7 +451,7 @@ export default function Bookings() {
                         </div>
                       ),
                     },
-                    { key: 'customer', label: 'Cliente',  render: (b) => <span className="font-medium">{b.customer.name}</span> },
+                    { key: 'customer', label: 'Cliente',  render: (b) => <span className="font-medium">{getBookingClientName(b)}</span> },
                     { key: 'barber',   label: 'Barbeiro', render: (b) => b.barber.name },
                     { key: 'service',  label: 'Serviço',  render: (b) => b.services[0]?.service.name ?? '—' },
                     { key: 'status',   label: 'Status',   render: (b) => <StatusBadge status={b.status} /> },
@@ -480,7 +480,10 @@ export default function Bookings() {
               <div className="grid gap-3 text-sm sm:grid-cols-2">
                 <div className="bg-zinc-50 dark:bg-zinc-800/50 rounded-xl p-3">
                   <p className="text-zinc-400 text-xs mb-1">Cliente</p>
-                  <p className="font-medium">{detail.customer.name}</p>
+                  <p className="font-medium">{getBookingClientName(detail)}</p>
+                  {detail.attendeeName && detail.attendeeName !== detail.customer.name ? (
+                    <p className="text-zinc-400 text-xs">Responsável: {detail.customer.name}</p>
+                  ) : null}
                   {hasPlan ? (
                     <span className="inline-flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.5 rounded bg-violet-100 text-violet-700 mt-0.5">
                       Plano: {detail.customer.plan!.name}

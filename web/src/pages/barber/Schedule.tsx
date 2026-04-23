@@ -11,7 +11,7 @@ import { BookingModal } from '@/pages/barber/BookingModal'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { PageLoader } from '@/components/ui/Spinner'
-import { formatCurrency, toWallClockDate } from '@/lib/utils'
+import { formatCurrency, getBookingClientName, toWallClockDate } from '@/lib/utils'
 import { useBarberAuthStore } from '@/store/barberAuth'
 import type { Barber, Booking, BookingStatus, Extra, Product } from '@/lib/types'
 
@@ -392,7 +392,7 @@ export default function BarberSchedule() {
                         className="pointer-events-none absolute left-1 right-1 z-30 rounded-md border-2 border-dashed border-primary-500 bg-primary-100/50"
                         style={{ top: dragPreview.top, height: Math.max((dragRef.current.duration / 60000 / 60) * HOUR_HEIGHT, 20) }}
                       >
-                        <p className="truncate px-2 pt-1 text-[11px] font-bold text-primary-700">{dragRef.current.booking.customer.name}</p>
+                        <p className="truncate px-2 pt-1 text-[11px] font-bold text-primary-700">{getBookingClientName(dragRef.current.booking)}</p>
                         <p className="px-2 text-[10px] text-primary-600">{dragPreview.label}</p>
                       </div>
                     )}
@@ -440,7 +440,7 @@ export default function BarberSchedule() {
                           style={{ top, height, zIndex: 10 }}
                         >
                           <div className="flex items-center gap-1">
-                            <p className="flex-1 truncate text-[11px] font-bold leading-tight">{b.customer.name}</p>
+                            <p className="flex-1 truncate text-[11px] font-bold leading-tight">{getBookingClientName(b)}</p>
                             {b.customer.plan ? (
                               <span className="shrink-0 rounded bg-violet-500 px-1 py-0.5 text-[9px] font-bold leading-none text-white">P</span>
                             ) : (

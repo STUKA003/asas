@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { StatusBadge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { PageLoader } from '@/components/ui/Spinner'
-import { formatCurrency, toWallClockDate } from '@/lib/utils'
+import { formatCurrency, getBookingClientName, toWallClockDate } from '@/lib/utils'
 import { useBarberAuthStore } from '@/store/barberAuth'
 import type { Booking } from '@/lib/types'
 
@@ -174,7 +174,7 @@ export default function BarberDashboard() {
                       </span>
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-semibold text-zinc-900">{b.customer.name}</p>
+                      <p className="truncate text-sm font-semibold text-zinc-900">{getBookingClientName(b)}</p>
                       <p className="truncate text-xs text-zinc-400">{b.services.map((s) => s.service.name).join(', ')}</p>
                     </div>
                     <StatusBadge status={b.status} />

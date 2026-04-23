@@ -2,7 +2,7 @@ import { format } from 'date-fns'
 import { pt } from 'date-fns/locale'
 import { Clock, Euro, Phone, Trash2 } from 'lucide-react'
 import type { Booking, BookingStatus, Extra, Product } from '@/lib/types'
-import { formatCurrency, toWallClockDate } from '@/lib/utils'
+import { formatCurrency, getBookingClientName, toWallClockDate } from '@/lib/utils'
 import { StatusBadge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Select } from '@/components/ui/Select'
@@ -78,7 +78,7 @@ export function BookingModal({
           <div className="flex items-start justify-between gap-3">
             <div>
               <div className="flex items-center gap-2">
-                <p className="text-lg font-bold leading-tight">{booking.customer.name}</p>
+                <p className="text-lg font-bold leading-tight">{getBookingClientName(booking)}</p>
                 {booking.customer.plan ? (
                   <span className="rounded-full border border-violet-200 bg-violet-100 px-2 py-0.5 text-[10px] font-bold text-violet-700">
                     {booking.customer.plan.name}
@@ -94,6 +94,9 @@ export function BookingModal({
                   <Phone size={12} /> {booking.customer.phone}
                 </a>
               )}
+              {booking.attendeeName && booking.attendeeName !== booking.customer.name ? (
+                <p className="mt-1 text-xs text-zinc-400">Responsável: {booking.customer.name}</p>
+              ) : null}
             </div>
             <StatusBadge status={booking.status as BookingStatus} />
           </div>

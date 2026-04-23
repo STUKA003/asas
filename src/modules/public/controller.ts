@@ -275,12 +275,17 @@ const bookingSchema = z.object({
   productIds: z.array(z.string()).optional(),
   startTime: z.string().datetime(),
   customer: z.object({
+    attendeeName: z.string().min(2).optional(),
     name: z.string().min(2),
     phone: z.string().min(8),
     email: z.string().min(1).email(),
     notes: z.string().optional(),
   }),
 })
+
+function bookingClientName<T extends { attendeeName?: string | null; customer: { name: string } }>(booking: T) {
+  return booking.attendeeName?.trim() || booking.customer.name
+}
 
 function buildBookingManagementResponse(slug: string, bookingId: string, barbershopId: string) {
   const managementToken = issueBookingManagementToken(bookingId, barbershopId)
@@ -292,6 +297,7 @@ function buildBookingManagementResponse(slug: string, bookingId: string, barbers
 }
 
 async function sendBookingManagementLinkEmail(args: {
+  attendeeName?: string | null
   slug: string
   bookingId: string
   barbershopId: string
@@ -311,6 +317,7 @@ async function sendBookingManagementLinkEmail(args: {
       {
         title: 'O que podes fazer',
         items: [
+          ...(args.attendeeName && args.attendeeName !== args.customerName ? [`Reserva em nome de: ${args.attendeeName}`] : []),
           'Confirmar presença.',
           'Cancelar a reserva.',
           'Remarcar para outro horário disponível.',
@@ -344,6 +351,7 @@ function formatBookingDateTime(date: Date) {
 }
 
 async function sendBookingConfirmationEmail(args: {
+  attendeeName?: string | null
   barberName: string
   barbershopName: string
   bookingId: string
@@ -369,6 +377,8 @@ async function sendBookingConfirmationEmail(args: {
         title: 'Resumo da marcação',
         items: [
           `Data e hora: ${formatBookingDateTime(args.bookingStartTime)}`,
+          `Reserva em nome de: ${args.attendeeName?.trim() || args.customerName}`,
+          ...(args.attendeeName && args.attendeeName !== args.customerName ? [`Responsável: ${args.customerName}`] : []),
           `Barbeiro: ${args.barberName}`,
           `Serviços: ${args.selectedServices.join(', ')}`,
           ...(args.selectedExtras.length > 0 ? [`Extras: ${args.selectedExtras.join(', ')}`] : []),
@@ -482,6 +492,7 @@ export async function createPublicBooking(req: Request, res: Response) {
       barbershopId: shop.id,
       barberId,
       customerId: customer.id,
+      attendeeName: customerData.attendeeName || customerData.name,
       serviceIds,
       extraIds: extraIds ?? [],
       productIds: productIds ?? [],
@@ -493,7 +504,7 @@ export async function createPublicBooking(req: Request, res: Response) {
       barbershopId: shop.id,
       barberId: booking.barber.id,
       bookingId: booking.id,
-      customerName: booking.customer.name,
+      customerName: bookingClientName(booking),
       source: 'public',
       startTime: new Date(booking.startTime),
     })
@@ -505,6 +516,7 @@ export async function createPublicBooking(req: Request, res: Response) {
           bookingId: booking.id,
           barbershopId: shop.id,
           bookingStartTime: new Date(booking.startTime),
+          attendeeName: booking.attendeeName,
           customerEmail: customer.email,
           customerName: booking.customer.name,
           barbershopName: shop.name,
@@ -572,6 +584,7 @@ export async function resendManagedBookingLink(req: Request, res: Response) {
       slug: req.params.slug,
       bookingId: booking.id,
       barbershopId: booking.barbershopId,
+      attendeeName: booking.attendeeName,
       customerEmail: booking.customer.email,
       customerName: booking.customer.name,
       barbershopName: shop.name,
@@ -648,7 +661,7 @@ export async function confirmManagedBooking(req: Request, res: Response) {
       barbershopId: updated.barbershopId,
       barberId: updated.barber.id,
       bookingId: updated.id,
-      customerName: updated.customer.name,
+      customerName: bookingClientName(updated),
       kind: 'confirmed',
     })
   }
@@ -688,7 +701,7 @@ export async function cancelManagedBooking(req: Request, res: Response) {
     barbershopId: updated.barbershopId,
     barberId: updated.barber.id,
     bookingId: updated.id,
-    customerName: updated.customer.name,
+    customerName: bookingClientName(updated),
     kind: 'cancelled',
   })
 
@@ -735,7 +748,7 @@ export async function rescheduleManagedBooking(req: Request, res: Response) {
     barbershopId: updated.barbershopId,
     barberId: updated.barber.id,
     bookingId: updated.id,
-    customerName: updated.customer.name,
+    customerName: bookingClientName(updated),
     kind: 'rescheduled',
     startTime,
   })

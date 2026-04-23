@@ -1,7 +1,14 @@
 import { create } from 'zustand'
 import type { Service, Barber, Extra, Product, TimeSlot } from '@/lib/types'
 
-interface CustomerInfo { name: string; phone: string; email?: string; notes?: string }
+interface CustomerInfo {
+  attendeeName: string
+  email: string
+  isForSomeoneElse?: boolean
+  name: string
+  notes?: string
+  phone: string
+}
 interface CustomerPlanInfo { id: string; name: string; allowedServices: { id: string; name: string }[] }
 
 interface BookingStore {

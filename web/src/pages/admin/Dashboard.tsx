@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { StatusBadge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { PageLoader } from '@/components/ui/Spinner'
-import { formatCurrency, toWallClockDate } from '@/lib/utils'
+import { formatCurrency, getBookingClientName, toWallClockDate } from '@/lib/utils'
 import { addDays, endOfMonth, format, isWithinInterval, startOfMonth, startOfWeek, subMonths } from 'date-fns'
 import { pt } from 'date-fns/locale'
 import {
@@ -359,7 +359,7 @@ export default function Dashboard() {
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center justify-between gap-2">
-                          <p className="truncate text-[13.5px] font-semibold text-ink">{booking.customer.name}</p>
+                          <p className="truncate text-[13.5px] font-semibold text-ink">{getBookingClientName(booking)}</p>
                           <StatusBadge status={booking.status} />
                         </div>
                         <p className="mt-0.5 truncate text-[12px] text-ink-muted">

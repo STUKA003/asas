@@ -27,10 +27,11 @@ interface CreateBookingPayload {
   productIds?: string[]
   startTime:  string
   customer: {
+    attendeeName?: string
+    email: string
     name:   string
-    phone:  string
-    email?: string
     notes?: string
+    phone:  string
   }
 }
 

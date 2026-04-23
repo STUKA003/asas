@@ -23,6 +23,7 @@ export function buildBookingListWhere(params: {
     const query = String(params.q).trim()
     if (query) {
       where.OR = [
+        { attendeeName: { contains: query } },
         { customer: { name: { contains: query } } },
         { customer: { phone: { contains: query } } },
         { barber: { name: { contains: query } } },

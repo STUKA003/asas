@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
+import type { Booking } from './types'
 
 interface VerticalWheelEventLike {
   deltaX: number
@@ -34,6 +35,10 @@ export function toWallClockDate(value: string | Date) {
     date.getUTCSeconds(),
     date.getUTCMilliseconds()
   )
+}
+
+export function getBookingClientName(booking: Pick<Booking, 'attendeeName' | 'customer'>) {
+  return booking.attendeeName?.trim() || booking.customer.name
 }
 
 export function findScrollableParent(element: HTMLElement | null) {

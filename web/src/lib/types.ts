@@ -61,6 +61,7 @@ export interface CustomerPlanLookup {
 }
 export interface Booking {
   id: string; startTime: string; endTime: string; status: BookingStatus
+  attendeeName?: string | null
   totalPrice: number; totalDuration: number; notes?: string
   barber: Pick<Barber, 'id' | 'name'>
   customer: Pick<Customer, 'id' | 'name' | 'phone'> & { plan?: { id: string; name: string } | null }

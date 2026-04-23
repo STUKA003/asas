@@ -239,6 +239,7 @@ model Booking {
   startTime     DateTime
   endTime       DateTime
   status        String        @default("PENDING")
+  attendeeName  String?
   notes         String?
   totalPrice    Float
   totalDuration Int

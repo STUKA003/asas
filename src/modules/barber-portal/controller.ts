@@ -184,7 +184,8 @@ export async function updateBookingStatus(req: Request, res: Response) {
 
   const updated = await prisma.booking.update({ where: { id: req.params.id }, data: { status } })
 
-  const message = `${booking.barber.name} ${STATUS_LABELS[status] ?? 'alterou'} o agendamento de ${booking.customer.name}`
+  const bookingClientName = booking.attendeeName?.trim() || booking.customer.name
+  const message = `${booking.barber.name} ${STATUS_LABELS[status] ?? 'alterou'} o agendamento de ${bookingClientName}`
 
   await prisma.notification.create({
     data: {
@@ -241,7 +242,8 @@ export async function rescheduleBooking(req: Request, res: Response) {
     data: { startTime: newStart, endTime: newEnd },
   })
 
-  const message = `${booking.barber.name} remarcou o agendamento de ${booking.customer.name} das ${oldTimeStr} para as ${newTimeStr}`
+  const bookingClientName = booking.attendeeName?.trim() || booking.customer.name
+  const message = `${booking.barber.name} remarcou o agendamento de ${bookingClientName} das ${oldTimeStr} para as ${newTimeStr}`
 
   await prisma.notification.create({
     data: {
