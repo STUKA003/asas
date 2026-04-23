@@ -7,7 +7,7 @@ import { StatusBadge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { PageLoader } from '@/components/ui/Spinner'
 import { formatCurrency, toWallClockDate } from '@/lib/utils'
-import { addDays, endOfMonth, format, isWithinInterval, startOfMonth, subMonths } from 'date-fns'
+import { addDays, endOfMonth, format, isWithinInterval, startOfMonth, startOfWeek, subMonths } from 'date-fns'
 import { pt } from 'date-fns/locale'
 import {
   AlertTriangle, ArrowDownRight, ArrowUpRight,
@@ -96,8 +96,10 @@ export default function Dashboard() {
 
   const upcoming = todayBookings.filter((b) => ['PENDING', 'CONFIRMED'].includes(b.status)).slice(0, 8)
 
+  const weekStart = startOfWeek(now, { locale: pt })
+
   const dailyDistribution = Array.from({ length: 7 }).map((_, i) => {
-    const day = addDays(monthStart, i)
+    const day = addDays(weekStart, i)
     const count = thisMonth.filter((b) => format(toWallClockDate(b.startTime), 'yyyy-MM-dd') === format(day, 'yyyy-MM-dd')).length
     return { day: format(day, 'EEE', { locale: pt }), fullDay: format(day, 'EEEE', { locale: pt }), bookings: count }
   })
