@@ -233,7 +233,7 @@ export function StepConfirmation() {
 
     addPartyBooking(currentDraft)
     setBookingError(null)
-    resetCurrentBooking({ attendeeName: '', isForSomeoneElse: true })
+    resetCurrentBooking({ attendeeName: '' })
     store.setStep(0)
   }
 

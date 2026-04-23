@@ -4,7 +4,6 @@ import type { Service, Barber, Extra, Product, TimeSlot } from '@/lib/types'
 interface CustomerInfo {
   attendeeName: string
   email: string
-  isForSomeoneElse?: boolean
   name: string
   notes?: string
   phone: string
@@ -37,7 +36,7 @@ interface BookingStore {
   party: BookingPartyItem[]
   products: Product[]
   removePartyBooking: (index: number) => void
-  resetCurrentBooking: (options?: { attendeeName?: string; isForSomeoneElse?: boolean }) => void
+  resetCurrentBooking: (options?: { attendeeName?: string }) => void
   reset:          () => void
   service: Service | null
   setBarber:      (b: Barber)   => void
@@ -89,7 +88,6 @@ export const useBookingStore = create<BookingStore>((set, get) => ({
       ? {
           ...state.customer,
           attendeeName: options?.attendeeName ?? '',
-          isForSomeoneElse: options?.isForSomeoneElse ?? state.customer.isForSomeoneElse,
         }
       : state.customer,
   })),

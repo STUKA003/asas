@@ -14,7 +14,6 @@ import type { CustomerPlanLookup } from '@/lib/types'
 const schema = z.object({
   attendeeName: z.string().min(2, 'Nome da pessoa atendida obrigatório'),
   email: z.string().min(1, 'E-mail obrigatório').email('E-mail inválido'),
-  isForSomeoneElse: z.boolean().default(false),
   name:  z.string().min(2, 'Nome do responsável obrigatório'),
   notes: z.string().optional(),
   phone: z.string().min(10, 'Telefone obrigatório'),
@@ -47,13 +46,12 @@ export function StepCustomer() {
   const { customer, service, date, setCustomer, setCustomerPlan, setStep } = useBookingStore()
   const { register, control, handleSubmit, setValue, watch, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: customer ?? { attendeeName: '', email: '', isForSomeoneElse: false, name: '', notes: '', phone: '' },
+    defaultValues: customer ?? { attendeeName: '', email: '', name: '', notes: '', phone: '' },
   })
   const phone = watch('phone') ?? ''
-  const isForSomeoneElse = watch('isForSomeoneElse') ?? false
   const name = watch('name') ?? ''
   const attendeeName = watch('attendeeName') ?? ''
-  const shouldLookupPlan = !isForSomeoneElse && attendeeName.trim().toLowerCase() === name.trim().toLowerCase()
+  const shouldLookupPlan = attendeeName.trim().toLowerCase() === name.trim().toLowerCase()
   const { data: customerLookup } = useQuery({
     queryKey: ['public', slug, 'customer-plan', phone, name],
     queryFn: () => publicApi(slug).customerPlan({ phone: phone.trim(), name: name.trim() }),
@@ -69,10 +67,10 @@ export function StepCustomer() {
   }, [plan]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (!isForSomeoneElse && attendeeName !== name) {
+    if (!attendeeName.trim()) {
       setValue('attendeeName', name, { shouldValidate: true })
     }
-  }, [attendeeName, isForSomeoneElse, name, setValue])
+  }, [attendeeName, name, setValue])
 
   const selectedDay = date ? new Date(date).getDay() : null
   const hasInvalidDay = !!plan && selectedDay !== null && !plan.allowedDays.includes(selectedDay)
@@ -117,19 +115,8 @@ export function StepCustomer() {
           error={errors.name?.message}
           {...register('name')}
         />
-        <label className="flex items-start gap-3 rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-ink">
-          <input
-            type="checkbox"
-            className="mt-1 h-4 w-4 rounded border-neutral-300 text-primary-600 focus:ring-primary-500"
-            {...register('isForSomeoneElse')}
-          />
-          <span>
-            <span className="block font-medium">Esta marcação é para outra pessoa</span>
-            <span className="block text-ink-muted">Ex.: pai a marcar para o filho ou reserva feita por um responsável.</span>
-          </span>
-        </label>
         <Input
-          label={isForSomeoneElse ? 'Nome da pessoa atendida' : 'Nome de quem vai ser atendido'}
+          label="Nome da pessoa atendida"
           placeholder="Miguel Silva"
           error={errors.attendeeName?.message}
           {...register('attendeeName')}
