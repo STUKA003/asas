@@ -1,7 +1,7 @@
 import crypto from 'node:crypto'
 import type { AuthTokenType, User } from '@prisma/client'
 import { prisma } from './prisma'
-import { sendEmail } from './email'
+import { renderEmailTemplate, sendEmail } from './email'
 
 function hashToken(token: string) {
   return crypto.createHash('sha256').update(token).digest('hex')
@@ -47,52 +47,67 @@ async function issueToken(userId: string, type: AuthTokenType, ttlMinutes: numbe
 export async function issueEmailVerification(user: Pick<User, 'id' | 'email' | 'name'>, slug: string) {
   const token = await issueToken(user.id, 'EMAIL_VERIFICATION', 60 * 24)
   const verifyUrl = `${appUrl()}/verify-email?token=${token}`
+  const message = renderEmailTemplate({
+    preheader: 'Confirma o teu email para ativares a conta da tua barbearia na Trimio.',
+    title: 'Confirma o teu email',
+    intro: [
+      `Olá ${user.name},`,
+      'A tua conta foi criada com sucesso. Falta só confirmar o email para ativares o acesso ao painel.',
+    ],
+    sections: [
+      {
+        title: 'Conta',
+        items: [
+          `Barbearia: ${slug}`,
+          'Este link expira dentro de 24 horas.',
+        ],
+      },
+    ],
+    ctaLabel: 'Confirmar email',
+    ctaUrl: verifyUrl,
+    outro: [
+      'Se não foste tu a criar esta conta, podes ignorar esta mensagem.',
+    ],
+    footer: 'Trimio · confirmação de conta',
+  })
 
   await sendEmail({
     to: user.email,
     subject: 'Confirma o teu email na Trimio',
-    text: [
-      `Olá ${user.name},`,
-      '',
-      'Confirma o teu email para ativares a tua conta na Trimio.',
-      `Barbearia: ${slug}`,
-      `Link: ${verifyUrl}`,
-      '',
-      'Se não foste tu, ignora este email.',
-    ].join('\n'),
-    html: `
-      <p>Olá ${user.name},</p>
-      <p>Confirma o teu email para ativares a tua conta na Trimio.</p>
-      <p><strong>Barbearia:</strong> ${slug}</p>
-      <p><a href="${verifyUrl}">Confirmar email</a></p>
-      <p>Se não foste tu, ignora este email.</p>
-    `,
+    text: message.text,
+    html: message.html,
   })
 }
 
 export async function issuePasswordReset(user: Pick<User, 'id' | 'email' | 'name'>, slug: string) {
   const token = await issueToken(user.id, 'PASSWORD_RESET', 30)
   const resetUrl = `${appUrl()}/admin/reset-password?token=${token}`
+  const message = renderEmailTemplate({
+    preheader: 'Recebemos um pedido para redefinir a password da tua conta.',
+    title: 'Redefinir password',
+    intro: [
+      `Olá ${user.name},`,
+      `Recebemos um pedido para redefinir a password da conta ${slug}.`,
+    ],
+    sections: [
+      {
+        title: 'Segurança',
+        items: [
+          'Este link expira em 30 minutos.',
+          'Se não reconheces este pedido, ignora o email e mantém a password atual.',
+        ],
+      },
+    ],
+    ctaLabel: 'Redefinir password',
+    ctaUrl: resetUrl,
+    footer: 'Trimio · recuperação de acesso',
+  })
 
   await sendEmail({
     to: user.email,
     subject: 'Redefinir password da tua conta Trimio',
-    text: [
-      `Olá ${user.name},`,
-      '',
-      `Recebemos um pedido para redefinir a password da conta ${slug}.`,
-      `Link: ${resetUrl}`,
-      '',
-      'Este link expira em 30 minutos.',
-      'Se não foste tu, ignora este email.',
-    ].join('\n'),
-    html: `
-      <p>Olá ${user.name},</p>
-      <p>Recebemos um pedido para redefinir a password da conta <strong>${slug}</strong>.</p>
-      <p><a href="${resetUrl}">Redefinir password</a></p>
-      <p>Este link expira em 30 minutos.</p>
-      <p>Se não foste tu, ignora este email.</p>
-    `,
+    text: message.text,
+    html: message.html,
   })
 }
 

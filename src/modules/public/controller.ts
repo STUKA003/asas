@@ -9,7 +9,7 @@ import { normalizePublicShop, resolvePublicTenant } from './tenant'
 import { serializeCustomerPlanLookup, serializePublicPlan } from './serializers'
 import { notifyBookingCreated, notifyCustomerBookingAction } from '../../lib/booking-notifications'
 import { issueBookingManagementToken, verifyBookingManagementToken } from '../../lib/booking-management'
-import { sendEmail } from '../../lib/email'
+import { renderEmailTemplate, sendEmail } from '../../lib/email'
 
 const bookingManageTokenSchema = z.object({
   token: z.string().min(1),
@@ -300,24 +300,101 @@ async function sendBookingManagementLinkEmail(args: {
   barbershopName: string
 }) {
   const management = buildBookingManagementResponse(args.slug, args.bookingId, args.barbershopId)
+  const message = renderEmailTemplate({
+    preheader: `Aqui está o link seguro para gerires a tua reserva em ${args.barbershopName}.`,
+    title: 'Link seguro da tua reserva',
+    intro: [
+      `Olá ${args.customerName},`,
+      `Aqui tens o acesso seguro para gerires a tua reserva em ${args.barbershopName}.`,
+    ],
+    sections: [
+      {
+        title: 'O que podes fazer',
+        items: [
+          'Confirmar presença.',
+          'Cancelar a reserva.',
+          'Remarcar para outro horário disponível.',
+        ],
+      },
+    ],
+    ctaLabel: 'Gerir reserva',
+    ctaUrl: management.managementUrl,
+    outro: [
+      'Guarda este email para conseguires voltar à gestão da tua reserva mais tarde.',
+    ],
+    footer: `Trimio · gestão segura da reserva · ${args.barbershopName}`,
+  })
 
   await sendEmail({
     to: args.customerEmail,
     subject: `Link seguro da tua reserva em ${args.barbershopName}`,
-    text: [
+    text: message.text,
+    html: message.html,
+  })
+}
+
+function formatBookingDateTime(date: Date) {
+  const formatted = new Intl.DateTimeFormat('pt-PT', {
+    dateStyle: 'full',
+    timeStyle: 'short',
+    timeZone: 'Europe/Lisbon',
+  }).format(date)
+
+  return formatted.charAt(0).toUpperCase() + formatted.slice(1)
+}
+
+async function sendBookingConfirmationEmail(args: {
+  barberName: string
+  barbershopName: string
+  bookingId: string
+  bookingStartTime: Date
+  customerEmail: string
+  customerName: string
+  barbershopId: string
+  selectedExtras: string[]
+  selectedProducts: string[]
+  selectedServices: string[]
+  slug: string
+}) {
+  const management = buildBookingManagementResponse(args.slug, args.bookingId, args.barbershopId)
+  const message = renderEmailTemplate({
+    preheader: `A tua marcação em ${args.barbershopName} ficou confirmada.`,
+    title: 'Marcação confirmada',
+    intro: [
       `Olá ${args.customerName},`,
-      '',
-      `Aqui está o link seguro para gerires a tua reserva em ${args.barbershopName}:`,
-      management.managementUrl,
-      '',
-      'Através deste link podes confirmar, cancelar ou remarcar a tua reserva.',
-    ].join('\n'),
-    html: `
-      <p>Olá ${args.customerName},</p>
-      <p>Aqui está o link seguro para gerires a tua reserva em <strong>${args.barbershopName}</strong>:</p>
-      <p><a href="${management.managementUrl}">Gerir reserva</a></p>
-      <p>Através deste link podes confirmar, cancelar ou remarcar a tua reserva.</p>
-    `,
+      `A tua marcação em ${args.barbershopName} ficou registada com sucesso.`,
+    ],
+    sections: [
+      {
+        title: 'Resumo da marcação',
+        items: [
+          `Data e hora: ${formatBookingDateTime(args.bookingStartTime)}`,
+          `Barbeiro: ${args.barberName}`,
+          `Serviços: ${args.selectedServices.join(', ')}`,
+          ...(args.selectedExtras.length > 0 ? [`Extras: ${args.selectedExtras.join(', ')}`] : []),
+          ...(args.selectedProducts.length > 0 ? [`Produtos: ${args.selectedProducts.join(', ')}`] : []),
+        ],
+      },
+      {
+        title: 'Gestão da reserva',
+        items: [
+          'Usa o link seguro abaixo para confirmar, remarcar ou cancelar.',
+        ],
+      },
+    ],
+    ctaLabel: 'Gerir reserva',
+    ctaUrl: management.managementUrl,
+    outro: [
+      'Se adicionares este compromisso ao calendário, mantém este email guardado para voltares à gestão da reserva.',
+    ],
+    footer: `Trimio · confirmação da reserva · ${args.barbershopName}`,
+  })
+
+  await sendEmail({
+    to: args.customerEmail,
+    subject: `Marcação confirmada em ${args.barbershopName}`,
+    text: message.text,
+    html: message.html,
   })
 }
 
@@ -420,6 +497,26 @@ export async function createPublicBooking(req: Request, res: Response) {
       source: 'public',
       startTime: new Date(booking.startTime),
     })
+
+    if (customer.email) {
+      try {
+        await sendBookingConfirmationEmail({
+          slug: req.params.slug,
+          bookingId: booking.id,
+          barbershopId: shop.id,
+          bookingStartTime: new Date(booking.startTime),
+          customerEmail: customer.email,
+          customerName: booking.customer.name,
+          barbershopName: shop.name,
+          barberName: booking.barber.name,
+          selectedServices: booking.services.map((item) => item.service.name),
+          selectedExtras: booking.extras.map((item) => item.extra.name),
+          selectedProducts: booking.products.map((item) => item.product.name),
+        })
+      } catch (error) {
+        console.error('[booking-confirmation-email]', error)
+      }
+    }
 
     res.status(201).json({
       ...booking,
