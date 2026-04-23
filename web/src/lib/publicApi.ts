@@ -38,6 +38,12 @@ interface ManageBookingPayload {
   token: string
 }
 
+interface ResendManagedBookingLinkPayload {
+  bookingId: string
+  name: string
+  phone: string
+}
+
 interface ManageBookingAvailabilityParams {
   token: string
   date: string
@@ -65,6 +71,8 @@ export function publicApi(slug: string) {
       http.get<{ booking: ManagedBooking }>(`${base}/bookings/manage`, { params: p }).then((r) => r.data),
     managedBookingAvailability: (p: ManageBookingAvailabilityParams) =>
       http.get<AvailabilityResponse>(`${base}/bookings/manage/availability`, { params: p }).then((r) => r.data),
+    resendManagedBookingLink: (p: ResendManagedBookingLinkPayload) =>
+      http.post<{ success: boolean; message: string }>(`${base}/bookings/manage/resend-link`, p).then((r) => r.data),
     confirmManagedBooking: (p: ManageBookingPayload) =>
       http.patch<{ booking: ManagedBooking }>(`${base}/bookings/manage/confirm`, p).then((r) => r.data),
     cancelManagedBooking: (p: ManageBookingPayload) =>

@@ -126,6 +126,11 @@ export function StepCustomer() {
           error={errors.email?.message}
           {...register('email')}
         />
+        {!watch('email') && (
+          <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-3 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-200">
+            Se não colocares email e perderes o link da reserva, não vais conseguir receber novamente o acesso seguro para gerir online.
+          </div>
+        )}
         <Textarea
           label="Observações (opcional)"
           placeholder="Alguma preferência ou informação adicional..."

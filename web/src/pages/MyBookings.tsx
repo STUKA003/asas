@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { format, isFuture, isToday } from 'date-fns'
 import { pt } from 'date-fns/locale'
-import { Calendar, Clock3, Mail, Scissors, Search, ShieldCheck } from 'lucide-react'
+import { Calendar, Clock3, Mail, Scissors, Search, Send, ShieldCheck } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Footer } from '@/components/layout/Footer'
 import { Header } from '@/components/layout/Header'
@@ -32,6 +32,7 @@ export default function MyBookings() {
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
   const [lookup, setLookup] = useState<{ name: string; phone: string } | null>(null)
+  const [feedback, setFeedback] = useState<string | null>(null)
 
   const bookingsQuery = useQuery({
     queryKey: ['public', slug, 'customer-bookings', lookup?.phone, lookup?.name],
@@ -58,6 +59,7 @@ export default function MyBookings() {
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
     if (!canSearch) return
+    setFeedback(null)
     setLookup({ name: name.trim(), phone: phone.trim() })
   }
 
@@ -144,6 +146,11 @@ export default function MyBookings() {
                   </div>
                 ) : (
                   <>
+                    {feedback ? (
+                      <div className="rounded-2xl border border-success-200 bg-success-50 p-4 text-sm text-success-700">
+                        {feedback}
+                      </div>
+                    ) : null}
                     <div className="rounded-2xl border border-neutral-200 bg-white p-5">
                       <p className="text-sm font-semibold text-ink">
                         {bookingsQuery.data?.customer?.name ?? lookup.name}
@@ -154,8 +161,22 @@ export default function MyBookings() {
                     </div>
 
                     <div className="space-y-5">
-                      <BookingSection title="Próximas marcações" bookings={upcomingBookings} emptyMessage="Sem marcações futuras neste momento." />
-                      <BookingSection title="Histórico recente" bookings={pastBookings} emptyMessage="Sem histórico recente para mostrar." />
+                      <BookingSection
+                        title="Próximas marcações"
+                        bookings={upcomingBookings}
+                        lookup={lookup}
+                        slug={slug}
+                        onFeedback={setFeedback}
+                        emptyMessage="Sem marcações futuras neste momento."
+                      />
+                      <BookingSection
+                        title="Histórico recente"
+                        bookings={pastBookings}
+                        lookup={lookup}
+                        slug={slug}
+                        onFeedback={setFeedback}
+                        emptyMessage="Sem histórico recente para mostrar."
+                      />
                     </div>
                   </>
                 )}
@@ -172,12 +193,28 @@ export default function MyBookings() {
 function BookingSection({
   title,
   bookings,
+  lookup,
+  slug,
+  onFeedback,
   emptyMessage,
 }: {
   title: string
   bookings: CustomerBookingSummary[]
+  lookup: { name: string; phone: string }
+  slug: string
+  onFeedback: (message: string | null) => void
   emptyMessage: string
 }) {
+  const resendMutation = useMutation({
+    mutationFn: (bookingId: string) => publicApi(slug).resendManagedBookingLink({
+      bookingId,
+      name: lookup.name,
+      phone: lookup.phone,
+    }),
+    onSuccess: (data) => onFeedback(data.message),
+    onError: (error: unknown) => onFeedback(getApiErrorMessage(error)),
+  })
+
   return (
     <div className="rounded-2xl border border-neutral-200 bg-white p-5">
       <div className="flex items-center justify-between gap-3">
@@ -223,11 +260,26 @@ function BookingSection({
                     Para confirmar, remarcar ou cancelar, usa o link seguro recebido no momento da marcação.
                   </p>
                   {booking.customer.email ? (
-                    <p className="mt-2 inline-flex items-center gap-1.5 text-[12.5px] text-ink-muted">
-                      <Mail size={13} />
-                      Também podemos usar email e notificações mais à frente.
+                    <div className="mt-3 space-y-2">
+                      <p className="inline-flex items-center gap-1.5 text-[12.5px] text-ink-muted">
+                        <Mail size={13} />
+                        Existe email associado a esta reserva.
+                      </p>
+                      <Button
+                        variant="secondary"
+                        className="w-full"
+                        onClick={() => resendMutation.mutate(booking.id)}
+                        loading={resendMutation.isPending}
+                      >
+                        <Send size={15} />
+                        Reenviar link seguro
+                      </Button>
+                    </div>
+                  ) : (
+                    <p className="mt-2 text-[12.5px] text-ink-muted">
+                      Esta reserva não tem email associado. Sem o link original, a gestão online fica indisponível.
                     </p>
-                  ) : null}
+                  )}
                 </div>
               </div>
             </div>

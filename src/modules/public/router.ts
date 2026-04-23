@@ -13,6 +13,7 @@ import {
   getManagedBookingAvailability,
   lookupCustomerPlan,
   lookupCustomerBookings,
+  resendManagedBookingLink,
   rescheduleManagedBooking,
   subscribePlan,
   getAvailability,
@@ -35,6 +36,7 @@ router.get('/availability', publicAvailabilityLimiter, getAvailability)
 router.post('/bookings',    publicWriteLimiter, createPublicBooking)
 router.get('/bookings/manage', publicLookupLimiter, getManagedBooking)
 router.get('/bookings/manage/availability', publicAvailabilityLimiter, getManagedBookingAvailability)
+router.post('/bookings/manage/resend-link', publicWriteLimiter, resendManagedBookingLink)
 router.patch('/bookings/manage/confirm', publicWriteLimiter, confirmManagedBooking)
 router.patch('/bookings/manage/cancel', publicWriteLimiter, cancelManagedBooking)
 router.patch('/bookings/manage/reschedule', publicWriteLimiter, rescheduleManagedBooking)

@@ -9,6 +9,7 @@ import { normalizePublicShop, resolvePublicTenant } from './tenant'
 import { serializeCustomerPlanLookup, serializePublicPlan } from './serializers'
 import { notifyBookingCreated, notifyCustomerBookingAction } from '../../lib/booking-notifications'
 import { issueBookingManagementToken, verifyBookingManagementToken } from '../../lib/booking-management'
+import { sendEmail } from '../../lib/email'
 
 const bookingManageTokenSchema = z.object({
   token: z.string().min(1),
@@ -22,6 +23,12 @@ const bookingManageAvailabilitySchema = z.object({
 const bookingManageStartTimeSchema = z.object({
   token: z.string().min(1),
   startTime: z.string().datetime(),
+})
+
+const resendManagementLinkSchema = z.object({
+  bookingId: z.string().min(1),
+  name: z.string().min(2),
+  phone: z.string().min(8),
 })
 
 const availabilityQuerySchema = z.object({
@@ -284,6 +291,36 @@ function buildBookingManagementResponse(slug: string, bookingId: string, barbers
   }
 }
 
+async function sendBookingManagementLinkEmail(args: {
+  slug: string
+  bookingId: string
+  barbershopId: string
+  customerEmail: string
+  customerName: string
+  barbershopName: string
+}) {
+  const management = buildBookingManagementResponse(args.slug, args.bookingId, args.barbershopId)
+
+  await sendEmail({
+    to: args.customerEmail,
+    subject: `Link seguro da tua reserva em ${args.barbershopName}`,
+    text: [
+      `Olá ${args.customerName},`,
+      '',
+      `Aqui está o link seguro para gerires a tua reserva em ${args.barbershopName}:`,
+      management.managementUrl,
+      '',
+      'Através deste link podes confirmar, cancelar ou remarcar a tua reserva.',
+    ].join('\n'),
+    html: `
+      <p>Olá ${args.customerName},</p>
+      <p>Aqui está o link seguro para gerires a tua reserva em <strong>${args.barbershopName}</strong>:</p>
+      <p><a href="${management.managementUrl}">Gerir reserva</a></p>
+      <p>Através deste link podes confirmar, cancelar ou remarcar a tua reserva.</p>
+    `,
+  })
+}
+
 type ManagedBookingRecord = Prisma.BookingGetPayload<{
   include: {
     barber: { select: { id: true, name: true } }
@@ -405,6 +442,50 @@ export async function getManagedBooking(req: Request, res: Response) {
   }
 
   res.json({ booking: serializeManagedBooking(req.params.slug, result.booking) })
+}
+
+export async function resendManagedBookingLink(req: Request, res: Response) {
+  const parsed = resendManagementLinkSchema.safeParse(req.body)
+  if (!parsed.success) { res.status(400).json({ error: parsed.error.flatten() }); return }
+
+  const shop = await resolvePublicTenant(req.params.slug)
+  if (!shop) { res.status(404).json({ error: 'Barbershop not found' }); return }
+
+  const booking = await prisma.booking.findFirst({
+    where: {
+      id: parsed.data.bookingId,
+      barbershopId: shop.id,
+      customer: {
+        name: { equals: parsed.data.name.trim(), mode: 'insensitive' },
+        phone: parsed.data.phone,
+      },
+    },
+    include: {
+      customer: { select: { name: true, email: true } },
+    },
+  })
+
+  if (!booking || !booking.customer.email) {
+    res.json({ success: true, message: 'Se existir um email associado a esta reserva, enviámos o link seguro.' })
+    return
+  }
+
+  try {
+    await sendBookingManagementLinkEmail({
+      slug: req.params.slug,
+      bookingId: booking.id,
+      barbershopId: booking.barbershopId,
+      customerEmail: booking.customer.email,
+      customerName: booking.customer.name,
+      barbershopName: shop.name,
+    })
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unable to deliver email'
+    res.status(503).json({ error: message })
+    return
+  }
+
+  res.json({ success: true, message: 'Se existir um email associado a esta reserva, enviámos o link seguro.' })
 }
 
 export async function getManagedBookingAvailability(req: Request, res: Response) {
