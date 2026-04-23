@@ -224,9 +224,11 @@ interface BarberLayoutProps {
 
 export function BarberLayout({ children }: BarberLayoutProps) {
   const { barber, token, logout, setBarber } = useBarberAuthStore()
+  const qc = useQueryClient()
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [refreshing, setRefreshing] = useState(false)
   const slug = barber?.barbershop?.slug ?? barber?.barbershopId ?? ''
 
   const { data: meData } = useQuery({
@@ -250,6 +252,15 @@ export function BarberLayout({ children }: BarberLayoutProps) {
   const handleLogout = () => {
     logout()
     navigate(`/${slug}/barber/login`)
+  }
+
+  const handleRefresh = async () => {
+    setRefreshing(true)
+    try {
+      await qc.refetchQueries({ type: 'active' })
+    } finally {
+      setRefreshing(false)
+    }
   }
 
   const navSections: PanelNavSection[] = [
@@ -316,6 +327,8 @@ export function BarberLayout({ children }: BarberLayoutProps) {
           <p className="mt-1 text-xs text-ink-muted">Acesso rápido à agenda, estados e detalhe de atendimento.</p>
         </div>
       }
+      onPullRefresh={handleRefresh}
+      isPullRefreshing={refreshing}
     >
       {children}
     </PanelShell>

@@ -236,6 +236,88 @@ function SuspendEditor({ b, token, onDone }: { b: Barbershop; token: string; onD
   )
 }
 
+function PasswordEditor({ b, token, onDone }: { b: Barbershop; token: string; onDone: () => void }) {
+  const qc = useQueryClient()
+  const [password, setPassword] = useState('')
+  const [confirm, setConfirm] = useState('')
+  const [error, setError] = useState('')
+
+  const mut = useMutation({
+    mutationFn: () => superadminApi.updateOwnerPassword(token, b.id, { password }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['superadmin'] })
+      onDone()
+    },
+    onError: (err: unknown) => {
+      const msg = typeof err === 'object' && err !== null && 'response' in err
+        ? (err as { response?: { data?: { error?: string | { fieldErrors?: Record<string, string[]> } } } }).response?.data?.error
+        : undefined
+      if (typeof msg === 'string') {
+        setError(msg)
+        return
+      }
+      const fe = typeof msg === 'object' && msg?.fieldErrors ? msg.fieldErrors : undefined
+      setError(fe?.password?.[0] ?? 'Erro ao atualizar password')
+    },
+  })
+
+  const handleSubmit = () => {
+    if (password.length < 6) {
+      setError('A password tem de ter pelo menos 6 caracteres')
+      return
+    }
+    if (password !== confirm) {
+      setError('As passwords não coincidem')
+      return
+    }
+    setError('')
+    mut.mutate()
+  }
+
+  if (!b.owner) {
+    return (
+      <div className="mt-4 border-t border-white/[0.07] pt-4">
+        <p className="text-xs text-white/35">Esta barbearia não tem conta admin associada.</p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="mt-4 space-y-3 border-t border-white/[0.07] pt-4">
+      <p className="text-[12px] text-white/45">
+        Vais definir uma nova password para <span className="text-white/75">{b.owner.email}</span>.
+      </p>
+      <div className="space-y-1.5">
+        <p className="text-[11px] text-white/35">Nova password</p>
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Mínimo 6 caracteres"
+          className={darkInput}
+        />
+      </div>
+      <div className="space-y-1.5">
+        <p className="text-[11px] text-white/35">Confirmar password</p>
+        <input
+          type="password"
+          value={confirm}
+          onChange={(e) => setConfirm(e.target.value)}
+          placeholder="Repete a password"
+          className={darkInput}
+        />
+      </div>
+      {error && <p className="text-xs text-red-400">{error}</p>}
+      <div className="flex gap-2">
+        <button onClick={handleSubmit} disabled={mut.isPending} className={cn(darkBtn, 'bg-primary-600 text-white hover:bg-primary-700')}>
+          {mut.isPending ? 'A guardar…' : 'Guardar nova password'}
+        </button>
+        <button onClick={onDone} className={cn(darkBtn, 'bg-white/[0.06] text-white/50 hover:bg-white/[0.10] hover:text-white/75')}>Cancelar</button>
+      </div>
+    </div>
+  )
+}
+
 function CreateModal({ token, onClose }: { token: string; onClose: () => void }) {
   const qc = useQueryClient()
   const [form, setForm]         = useState({ barbershopName: '', slug: '', adminName: '', adminEmail: '', adminPassword: '', plan: 'FREE' as Plan })
@@ -330,7 +412,7 @@ export default function SuperAdminBarbershops() {
   const [verificationFilter, setVerificationFilter] = useState<VerificationFilter>('all')
   const [healthFilter, setHealthFilter]       = useState<HealthFilter>('all')
   const [expandedId, setExpandedId]           = useState<string | null>(null)
-  const [editMode, setEditMode]               = useState<'identity' | 'plan' | 'suspend' | null>(null)
+  const [editMode, setEditMode]               = useState<'identity' | 'plan' | 'password' | 'suspend' | null>(null)
   const [showCreate, setShowCreate]           = useState(false)
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
 
@@ -568,6 +650,9 @@ export default function SuperAdminBarbershops() {
                             )}
                             <button onClick={() => setEditMode('identity')} className={actionBtn()}>Editar nome / slug</button>
                             <button onClick={() => setEditMode('plan')} className={actionBtn()}>Alterar plano</button>
+                            <button onClick={() => setEditMode('password')} className={actionBtn()}>
+                              <KeyRound size={12} /> Trocar password
+                            </button>
                             <button onClick={() => setEditMode('suspend')} className={actionBtn(b.suspended ? 'success' : 'danger')}>
                               {b.suspended ? <><CheckCircle size={12} /> Reativar</> : <><Ban size={12} /> Suspender</>}
                             </button>
@@ -689,6 +774,7 @@ export default function SuperAdminBarbershops() {
                         {editMode === 'identity' && <IdentityEditor b={b} token={token!} onDone={() => setEditMode(null)} />}
                         {editMode === 'plan'     && <PlanEditor     b={b} token={token!} onDone={() => setEditMode(null)} />}
                         {editMode === 'suspend'  && <SuspendEditor  b={b} token={token!} onDone={() => setEditMode(null)} />}
+                        {editMode === 'password' && <PasswordEditor b={b} token={token!} onDone={() => setEditMode(null)} />}
                       </>
                     )}
                   </div>

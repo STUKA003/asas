@@ -1,4 +1,4 @@
-import { Suspense, lazy, type ReactNode } from 'react'
+import { Component, Suspense, lazy, type ComponentType, type ReactNode } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, Outlet, useParams } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useAuthStore } from '@/store/auth'
@@ -8,37 +8,71 @@ import { PlanGate } from '@/components/admin/PlanGate'
 import { useSuperAuthStore } from '@/store/superauth'
 import { useBarberAuthStore } from '@/store/barberAuth'
 
-const Home = lazy(() => import('@/pages/Home'))
-const PlatformHome = lazy(() => import('@/pages/PlatformHome'))
-const Services = lazy(() => import('@/pages/Services'))
-const Booking = lazy(() => import('@/pages/Booking'))
-const ManageBooking = lazy(() => import('@/pages/ManageBooking'))
-const Plans = lazy(() => import('@/pages/Plans'))
-const Products = lazy(() => import('@/pages/Products'))
-const Login = lazy(() => import('@/pages/admin/Login'))
-const Dashboard = lazy(() => import('@/pages/admin/Dashboard'))
-const Customers = lazy(() => import('@/pages/admin/Customers'))
-const Barbers = lazy(() => import('@/pages/admin/Barbers'))
-const AdminServices = lazy(() => import('@/pages/admin/Services'))
-const Extras = lazy(() => import('@/pages/admin/Extras'))
-const AdminProducts = lazy(() => import('@/pages/admin/Products'))
-const AdminPlans = lazy(() => import('@/pages/admin/Plans'))
-const Bookings = lazy(() => import('@/pages/admin/Bookings'))
-const Schedule = lazy(() => import('@/pages/admin/Schedule'))
-const Customization = lazy(() => import('@/pages/admin/Customization'))
-const Billing = lazy(() => import('@/pages/admin/Billing'))
-const Reports = lazy(() => import('@/pages/admin/Reports'))
-const Register = lazy(() => import('@/pages/Register'))
-const VerifyEmail = lazy(() => import('@/pages/VerifyEmail'))
-const ForgotPassword = lazy(() => import('@/pages/admin/ForgotPassword'))
-const ResetPassword = lazy(() => import('@/pages/admin/ResetPassword'))
-const ResendVerification = lazy(() => import('@/pages/admin/ResendVerification'))
-const SuperAdminLogin = lazy(() => import('@/pages/superadmin/Login'))
-const SuperAdminDashboard = lazy(() => import('@/pages/superadmin/Dashboard'))
-const SuperAdminBarbershops = lazy(() => import('@/pages/superadmin/Barbershops'))
-const BarberLogin = lazy(() => import('@/pages/barber/Login'))
-const BarberDashboard = lazy(() => import('@/pages/barber/Dashboard'))
-const BarberSchedule = lazy(() => import('@/pages/barber/Schedule'))
+const LAZY_RETRY_KEY = 'trimio:lazy-route-retry'
+
+function isChunkLoadError(error: unknown) {
+  if (!(error instanceof Error)) return false
+
+  const message = error.message.toLowerCase()
+  return (
+    message.includes('failed to fetch dynamically imported module') ||
+    message.includes('importing a module script failed') ||
+    message.includes('error loading dynamically imported module') ||
+    message.includes('failed to load module script') ||
+    message.includes('chunk')
+  )
+}
+
+function lazyWithRetry<T extends { default: ComponentType<any> }>(
+  importer: () => Promise<T>
+) {
+  return lazy(async () => {
+    try {
+      const module = await importer()
+      sessionStorage.removeItem(LAZY_RETRY_KEY)
+      return module
+    } catch (error) {
+      if (isChunkLoadError(error) && sessionStorage.getItem(LAZY_RETRY_KEY) !== '1') {
+        sessionStorage.setItem(LAZY_RETRY_KEY, '1')
+        window.location.reload()
+      }
+
+      throw error
+    }
+  })
+}
+
+const Home = lazyWithRetry(() => import('@/pages/Home'))
+const PlatformHome = lazyWithRetry(() => import('@/pages/PlatformHome'))
+const Services = lazyWithRetry(() => import('@/pages/Services'))
+const Booking = lazyWithRetry(() => import('@/pages/Booking'))
+const ManageBooking = lazyWithRetry(() => import('@/pages/ManageBooking'))
+const Plans = lazyWithRetry(() => import('@/pages/Plans'))
+const Products = lazyWithRetry(() => import('@/pages/Products'))
+const Login = lazyWithRetry(() => import('@/pages/admin/Login'))
+const Dashboard = lazyWithRetry(() => import('@/pages/admin/Dashboard'))
+const Customers = lazyWithRetry(() => import('@/pages/admin/Customers'))
+const Barbers = lazyWithRetry(() => import('@/pages/admin/Barbers'))
+const AdminServices = lazyWithRetry(() => import('@/pages/admin/Services'))
+const Extras = lazyWithRetry(() => import('@/pages/admin/Extras'))
+const AdminProducts = lazyWithRetry(() => import('@/pages/admin/Products'))
+const AdminPlans = lazyWithRetry(() => import('@/pages/admin/Plans'))
+const Bookings = lazyWithRetry(() => import('@/pages/admin/Bookings'))
+const Schedule = lazyWithRetry(() => import('@/pages/admin/Schedule'))
+const Customization = lazyWithRetry(() => import('@/pages/admin/Customization'))
+const Billing = lazyWithRetry(() => import('@/pages/admin/Billing'))
+const Reports = lazyWithRetry(() => import('@/pages/admin/Reports'))
+const Register = lazyWithRetry(() => import('@/pages/Register'))
+const VerifyEmail = lazyWithRetry(() => import('@/pages/VerifyEmail'))
+const ForgotPassword = lazyWithRetry(() => import('@/pages/admin/ForgotPassword'))
+const ResetPassword = lazyWithRetry(() => import('@/pages/admin/ResetPassword'))
+const ResendVerification = lazyWithRetry(() => import('@/pages/admin/ResendVerification'))
+const SuperAdminLogin = lazyWithRetry(() => import('@/pages/superadmin/Login'))
+const SuperAdminDashboard = lazyWithRetry(() => import('@/pages/superadmin/Dashboard'))
+const SuperAdminBarbershops = lazyWithRetry(() => import('@/pages/superadmin/Barbershops'))
+const BarberLogin = lazyWithRetry(() => import('@/pages/barber/Login'))
+const BarberDashboard = lazyWithRetry(() => import('@/pages/barber/Dashboard'))
+const BarberSchedule = lazyWithRetry(() => import('@/pages/barber/Schedule'))
 
 const qc = new QueryClient({
   defaultOptions: { queries: { staleTime: 1000 * 60, retry: 1 } },
@@ -81,8 +115,52 @@ function RouteLoader() {
   )
 }
 
+class RouteErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
+  state = { hasError: false }
+
+  static getDerivedStateFromError() {
+    return { hasError: true }
+  }
+
+  componentDidCatch(error: unknown) {
+    console.error('Route render failed', error)
+  }
+
+  handleReload = () => {
+    window.location.reload()
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="flex min-h-[40vh] items-center justify-center px-6">
+          <div className="max-w-md rounded-3xl border border-zinc-200 bg-white p-6 text-center shadow-sm">
+            <h1 className="text-lg font-semibold text-zinc-950">Falha ao abrir a página</h1>
+            <p className="mt-2 text-sm text-zinc-600">
+              Ocorreu um erro no carregamento. Atualiza a página para voltar a sincronizar a app.
+            </p>
+            <button
+              type="button"
+              onClick={this.handleReload}
+              className="mt-5 inline-flex items-center justify-center rounded-xl bg-zinc-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-zinc-800"
+            >
+              Atualizar página
+            </button>
+          </div>
+        </div>
+      )
+    }
+
+    return this.props.children
+  }
+}
+
 function withSuspense(children: ReactNode) {
-  return <Suspense fallback={<RouteLoader />}>{children}</Suspense>
+  return (
+    <RouteErrorBoundary>
+      <Suspense fallback={<RouteLoader />}>{children}</Suspense>
+    </RouteErrorBoundary>
+  )
 }
 
 export default function App() {

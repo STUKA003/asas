@@ -68,17 +68,17 @@ export default function Home() {
           <div className="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 sm:py-32 lg:py-36">
             <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start">
               <div>
-                {barbershop?.logoUrl && (
-                  <img
-                    src={barbershop.logoUrl}
-                    alt={name}
-                    className="mb-8 h-20 w-auto max-w-[14rem] object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.3)] sm:h-24"
-                  />
-                )}
-
-                {/* Chip */}
-                <div className="tenant-chip mb-6 inline-flex items-center gap-1.5 rounded-full px-3.5 py-1 text-[12.5px] font-semibold">
-                  <Sparkles size={12} /> Agendamento online 24h
+                <div className="mb-6 flex items-center gap-4">
+                  {barbershop?.logoUrl && (
+                    <div className="inline-flex shrink-0 items-center justify-center rounded-2xl bg-white px-4 py-3 shadow-[0_8px_24px_rgba(0,0,0,0.3)]">
+                      <img
+                        src={barbershop.logoUrl}
+                        alt={name}
+                        className="h-10 w-10 object-contain sm:h-12 sm:w-12"
+                      />
+                    </div>
+                  )}
+                  <p className="text-4xl font-bold tracking-tight text-white sm:text-5xl">{name}</p>
                 </div>
 
                 {/* Headline */}

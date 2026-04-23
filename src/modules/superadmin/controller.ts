@@ -274,6 +274,10 @@ const barbershopDetailsSchema = z.object({
     .regex(/^[a-z0-9-]+$/, 'O slug só pode ter letras minúsculas, números e hífen'),
 })
 
+const ownerPasswordSchema = z.object({
+  password: z.string().min(6, 'A password tem de ter pelo menos 6 caracteres'),
+})
+
 export async function updateBarbershopSubscription(req: Request, res: Response) {
   const parsed = subscriptionSchema.safeParse(req.body)
   if (!parsed.success) { res.status(400).json({ error: parsed.error.flatten() }); return }
@@ -472,6 +476,41 @@ export async function verifyOwnerEmail(req: Request, res: Response) {
   res.json({ success: true, user: updated })
 }
 
+export async function updateOwnerPassword(req: Request, res: Response) {
+  const parsed = ownerPasswordSchema.safeParse(req.body)
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.flatten() })
+    return
+  }
+
+  const barbershop = await prisma.barbershop.findUnique({
+    where: { id: req.params.id },
+    select: {
+      id: true,
+      users: {
+        where: { role: 'OWNER' },
+        orderBy: { createdAt: 'asc' },
+        take: 1,
+        select: { id: true },
+      },
+    },
+  })
+
+  const owner = barbershop?.users[0]
+  if (!barbershop || !owner) {
+    res.status(404).json({ error: 'Barbearia ou utilizador administrador não encontrado' })
+    return
+  }
+
+  const password = await bcrypt.hash(parsed.data.password, 10)
+  await prisma.user.update({
+    where: { id: owner.id },
+    data: { password },
+  })
+
+  res.json({ success: true })
+}
+
 export async function resendOwnerVerification(req: Request, res: Response) {
   const barbershop = await prisma.barbershop.findUnique({
     where: { id: req.params.id },
@@ -516,7 +555,7 @@ export async function createSupportSession(req: Request, res: Response) {
       name: true,
       users: {
         orderBy: { createdAt: 'asc' },
-        select: { id: true, name: true, email: true, role: true },
+        select: { id: true, name: true, email: true, avatar: true, role: true },
         take: 1,
       },
     },
@@ -545,6 +584,7 @@ export async function createSupportSession(req: Request, res: Response) {
       id: user.id,
       name: user.name,
       email: user.email,
+      avatar: user.avatar,
       role: 'SUPPORT',
       barbershopId: barbershop.id,
     },

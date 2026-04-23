@@ -96,8 +96,7 @@ export function StepCustomer() {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-xl font-bold">Seus dados</h2>
-        <p className="text-zinc-500 text-sm mt-1">Para confirmarmos seu agendamento</p>
+        <h2 className="text-xl font-bold">Os teus dados</h2>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

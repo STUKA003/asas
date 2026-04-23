@@ -594,6 +594,30 @@ test('public availability and booking flow works end-to-end', { skip: !integrati
   assert.match(misalignedBooking.body.error, /outside barber working hours/)
 })
 
+test('public availability rejects invalid query params', { skip: !integrationEnabled }, async () => {
+  const shop = await prisma.barbershop.create({
+    data: {
+      name: 'Validation Shop',
+      slug: 'validation-shop',
+      slotGranularityMinutes: 15,
+    },
+  })
+
+  const barber = await prisma.barber.create({
+    data: {
+      name: 'Rui',
+      barbershopId: shop.id,
+      active: true,
+    },
+  })
+
+  const invalidDate = await jsonRequest(`/api/public/${shop.slug}/availability?barberId=${barber.id}&date=invalido&duration=30`)
+  assert.equal(invalidDate.response.status, 400)
+
+  const invalidDuration = await jsonRequest(`/api/public/${shop.slug}/availability?barberId=${barber.id}&date=2026-05-01&duration=abc`)
+  assert.equal(invalidDuration.response.status, 400)
+})
+
 test('public availability respects split barber-specific working hours', { skip: !integrationEnabled }, async () => {
   const bookingDate = new Date()
   bookingDate.setDate(bookingDate.getDate() + ((4 - bookingDate.getDay() + 7) % 7 || 7))

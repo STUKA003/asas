@@ -24,6 +24,12 @@ const bookingManageStartTimeSchema = z.object({
   startTime: z.string().datetime(),
 })
 
+const availabilityQuerySchema = z.object({
+  barberId: z.string().min(1),
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  duration: z.coerce.number().int().positive(),
+})
+
 // ─── Public handlers ─────────────────────────────────────────────────────────
 
 export async function getBarbershop(req: Request, res: Response) {
@@ -171,10 +177,9 @@ export async function subscribePlan(req: Request, res: Response) {
 }
 
 export async function getAvailability(req: Request, res: Response) {
-  const { barberId, date, duration } = req.query
-
-  if (!barberId || !date || !duration) {
-    res.status(400).json({ error: 'barberId, date and duration are required' })
+  const parsed = availabilityQuerySchema.safeParse(req.query)
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.flatten() })
     return
   }
 
@@ -182,19 +187,24 @@ export async function getAvailability(req: Request, res: Response) {
   if (!shop) { res.status(404).json({ error: 'Barbershop not found' }); return }
 
   const barber = await prisma.barber.findFirst({
-    where: { id: barberId as string, barbershopId: shop.id, active: true },
+    where: { id: parsed.data.barberId, barbershopId: shop.id, active: true },
   })
   if (!barber) { res.status(404).json({ error: 'Barber not found' }); return }
 
   const slots = await getAvailableSlots(
-    barberId as string,
+    parsed.data.barberId,
     shop.id,
-    date as string,
-    Number(duration),
+    parsed.data.date,
+    parsed.data.duration,
     shop.slotGranularityMinutes
   )
 
-  res.json({ barberId, date, durationMinutes: Number(duration), slots })
+  res.json({
+    barberId: parsed.data.barberId,
+    date: parsed.data.date,
+    durationMinutes: parsed.data.duration,
+    slots,
+  })
 }
 
 const bookingSchema = z.object({

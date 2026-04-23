@@ -1,7 +1,8 @@
 import { useBookingStore } from '@/store/booking'
 import { useTenant } from '@/providers/TenantProvider'
 import { formatCurrency, formatDuration, toWallClockDate } from '@/lib/utils'
-import { BadgeCheck, CalendarDays, Clock, DollarSign, Sparkles, User } from 'lucide-react'
+import { BadgeCheck, CalendarDays, Clock, DollarSign, User } from 'lucide-react'
+import { Avatar } from '@/components/ui/Avatar'
 
 export function BookingSummary() {
   const { service, extras, products, customerPlan, barber, date, slot } = useBookingStore()
@@ -23,26 +24,27 @@ export function BookingSummary() {
 
   const duration = service.duration + extras.reduce((s, e) => s + e.duration, 0)
   const lines = [
-    barber ? { icon: User, label: 'Profissional', value: barber.name } : null,
     date ? { icon: CalendarDays, label: 'Data', value: new Date(date).toLocaleDateString('pt-PT', { day: '2-digit', month: 'long' }) } : null,
     slot ? { icon: Clock, label: 'Hora', value: toWallClockDate(slot.startTime).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' }) } : null,
   ].filter(Boolean) as Array<{ icon: typeof User; label: string; value: string }>
 
   return (
     <div className="rounded-3xl border border-neutral-200 bg-white p-5 text-sm shadow-medium">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="eyebrow">Resumo da reserva</p>
-          <p className="mt-2 text-lg font-semibold text-ink">Quase fechado</p>
-          <p className="mt-1 text-sm text-ink-muted">Revê o essencial antes de avançares para o próximo passo.</p>
-        </div>
-        <div className="tenant-soft-icon flex h-11 w-11 items-center justify-center rounded-2xl">
-          <Sparkles size={18} />
-        </div>
+      <div>
+        <p className="eyebrow">Resumo da reserva</p>
       </div>
 
       {lines.length > 0 && (
         <div className="mt-5 grid gap-2 rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
+          {barber && (
+            <div className="mb-1 flex items-center gap-3 rounded-2xl border border-neutral-200 bg-white px-3 py-3 shadow-soft">
+              <Avatar name={barber.name} src={barber.avatar} size="md" />
+              <div className="min-w-0">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink-muted">Profissional</p>
+                <p className="truncate text-sm font-medium text-ink">{barber.name}</p>
+              </div>
+            </div>
+          )}
           {lines.map((line) => (
             <div key={line.label} className="flex items-center gap-3 text-sm text-ink-soft">
               <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-white text-primary-700 shadow-soft">
@@ -77,7 +79,7 @@ export function BookingSummary() {
         </div>
         <div className="mt-4 flex items-center gap-1.5 text-xs text-ink-muted">
           <Clock size={13} />
-          <span>{formatDuration(duration)} de experiência reservada</span>
+          <span>{formatDuration(duration)}</span>
         </div>
       </div>
 
@@ -117,9 +119,6 @@ export function BookingSummary() {
         </div>
       </div>
 
-      <div className="mt-3 rounded-[1.25rem] border border-neutral-200 bg-neutral-50 px-4 py-3 text-xs leading-5 text-ink-muted">
-        O valor final pode refletir extras, produtos e benefícios do teu plano no momento da confirmação.
-      </div>
     </div>
   )
 }

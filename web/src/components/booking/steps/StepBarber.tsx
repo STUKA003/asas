@@ -23,8 +23,7 @@ export function StepBarber() {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-xl font-bold">Escolha um barbeiro</h2>
-        <p className="text-zinc-500 text-sm mt-1">Selecione quem irá te atender</p>
+        <h2 className="text-xl font-bold">Escolhe o barbeiro</h2>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2">

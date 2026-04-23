@@ -123,7 +123,7 @@ export function PhoneInput({
         </label>
       )}
 
-      <div className={cn('grid gap-3 sm:grid-cols-[140px_minmax(0,1fr)]', className)}>
+      <div className={cn('grid gap-2 grid-cols-[120px_minmax(0,1fr)]', className)}>
         <div className="relative">
           <select
             value={countryCode}

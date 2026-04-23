@@ -29,17 +29,22 @@ export function Header() {
 
           {/* Brand */}
           <Link to={base} className="flex min-w-0 items-center gap-2.5">
-            <img
-              src={clientsLogo}
-              alt="Trimio Clientes"
-              className="h-10 w-10 shrink-0 rounded-xl object-contain"
-            />
+            {barbershop?.logoUrl ? (
+              <img
+                src={barbershop.logoUrl}
+                alt={barbershop.name}
+                className="h-10 w-10 shrink-0 rounded-xl object-contain mix-blend-multiply"
+              />
+            ) : (
+              <img
+                src={clientsLogo}
+                alt="Trimio Clientes"
+                className="h-10 w-10 shrink-0 rounded-xl object-contain"
+              />
+            )}
             <div className="hidden min-w-0 sm:block">
               <span className="block truncate text-[13px] font-semibold tracking-[-0.01em] text-ink">
                 {barbershop?.name ?? 'Trimio Clientes'}
-              </span>
-              <span className="block truncate text-[11px] text-ink-muted">
-                Reserva online e gestão clara
               </span>
             </div>
           </Link>

@@ -1,4 +1,5 @@
 import { useRef, useState, useEffect } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 import { Building2, LayoutDashboard, LogOut, Shield } from 'lucide-react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useSuperAuthStore } from '@/store/superauth'
@@ -70,12 +71,23 @@ function SuperAccountMenu({
 }
 
 export function SuperAdminLayout({ children }: { children: React.ReactNode }) {
+  const qc = useQueryClient()
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const { logout } = useSuperAuthStore()
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [refreshing, setRefreshing] = useState(false)
 
   useInstallBrand('superadmin')
+
+  const handleRefresh = async () => {
+    setRefreshing(true)
+    try {
+      await qc.refetchQueries({ type: 'active' })
+    } finally {
+      setRefreshing(false)
+    }
+  }
 
   const navSections: PanelNavSection[] = [
     {
@@ -119,6 +131,8 @@ export function SuperAdminLayout({ children }: { children: React.ReactNode }) {
         </div>
       }
       theme="dark"
+      onPullRefresh={handleRefresh}
+      isPullRefreshing={refreshing}
     >
       {children}
     </PanelShell>

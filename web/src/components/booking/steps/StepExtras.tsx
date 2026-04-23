@@ -31,8 +31,7 @@ export function StepExtras() {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-xl font-bold">Adicionar extras</h2>
-        <p className="text-zinc-500 text-sm mt-1">Incremente o seu atendimento (opcional)</p>
+        <h2 className="text-xl font-bold">Extras <span className="text-sm font-normal text-zinc-400">opcional</span></h2>
       </div>
 
       <div className="space-y-2">

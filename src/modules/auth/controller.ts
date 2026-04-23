@@ -95,7 +95,7 @@ export async function register(req: Request, res: Response) {
         create: { name, email, password: hashed, role: 'OWNER' },
       },
     },
-    include: { users: { select: { id: true, name: true, email: true, role: true } } },
+    include: { users: { select: { id: true, name: true, email: true, avatar: true, role: true } } },
   })
 
   const user = barbershop.users[0]
@@ -194,7 +194,7 @@ export async function login(req: Request, res: Response) {
     userAgent: requestMeta.userAgent,
   })
 
-  res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role } })
+  res.json({ token, user: { id: user.id, name: user.name, email: user.email, avatar: user.avatar, role: user.role, barbershopId: user.barbershopId } })
 }
 
 export async function verifyEmail(req: Request, res: Response) {
@@ -326,7 +326,7 @@ export async function resetPassword(req: Request, res: Response) {
 export async function me(req: Request, res: Response) {
   const user = await prisma.user.findUnique({
     where: { id: req.auth.userId },
-    select: { id: true, name: true, email: true, role: true, barbershopId: true },
+    select: { id: true, name: true, email: true, avatar: true, role: true, barbershopId: true },
   })
   res.json(user)
 }

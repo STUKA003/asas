@@ -13,14 +13,52 @@ import { Modal } from '@/components/ui/Modal'
 import { Badge } from '@/components/ui/Badge'
 import { Avatar } from '@/components/ui/Avatar'
 import { DataTable } from '@/components/admin/DataTable'
-import { Plus, Pencil, Trash2, KeyRound, ShieldCheck, ShieldOff, AlertTriangle } from 'lucide-react'
+import { Plus, Pencil, Trash2, KeyRound, ShieldCheck, ShieldOff, AlertTriangle, ImagePlus } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import type { Barber } from '@/lib/types'
+
+function readFileAsDataUrl(file: File) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(String(reader.result ?? ''))
+    reader.onerror = () => reject(new Error('Nao foi possivel ler a imagem'))
+    reader.readAsDataURL(file)
+  })
+}
+
+async function compressImage(file: File) {
+  const source = await readFileAsDataUrl(file)
+
+  return new Promise<string>((resolve, reject) => {
+    const image = new Image()
+    image.onload = () => {
+      const maxSize = 900
+      const scale = Math.min(1, maxSize / Math.max(image.width, image.height))
+      const width = Math.max(1, Math.round(image.width * scale))
+      const height = Math.max(1, Math.round(image.height * scale))
+      const canvas = document.createElement('canvas')
+      canvas.width = width
+      canvas.height = height
+      const ctx = canvas.getContext('2d')
+
+      if (!ctx) {
+        reject(new Error('Nao foi possivel preparar a imagem'))
+        return
+      }
+
+      ctx.drawImage(image, 0, 0, width, height)
+      resolve(canvas.toDataURL('image/jpeg', 0.76))
+    }
+    image.onerror = () => reject(new Error('Nao foi possivel processar a imagem'))
+    image.src = source
+  })
+}
 
 const schema = z.object({
   name:   z.string().min(2),
   email:  z.string().email().optional().or(z.literal('')),
   phone:  z.string().optional(),
+  avatar: z.string().optional(),
   active: z.boolean().optional(),
 })
 type FormData = z.infer<typeof schema>
@@ -37,6 +75,7 @@ export default function Barbers() {
   const [accessModal, setAccessModal] = useState<Barber | null>(null)
   const [editing, setEditing]         = useState<Barber | null>(null)
   const [mutationError, setMutationError] = useState('')
+  const [avatarError, setAvatarError] = useState('')
 
   const { data = [], isLoading } = useQuery({
     queryKey: ['barbers'],
@@ -48,9 +87,10 @@ export default function Barbers() {
   const activeBarbers = barbershop?.subscription?.limits?.activeBarbers ?? data.filter(b => b.active).length
   const atLimit       = maxBarbers !== null && activeBarbers >= maxBarbers
 
-  const { register, control, handleSubmit, reset, formState: { errors } } = useForm<FormData>({
+  const { register, control, handleSubmit, reset, watch, setValue, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
   })
+  const avatarValue = watch('avatar')
 
   const {
     register: regPw, handleSubmit: handlePw, reset: resetPw,
@@ -80,13 +120,28 @@ export default function Barbers() {
     },
   })
 
-  const openCreate = () => { setEditing(null); reset({}); setMutationError(''); setModalOpen(true) }
-  const openEdit   = (b: Barber) => { setEditing(b); reset(b); setMutationError(''); setModalOpen(true) }
-  const closeModal = () => { setModalOpen(false); setEditing(null); setMutationError('') }
+  const openCreate = () => { setEditing(null); reset({ avatar: '' }); setMutationError(''); setAvatarError(''); setModalOpen(true) }
+  const openEdit   = (b: Barber) => { setEditing(b); reset({ ...b, avatar: b.avatar ?? '' }); setMutationError(''); setAvatarError(''); setModalOpen(true) }
+  const closeModal = () => { setModalOpen(false); setEditing(null); setMutationError(''); setAvatarError('') }
 
   const onSubmit   = (d: FormData) => editing ? update.mutate(d) : create.mutate(d)
   const onSetPass  = (d: PasswordFormData) => setPass.mutate({ id: accessModal!.id, pw: d.password })
   const onRevoke   = () => setPass.mutate({ id: accessModal!.id, pw: null })
+
+  const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    try {
+      setAvatarError('')
+      const dataUrl = await compressImage(file)
+      setValue('avatar', dataUrl, { shouldDirty: true })
+    } catch (error) {
+      setAvatarError(error instanceof Error ? error.message : 'Nao foi possivel carregar a foto')
+    }
+
+    event.target.value = ''
+  }
 
   return (
     <AdminLayout>
@@ -179,6 +234,29 @@ export default function Barbers() {
           )}
           <Input label="Nome" placeholder="Joao Silva" error={errors.name?.message} {...register('name')} />
           <Input label="E-mail" type="email" placeholder="joao@example.com" error={errors.email?.message} {...register('email')} />
+          <input type="hidden" {...register('avatar')} />
+          <div className="space-y-3">
+            <div>
+              <p className="text-sm font-medium text-zinc-700 dark:text-zinc-200">Foto do barbeiro</p>
+              <p className="mt-1 text-xs text-zinc-500">Esta foto aparece no painel e na escolha de barbeiro no site de agenda.</p>
+            </div>
+            <div className="flex items-center gap-4 rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-4 dark:border-zinc-800 dark:bg-zinc-900">
+              <Avatar name={watch('name') || 'Barbeiro'} src={avatarValue || undefined} size="lg" />
+              <div className="flex flex-wrap gap-2">
+                <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100">
+                  <ImagePlus size={15} />
+                  Carregar foto
+                  <input type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
+                </label>
+                {avatarValue && (
+                  <Button type="button" variant="outline" onClick={() => setValue('avatar', '', { shouldDirty: true })}>
+                    Remover
+                  </Button>
+                )}
+              </div>
+            </div>
+            {avatarError && <p className="text-sm text-red-600">{avatarError}</p>}
+          </div>
           <Controller
             name="phone"
             control={control}

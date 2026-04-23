@@ -176,7 +176,6 @@ export function StepConfirmation() {
     <div className="space-y-5">
       <div>
         <h2 className="text-xl font-bold">Confirmar agendamento</h2>
-        <p className="text-zinc-500 text-sm mt-1">Revise os detalhes antes de confirmar</p>
       </div>
 
       <div className="space-y-3">

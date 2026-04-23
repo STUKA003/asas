@@ -29,6 +29,7 @@ const updateSchema = z.object({
   address:     z.string().optional(),
   whatsapp:    z.string().optional(),
   instagram:   z.string().optional(),
+  adminAvatarUrl: imageSchema.optional().or(z.literal('')),
   logoUrl:     imageSchema.optional().or(z.literal('')),
   heroImageUrl: imageSchema.optional().or(z.literal('')),
   heroTitle:   z.string().optional(),
@@ -50,6 +51,13 @@ const updateSchema = z.object({
 export async function getMyBarbershop(req: Request, res: Response) {
   const barbershop = await prisma.barbershop.findUnique({
     where: { id: req.auth.barbershopId },
+    include: {
+      users: {
+        where: { id: req.auth.userId },
+        select: { id: true, name: true, email: true, avatar: true },
+        take: 1,
+      },
+    },
   })
   if (!barbershop) { res.json(null); return }
 
@@ -78,6 +86,7 @@ export async function getMyBarbershop(req: Request, res: Response) {
   res.json({
     ...barbershop,
     galleryImages: parseGalleryImages(barbershop.galleryImages),
+    currentUser: barbershop.users[0] ?? null,
     subscription: {
       plan: effectivePlan,
       paidPlan: barbershop.subscriptionPlan,
@@ -241,6 +250,10 @@ export async function updateBarbershop(req: Request, res: Response) {
     res.status(400).json({ error: 'A imagem do logo é demasiado grande. Escolha uma imagem mais leve.' })
     return
   }
+  if (parsed.data.adminAvatarUrl && parsed.data.adminAvatarUrl.startsWith('data:image/') && parsed.data.adminAvatarUrl.length > MAX_IMAGE_DATA_LENGTH) {
+    res.status(400).json({ error: 'A foto da conta é demasiado grande. Escolha uma imagem mais leve.' })
+    return
+  }
   if (parsed.data.heroImageUrl && parsed.data.heroImageUrl.startsWith('data:image/') && parsed.data.heroImageUrl.length > MAX_IMAGE_DATA_LENGTH) {
     res.status(400).json({ error: 'A imagem principal é demasiado grande. Escolha uma imagem mais leve.' })
     return
@@ -251,20 +264,42 @@ export async function updateBarbershop(req: Request, res: Response) {
   }
 
   const {
+    adminAvatarUrl,
     logoUrl,
     heroImageUrl,
     galleryImages,
     ...rest
   } = parsed.data
 
-  const barbershop = await prisma.barbershop.update({
-    where: { id: req.auth.barbershopId },
-    data: {
-      ...rest,
-      ...(logoUrl !== undefined ? { logoUrl: logoUrl || null } : {}),
-      ...(heroImageUrl !== undefined ? { heroImageUrl: heroImageUrl || null } : {}),
-      ...(galleryImages !== undefined ? { galleryImages: JSON.stringify(galleryImages) } : {}),
-    },
+  const barbershop = await prisma.$transaction(async (tx) => {
+    if (adminAvatarUrl !== undefined) {
+      await tx.user.update({
+        where: { id: req.auth.userId },
+        data: { avatar: adminAvatarUrl || null },
+      })
+    }
+
+    return tx.barbershop.update({
+      where: { id: req.auth.barbershopId },
+      data: {
+        ...rest,
+        ...(logoUrl !== undefined ? { logoUrl: logoUrl || null } : {}),
+        ...(heroImageUrl !== undefined ? { heroImageUrl: heroImageUrl || null } : {}),
+        ...(galleryImages !== undefined ? { galleryImages: JSON.stringify(galleryImages) } : {}),
+      },
+      include: {
+        users: {
+          where: { id: req.auth.userId },
+          select: { id: true, name: true, email: true, avatar: true },
+          take: 1,
+        },
+      },
+    })
   })
-  res.json({ ...barbershop, galleryImages: parseGalleryImages(barbershop.galleryImages) })
+
+  res.json({
+    ...barbershop,
+    galleryImages: parseGalleryImages(barbershop.galleryImages),
+    currentUser: barbershop.users[0] ?? null,
+  })
 }

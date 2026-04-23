@@ -242,11 +242,13 @@ function NotificationBell() {
 function AdminAccountMenu({
   userName,
   userEmail,
+  userAvatar,
   currentPlan,
   onLogout,
 }: {
   userName?: string
   userEmail?: string
+  userAvatar?: string | null
   currentPlan: PlanTier
   onLogout: () => void
 }) {
@@ -267,7 +269,7 @@ function AdminAccountMenu({
         onClick={() => setOpen((prev) => !prev)}
         className="inline-flex items-center gap-3 rounded-xl border border-neutral-200 bg-white px-3 py-2 shadow-soft transition hover:border-neutral-300"
       >
-        <Avatar name={userName ?? ''} size="sm" />
+        <Avatar name={userName ?? ''} src={userAvatar ?? undefined} size="sm" />
         <div className="hidden text-left sm:block">
           <p className="max-w-[10rem] truncate text-sm font-medium text-ink">{userName}</p>
           <p className="max-w-[10rem] truncate text-xs text-ink-muted">{userEmail}</p>
@@ -308,8 +310,10 @@ function AdminAccountMenu({
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [refreshing, setRefreshing] = useState(false)
   const { pathname } = useLocation()
   const navigate = useNavigate()
+  const qc = useQueryClient()
   const { user, logout } = useAuthStore()
   const { data: barbershop } = useQuery({
     queryKey: ['barbershop'],
@@ -325,6 +329,15 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
   const handleLogout = () => {
     logout()
     navigate('/admin/login')
+  }
+
+  const handleRefresh = async () => {
+    setRefreshing(true)
+    try {
+      await qc.refetchQueries({ type: 'active' })
+    } finally {
+      setRefreshing(false)
+    }
   }
 
   const currentPlan = (barbershop?.subscription?.plan ?? 'FREE') as PlanTier
@@ -395,6 +408,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
           <AdminAccountMenu
             userName={user?.name}
             userEmail={user?.email}
+            userAvatar={barbershop?.currentUser?.avatar ?? user?.avatar}
             currentPlan={currentPlan}
             onLogout={handleLogout}
           />
@@ -411,6 +425,8 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
           </Link>
         </div>
       }
+      onPullRefresh={handleRefresh}
+      isPullRefreshing={refreshing}
     >
       {barbershop?.subscription?.expired ? (
         <div className="mb-6 flex items-start gap-3 rounded-2xl border border-warning-100 bg-warning-50 px-4 py-4 text-sm text-warning-700">

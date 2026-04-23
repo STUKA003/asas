@@ -51,7 +51,6 @@ export function StepDateTime() {
     <div className="space-y-5">
       <div>
         <h2 className="text-xl font-bold">Data e horário</h2>
-        <p className="text-zinc-500 text-sm mt-1">Escolha quando você quer ser atendido</p>
       </div>
 
       {/* Date picker */}

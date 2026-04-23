@@ -1,6 +1,6 @@
-import { useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Menu, type LucideIcon } from 'lucide-react'
+import { Menu, RefreshCw, type LucideIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 export interface PanelNavItem {
@@ -35,6 +35,8 @@ interface PanelShellProps {
   sidebarFooter?: React.ReactNode
   children: React.ReactNode
   theme?: 'light' | 'dark'
+  onPullRefresh?: () => Promise<void> | void
+  isPullRefreshing?: boolean
 }
 
 export function PageHeader({
@@ -74,7 +76,14 @@ export function PanelShell({
   sidebarFooter,
   children,
   theme = 'light',
+  onPullRefresh,
+  isPullRefreshing = false,
 }: PanelShellProps) {
+  const mainRef = useRef<HTMLElement>(null)
+  const touchStartY = useRef<number | null>(null)
+  const pullArmed = useRef(false)
+  const [pullDistance, setPullDistance] = useState(0)
+
   useEffect(() => {
     if (sidebarOpen) document.body.style.overflow = 'hidden'
     else document.body.style.overflow = ''
@@ -87,6 +96,50 @@ export function PanelShell({
     item.exact
       ? currentPath === item.href
       : currentPath === item.href || currentPath.startsWith(`${item.href}/`)
+
+  const refreshReady = pullDistance >= 72
+
+  const handleTouchStart = (event: React.TouchEvent<HTMLElement>) => {
+    if (!onPullRefresh || isPullRefreshing) return
+    if ((mainRef.current?.scrollTop ?? 0) > 0) return
+    touchStartY.current = event.touches[0]?.clientY ?? null
+    pullArmed.current = true
+  }
+
+  const handleTouchMove = (event: React.TouchEvent<HTMLElement>) => {
+    if (!onPullRefresh || isPullRefreshing || !pullArmed.current || touchStartY.current === null) return
+    if ((mainRef.current?.scrollTop ?? 0) > 0) {
+      setPullDistance(0)
+      return
+    }
+
+    const currentY = event.touches[0]?.clientY ?? touchStartY.current
+    const delta = currentY - touchStartY.current
+
+    if (delta <= 0) {
+      setPullDistance(0)
+      return
+    }
+
+    setPullDistance(Math.min(delta * 0.45, 96))
+  }
+
+  const resetPullState = () => {
+    touchStartY.current = null
+    pullArmed.current = false
+    setPullDistance(0)
+  }
+
+  const handleTouchEnd = async () => {
+    if (!onPullRefresh || isPullRefreshing) {
+      resetPullState()
+      return
+    }
+
+    const shouldRefresh = pullDistance >= 72
+    resetPullState()
+    if (shouldRefresh) await onPullRefresh()
+  }
 
   const Sidebar = () => (
     <div className="flex h-full flex-col">
@@ -283,7 +336,41 @@ export function PanelShell({
         </header>
 
         {/* ── Page content ── */}
-        <main className="flex-1 overflow-y-auto">
+        <main
+          ref={mainRef}
+          className="relative flex-1 overflow-y-auto overscroll-y-contain"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          onTouchCancel={handleTouchEnd}
+        >
+          {(onPullRefresh || isPullRefreshing) ? (
+            <div
+              className="pointer-events-none sticky top-0 z-10 flex justify-center"
+              style={{ height: pullDistance > 0 || isPullRefreshing ? 56 : 0 }}
+            >
+              <div
+                className={cn(
+                  'mt-2 inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium shadow-soft transition-all duration-200',
+                  isDark
+                    ? 'border-white/[0.08] bg-[#17171d] text-white/70'
+                    : 'border-neutral-200 bg-white text-ink-muted',
+                  (refreshReady || isPullRefreshing) && !isDark && 'text-ink',
+                  (refreshReady || isPullRefreshing) && isDark && 'text-white'
+                )}
+                style={{
+                  opacity: pullDistance > 0 || isPullRefreshing ? 1 : 0,
+                  transform: `translateY(${Math.min(pullDistance, 32)}px)`,
+                }}
+              >
+                <RefreshCw
+                  size={14}
+                  className={cn(isPullRefreshing && 'animate-spin', refreshReady && !isPullRefreshing && 'text-primary-600')}
+                />
+                <span>{isPullRefreshing ? 'A atualizar...' : refreshReady ? 'Larga para atualizar' : 'Puxa para atualizar'}</span>
+              </div>
+            </div>
+          ) : null}
           <div className="mx-auto w-full max-w-[1240px] px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
             {children}
           </div>

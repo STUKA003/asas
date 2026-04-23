@@ -61,6 +61,7 @@ model User {
   email        String
   password     String
   name         String
+  avatar       String?
   role         String     @default("ADMIN")
   emailVerifiedAt DateTime?
   barbershopId String

@@ -8,6 +8,7 @@ import { ACCENT_PRESETS, DEFAULT_ACCENT, applyAccentColor } from '@/lib/theme'
 import { AdminLayout } from '@/components/layout/AdminLayout'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
+import { Avatar } from '@/components/ui/Avatar'
 import { Input, Textarea } from '@/components/ui/Input'
 import { PhoneInput } from '@/components/ui/PhoneInput'
 import { PageLoader } from '@/components/ui/Spinner'
@@ -23,6 +24,116 @@ function readFileAsDataUrl(file: File) {
     reader.onerror = () => reject(new Error('Nao foi possivel ler a imagem'))
     reader.readAsDataURL(file)
   })
+}
+
+function removeSolidLogoBackground(ctx: CanvasRenderingContext2D, width: number, height: number) {
+  const image = ctx.getImageData(0, 0, width, height)
+  const { data } = image
+  const visited = new Uint8Array(width * height)
+  const queue = new Uint32Array(width * height)
+  let queueStart = 0
+  let queueEnd = 0
+
+  const borderIndexes: number[] = []
+  for (let x = 0; x < width; x += 1) {
+    borderIndexes.push(x, (height - 1) * width + x)
+  }
+  for (let y = 1; y < height - 1; y += 1) {
+    borderIndexes.push(y * width, y * width + (width - 1))
+  }
+
+  const opaqueSamples = borderIndexes
+    .map((index) => {
+      const offset = index * 4
+      return {
+        index,
+        r: data[offset],
+        g: data[offset + 1],
+        b: data[offset + 2],
+        a: data[offset + 3],
+      }
+    })
+    .filter((pixel) => pixel.a > 220)
+
+  if (!opaqueSamples.length) return
+
+  const background = opaqueSamples.reduce(
+    (acc, pixel) => ({
+      r: acc.r + pixel.r,
+      g: acc.g + pixel.g,
+      b: acc.b + pixel.b,
+    }),
+    { r: 0, g: 0, b: 0 },
+  )
+
+  background.r /= opaqueSamples.length
+  background.g /= opaqueSamples.length
+  background.b /= opaqueSamples.length
+
+  const edgeMatchRatio =
+    opaqueSamples.filter((pixel) => {
+      const diff =
+        Math.abs(pixel.r - background.r) +
+        Math.abs(pixel.g - background.g) +
+        Math.abs(pixel.b - background.b)
+      return diff <= 42
+    }).length / opaqueSamples.length
+
+  if (edgeMatchRatio < 0.72) return
+
+  const isNearBackground = (index: number) => {
+    const offset = index * 4
+    const alpha = data[offset + 3]
+    if (alpha < 32) return true
+
+    const diff =
+      Math.abs(data[offset] - background.r) +
+      Math.abs(data[offset + 1] - background.g) +
+      Math.abs(data[offset + 2] - background.b)
+
+    return diff <= 54 && alpha > 80
+  }
+
+  const enqueue = (index: number) => {
+    if (visited[index]) return
+    visited[index] = 1
+    queue[queueEnd] = index
+    queueEnd += 1
+  }
+
+  for (const index of borderIndexes) {
+    if (isNearBackground(index)) enqueue(index)
+  }
+
+  while (queueStart < queueEnd) {
+    const index = queue[queueStart]
+    queueStart += 1
+
+    const offset = index * 4
+    data[offset + 3] = 0
+
+    const x = index % width
+    const y = Math.floor(index / width)
+
+    if (x > 0) {
+      const next = index - 1
+      if (!visited[next] && isNearBackground(next)) enqueue(next)
+    }
+    if (x < width - 1) {
+      const next = index + 1
+      if (!visited[next] && isNearBackground(next)) enqueue(next)
+    }
+    if (y > 0) {
+      const next = index - width
+      if (!visited[next] && isNearBackground(next)) enqueue(next)
+    }
+    if (y < height - 1) {
+      const next = index + width
+      if (!visited[next] && isNearBackground(next)) enqueue(next)
+    }
+  }
+
+  ctx.putImageData(image, 0, 0)
 }
 
 async function compressImage(file: File, usage: 'logo' | 'photo' = 'photo') {
@@ -46,7 +157,12 @@ async function compressImage(file: File, usage: 'logo' | 'photo' = 'photo') {
       }
 
       ctx.drawImage(image, 0, 0, width, height)
-      const prefersPng = usage === 'logo' && file.type === 'image/png'
+
+      if (usage === 'logo') {
+        removeSolidLogoBackground(ctx, width, height)
+      }
+
+      const prefersPng = usage === 'logo'
       const result = prefersPng
         ? canvas.toDataURL('image/png')
         : canvas.toDataURL('image/jpeg', 0.72)
@@ -82,6 +198,7 @@ type FormValues = {
   address: string
   whatsapp: string
   instagram: string
+  adminAvatarUrl: string
   logoUrl: string
   heroImageUrl: string
   heroTitle: string
@@ -104,6 +221,8 @@ export default function Customization() {
   const [activeColorName, setActiveColorName] = useState(DEFAULT_ACCENT.name)
   const [logoError, setLogoError] = useState<string | null>(null)
   const [logoDirty, setLogoDirty] = useState(false)
+  const [adminAvatarError, setAdminAvatarError] = useState<string | null>(null)
+  const [adminAvatarDirty, setAdminAvatarDirty] = useState(false)
   const [heroImageError, setHeroImageError] = useState<string | null>(null)
   const [heroImageDirty, setHeroImageDirty] = useState(false)
   const [galleryError, setGalleryError] = useState<string | null>(null)
@@ -121,6 +240,7 @@ export default function Customization() {
       address: '',
       whatsapp: '',
       instagram: '',
+      adminAvatarUrl: '',
       logoUrl: '',
       heroImageUrl: '',
       heroTitle: '',
@@ -139,6 +259,7 @@ export default function Customization() {
     },
   })
 
+  const adminAvatarUrl = watch('adminAvatarUrl')
   const logoUrl = watch('logoUrl')
   const heroImageUrl = watch('heroImageUrl')
   const galleryImages = watch('galleryImages')
@@ -166,6 +287,7 @@ export default function Customization() {
         address: shop.address ?? '',
         whatsapp: shop.whatsapp ?? '',
         instagram: shop.instagram ?? '',
+        adminAvatarUrl: shop.currentUser?.avatar ?? '',
         logoUrl: shop.logoUrl ?? '',
         heroImageUrl: shop.heroImageUrl ?? '',
         heroTitle: shop.heroTitle ?? '',
@@ -184,6 +306,7 @@ export default function Customization() {
       })
       const savedName = shop.accentColor ?? DEFAULT_ACCENT.name
       setActiveColorName(savedName)
+      setAdminAvatarDirty(false)
       setLogoDirty(false)
       setHeroImageDirty(false)
       setGalleryDirty(false)
@@ -205,6 +328,14 @@ export default function Customization() {
     mutationFn: (nextLogoUrl: string) => barbershopApi.update({ logoUrl: nextLogoUrl }),
     onSuccess: () => {
       setLogoDirty(false)
+      queryClient.invalidateQueries({ queryKey: ['barbershop'] })
+    },
+  })
+
+  const { mutate: mutateAdminAvatar, isPending: isSavingAdminAvatar } = useMutation({
+    mutationFn: (nextAvatarUrl: string) => barbershopApi.update({ adminAvatarUrl: nextAvatarUrl }),
+    onSuccess: () => {
+      setAdminAvatarDirty(false)
       queryClient.invalidateQueries({ queryKey: ['barbershop'] })
     },
   })
@@ -246,6 +377,22 @@ export default function Customization() {
       setLogoDirty(true)
     } catch (error) {
       setLogoError(getRequestErrorMessage(error, 'Nao foi possivel carregar o logo'))
+    }
+
+    event.target.value = ''
+  }
+
+  const handleAdminAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    try {
+      setAdminAvatarError(null)
+      const dataUrl = await compressImage(file, 'photo')
+      setValue('adminAvatarUrl', dataUrl, { shouldDirty: true })
+      setAdminAvatarDirty(true)
+    } catch (error) {
+      setAdminAvatarError(getRequestErrorMessage(error, 'Nao foi possivel carregar a foto da conta'))
     }
 
     event.target.value = ''
@@ -317,7 +464,7 @@ export default function Customization() {
         <Card>
           <CardHeader><CardTitle>Informações base</CardTitle></CardHeader>
           <CardContent className="pt-0">
-            <form onSubmit={handleSubmit((data) => mutate(data))} className="space-y-4">
+            <form onSubmit={handleSubmit(({ adminAvatarUrl: _a, logoUrl: _l, heroImageUrl: _h, galleryImages: _g, ...data }) => mutate(data))} className="space-y-4">
               <Input label="Nome da barbearia" {...register('name')} />
               <div className="grid gap-4 sm:grid-cols-2">
                 <Controller
@@ -396,11 +543,56 @@ export default function Customization() {
                 </div>
               </div>
               <input type="hidden" {...register('slotGranularityMinutes', { valueAsNumber: true })} />
-              <input type="hidden" {...register('logoUrl')} />
-              <input type="hidden" {...register('heroImageUrl')} />
-              <input type="hidden" {...register('galleryImages')} />
               <Button type="submit" loading={isPending}>Salvar informações base</Button>
             </form>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader><CardTitle>Foto da conta</CardTitle></CardHeader>
+          <CardContent className="pt-0">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+              <Avatar
+                name={shop?.currentUser?.name ?? shop?.name ?? 'Conta'}
+                src={adminAvatarUrl || undefined}
+                size="lg"
+                className="h-20 w-20 text-xl"
+              />
+              <div className="space-y-2">
+                <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-zinc-200 dark:border-zinc-700 px-4 py-2 text-sm font-medium hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
+                  <ImagePlus size={16} />
+                  Escolher do computador
+                  <input type="file" accept="image/*" className="hidden" onChange={handleAdminAvatarChange} />
+                </label>
+                {adminAvatarUrl && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="gap-2"
+                    onClick={() => {
+                      setAdminAvatarError(null)
+                      setValue('adminAvatarUrl', '', { shouldDirty: true })
+                      setAdminAvatarDirty(true)
+                    }}
+                  >
+                    <Trash2 size={14} />
+                    Remover foto
+                  </Button>
+                )}
+                <Button
+                  type="button"
+                  size="sm"
+                  loading={isSavingAdminAvatar}
+                  disabled={!adminAvatarDirty}
+                  onClick={() => mutateAdminAvatar(adminAvatarUrl)}
+                >
+                  Salvar foto
+                </Button>
+                <p className="text-xs text-zinc-400">Esta foto aparece na conta admin da barbearia dentro do painel.</p>
+                {adminAvatarError && <p className="text-xs text-red-500">{adminAvatarError}</p>}
+              </div>
+            </div>
           </CardContent>
         </Card>
 
@@ -410,7 +602,7 @@ export default function Customization() {
             <div className="flex items-center gap-4">
               <div className="h-20 w-20 bg-accent-100 dark:bg-accent-900/30 rounded-2xl flex items-center justify-center overflow-hidden">
                 {logoUrl ? (
-                  <img src={logoUrl} alt="Logo da barbearia" className="h-full w-full object-cover" />
+                  <img src={logoUrl} alt="Logo da barbearia" className="h-full w-full object-contain" />
                 ) : (
                   <Scissors size={28} className="text-accent-600" />
                 )}
@@ -485,7 +677,7 @@ export default function Customization() {
               </div>
             ) : (
               <div className="space-y-6">
-                <form onSubmit={handleSubmit((data) => mutate(data))} className="space-y-4">
+                <form onSubmit={handleSubmit(({ adminAvatarUrl: _a, logoUrl: _l, heroImageUrl: _h, galleryImages: _g, ...data }) => mutate(data))} className="space-y-4">
                   <div className="grid gap-4 sm:grid-cols-2">
                     <Input label="Título principal da home" placeholder="Minha Barbearia, no seu tempo." {...register('heroTitle')} />
                     <Input label="Subtítulo da home" placeholder="Agende sem chamadas, sem espera." {...register('heroSubtitle')} />
@@ -599,7 +791,7 @@ export default function Customization() {
                 </div>
 
                 <div className="border-t border-zinc-200 pt-6">
-                  <form onSubmit={handleSubmit((data) => mutate(data))} className="space-y-4">
+                  <form onSubmit={handleSubmit(({ adminAvatarUrl: _a, logoUrl: _l, heroImageUrl: _h, galleryImages: _g, ...data }) => mutate(data))} className="space-y-4">
                     <p className="text-sm font-semibold text-zinc-950">Banner promocional</p>
                     <label className="flex items-center gap-3 rounded-xl border border-zinc-200 dark:border-zinc-700 px-4 py-3">
                       <input type="checkbox" className="rounded accent-orange-500" {...register('promoEnabled')} />
@@ -649,7 +841,7 @@ export default function Customization() {
                 <div className="relative">
                   <div className="mb-4 flex items-center gap-3">
                     {logoUrl ? (
-                      <img src={logoUrl} alt="Logo" className="h-10 w-10 rounded-xl object-cover" />
+                      <img src={logoUrl} alt="Logo" className="h-10 w-10 rounded-xl object-contain" />
                     ) : (
                       <div className="h-10 w-10 bg-accent-500 rounded-xl flex items-center justify-center">
                         <Scissors size={16} className="text-white" />
@@ -657,11 +849,11 @@ export default function Customization() {
                     )}
                     <span className="font-bold">{shop?.name ?? 'Trimio'}</span>
                   </div>
-                  <h3 className="text-lg font-bold">{heroTitle || `${shop?.name ?? 'Trimio'} — no seu tempo.`}</h3>
+                  <h3 className="text-lg font-bold text-white">{heroTitle || `${shop?.name ?? 'Trimio'} — no seu tempo.`}</h3>
                   <p className="mt-2 max-w-xl text-sm text-zinc-300">{heroSubtitle || 'Agende sem chamadas, sem espera.'}</p>
                   {promoEnabled && (promoTitle || promoText) && (
                     <div className="mt-4 max-w-md rounded-2xl border border-white/10 bg-white/10 p-4">
-                      <p className="text-sm font-semibold">{promoTitle || 'Promoção ativa'}</p>
+                      <p className="text-sm font-semibold text-white">{promoTitle || 'Promoção ativa'}</p>
                       <p className="mt-1 text-xs text-zinc-300">{promoText || 'Campanha disponível para os seus clientes.'}</p>
                       <p className="mt-3 text-xs font-medium text-accent-200">{promoButtonText || 'Agendar promoção'}</p>
                     </div>

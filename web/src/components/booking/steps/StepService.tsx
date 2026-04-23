@@ -5,7 +5,7 @@ import { useBookingStore } from '@/store/booking'
 import { formatCurrency, formatDuration, cn } from '@/lib/utils'
 import { Button } from '@/components/ui/Button'
 import { PageLoader } from '@/components/ui/Spinner'
-import { ArrowRight, CheckCircle2, Clock, Sparkles } from 'lucide-react'
+import { ArrowRight, CheckCircle2, Clock } from 'lucide-react'
 import type { Service } from '@/lib/types'
 
 export function StepService() {
@@ -22,21 +22,8 @@ export function StepService() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div>
-          <p className="eyebrow">Passo 1</p>
-          <h2 className="mt-2 text-2xl font-semibold text-ink">Escolhe o serviço</h2>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-ink-muted">
-            Começa pelo que queres fazer hoje. O resto do fluxo adapta-se automaticamente à duração e disponibilidade.
-          </p>
-        </div>
-        <div className="rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-ink-soft">
-          <div className="flex items-center gap-2 font-medium text-ink">
-            <Sparkles size={15} className="text-primary-600" />
-            Escolha guiada
-          </div>
-          <p className="mt-1 text-xs text-ink-muted">Seleciona uma opção para desbloquear o próximo passo.</p>
-        </div>
+      <div>
+        <h2 className="text-xl font-bold">Escolhe o serviço</h2>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
@@ -79,16 +66,7 @@ export function StepService() {
         ))}
       </div>
 
-      <div className="flex flex-col gap-3 rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="text-sm text-ink-muted">
-          {selected ? (
-            <span>
-              Serviço selecionado: <strong className="text-ink">{selected.name}</strong>
-            </span>
-          ) : (
-            'Seleciona um serviço para continuar.'
-          )}
-        </div>
+      <div className="flex justify-end">
         <Button disabled={!selected} onClick={() => setStep(1)}>
           Continuar
           <ArrowRight size={15} />
