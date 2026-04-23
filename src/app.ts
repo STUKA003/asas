@@ -1,7 +1,10 @@
 import express from 'express'
 import cors from 'cors'
 import helmet from 'helmet'
+import fs from 'fs'
+import path from 'path'
 import { authenticate } from './middlewares/auth'
+import { prisma } from './lib/prisma'
 
 import authRouter from './modules/auth/router'
 import publicRouter from './modules/public/router'
@@ -157,6 +160,107 @@ app.use('/api/barber-auth', barberAuthRouter)
 app.use('/api/barber-portal', barberPortalRouter)
 app.use('/api/notifications', notificationsRouter)
 app.use('/api/push', pushRouter)
+
+/* ─── SEO routes ─────────────────────────────────────────────── */
+
+const BASE_URL = 'https://trimio.pt'
+const RESERVED = new Set(['api', 'admin', 'superadmin', 'register', 'verify-email', 'barber', 'install-manifest'])
+
+function escHtml(s: string) {
+  return s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+}
+
+function readIndexHtml(): string {
+  const p = path.resolve(__dirname, '..', 'web', 'dist', 'index.html')
+  return fs.readFileSync(p, 'utf-8')
+}
+
+// Sitemap — lists all barbershop pages for Google to crawl
+app.get('/sitemap.xml', async (_req, res) => {
+  try {
+    const shops = await prisma.barbershop.findMany({
+      where: { suspended: false },
+      select: { slug: true, updatedAt: true },
+    })
+    const now = new Date().toISOString().split('T')[0]
+    const urls: { loc: string; priority: string; lastmod?: string }[] = [
+      { loc: `${BASE_URL}/`,        priority: '1.0', lastmod: now },
+      { loc: `${BASE_URL}/register`, priority: '0.8' },
+      ...shops.flatMap((s) => {
+        const mod = s.updatedAt.toISOString().split('T')[0]
+        return [
+          { loc: `${BASE_URL}/${s.slug}`,          priority: '0.8', lastmod: mod },
+          { loc: `${BASE_URL}/${s.slug}/booking`,  priority: '0.9', lastmod: mod },
+          { loc: `${BASE_URL}/${s.slug}/services`, priority: '0.6', lastmod: mod },
+        ]
+      }),
+    ]
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${
+      urls.map(({ loc, priority, lastmod }) =>
+        `  <url>\n    <loc>${loc}</loc>\n    <priority>${priority}</priority>${lastmod ? `\n    <lastmod>${lastmod}</lastmod>` : ''}\n  </url>`
+      ).join('\n')
+    }\n</urlset>`
+    res.setHeader('Content-Type', 'application/xml; charset=utf-8')
+    res.setHeader('Cache-Control', 'public, max-age=3600')
+    res.send(xml)
+  } catch {
+    res.status(500).send('Error generating sitemap')
+  }
+})
+
+// Robots.txt — explicit sitemap reference
+app.get('/robots.txt', (_req, res) => {
+  res.setHeader('Content-Type', 'text/plain; charset=utf-8')
+  res.setHeader('Cache-Control', 'public, max-age=86400')
+  res.send(`User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /superadmin/\nDisallow: /api/\nSitemap: ${BASE_URL}/sitemap.xml\n`)
+})
+
+// Barbershop pages — inject SEO meta tags before the SPA renders
+app.get('/:slug', async (req, res, next) => {
+  const { slug } = req.params
+  if (RESERVED.has(slug) || !/^[a-z0-9][a-z0-9-]*$/.test(slug)) return next()
+  try {
+    const shop = await prisma.barbershop.findUnique({
+      where: { slug },
+      select: { name: true, slug: true, address: true, suspended: true },
+    })
+    if (!shop || shop.suspended) return next()
+
+    const title  = `${shop.name} — Agendamento Online`
+    const desc   = `Marca o teu corte em ${shop.name}${shop.address ? ` em ${shop.address}` : ''}. Agendamento online rápido, sem chamadas nem WhatsApp.`
+    const url    = `${BASE_URL}/${slug}`
+    const ld     = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'HairSalon',
+      name: shop.name,
+      url,
+      ...(shop.address ? { address: { '@type': 'PostalAddress', addressLocality: shop.address } } : {}),
+      potentialAction: { '@type': 'ReserveAction', target: `${url}/booking`, name: 'Agendar corte' },
+    })
+
+    const inject = [
+      `<title>${escHtml(title)}</title>`,
+      `<meta name="description" content="${escHtml(desc)}" />`,
+      `<meta property="og:title" content="${escHtml(title)}" />`,
+      `<meta property="og:description" content="${escHtml(desc)}" />`,
+      `<meta property="og:url" content="${url}" />`,
+      `<meta property="og:type" content="website" />`,
+      `<meta name="twitter:card" content="summary" />`,
+      `<link rel="canonical" href="${url}" />`,
+      `<script type="application/ld+json">${ld}</script>`,
+    ].join('\n    ')
+
+    const html = readIndexHtml().replace(
+      /<title>.*?<\/title>/,
+      inject
+    )
+    res.setHeader('Content-Type', 'text/html; charset=utf-8')
+    res.setHeader('Cache-Control', 'public, max-age=300, stale-while-revalidate=3600')
+    res.send(html)
+  } catch {
+    next()
+  }
+})
 
 app.use((_req, res) => res.status(404).json({ error: 'Route not found' }))
 
