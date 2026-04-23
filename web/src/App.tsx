@@ -7,6 +7,7 @@ import { PageLoader } from '@/components/ui/Spinner'
 import { PlanGate } from '@/components/admin/PlanGate'
 import { useSuperAuthStore } from '@/store/superauth'
 import { useBarberAuthStore } from '@/store/barberAuth'
+import { ToastProvider } from '@/components/ui/Toast'
 
 const LAZY_RETRY_KEY = 'trimio:lazy-route-retry'
 
@@ -167,6 +168,7 @@ function withSuspense(children: ReactNode) {
 export default function App() {
   return (
     <QueryClientProvider client={qc}>
+    <ToastProvider>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={withSuspense(<PlatformHome />)} />
@@ -221,6 +223,7 @@ export default function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
+    </ToastProvider>
     </QueryClientProvider>
   )
 }

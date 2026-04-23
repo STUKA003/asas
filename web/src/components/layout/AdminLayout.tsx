@@ -439,7 +439,9 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
           </Link>
         </div>
       ) : null}
-      {children}
+      <div className="animate-fade-in">
+        {children}
+      </div>
     </PanelShell>
   )
 }

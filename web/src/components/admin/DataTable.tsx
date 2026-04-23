@@ -1,7 +1,7 @@
 import { type ReactNode, type WheelEvent as ReactWheelEvent, useRef } from 'react'
 import { cn, redirectVerticalWheelToParent } from '@/lib/utils'
-import { Spinner } from '@/components/ui/Spinner'
 import { Button } from '@/components/ui/Button'
+import { SkeletonTableRows } from '@/components/ui/Skeleton'
 import { Pencil, SearchX, Trash2 } from 'lucide-react'
 
 export interface Column<T> {
@@ -18,6 +18,7 @@ interface DataTableProps<T> {
   keyExtractor: (row: T) => string
   onRowClick?: (row: T) => void
   emptyMessage?: string
+  emptyDescription?: string
   actions?: (row: T) => ReactNode
 }
 
@@ -38,20 +39,30 @@ function RowActions({ onEdit, onDelete }: { onEdit?: () => void; onDelete?: () =
   )
 }
 
-export function DataTable<T>({ columns, data, loading, keyExtractor, onRowClick, emptyMessage, actions }: DataTableProps<T>) {
+export function DataTable<T>({
+  columns, data, loading, keyExtractor, onRowClick,
+  emptyMessage, emptyDescription, actions,
+}: DataTableProps<T>) {
   const tableScrollRef = useRef<HTMLDivElement>(null)
 
   if (loading) {
-    return <div className="flex justify-center py-16"><Spinner /></div>
+    return <SkeletonTableRows rows={5} cols={columns.length + (actions ? 1 : 0)} />
   }
 
   if (!data.length) {
     return (
-      <div className="flex flex-col items-center justify-center gap-3 py-16">
+      <div className="flex flex-col items-center justify-center gap-3 py-16 px-4">
         <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-neutral-100">
           <SearchX size={20} className="text-ink-muted" />
         </div>
-        <p className="text-sm text-ink-muted">{emptyMessage ?? 'Nenhum item encontrado.'}</p>
+        <div className="text-center">
+          <p className="text-[13.5px] font-medium text-ink">
+            {emptyMessage ?? 'Sem resultados'}
+          </p>
+          {emptyDescription && (
+            <p className="mt-1 text-[12.5px] text-ink-muted">{emptyDescription}</p>
+          )}
+        </div>
       </div>
     )
   }
@@ -77,7 +88,7 @@ export function DataTable<T>({ columns, data, loading, keyExtractor, onRowClick,
             <div className="space-y-3">
               {columns.map((col, index) => (
                 <div key={col.key} className={cn('grid gap-1', index === 0 && 'border-b border-neutral-100 pb-3')}>
-                  <p className="text-[10.5px] font-semibold uppercase tracking-[0.16em] text-ink-muted">
+                  <p className="text-[11px] font-medium text-ink-muted">
                     {col.label}
                   </p>
                   <div className={cn('text-[13.5px] text-ink-soft', col.className)}>
@@ -100,14 +111,14 @@ export function DataTable<T>({ columns, data, loading, keyExtractor, onRowClick,
         <div ref={tableScrollRef} onWheel={handleWheel} className="overflow-x-auto">
           <table className="w-full min-w-[560px]">
             <thead>
-              <tr className="border-b border-neutral-100 bg-neutral-50/80">
+              <tr className="border-b border-neutral-100 bg-neutral-50/60">
                 {columns.map((col) => (
-                  <th key={col.key} className={cn('px-6 py-3 text-left text-[10.5px] font-semibold uppercase tracking-[0.14em] text-ink-muted', col.className)}>
+                  <th key={col.key} className={cn('px-6 py-3 text-left text-[12px] font-medium text-ink-muted', col.className)}>
                     {col.label}
                   </th>
                 ))}
                 {actions && (
-                  <th className="px-6 py-3 text-right text-[10.5px] font-semibold uppercase tracking-[0.14em] text-ink-muted">
+                  <th className="px-6 py-3 text-right text-[12px] font-medium text-ink-muted">
                     Ações
                   </th>
                 )}

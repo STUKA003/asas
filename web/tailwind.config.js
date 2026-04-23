@@ -103,9 +103,10 @@ export default {
         'inner-soft': 'inset 0 1px 0 rgba(255,255,255,0.10)',
       },
       animation: {
-        'fade-in':  'fadeIn  0.15s ease-out',
-        'slide-up': 'slideUp 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
-        'enter':    'enter   0.15s cubic-bezier(0.16, 1, 0.3, 1)',
+        'fade-in':  'fadeIn  0.18s ease-out',
+        'slide-up': 'slideUp 0.22s cubic-bezier(0.16, 1, 0.3, 1)',
+        'enter':    'enter   0.18s cubic-bezier(0.16, 1, 0.3, 1)',
+        'shimmer':  'shimmer 1.6s infinite linear',
       },
       keyframes: {
         fadeIn: {
@@ -113,12 +114,16 @@ export default {
           to:   { opacity: '1' },
         },
         slideUp: {
-          from: { opacity: '0', transform: 'translateY(6px)'  },
+          from: { opacity: '0', transform: 'translateY(8px)'  },
           to:   { opacity: '1', transform: 'translateY(0)'    },
         },
         enter: {
-          from: { opacity: '0', transform: 'scale(0.98) translateY(4px)' },
+          from: { opacity: '0', transform: 'scale(0.97) translateY(6px)' },
           to:   { opacity: '1', transform: 'scale(1)    translateY(0)'   },
+        },
+        shimmer: {
+          from: { backgroundPosition: '-400px 0' },
+          to:   { backgroundPosition: '400px 0' },
         },
       },
     },

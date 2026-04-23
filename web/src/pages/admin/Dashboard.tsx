@@ -5,7 +5,7 @@ import { PageHeader } from '@/components/layout/PanelShell'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { StatusBadge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
-import { PageLoader } from '@/components/ui/Spinner'
+import { SkeletonCard } from '@/components/ui/Skeleton'
 import { formatCurrency, getBookingClientName, toWallClockDate } from '@/lib/utils'
 import { addDays, endOfMonth, format, isWithinInterval, startOfMonth, startOfWeek, subMonths } from 'date-fns'
 import { pt } from 'date-fns/locale'
@@ -45,7 +45,42 @@ export default function Dashboard() {
   const { data: customers     = [], isLoading: l3 } = useQuery({ queryKey: ['customers'],           queryFn: () => customersApi.list() as Promise<Customer[]> })
   const { data: allBookings   = [], isLoading: l4 } = useQuery({ queryKey: ['bookings'],            queryFn: () => bookingsApi.list() as Promise<Booking[]> })
 
-  if (l1 || l2 || l3 || l4) return <AdminLayout><PageLoader /></AdminLayout>
+  const isLoading = l1 || l2 || l3 || l4
+
+  if (isLoading) return (
+    <AdminLayout>
+      <div className="space-y-6">
+        <div className="pb-6">
+          <div className="h-8 w-40 animate-pulse rounded-lg bg-neutral-100" />
+          <div className="mt-2 h-4 w-56 animate-pulse rounded-lg bg-neutral-100" />
+        </div>
+        <div className="grid gap-3.5 md:grid-cols-2 xl:grid-cols-4">
+          <SkeletonCard /><SkeletonCard /><SkeletonCard /><SkeletonCard />
+        </div>
+        <div className="grid gap-5 lg:grid-cols-2">
+          <div className="rounded-2xl border border-neutral-200/70 bg-white p-5">
+            <div className="mb-4 h-4 w-32 animate-pulse rounded-lg bg-neutral-100" />
+            <div className="space-y-3">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <div className="h-10 w-10 animate-pulse rounded-xl bg-neutral-100" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-3.5 w-3/4 animate-pulse rounded bg-neutral-100" />
+                    <div className="h-3 w-1/2 animate-pulse rounded bg-neutral-100" />
+                  </div>
+                  <div className="h-5 w-16 animate-pulse rounded-full bg-neutral-100" />
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="rounded-2xl border border-neutral-200/70 bg-white p-5">
+            <div className="mb-4 h-4 w-32 animate-pulse rounded-lg bg-neutral-100" />
+            <div className="h-36 animate-pulse rounded-xl bg-neutral-100" />
+          </div>
+        </div>
+      </div>
+    </AdminLayout>
+  )
 
   const now = new Date()
   const monthStart         = startOfMonth(now)
