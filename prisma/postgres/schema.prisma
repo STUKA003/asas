@@ -61,6 +61,7 @@ model User {
   email        String
   password     String
   name         String
+  avatar       String?
   role         String     @default("ADMIN")
   emailVerifiedAt DateTime?
   barbershopId String
@@ -239,6 +240,7 @@ model Booking {
   startTime     DateTime
   endTime       DateTime
   status        String        @default("PENDING")
+  attendeeName  String?
   notes         String?
   totalPrice    Float
   totalDuration Int
