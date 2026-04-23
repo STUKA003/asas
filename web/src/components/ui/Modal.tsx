@@ -38,26 +38,26 @@ export function Modal({ open, onClose, title, children, size = 'md' }: ModalProp
       <div
         className={cn(
           'relative flex max-h-[calc(100vh-2rem)] w-full flex-col overflow-hidden',
-          'rounded-3xl border border-neutral-200/70 bg-white animate-enter',
-          'shadow-[0_24px_56px_rgba(0,0,0,0.15),0_6px_16px_rgba(0,0,0,0.07)]',
+          'rounded-2xl border border-neutral-200/60 bg-white animate-enter',
           'sm:max-h-[calc(100vh-4rem)]',
           sizes[size]
         )}
+        style={{ boxShadow: '0 24px 64px rgba(0,0,0,0.16), 0 8px 24px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04)' }}
       >
         {title && (
           <div className="flex items-center justify-between border-b border-neutral-100 px-6 py-4">
-            <h2 className="text-[15px] font-semibold tracking-tight text-ink">{title}</h2>
+            <h2 className="text-[14.5px] font-semibold text-ink" style={{ letterSpacing: '-0.02em' }}>{title}</h2>
             <Button
               variant="ghost"
               size="sm"
               onClick={onClose}
-              className="h-8 w-8 rounded-lg p-0 text-ink-muted hover:text-ink"
+              className="h-7 w-7 rounded-lg p-0 text-ink-muted hover:bg-neutral-100 hover:text-ink"
             >
-              <X size={15} />
+              <X size={14} />
             </Button>
           </div>
         )}
-        <div className="overflow-y-auto px-6 py-6">{children}</div>
+        <div className="overflow-y-auto px-6 py-5">{children}</div>
       </div>
     </div>,
     document.body

@@ -49,15 +49,15 @@ export function PageHeader({
   actions?: React.ReactNode
 }) {
   return (
-    <div className="flex flex-col gap-4 border-b border-neutral-200/70 pb-6 sm:flex-row sm:items-end sm:justify-between">
+    <div className="flex flex-col gap-3 pb-6 sm:flex-row sm:items-start sm:justify-between">
       <div className="min-w-0">
-        <h1 className="text-2xl font-semibold tracking-[-0.03em] text-ink sm:text-[1.65rem]">{title}</h1>
+        <h1 className="text-[1.5rem] font-semibold text-ink sm:text-[1.6rem]" style={{ letterSpacing: '-0.032em' }}>{title}</h1>
         {subtitle ? (
-          <p className="mt-1.5 max-w-2xl text-sm leading-6 text-ink-muted">{subtitle}</p>
+          <p className="mt-1 max-w-2xl text-[13px] leading-relaxed text-ink-muted">{subtitle}</p>
         ) : null}
       </div>
       {actions ? (
-        <div className="flex shrink-0 items-center gap-2.5">{actions}</div>
+        <div className="flex shrink-0 items-center gap-2">{actions}</div>
       ) : null}
     </div>
   )
@@ -146,36 +146,36 @@ export function PanelShell({
 
       {/* ── Brand ── */}
       <div className={cn(
-        'px-4 py-4',
-        isDark ? 'border-b border-white/[0.07]' : 'border-b border-neutral-100'
+        'px-4 py-[14px]',
+        isDark ? 'border-b border-white/[0.06]' : 'border-b border-neutral-100/80'
       )}>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           {brand.logoSrc ? (
             <img
               src={brand.logoSrc}
               alt={brand.name}
-              className="h-10 w-10 shrink-0 rounded-xl object-contain"
+              className="h-9 w-9 shrink-0 rounded-xl object-contain"
             />
           ) : (
             <div className={cn(
-              'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-white',
-              isDark ? 'bg-primary-600/90' : 'bg-ink'
+              'flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-white',
+              isDark ? 'bg-primary-600' : 'bg-[#111116]'
             )}
-              style={{ boxShadow: isDark ? '0 1px 3px rgba(0,0,0,0.4)' : '0 1px 3px rgba(0,0,0,0.15)' }}
+              style={{ boxShadow: isDark ? '0 1px 4px rgba(0,0,0,0.5)' : '0 1px 3px rgba(0,0,0,0.20)' }}
             >
               {brand.icon}
             </div>
           )}
           <div className="min-w-0">
             <p className={cn(
-              'truncate text-[13px] font-semibold leading-tight tracking-[-0.01em]',
+              'truncate text-[13px] font-semibold leading-tight',
               isDark ? 'text-white' : 'text-ink'
-            )}>
+            )} style={{ letterSpacing: '-0.014em' }}>
               {brand.name}
             </p>
             <p className={cn(
               'mt-0.5 truncate text-[11.5px] leading-tight',
-              isDark ? 'text-white/40' : 'text-ink-muted'
+              isDark ? 'text-white/35' : 'text-ink-muted'
             )}>
               {brand.subtitle}
             </p>
@@ -184,14 +184,14 @@ export function PanelShell({
       </div>
 
       {/* ── Nav ── */}
-      <nav className="flex-1 overflow-y-auto px-3 py-4">
-        <div className="space-y-4">
+      <nav className="flex-1 overflow-y-auto px-2.5 py-3">
+        <div className="space-y-5">
           {navSections.map((section, sectionIndex) => (
-            <div key={section.label ?? `section-${sectionIndex}`} className="space-y-0.5">
+            <div key={section.label ?? `section-${sectionIndex}`} className="space-y-px">
               {section.label ? (
                 <p className={cn(
-                  'mb-1.5 px-2.5 text-[10px] font-semibold uppercase tracking-[0.16em]',
-                  isDark ? 'text-white/25' : 'text-ink-muted/70'
+                  'mb-2 px-2.5 text-[10.5px] font-semibold uppercase tracking-[0.12em]',
+                  isDark ? 'text-white/20' : 'text-ink-muted/55'
                 )}>
                   {section.label}
                 </p>
@@ -204,30 +204,30 @@ export function PanelShell({
                     to={item.href}
                     onClick={() => onSidebarOpen(false)}
                     className={cn(
-                      'group flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-[13px] transition-all duration-150',
+                      'group flex items-center gap-2.5 rounded-lg px-2.5 py-[7px] text-[13px] transition-all duration-100',
                       active
                         ? isDark
-                          ? 'bg-white/[0.09] font-semibold text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)]'
-                          : 'bg-primary-50/80 font-semibold text-primary-700 shadow-[inset_0_0_0_1px_rgba(var(--primary-200),0.5)]'
+                          ? 'bg-white/[0.10] font-semibold text-white'
+                          : 'bg-primary-50 font-semibold text-primary-700 shadow-[inset_0_0_0_1px_rgba(var(--primary-200),0.45)]'
                         : item.disabled
                           ? isDark
-                            ? 'cursor-not-allowed font-medium text-white/20'
-                            : 'cursor-not-allowed font-medium text-ink-muted/40'
+                            ? 'cursor-not-allowed font-medium text-white/18'
+                            : 'cursor-not-allowed font-medium text-ink-muted/35'
                           : isDark
-                            ? 'font-medium text-white/55 hover:bg-white/[0.04] hover:text-white/80'
-                            : 'font-medium text-ink-soft hover:bg-neutral-100/80 hover:text-ink'
+                            ? 'font-medium text-white/50 hover:bg-white/[0.05] hover:text-white/80'
+                            : 'font-medium text-ink-muted hover:bg-neutral-100/70 hover:text-ink-soft'
                     )}
                     aria-disabled={item.disabled || undefined}
                   >
                     <item.icon
-                      size={15}
+                      size={14.5}
                       className={cn(
-                        'shrink-0 transition-colors duration-150',
+                        'shrink-0 transition-colors duration-100',
                         active
-                          ? isDark ? 'text-white' : 'text-primary-600'
+                          ? isDark ? 'text-white/90' : 'text-primary-600'
                           : isDark
-                            ? 'text-white/35 group-hover:text-white/70'
-                            : 'text-ink-muted/70 group-hover:text-ink-soft'
+                            ? 'text-white/30 group-hover:text-white/60'
+                            : 'text-ink-muted/60 group-hover:text-ink-muted'
                       )}
                     />
                     <span className="flex-1 truncate">{item.label}</span>
@@ -294,33 +294,33 @@ export function PanelShell({
         <header className={cn(
           'sticky top-0 z-30 backdrop-blur-xl',
           isDark
-            ? 'border-b border-white/[0.07] bg-[#0d0d11]/90'
-            : 'border-b border-neutral-100 bg-white/90'
+            ? 'border-b border-white/[0.06] bg-[#0d0d11]/92'
+            : 'border-b border-neutral-100/90 bg-white/92'
         )}>
-          <div className="mx-auto flex w-full max-w-[1240px] items-center justify-between gap-4 px-4 py-3.5 sm:px-6 lg:px-8">
+          <div className="mx-auto flex w-full max-w-[1240px] items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
             <div className="flex min-w-0 items-center gap-3">
               <button
                 onClick={() => onSidebarOpen(true)}
                 className={cn(
-                  'inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-all duration-150 lg:hidden',
+                  'inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-all duration-100 lg:hidden',
                   isDark
-                    ? 'border border-white/[0.10] bg-white/[0.05] text-white/70 hover:bg-white/[0.09] hover:text-white'
-                    : 'border border-neutral-200 bg-white text-ink-soft shadow-soft hover:bg-neutral-50 hover:text-ink'
+                    ? 'border border-white/[0.09] bg-white/[0.04] text-white/60 hover:bg-white/[0.08] hover:text-white'
+                    : 'border border-neutral-200 bg-white text-ink-muted shadow-soft hover:bg-neutral-50 hover:text-ink-soft'
                 )}
               >
-                <Menu size={16} />
+                <Menu size={15} />
               </button>
               <div className="min-w-0">
                 <p className={cn(
-                  'truncate text-[15px] font-semibold tracking-[-0.02em]',
+                  'truncate text-[14.5px] font-semibold',
                   isDark ? 'text-white' : 'text-ink'
-                )}>
+                )} style={{ letterSpacing: '-0.022em' }}>
                   {topbarTitle}
                 </p>
                 {topbarSubtitle ? (
                   <p className={cn(
-                    'hidden truncate text-[12px] leading-tight sm:block',
-                    isDark ? 'text-white/35' : 'text-ink-muted'
+                    'hidden truncate text-[11.5px] leading-tight sm:block',
+                    isDark ? 'text-white/30' : 'text-ink-muted'
                   )}>
                     {topbarSubtitle}
                   </p>
@@ -328,7 +328,7 @@ export function PanelShell({
               </div>
             </div>
 
-            <div className="flex shrink-0 items-center gap-2.5">
+            <div className="flex shrink-0 items-center gap-2">
               {topbarAction}
               {topbarAside}
             </div>
