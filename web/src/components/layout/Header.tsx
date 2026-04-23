@@ -18,7 +18,6 @@ export function Header() {
   const links = [
     { href: base,               label: 'Início'   },
     { href: `${base}/services`, label: 'Serviços' },
-    { href: `${base}/my-bookings`, label: 'Meus agendamentos' },
     ...(!isFree && barbershop?.showPlans    !== false ? [{ href: `${base}/plans`,    label: 'Planos'   }] : []),
     ...(!isFree && barbershop?.showProducts !== false ? [{ href: `${base}/products`, label: 'Produtos' }] : []),
   ]
