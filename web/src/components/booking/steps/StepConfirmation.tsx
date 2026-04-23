@@ -1,15 +1,15 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { format } from 'date-fns'
 import { pt } from 'date-fns/locale'
 import { publicApi } from '@/lib/publicApi'
 import { useTenant } from '@/providers/TenantProvider'
-import { useBookingStore } from '@/store/booking'
+import { type BookingPartyItem, useBookingStore } from '@/store/booking'
 import { formatCurrency, formatDuration, toWallClockDate } from '@/lib/utils'
 import { buildGoogleCalendarUrl, detectCalendarPlatform, downloadIcsFile } from '@/lib/calendar'
 import { Button } from '@/components/ui/Button'
 import { Avatar } from '@/components/ui/Avatar'
-import { CheckCircle2, Calendar, Clock, Download, ExternalLink, User, Scissors } from 'lucide-react'
+import { Calendar, CheckCircle2, Clock, Download, ExternalLink, Plus, Scissors, Trash2, User } from 'lucide-react'
 
 function getBookingErrorMessage(err: unknown) {
   const apiMessage =
@@ -36,144 +36,256 @@ function getBookingErrorMessage(err: unknown) {
   return apiMessage
 }
 
+type CalendarEvent = {
+  description: string
+  endTime: Date
+  location: string
+  startTime: Date
+  title: string
+}
+
+type CreatedBookingSummary = BookingPartyItem & {
+  managementUrl: string | null
+}
+
+function buildCalendarEvent(item: BookingPartyItem, responsibleName: string, responsiblePhone: string | undefined, barbershopName: string, location: string) {
+  return {
+    title: `${item.service.name} com ${item.barber.name}`,
+    description: [
+      `Reserva em ${barbershopName}.`,
+      `Cliente: ${item.attendeeName}.`,
+      item.attendeeName !== responsibleName ? `Responsável: ${responsibleName}.` : null,
+      responsiblePhone ? `Contacto: ${responsiblePhone}.` : null,
+    ].filter(Boolean).join(' '),
+    location,
+    startTime: toWallClockDate(item.slot.startTime),
+    endTime: new Date(toWallClockDate(item.slot.startTime).getTime() + item.totalDuration * 60 * 1000),
+  }
+}
+
+function BookingDraftCard({
+  item,
+  removable,
+  onRemove,
+}: {
+  item: BookingPartyItem
+  removable?: boolean
+  onRemove?: () => void
+}) {
+  return (
+    <div className="rounded-2xl border border-neutral-200 bg-white p-4 shadow-soft">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-sm font-semibold text-ink">{item.attendeeName}</p>
+          <p className="mt-1 text-xs text-ink-muted">{item.service.name} com {item.barber.name}</p>
+        </div>
+        {removable && onRemove ? (
+          <button
+            type="button"
+            onClick={onRemove}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-neutral-200 text-ink-muted transition hover:border-danger-200 hover:bg-danger-50 hover:text-danger-600"
+          >
+            <Trash2 size={15} />
+          </button>
+        ) : null}
+      </div>
+      <div className="mt-4 grid gap-3 text-sm sm:grid-cols-3">
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">Data</p>
+          <p className="mt-1 font-medium text-ink">{format(new Date(item.date), "d 'de' MMMM", { locale: pt })}</p>
+        </div>
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">Hora</p>
+          <p className="mt-1 font-medium text-ink">{format(toWallClockDate(item.slot.startTime), 'HH:mm')}</p>
+        </div>
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">Total</p>
+          <p className="mt-1 font-medium text-ink">{formatCurrency(item.totalPrice)}</p>
+        </div>
+      </div>
+      {(item.extras.length > 0 || item.products.length > 0) ? (
+        <p className="mt-3 text-xs text-ink-muted">
+          {[
+            item.extras.length > 0 ? `Extras: ${item.extras.map((extra) => extra.name).join(', ')}` : null,
+            item.products.length > 0 ? `Produtos: ${item.products.map((product) => product.name).join(', ')}` : null,
+          ].filter(Boolean).join(' · ')}
+        </p>
+      ) : null}
+    </div>
+  )
+}
+
 export function StepConfirmation() {
   const store = useBookingStore()
   const { slug, barbershop } = useTenant()
-  const [confirmed, setConfirmed] = useState(false)
   const [bookingError, setBookingError] = useState<string | null>(null)
-  const [managementUrl, setManagementUrl] = useState<string | null>(null)
+  const [createdBookings, setCreatedBookings] = useState<CreatedBookingSummary[]>([])
   const previousStep = 5
 
-  const { service, barber, slot, extras, products, customer, customerPlan } = store
-  const bookingClientName = customer?.attendeeName || customer?.name || ''
-  const responsibleName = customer?.name || ''
-  const isManagedByResponsible = !!customer?.isForSomeoneElse && customer.attendeeName !== customer.name
+  const {
+    addPartyBooking,
+    barber,
+    customer,
+    customerPlan,
+    date,
+    extras,
+    party,
+    products,
+    removePartyBooking,
+    resetCurrentBooking,
+    service,
+    slot,
+  } = store
 
-  const planServiceIds = new Set(customerPlan?.allowedServices.map((s) => s.id) ?? [])
   const discount = barbershop?.planMemberDiscount ?? 0
+  const planServiceIds = new Set(customerPlan?.allowedServices.map((item) => item.id) ?? [])
   const applyDiscount = (price: number) => customerPlan ? price * (1 - discount / 100) : price
-
   const servicePrice = service ? (planServiceIds.has(service.id) ? 0 : applyDiscount(service.price)) : 0
-  const totalPrice =
+  const currentTotalPrice =
     servicePrice +
-    extras.reduce((s, e) => s + applyDiscount(e.price), 0) +
-    products.reduce((s, p) => s + applyDiscount(p.price), 0)
+    extras.reduce((sum, extra) => sum + applyDiscount(extra.price), 0) +
+    products.reduce((sum, product) => sum + applyDiscount(product.price), 0)
+  const currentTotalDuration = (service?.duration ?? 0) + extras.reduce((sum, extra) => sum + extra.duration, 0)
 
-  const totalDuration =
-    (service?.duration ?? 0) + extras.reduce((s, e) => s + e.duration, 0)
+  const currentDraft = useMemo<BookingPartyItem | null>(() => {
+    if (!service || !barber || !date || !slot || !customer?.attendeeName) return null
 
-  const calendarEvent = !slot || !service || !barber
-    ? null
-    : {
-        title: `${service.name} com ${barber.name}`,
-        description: [
-          `Reserva em ${barbershop?.name ?? 'Trimio'}.`,
-          bookingClientName ? `Cliente: ${bookingClientName}.` : null,
-          isManagedByResponsible ? `Responsável: ${responsibleName}.` : null,
-          customer?.phone ? `Contacto: ${customer.phone}.` : null,
-        ].filter(Boolean).join(' '),
-        location: barbershop?.address || barbershop?.name || 'Barbearia',
-        startTime: toWallClockDate(slot.startTime),
-        endTime: new Date(toWallClockDate(slot.startTime).getTime() + totalDuration * 60 * 1000),
-      }
+    return {
+      attendeeName: customer.attendeeName,
+      barber,
+      date,
+      extras,
+      planDiscount: customerPlan ? discount : 0,
+      products,
+      service,
+      serviceCoveredByPlan: planServiceIds.has(service.id),
+      servicePrice,
+      slot,
+      totalDuration: currentTotalDuration,
+      totalPrice: currentTotalPrice,
+    }
+  }, [barber, currentTotalDuration, currentTotalPrice, customer?.attendeeName, customerPlan, date, discount, extras, planServiceIds, products, service, servicePrice, slot])
 
+  const allDrafts = currentDraft ? [...party, currentDraft] : party
+  const overallTotal = allDrafts.reduce((sum, item) => sum + item.totalPrice, 0)
   const calendarPlatform = detectCalendarPlatform()
 
-  function handleCalendarAction() {
-    if (!calendarEvent) return
+  function handleCalendarAction(item: BookingPartyItem) {
+    const event = buildCalendarEvent(
+      item,
+      customer?.name ?? item.attendeeName,
+      customer?.phone,
+      barbershop?.name ?? 'Trimio',
+      barbershop?.address || barbershop?.name || 'Barbearia'
+    )
 
     if (calendarPlatform === 'ios') {
-      downloadIcsFile(calendarEvent, 'reserva-trimio.ics')
+      downloadIcsFile(event, `reserva-${item.attendeeName.toLowerCase().replace(/\s+/g, '-')}.ics`)
       return
     }
 
-    window.open(buildGoogleCalendarUrl(calendarEvent), '_blank', 'noopener,noreferrer')
+    window.open(buildGoogleCalendarUrl(event), '_blank', 'noopener,noreferrer')
   }
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: () =>
-      publicApi(slug).createBooking({
-        barberId:   barber!.id,
-        serviceIds: [service!.id],
-        extraIds:   extras.map((e) => e.id),
-        productIds: products.map((p) => p.id),
-        startTime:  slot!.startTime,
-        customer: {
-          attendeeName: customer!.attendeeName,
-          name:   customer!.name,
-          phone:  customer!.phone,
-          email:  customer!.email,
-          notes:  customer?.notes,
-        },
-      }),
-    onSuccess: (data: { management?: { managementUrl?: string } }) => {
-      setBookingError(null)
-      setManagementUrl(data.management?.managementUrl ?? null)
-      setConfirmed(true)
+  const createBookingsMutation = useMutation({
+    mutationFn: async () => {
+      if (!customer || allDrafts.length === 0) {
+        throw new Error('Completa pelo menos uma reserva antes de confirmar.')
+      }
+
+      const created: CreatedBookingSummary[] = []
+
+      for (const item of allDrafts) {
+        const response = await publicApi(slug).createBooking({
+          barberId: item.barber.id,
+          serviceIds: [item.service.id],
+          extraIds: item.extras.map((extra) => extra.id),
+          productIds: item.products.map((product) => product.id),
+          startTime: item.slot.startTime,
+          customer: {
+            attendeeName: item.attendeeName,
+            email: customer.email,
+            name: customer.name,
+            notes: customer.notes,
+            phone: customer.phone,
+          },
+        })
+
+        created.push({
+          ...item,
+          managementUrl: typeof response?.management?.managementUrl === 'string' ? response.management.managementUrl : null,
+        })
+      }
+
+      return created
     },
-    onError: (err: unknown) => {
-      setBookingError(getBookingErrorMessage(err))
+    onSuccess: (data) => {
+      setBookingError(null)
+      setCreatedBookings(data)
+    },
+    onError: (error: unknown) => {
+      setBookingError(getBookingErrorMessage(error))
     },
   })
 
-  if (confirmed) {
+  function handleAddAnotherPerson() {
+    if (!currentDraft) return
+
+    addPartyBooking(currentDraft)
+    setBookingError(null)
+    resetCurrentBooking({ attendeeName: '', isForSomeoneElse: true })
+    store.setStep(0)
+  }
+
+  if (createdBookings.length > 0) {
     return (
-      <div className="text-center py-8 space-y-4 animate-slide-up">
-        <div className="flex justify-center">
-          <div className="tenant-card flex h-20 w-20 items-center justify-center rounded-full">
-            <CheckCircle2 size={40} className="tenant-ink" />
+      <div className="space-y-5 py-4 animate-slide-up">
+        <div className="text-center">
+          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border border-primary-200 bg-primary-50">
+            <CheckCircle2 size={40} className="text-primary-700" />
           </div>
+          <h2 className="mt-4 text-2xl font-bold">Reservas confirmadas</h2>
+          <p className="mt-2 text-sm text-ink-muted">
+            Criámos {createdBookings.length} reserva{createdBookings.length > 1 ? 's' : ''} para {customer?.name}.
+          </p>
         </div>
-        <div>
-          <h2 className="text-2xl font-bold">Agendado!</h2>
-          <p className="text-zinc-500 mt-2">Seu horário foi confirmado com sucesso.</p>
+
+        <div className="space-y-4">
+          {createdBookings.map((item, index) => (
+            <div key={`${item.slot.startTime}-${item.attendeeName}-${index}`} className="rounded-3xl border border-neutral-200 bg-white p-5 shadow-soft">
+              <BookingDraftCard item={item} />
+              <div className="mt-4 flex flex-col gap-2">
+                <Button onClick={() => handleCalendarAction(item)} className="w-full">
+                  {calendarPlatform === 'ios' ? <Download size={16} /> : <Calendar size={16} />}
+                  {calendarPlatform === 'ios' ? 'Guardar no Calendário' : 'Adicionar ao Google Calendar'}
+                </Button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const event = buildCalendarEvent(
+                      item,
+                      customer?.name ?? item.attendeeName,
+                      customer?.phone,
+                      barbershop?.name ?? 'Trimio',
+                      barbershop?.address || barbershop?.name || 'Barbearia'
+                    )
+                    downloadIcsFile(event, `reserva-${item.attendeeName.toLowerCase().replace(/\s+/g, '-')}.ics`)
+                  }}
+                  className="inline-flex items-center justify-center gap-2 text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-800"
+                >
+                  <ExternalLink size={14} />
+                  Descarregar ficheiro .ics
+                </button>
+                {item.managementUrl ? (
+                  <Button onClick={() => { window.location.href = item.managementUrl! }} variant="secondary" className="w-full">
+                    Gerir reserva de {item.attendeeName}
+                  </Button>
+                ) : null}
+              </div>
+            </div>
+          ))}
         </div>
-        <div className="tenant-card rounded-2xl p-4 text-left space-y-2 text-sm">
-              <p><span className="text-zinc-400">Serviço:</span> <span className="font-medium">{service?.name}</span></p>
-              <p><span className="text-zinc-400">Barbeiro:</span> <span className="font-medium">{barber?.name}</span></p>
-              <p><span className="text-zinc-400">Reserva em nome de:</span> <span className="font-medium">{bookingClientName}</span></p>
-              {isManagedByResponsible ? (
-                <p><span className="text-zinc-400">Responsável:</span> <span className="font-medium">{responsibleName}</span></p>
-              ) : null}
-              {slot && (
-                <p>
-              <span className="text-zinc-400">Data:</span>{' '}
-              <span className="font-medium">
-                {format(toWallClockDate(slot.startTime), "d 'de' MMMM 'às' HH:mm", { locale: pt })}
-              </span>
-            </p>
-          )}
-        </div>
-        {calendarEvent && (
-          <div className="space-y-2">
-            <Button onClick={handleCalendarAction} className="w-full">
-              {calendarPlatform === 'ios' ? <Download size={16} /> : <Calendar size={16} />}
-              {calendarPlatform === 'ios' ? 'Guardar no Calendário' : 'Adicionar ao Google Calendar'}
-            </Button>
-            {calendarPlatform === 'ios' ? (
-              <p className="text-xs text-zinc-500">
-                No iPhone ou iPad vais descarregar um ficheiro de calendário para abrir na app Calendário.
-              </p>
-            ) : (
-              <p className="text-xs text-zinc-500">
-                No Android abrimos o Google Calendar com a reserva pronta para guardar.
-              </p>
-            )}
-            <button
-              type="button"
-              onClick={() => calendarEvent && downloadIcsFile(calendarEvent, 'reserva-trimio.ics')}
-              className="inline-flex items-center justify-center gap-2 text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-800"
-            >
-              <ExternalLink size={14} />
-              Descarregar ficheiro .ics
-            </button>
-          </div>
-        )}
-        {managementUrl && (
-          <Button onClick={() => { window.location.href = managementUrl }} variant="secondary" className="w-full">
-            Gerir esta reserva
-          </Button>
-        )}
+
         <Button onClick={() => { store.reset(); window.location.href = `/${slug}` }} className="w-full">
           Voltar ao início
         </Button>
@@ -184,104 +296,83 @@ export function StepConfirmation() {
   return (
     <div className="space-y-5">
       <div>
-        <h2 className="text-xl font-bold">Confirmar agendamento</h2>
+        <h2 className="text-xl font-bold">Confirmar reservas</h2>
+        <p className="mt-1 text-sm text-ink-muted">
+          O responsável recebe os emails e cada pessoa fica com a sua reserva separada.
+        </p>
       </div>
+
+      {customer ? (
+        <div className="flex items-center gap-3 rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100">
+            <User size={18} className="text-blue-600" />
+          </div>
+          <div>
+            <p className="font-semibold text-sm">{customer.name}</p>
+            <p className="text-xs text-zinc-400">{customer.phone} · {customer.email}</p>
+          </div>
+        </div>
+      ) : null}
 
       <div className="space-y-3">
-        {/* Barber + Service */}
-        <div className="flex items-center gap-3 p-4 bg-zinc-50 dark:bg-zinc-800/50 rounded-2xl">
-          {barber && <Avatar name={barber.name} />}
+        {party.map((item, index) => (
+          <BookingDraftCard
+            key={`${item.slot.startTime}-${item.attendeeName}-${index}`}
+            item={item}
+            removable
+            onRemove={() => removePartyBooking(index)}
+          />
+        ))}
+
+        {currentDraft ? (
+          <div className="rounded-3xl border border-primary-200 bg-primary-50/40 p-4">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <p className="text-sm font-semibold text-primary-800">Reserva atual</p>
+              <span className="rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-primary-700">
+                pronta a adicionar
+              </span>
+            </div>
+            <BookingDraftCard item={currentDraft} />
+          </div>
+        ) : (
+          <div className="rounded-2xl border border-dashed border-neutral-200 bg-neutral-50 px-4 py-8 text-center text-sm text-ink-muted">
+            Falta completar a reserva atual antes de confirmar.
+          </div>
+        )}
+      </div>
+
+      <div className="rounded-2xl border border-neutral-200 bg-white p-4 shadow-soft">
+        <div className="flex items-center justify-between">
           <div>
-            <p className="font-semibold text-sm">{barber?.name}</p>
-            <div className="flex items-center gap-1 text-xs text-zinc-400 mt-0.5">
-              <Scissors size={11} /> {service?.name}
-            </div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-ink-muted">Total do grupo</p>
+            <p className="mt-1 text-2xl font-semibold tracking-tight text-ink">{formatCurrency(overallTotal)}</p>
           </div>
-        </div>
-
-        {/* Date/time */}
-        {slot && (
-          <div className="tenant-card flex items-center gap-3 rounded-2xl p-4">
-            <div className="tenant-soft-icon flex h-10 w-10 items-center justify-center rounded-xl">
-              <Calendar size={18} />
-            </div>
-            <div>
-              <p className="font-semibold text-sm capitalize">
-                {format(toWallClockDate(slot.startTime), "EEEE, d 'de' MMMM", { locale: pt })}
-              </p>
-              <div className="flex items-center gap-1 text-xs text-zinc-400 mt-0.5">
-                <Clock size={11} /> {format(toWallClockDate(slot.startTime), 'HH:mm')} — {formatDuration(totalDuration)}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Customer */}
-        {customer && (
-          <div className="flex items-center gap-3 p-4 bg-zinc-50 dark:bg-zinc-800/50 rounded-2xl">
-            <div className="h-10 w-10 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
-              <User size={18} className="text-blue-600" />
-            </div>
-            <div>
-              <p className="font-semibold text-sm">{bookingClientName}</p>
-              {isManagedByResponsible ? (
-                <p className="text-xs text-zinc-400">Responsável: {responsibleName}</p>
-              ) : null}
-              <p className="text-xs text-zinc-400">{customer.phone}</p>
-            </div>
-          </div>
-        )}
-
-        {/* Pricing breakdown */}
-        <div className="tenant-card rounded-2xl p-4 space-y-2 text-sm">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-2 text-zinc-500">
-              <span>{service?.name}</span>
-              {service && planServiceIds.has(service.id) && (
-                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-violet-100 text-violet-700">plano</span>
-              )}
-            </div>
-            <div className="flex items-center gap-1.5">
-              {service && planServiceIds.has(service.id) && (
-                <span className="line-through text-zinc-400 text-xs">{formatCurrency(service.price)}</span>
-              )}
-              <span>{formatCurrency(servicePrice)}</span>
-            </div>
-          </div>
-          {extras.map((e) => (
-            <div key={e.id} className="flex justify-between items-center text-zinc-500">
-              <span>+ {e.name}</span>
-              <div className="flex items-center gap-1.5">
-                {customerPlan && discount > 0 && <span className="line-through text-xs text-zinc-400">{formatCurrency(e.price)}</span>}
-                <span>{formatCurrency(applyDiscount(e.price))}</span>
-              </div>
-            </div>
-          ))}
-          {products.map((p) => (
-            <div key={p.id} className="flex justify-between items-center text-zinc-500">
-              <span>{p.name}</span>
-              <div className="flex items-center gap-1.5">
-                {customerPlan && discount > 0 && <span className="line-through text-xs text-zinc-400">{formatCurrency(p.price)}</span>}
-                <span>{formatCurrency(applyDiscount(p.price))}</span>
-              </div>
-            </div>
-          ))}
-          <div className="border-t border-zinc-200 dark:border-zinc-700 pt-2 flex justify-between font-bold">
-            <span>Total</span>
-            <span className="tenant-ink">{formatCurrency(totalPrice)}</span>
+          <div className="text-right">
+            <p className="text-sm font-medium text-ink">{allDrafts.length} reserva{allDrafts.length !== 1 ? 's' : ''}</p>
+            <p className="text-xs text-ink-muted">Criadas separadamente no calendário</p>
           </div>
         </div>
       </div>
 
-      {bookingError && (
-        <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl text-sm text-red-600 dark:text-red-400">
+      {bookingError ? (
+        <div className="rounded-xl border border-red-200 bg-red-50 px-3 py-3 text-sm text-red-700">
           {bookingError}
         </div>
-      )}
+      ) : null}
 
-      <div className="flex justify-between pt-2">
-        <Button variant="outline" onClick={() => store.setStep(previousStep)}>Voltar</Button>
-        <Button loading={isPending} onClick={() => mutate()}>Confirmar agendamento</Button>
+      <div className="flex flex-col gap-3 sm:flex-row sm:justify-between">
+        <Button variant="outline" onClick={() => store.setStep(previousStep)}>
+          Voltar
+        </Button>
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <Button variant="secondary" disabled={!currentDraft} onClick={handleAddAnotherPerson}>
+            <Plus size={15} />
+            Adicionar outra pessoa
+          </Button>
+          <Button loading={createBookingsMutation.isPending} disabled={allDrafts.length === 0} onClick={() => createBookingsMutation.mutate()}>
+            Confirmar {allDrafts.length > 1 ? 'reservas' : 'reserva'}
+          </Button>
+        </div>
       </div>
     </div>
   )

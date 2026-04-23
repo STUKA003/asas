@@ -53,13 +53,14 @@ export function StepCustomer() {
   const isForSomeoneElse = watch('isForSomeoneElse') ?? false
   const name = watch('name') ?? ''
   const attendeeName = watch('attendeeName') ?? ''
+  const shouldLookupPlan = !isForSomeoneElse && attendeeName.trim().toLowerCase() === name.trim().toLowerCase()
   const { data: customerLookup } = useQuery({
     queryKey: ['public', slug, 'customer-plan', phone, name],
     queryFn: () => publicApi(slug).customerPlan({ phone: phone.trim(), name: name.trim() }),
-    enabled: !!slug && phone.trim().length >= 8 && name.trim().length >= 2,
+    enabled: !!slug && shouldLookupPlan && phone.trim().length >= 8 && name.trim().length >= 2,
   })
 
-  const knownCustomer = (customerLookup as CustomerPlanLookup | undefined)?.customer
+  const knownCustomer = shouldLookupPlan ? (customerLookup as CustomerPlanLookup | undefined)?.customer : null
   const plan = knownCustomer?.plan ?? null
 
   // Atualiza o plano no store assim que o lookup resolve — o BookingSummary fica logo correto
