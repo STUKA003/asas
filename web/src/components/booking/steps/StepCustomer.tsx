@@ -14,7 +14,7 @@ import type { CustomerPlanLookup } from '@/lib/types'
 const schema = z.object({
   name:  z.string().min(2, 'Nome obrigatório'),
   phone: z.string().min(10, 'Telefone obrigatório'),
-  email: z.string().email('E-mail inválido').optional().or(z.literal('')),
+  email: z.string().min(1, 'E-mail obrigatório').email('E-mail inválido'),
   notes: z.string().optional(),
 })
 type FormData = z.infer<typeof schema>
@@ -120,17 +120,12 @@ export function StepCustomer() {
           )}
         />
         <Input
-          label="E-mail (opcional)"
+          label="E-mail"
           type="email"
           placeholder="joao@example.com"
           error={errors.email?.message}
           {...register('email')}
         />
-        {!watch('email') && (
-          <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-3 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-200">
-            Se não colocares email e perderes o link da reserva, não vais conseguir receber novamente o acesso seguro para gerir online.
-          </div>
-        )}
         <Textarea
           label="Observações (opcional)"
           placeholder="Alguma preferência ou informação adicional..."

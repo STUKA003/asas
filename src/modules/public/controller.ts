@@ -277,7 +277,7 @@ const bookingSchema = z.object({
   customer: z.object({
     name: z.string().min(2),
     phone: z.string().min(8),
-    email: z.string().email().optional().or(z.literal('')),
+    email: z.string().min(1).email(),
     notes: z.string().optional(),
   }),
 })
