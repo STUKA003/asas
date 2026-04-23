@@ -1,9 +1,10 @@
+import { useRef, type WheelEvent as ReactWheelEvent } from 'react'
 import { endOfMonth, format, startOfMonth, startOfYear, subDays, subMonths } from 'date-fns'
 import { pt } from 'date-fns/locale'
 import { Activity, CreditCard, TrendingUp, Users } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { PageLoader } from '@/components/ui/Spinner'
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, redirectVerticalWheelToParent } from '@/lib/utils'
 
 export interface PlanReport {
   period: { from: string; to: string }
@@ -61,6 +62,7 @@ export function PlanReportPanel({
   onPeriodChange,
   actions,
 }: PlanReportPanelProps) {
+  const tableScrollRef = useRef<HTMLDivElement>(null)
 
   if (isLoading) {
     return (
@@ -82,6 +84,10 @@ export function PlanReportPanel({
         </CardContent>
       </Card>
     )
+  }
+
+  function handleWheel(event: ReactWheelEvent<HTMLDivElement>) {
+    redirectVerticalWheelToParent(event, tableScrollRef.current)
   }
 
   if (!report) {
@@ -139,7 +145,7 @@ export function PlanReportPanel({
             <div className="border-b border-zinc-100 px-4 py-3 dark:border-zinc-800">
               <p className="font-semibold">Desempenho por plano</p>
             </div>
-            <div className="overflow-x-auto px-4 py-2">
+            <div ref={tableScrollRef} onWheel={handleWheel} className="overflow-x-auto px-4 py-2">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-zinc-100 dark:border-zinc-800">

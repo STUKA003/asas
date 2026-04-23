@@ -254,13 +254,13 @@ export function PanelShell({
 
   return (
     <div className={cn(
-      'flex min-h-screen',
+      'flex min-h-[100dvh] overflow-hidden lg:h-[100dvh]',
       isDark ? 'bg-[#0d0d11]' : 'bg-[#f7f7fa]'
     )}>
 
       {/* ── Desktop sidebar ── */}
       <aside className={cn(
-        'hidden w-64 shrink-0 lg:flex lg:flex-col',
+        'hidden w-64 shrink-0 lg:flex lg:h-full lg:flex-col',
         isDark
           ? 'border-r border-white/[0.07] bg-[#111116]'
           : 'border-r border-neutral-100 bg-white'
@@ -288,7 +288,7 @@ export function PanelShell({
       ) : null}
 
       {/* ── Main content ── */}
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
 
         {/* ── Topbar ── */}
         <header className={cn(
@@ -338,7 +338,7 @@ export function PanelShell({
         {/* ── Page content ── */}
         <main
           ref={mainRef}
-          className="relative flex-1 overflow-y-auto overscroll-y-contain"
+          className="relative min-h-0 flex-1 overflow-y-auto overscroll-y-contain"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}

@@ -1,5 +1,5 @@
-import { type ReactNode } from 'react'
-import { cn } from '@/lib/utils'
+import { type ReactNode, type WheelEvent as ReactWheelEvent, useRef } from 'react'
+import { cn, redirectVerticalWheelToParent } from '@/lib/utils'
 import { Spinner } from '@/components/ui/Spinner'
 import { Button } from '@/components/ui/Button'
 import { Pencil, SearchX, Trash2 } from 'lucide-react'
@@ -39,6 +39,8 @@ function RowActions({ onEdit, onDelete }: { onEdit?: () => void; onDelete?: () =
 }
 
 export function DataTable<T>({ columns, data, loading, keyExtractor, onRowClick, emptyMessage, actions }: DataTableProps<T>) {
+  const tableScrollRef = useRef<HTMLDivElement>(null)
+
   if (loading) {
     return <div className="flex justify-center py-16"><Spinner /></div>
   }
@@ -52,6 +54,10 @@ export function DataTable<T>({ columns, data, loading, keyExtractor, onRowClick,
         <p className="text-sm text-ink-muted">{emptyMessage ?? 'Nenhum item encontrado.'}</p>
       </div>
     )
+  }
+
+  function handleWheel(event: ReactWheelEvent<HTMLDivElement>) {
+    redirectVerticalWheelToParent(event, tableScrollRef.current)
   }
 
   return (
@@ -91,7 +97,7 @@ export function DataTable<T>({ columns, data, loading, keyExtractor, onRowClick,
 
       {/* ── Desktop table ─────────────────────────────── */}
       <div className="hidden overflow-hidden md:block">
-        <div className="overflow-x-auto">
+        <div ref={tableScrollRef} onWheel={handleWheel} className="overflow-x-auto">
           <table className="w-full min-w-[560px]">
             <thead>
               <tr className="border-b border-neutral-100 bg-neutral-50/80">

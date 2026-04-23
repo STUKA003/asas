@@ -1,6 +1,12 @@
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 
+interface VerticalWheelEventLike {
+  deltaX: number
+  deltaY: number
+  preventDefault: () => void
+}
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
@@ -28,4 +34,28 @@ export function toWallClockDate(value: string | Date) {
     date.getUTCSeconds(),
     date.getUTCMilliseconds()
   )
+}
+
+export function findScrollableParent(element: HTMLElement | null) {
+  let current = element?.parentElement ?? null
+
+  while (current) {
+    const style = window.getComputedStyle(current)
+    const canScrollY = /(auto|scroll|overlay)/.test(style.overflowY)
+
+    if (canScrollY && current.scrollHeight > current.clientHeight) return current
+    current = current.parentElement
+  }
+
+  return document.scrollingElement as HTMLElement | null
+}
+
+export function redirectVerticalWheelToParent(event: VerticalWheelEventLike, element: HTMLElement | null) {
+  if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return
+
+  const scrollParent = findScrollableParent(element)
+  if (!scrollParent) return
+
+  scrollParent.scrollBy({ top: event.deltaY })
+  event.preventDefault()
 }

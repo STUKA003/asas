@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { WheelEvent as ReactWheelEvent } from 'react'
 import { format, isToday } from 'date-fns'
-import { cn, formatCurrency, toWallClockDate } from '@/lib/utils'
+import { cn, formatCurrency, redirectVerticalWheelToParent, toWallClockDate } from '@/lib/utils'
 import type { Booking, Barber, BlockedTime } from '@/lib/types'
 
 const HOUR_START  = 8
@@ -38,20 +38,6 @@ const STATUS_STYLES: Record<string, { bar: string; bg: string; text: string }> =
 }
 
 interface DragOver { barberId: string; top: number; label: string }
-
-function findScrollableParent(element: HTMLElement | null) {
-  let current = element?.parentElement ?? null
-
-  while (current) {
-    const style = window.getComputedStyle(current)
-    const canScrollY = /(auto|scroll|overlay)/.test(style.overflowY)
-
-    if (canScrollY && current.scrollHeight > current.clientHeight) return current
-    current = current.parentElement
-  }
-
-  return document.scrollingElement as HTMLElement | null
-}
 
 export interface EffectiveWorkingHour {
   startTime: string
@@ -135,13 +121,7 @@ export function CalendarView({ date, bookings, barbers, blockedTimes = [], effec
   }, [blockedTimes, barbers])
 
   function handleWheel(event: ReactWheelEvent<HTMLDivElement>) {
-    if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return
-
-    const scrollParent = findScrollableParent(containerRef.current)
-    if (!scrollParent) return
-
-    scrollParent.scrollBy({ top: event.deltaY })
-    event.preventDefault()
+    redirectVerticalWheelToParent(event, containerRef.current)
   }
 
   function getStyle(bk: Booking) {

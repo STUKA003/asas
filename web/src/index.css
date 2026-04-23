@@ -68,9 +68,11 @@
   * { @apply border-neutral-200; }
   *::before, *::after { box-sizing: border-box; }
   html { color-scheme: light; }
+  html, body, #root { height: 100%; }
 
   body {
     @apply bg-[#fafafc] font-sans text-ink antialiased;
+    min-height: 100%;
     font-feature-settings: "cv02","cv03","cv04","cv11";
     background-image:
       radial-gradient(ellipse 80% 40% at 50% -8%, rgba(var(--primary-200), 0.10) 0%, transparent 100%);
