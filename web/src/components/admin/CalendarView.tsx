@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import type { WheelEvent as ReactWheelEvent } from 'react'
 import { format, isToday } from 'date-fns'
 import { cn, formatCurrency, toWallClockDate } from '@/lib/utils'
 import type { Booking, Barber, BlockedTime } from '@/lib/types'
@@ -37,6 +38,20 @@ const STATUS_STYLES: Record<string, { bar: string; bg: string; text: string }> =
 }
 
 interface DragOver { barberId: string; top: number; label: string }
+
+function findScrollableParent(element: HTMLElement | null) {
+  let current = element?.parentElement ?? null
+
+  while (current) {
+    const style = window.getComputedStyle(current)
+    const canScrollY = /(auto|scroll|overlay)/.test(style.overflowY)
+
+    if (canScrollY && current.scrollHeight > current.clientHeight) return current
+    current = current.parentElement
+  }
+
+  return document.scrollingElement as HTMLElement | null
+}
 
 export interface EffectiveWorkingHour {
   startTime: string
@@ -118,6 +133,16 @@ export function CalendarView({ date, bookings, barbers, blockedTimes = [], effec
 
     return map
   }, [blockedTimes, barbers])
+
+  function handleWheel(event: ReactWheelEvent<HTMLDivElement>) {
+    if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return
+
+    const scrollParent = findScrollableParent(containerRef.current)
+    if (!scrollParent) return
+
+    scrollParent.scrollBy({ top: event.deltaY })
+    event.preventDefault()
+  }
 
   function getStyle(bk: Booking) {
     const d    = toWallClockDate(bk.startTime)
@@ -333,7 +358,11 @@ export function CalendarView({ date, bookings, barbers, blockedTimes = [], effec
   }
 
   return (
-    <div ref={containerRef} className="overflow-x-auto rounded-[1.75rem] border border-zinc-200/70 bg-white/92 shadow-[0_20px_45px_-32px_rgba(15,23,42,0.35)] backdrop-blur-sm">
+    <div
+      ref={containerRef}
+      onWheel={handleWheel}
+      className="overflow-x-auto rounded-[1.75rem] border border-zinc-200/70 bg-white/92 shadow-[0_20px_45px_-32px_rgba(15,23,42,0.35)] backdrop-blur-sm"
+    >
       {/* ── Header ── */}
       <div className="sticky top-0 z-20 flex border-b border-zinc-100 bg-white/95 backdrop-blur-xl">
         <div className="w-14 shrink-0" />
