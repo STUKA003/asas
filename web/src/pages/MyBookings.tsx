@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { format, isFuture, isToday } from 'date-fns'
 import { pt } from 'date-fns/locale'
-import { Calendar, Clock3, ExternalLink, RefreshCw, Scissors, Search } from 'lucide-react'
+import { Calendar, Clock3, Mail, Scissors, Search, ShieldCheck } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Footer } from '@/components/layout/Footer'
 import { Header } from '@/components/layout/Header'
@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/Button'
 import { PhoneInput } from '@/components/ui/PhoneInput'
 import { PageLoader } from '@/components/ui/Spinner'
 import { publicApi } from '@/lib/publicApi'
-import type { ManagedBooking } from '@/lib/types'
+import type { CustomerBookingSummary } from '@/lib/types'
 import { formatDuration, toWallClockDate } from '@/lib/utils'
 import { useTenant } from '@/providers/TenantProvider'
 
@@ -76,8 +76,7 @@ export default function MyBookings() {
                   Meus agendamentos
                 </h1>
                 <p className="mt-3 text-sm leading-6 text-ink-muted">
-                  Consulta as tuas marcações na {barbershop?.name ?? 'barbearia'}, abre a gestão individual e confirma,
-                  remarca ou cancela quando precisares.
+                  Consulta as tuas marcações na {barbershop?.name ?? 'barbearia'} e confirma rapidamente se tens reservas futuras ou histórico recente.
                 </p>
 
                 <form onSubmit={handleSubmit} className="mt-6 space-y-4 rounded-2xl border border-neutral-200 bg-neutral-50 p-5">
@@ -108,7 +107,7 @@ export default function MyBookings() {
                 </form>
 
                 <div className="mt-5 rounded-2xl border border-primary-100 bg-primary-50/70 p-4 text-sm text-primary-700">
-                  Cada reserva abre a sua própria página de gestão segura, onde consegues confirmar presença, cancelar ou remarcar.
+                  A gestão sensível da reserva fica protegida por um link seguro gerado no momento da marcação. Esta área serve apenas para localizar as tuas reservas.
                 </div>
               </section>
 
@@ -155,8 +154,8 @@ export default function MyBookings() {
                     </div>
 
                     <div className="space-y-5">
-                      <BookingSection title="Próximas marcações" bookings={upcomingBookings} slug={slug} emptyMessage="Sem marcações futuras neste momento." />
-                      <BookingSection title="Histórico recente" bookings={pastBookings} slug={slug} emptyMessage="Sem histórico recente para mostrar." />
+                      <BookingSection title="Próximas marcações" bookings={upcomingBookings} emptyMessage="Sem marcações futuras neste momento." />
+                      <BookingSection title="Histórico recente" bookings={pastBookings} emptyMessage="Sem histórico recente para mostrar." />
                     </div>
                   </>
                 )}
@@ -173,12 +172,10 @@ export default function MyBookings() {
 function BookingSection({
   title,
   bookings,
-  slug,
   emptyMessage,
 }: {
   title: string
-  bookings: ManagedBooking[]
-  slug: string
+  bookings: CustomerBookingSummary[]
   emptyMessage: string
 }) {
   return (
@@ -217,13 +214,21 @@ function BookingSection({
                     </p>
                   </div>
                 </div>
-
-                <Link to={`/${slug}/booking/manage?token=${booking.management.managementToken}`} className="shrink-0">
-                  <Button variant={booking.canCancel || booking.canConfirm || booking.canReschedule ? 'primary' : 'secondary'}>
-                    {booking.canCancel || booking.canConfirm || booking.canReschedule ? <RefreshCw size={16} /> : <ExternalLink size={16} />}
-                    Gerir reserva
-                  </Button>
-                </Link>
+                <div className="max-w-xs rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm text-ink-muted">
+                  <p className="flex items-center gap-2 font-medium text-ink">
+                    <ShieldCheck size={15} className="text-primary-600" />
+                    Gestão protegida
+                  </p>
+                  <p className="mt-2 leading-6">
+                    Para confirmar, remarcar ou cancelar, usa o link seguro recebido no momento da marcação.
+                  </p>
+                  {booking.customer.email ? (
+                    <p className="mt-2 inline-flex items-center gap-1.5 text-[12.5px] text-ink-muted">
+                      <Mail size={13} />
+                      Também podemos usar email e notificações mais à frente.
+                    </p>
+                  ) : null}
+                </div>
               </div>
             </div>
           ))}

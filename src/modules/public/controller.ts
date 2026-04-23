@@ -211,7 +211,7 @@ export async function lookupCustomerBookings(req: Request, res: Response) {
 
   res.json({
     customer,
-    bookings: bookings.map((booking) => serializeManagedBooking(req.params.slug, booking)),
+    bookings,
   })
 }
 

@@ -922,9 +922,9 @@ test('public customer booking lookup returns managed bookings for the matching c
   assert.equal(rightLookup.body.bookings[0].id, booking.id)
   assert.equal(rightLookup.body.bookings[0].barber.name, 'Barber Lookup')
   assert.equal(rightLookup.body.bookings[0].services[0].service.name, 'Corte premium')
-  assert.equal(typeof rightLookup.body.bookings[0].management.managementToken, 'string')
-  assert.equal(rightLookup.body.bookings[0].canCancel, true)
-  assert.equal(rightLookup.body.bookings[0].canReschedule, true)
+  assert.equal('management' in rightLookup.body.bookings[0], false)
+  assert.equal('canCancel' in rightLookup.body.bookings[0], false)
+  assert.equal('canReschedule' in rightLookup.body.bookings[0], false)
 })
 
 test('public barber listing only exposes minimal public fields', { skip: !integrationEnabled }, async () => {
