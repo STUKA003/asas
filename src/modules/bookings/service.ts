@@ -98,7 +98,7 @@ export async function createBooking(input: CreateBookingInput) {
 
   const totalDuration =
     services.reduce((sum, s) => sum + s.duration, 0) +
-    extras.reduce((sum, e) => sum + e.duration, 0)
+    extras.reduce((sum, e) => sum + (e.fitsInService ? 0 : e.duration), 0)
 
   // Desconto para membros do plano (em serviços fora do plano, extras e produtos)
   const discountPct = customer.plan ? (barbershop?.planMemberDiscount ?? 0) : 0

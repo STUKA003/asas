@@ -1,0 +1,1 @@
+ALTER TABLE "Extra" ADD COLUMN "fitsInService" BOOLEAN NOT NULL DEFAULT false;

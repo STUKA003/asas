@@ -158,12 +158,13 @@ model Service {
 }
 
 model Extra {
-  id           String     @id @default(cuid())
-  name         String
-  description  String?
-  price        Float
-  duration     Int        @default(0)
-  active       Boolean    @default(true)
+  id             String     @id @default(cuid())
+  name           String
+  description    String?
+  price          Float
+  duration       Int        @default(0)
+  fitsInService  Boolean    @default(false)
+  active         Boolean    @default(true)
   barbershopId String
   barbershop   Barbershop @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
   createdAt    DateTime   @default(now())

@@ -22,7 +22,7 @@ export function BookingSummary() {
     extraPrices.reduce((s, e) => s + e.effectivePrice, 0) +
     productPrices.reduce((s, p) => s + p.effectivePrice, 0)
 
-  const duration = service.duration + extras.reduce((s, e) => s + e.duration, 0)
+  const duration = service.duration + extras.reduce((s, e) => s + (e.fitsInService ? 0 : e.duration), 0)
   const lines = [
     date ? { icon: CalendarDays, label: 'Data', value: new Date(date).toLocaleDateString('pt-PT', { day: '2-digit', month: 'long' }) } : null,
     slot ? { icon: Clock, label: 'Hora', value: toWallClockDate(slot.startTime).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' }) } : null,

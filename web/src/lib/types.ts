@@ -24,7 +24,7 @@ export interface Service {
   id: string; name: string; description?: string; price: number; duration: number; active: boolean
 }
 export interface Extra {
-  id: string; name: string; description?: string; price: number; duration: number; active: boolean
+  id: string; name: string; description?: string; price: number; duration: number; fitsInService: boolean; active: boolean
 }
 export interface Product {
   id: string; name: string; description?: string; imageUrl?: string; price: number; stock: number; active: boolean

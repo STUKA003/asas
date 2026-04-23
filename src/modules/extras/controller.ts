@@ -8,6 +8,7 @@ const schema = z.object({
   description: z.string().optional(),
   price: z.number().positive(),
   duration: z.number().int().min(0).default(0),
+  fitsInService: z.boolean().optional(),
   active: z.boolean().optional(),
 })
 

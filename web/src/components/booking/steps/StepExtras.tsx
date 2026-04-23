@@ -52,9 +52,14 @@ export function StepExtras() {
                 {e.description && <p className="text-xs text-zinc-400 mt-0.5">{e.description}</p>}
                 <div className="flex items-center gap-3 mt-2">
                   <span className="tenant-ink text-sm font-bold">{formatCurrency(e.price)}</span>
-                  {e.duration > 0 && (
+                  {e.duration > 0 && !e.fitsInService && (
                     <span className="flex items-center gap-1 text-xs text-zinc-400">
                       <Clock size={11} /> +{formatDuration(e.duration)}
+                    </span>
+                  )}
+                  {e.fitsInService && (
+                    <span className="flex items-center gap-1 text-xs text-emerald-600 font-medium">
+                      <Clock size={11} /> incluído no serviço
                     </span>
                   )}
                 </div>

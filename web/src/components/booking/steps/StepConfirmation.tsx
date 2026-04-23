@@ -66,7 +66,7 @@ export function StepConfirmation() {
     servicePrice +
     extras.reduce((sum, extra) => sum + applyDiscount(extra.price), 0) +
     products.reduce((sum, product) => sum + applyDiscount(product.price), 0)
-  const totalDuration = (service?.duration ?? 0) + extras.reduce((sum, extra) => sum + extra.duration, 0)
+  const totalDuration = (service?.duration ?? 0) + extras.reduce((sum, extra) => sum + (extra.fitsInService ? 0 : extra.duration), 0)
 
   const draft = useMemo<BookingDraft | null>(() => {
     if (!service || !barber || !date || !slot || !customer?.attendeeName) return null
