@@ -1,63 +1,285 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
-  ArrowRight, CalendarClock, BarChart2,
-  Scissors, Store, Users, CheckCircle2,
+  ArrowRight, Check, ChevronDown,
+  Calendar, Users, BarChart2, Smartphone,
+  MessageSquareOff, PhoneOff, Clock, Star,
 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { applyPlatformAccent } from '@/lib/theme'
 import platformLogo from '@/assets/branding/platform-logo.png'
 import { useInstallBrand } from '@/lib/installBrand'
+import { cn } from '@/lib/utils'
 
-const features = [
+/* ─── Data ────────────────────────────────────────────────────── */
+
+const pains = [
   {
-    icon: Store,
-    title: 'Página pública da barbearia',
-    text: 'Link próprio com serviços, galeria, horários e botão de reserva. Pronto a partilhar.',
+    icon: MessageSquareOff,
+    title: 'WhatsApp a transbordar',
+    text: 'Dezenas de mensagens por dia só para marcar e remarcar. E ainda há as que ficam sem resposta.',
   },
   {
-    icon: CalendarClock,
-    title: 'Agendamento online',
-    text: 'Os clientes escolhem serviço, barbeiro, data e hora. Sem chamadas, sem mensagens.',
+    icon: PhoneOff,
+    title: 'Chamadas na hora errada',
+    text: 'O telefone toca quando tens uma tesoura na mão. E às 22h já não atendeste — o cliente foi à concorrência.',
+  },
+  {
+    icon: Clock,
+    title: 'Sem visibilidade do negócio',
+    text: 'Não sabes quanto vais ganhar esta semana, quem está a trabalhar ou se tens agenda para amanhã.',
+  },
+]
+
+const benefits = [
+  {
+    icon: Calendar,
+    title: 'Agenda sempre organizada',
+    text: 'Os clientes escolhem serviço, barbeiro, dia e hora — sem te interromper. Funciona 24h por dia.',
   },
   {
     icon: Users,
-    title: 'Gestão de equipa e agenda',
-    text: 'Barbeiros com portal próprio, horários configuráveis e vista de agenda em tempo real.',
+    title: 'Equipa na mesma página',
+    text: 'Cada barbeiro vê a sua agenda no telemóvel. Tu vês tudo numa vista de calendário em tempo real.',
+  },
+  {
+    icon: Smartphone,
+    title: 'Página pública pronta a usar',
+    text: 'O teu link personalizado com serviços, galeria e botão de reserva. Partilha no Instagram e está feito.',
   },
   {
     icon: BarChart2,
-    title: 'Relatórios e clientes',
-    text: 'Histórico de reservas, faturação estimada e base de clientes centralizada.',
+    title: 'Dados que fazem sentido',
+    text: 'Relatórios de faturação, histórico de clientes e taxa de cancelamentos — tudo num só painel.',
   },
 ]
 
-const steps = [
-  { n: '1', title: 'Cria a barbearia',    desc: 'Nome, endereço e link em menos de 2 minutos.' },
-  { n: '2', title: 'Configura o negócio', desc: 'Barbeiros, serviços, horários e preços.' },
-  { n: '3', title: 'Partilha e recebe',   desc: 'Partilha o link e as reservas chegam sozinhas.' },
+const testimonials = [
+  {
+    name: 'Ricardo Fernandes',
+    role: 'Studio RF · Lisboa',
+    stars: 5,
+    text: 'Antes atendia marcações pelo WhatsApp até à meia-noite. Agora os clientes marcam sozinhos quando querem. Libertou-me completamente.',
+  },
+  {
+    name: 'Diogo Almeida',
+    role: 'Barber House · Porto',
+    stars: 5,
+    text: 'Tenho 3 barbeiros e a gestão de horários era um caos. Em 15 minutos de configuração, o problema desapareceu.',
+  },
+  {
+    name: 'Carlos Mendes',
+    role: 'Fade Studio · Braga',
+    stars: 5,
+    text: 'Os clientes adoram poder escolher o barbeiro preferido. As faltas reduziram e os comentários do Instagram aumentaram.',
+  },
 ]
+
+const plans = [
+  {
+    id: 'FREE',
+    name: 'Grátis',
+    price: '0€',
+    period: 'para sempre',
+    highlight: false,
+    description: 'Para testar sem risco.',
+    features: [
+      '1 barbeiro',
+      '30 reservas por mês',
+      'Página pública com booking',
+      'Painel de gestão completo',
+      'Sem cartão de crédito',
+    ],
+    cta: 'Começar grátis',
+    note: null,
+  },
+  {
+    id: 'BASIC',
+    name: 'Básico',
+    price: '19€',
+    period: 'por mês',
+    highlight: true,
+    description: 'Para barbearias a crescer.',
+    features: [
+      'Até 3 barbeiros',
+      'Reservas ilimitadas',
+      'Extras e produtos',
+      'Planos de subscrição para clientes',
+      'Relatórios de negócio',
+      'Suporte prioritário',
+    ],
+    cta: 'Começar grátis',
+    note: 'Começa com 14 dias de teste',
+  },
+  {
+    id: 'PRO',
+    name: 'Pro',
+    price: '39€',
+    period: 'por mês',
+    highlight: false,
+    description: 'Para espaços com mais equipa.',
+    features: [
+      'Barbeiros ilimitados',
+      'Reservas ilimitadas',
+      'Tudo do plano Básico',
+      'Portal dedicado por barbeiro',
+      'Notificações push',
+      'Relatórios avançados',
+    ],
+    cta: 'Começar grátis',
+    note: 'Começa com 14 dias de teste',
+  },
+]
+
+const faqs = [
+  {
+    q: 'Preciso de saber informática ou programação?',
+    a: 'Não. O Trimio está desenhado para qualquer pessoa. Crias a conta, adicionas os teus serviços e barbeiros, e partilhas o link. O setup típico demora menos de 5 minutos.',
+  },
+  {
+    q: 'Como é que os clientes fazem a marcação?',
+    a: 'Recebes um link personalizado (ex: trimio.pt/o-teu-nome). Partilhas no Instagram, WhatsApp ou onde quiseres. Os clientes abrem, escolhem e marcam — sem app, sem cadastro.',
+  },
+  {
+    q: 'Posso cancelar quando quiser?',
+    a: 'Sim, a qualquer momento e sem penalizações. Não há contratos anuais obrigatórios. Se cancelares, o teu plano mantém-se até ao fim do período pago.',
+  },
+  {
+    q: 'O que acontece quando atinjo o limite do plano gratuito?',
+    a: 'Recebemos avisos antes de atingires o limite. Quando o atinges, os clientes não conseguem fazer novas marcações até ao mês seguinte ou até fazeres upgrade — os dados ficam todos guardados.',
+  },
+]
+
+/* ─── Sub-components ──────────────────────────────────────────── */
+
+function FaqItem({ q, a }: { q: string; a: string }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <button
+      onClick={() => setOpen(!open)}
+      className="w-full rounded-2xl border border-neutral-200/70 bg-white px-5 py-4 text-left transition-all duration-150 hover:border-neutral-300"
+    >
+      <div className="flex items-center justify-between gap-4">
+        <span className="text-[14px] font-medium text-ink">{q}</span>
+        <ChevronDown
+          size={16}
+          className={cn('shrink-0 text-ink-muted transition-transform duration-200', open && 'rotate-180')}
+        />
+      </div>
+      {open && (
+        <p className="mt-3 text-[13px] leading-6 text-ink-muted">{a}</p>
+      )}
+    </button>
+  )
+}
+
+/* ─── Booking mockup ──────────────────────────────────────────── */
+function BookingMockup() {
+  return (
+    <div className="relative mx-auto w-full max-w-[320px] select-none">
+      {/* Phone frame */}
+      <div className="overflow-hidden rounded-[2rem] border-[6px] border-neutral-800 bg-white shadow-[0_32px_64px_rgba(0,0,0,0.28),0_8px_24px_rgba(0,0,0,0.16)]">
+        {/* Status bar */}
+        <div className="flex items-center justify-between bg-[#0c0c11] px-4 py-2">
+          <span className="text-[10px] font-semibold text-white/60">9:41</span>
+          <div className="flex gap-1">
+            {[3,2,3].map((h, i) => (
+              <div key={i} className="w-1 rounded-sm bg-white/50" style={{ height: h * 3 }} />
+            ))}
+          </div>
+        </div>
+        {/* Header */}
+        <div className="flex items-center gap-2.5 bg-white px-3.5 py-3 shadow-[0_1px_0_rgba(0,0,0,0.06)]">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#111116]">
+            <span className="text-[11px] font-bold text-white">SB</span>
+          </div>
+          <div>
+            <p className="text-[12px] font-semibold text-ink">Stuka Barber</p>
+            <p className="text-[10px] text-ink-muted">Taipas, Guimarães</p>
+          </div>
+        </div>
+        {/* Content */}
+        <div className="bg-[#f7f7fa] px-3.5 py-4 space-y-3">
+          {/* Service selected */}
+          <div>
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-ink-muted">Serviço</p>
+            <div className="flex items-center justify-between rounded-xl border-[1.5px] border-primary-400 bg-primary-50/60 px-3 py-2.5"
+              style={{ boxShadow: '0 0 0 3px rgba(129,140,248,0.15)' }}>
+              <div>
+                <p className="text-[12px] font-semibold text-ink">Cabelo + Barba</p>
+                <p className="text-[10px] text-ink-muted">60 min</p>
+              </div>
+              <p className="text-[13px] font-semibold text-primary-700">15€</p>
+            </div>
+          </div>
+          {/* Barber */}
+          <div>
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-ink-muted">Barbeiro</p>
+            <div className="flex items-center gap-2.5 rounded-xl border border-neutral-200 bg-white px-3 py-2.5">
+              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary-100 text-[10px] font-bold text-primary-700">ST</div>
+              <p className="text-[12px] font-semibold text-ink">Stuka</p>
+            </div>
+          </div>
+          {/* Time slots */}
+          <div>
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-ink-muted">Amanhã, Sex 25 Abr</p>
+            <div className="grid grid-cols-3 gap-1.5">
+              {['10:00','10:30','11:00','12:00','14:30','15:00'].map((t, i) => (
+                <div key={t} className={cn(
+                  'rounded-lg py-1.5 text-center text-[11px] font-medium',
+                  i === 2
+                    ? 'bg-primary-600 text-white'
+                    : 'border border-neutral-200 bg-white text-ink-soft'
+                )}>{t}</div>
+              ))}
+            </div>
+          </div>
+          {/* CTA */}
+          <div className="rounded-xl bg-primary-600 py-2.5 text-center">
+            <p className="text-[12px] font-semibold text-white">Confirmar reserva</p>
+          </div>
+        </div>
+      </div>
+      {/* Floating notification */}
+      <div className="absolute -right-4 top-24 w-[160px] animate-slide-up rounded-2xl border border-neutral-200/80 bg-white p-3 shadow-strong">
+        <div className="flex items-start gap-2">
+          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-success-50">
+            <Check size={12} className="text-success-600" />
+          </div>
+          <div>
+            <p className="text-[11px] font-semibold text-ink">Reserva confirmada</p>
+            <p className="text-[10px] text-ink-muted">Sex 25 Abr · 11:00</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ─── Page ─────────────────────────────────────────────────────── */
 
 export default function PlatformHome() {
   useEffect(() => { applyPlatformAccent() }, [])
   useInstallBrand('platform')
 
   return (
-    <div className="min-h-screen bg-[#fafafc] text-ink">
+    <div className="min-h-screen overflow-x-hidden bg-[#fafafc] text-ink">
 
-      {/* ── Header ──────────────────────────────────────────── */}
+      {/* ─── Header ──────────────────────────────────────────────── */}
       <header className="sticky top-0 z-40 border-b border-neutral-100 bg-white/92 backdrop-blur-xl">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-          <Link to="/" className="flex items-center gap-2.5">
-            <img src={platformLogo} alt="Trimio" className="h-9 w-9 rounded-xl object-contain" />
-            <span className="text-[14px] font-semibold tracking-tight text-ink">Trimio</span>
+        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
+          <Link to="/" className="flex items-center gap-2">
+            <img src={platformLogo} alt="Trimio" className="h-8 w-8 rounded-xl object-contain" />
+            <span className="text-[14px] font-semibold text-ink" style={{ letterSpacing: '-0.01em' }}>Trimio</span>
           </Link>
           <div className="flex items-center gap-2">
             <Link to="/admin/login">
-              <Button variant="secondary" size="sm">Entrar</Button>
+              <Button variant="ghost" size="sm">Entrar</Button>
             </Link>
             <Link to="/register">
-              <Button size="sm">Criar conta</Button>
+              <Button size="sm">
+                Começar grátis
+              </Button>
             </Link>
           </div>
         </div>
@@ -65,159 +287,345 @@ export default function PlatformHome() {
 
       <main>
 
-        {/* ── Hero ────────────────────────────────────────────── */}
-        <section className="relative overflow-hidden bg-[#0c0c11] text-white">
-          <div
-            className="pointer-events-none absolute inset-0"
-            style={{
-              background:
-                'radial-gradient(ellipse 70% 50% at 50% -5%, rgba(99,102,241,0.18) 0%, transparent 60%)',
-            }}
-          />
-          <div className="relative mx-auto max-w-6xl px-4 py-24 sm:px-6 sm:py-32 text-center">
-            <div className="mx-auto max-w-3xl">
-              <p className="mb-5 inline-flex items-center gap-1.5 rounded-full border border-primary-400/20 bg-primary-500/10 px-3.5 py-1 text-[12px] font-semibold uppercase tracking-[0.14em] text-primary-300">
-                Plataforma para barbearias
-              </p>
+        {/* ─── Hero ────────────────────────────────────────────────── */}
+        <section className="relative overflow-hidden bg-[#0b0c11]">
+          {/* Background glow */}
+          <div className="pointer-events-none absolute inset-0" style={{
+            background: 'radial-gradient(ellipse 80% 60% at 50% -10%, rgba(99,102,241,0.22) 0%, transparent 55%)',
+          }} />
+          <div className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2" style={{
+            width: 600, height: 1, boxShadow: '0 0 120px 40px rgba(99,102,241,0.10)',
+          }} />
 
-              <h1 className="text-balance text-[2.6rem] font-semibold leading-[0.92] tracking-[-0.04em] text-white sm:text-[3.6rem] lg:text-[4.2rem]">
-                Site, reservas e gestão — num só lugar.
-              </h1>
+          <div className="relative mx-auto max-w-6xl px-4 pb-0 pt-20 sm:px-6 sm:pt-28">
+            <div className="grid gap-16 lg:grid-cols-[1fr_400px] lg:items-end">
 
-              <p className="mx-auto mt-6 max-w-xl text-[15px] leading-7 text-white/50">
-                Cada barbearia tem a sua página pública para receber clientes online, e um painel completo para gerir a operação.
-              </p>
-
-              <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-                <Link to="/register">
-                  <Button size="lg" className="min-w-[13rem]">
-                    Criar conta grátis <ArrowRight size={15} />
-                  </Button>
-                </Link>
-                <Link to="/admin/login">
-                  <Button size="lg" variant="outline" className="min-w-[11rem] border-white/[0.14] bg-white/[0.05] text-white/75 hover:bg-white/[0.10] hover:text-white">
-                    Entrar no painel
-                  </Button>
-                </Link>
-              </div>
-
-              <p className="mt-6 text-[12px] text-white/25">Grátis até 30 reservas/mês · Sem cartão de crédito</p>
-            </div>
-
-            {/* Stats strip */}
-            <div className="mx-auto mt-16 grid max-w-2xl grid-cols-3 gap-px overflow-hidden rounded-2xl border border-white/[0.07] bg-white/[0.07]">
-              {[
-                { value: 'Grátis',    label: 'para começar' },
-                { value: '< 2 min',   label: 'para configurar' },
-                { value: '24h',       label: 'disponível para clientes' },
-              ].map((s) => (
-                <div key={s.label} className="bg-[#0c0c11] px-4 py-5">
-                  <p className="text-[18px] font-semibold tracking-tight text-white">{s.value}</p>
-                  <p className="mt-0.5 text-[11px] text-white/35">{s.label}</p>
+              {/* Left — copy */}
+              <div className="pb-20 sm:pb-24">
+                {/* Pill */}
+                <div className="mb-6 inline-flex items-center gap-1.5 rounded-full border border-primary-400/20 bg-primary-500/10 px-3 py-1">
+                  <span className="h-1.5 w-1.5 rounded-full bg-primary-400" />
+                  <span className="text-[11.5px] font-semibold text-primary-300" style={{ letterSpacing: '0.04em' }}>
+                    Sistema de reservas para barbearias
+                  </span>
                 </div>
-              ))}
-            </div>
-          </div>
-        </section>
 
-        {/* ── Funcionalidades ──────────────────────────────────── */}
-        <section className="py-20 sm:py-28">
-          <div className="mx-auto max-w-6xl px-4 sm:px-6">
-            <div className="mb-12 text-center">
-              <h2 className="text-[1.75rem] font-semibold tracking-[-0.03em] text-ink sm:text-[2.2rem]">
-                O que o Trimio inclui
-              </h2>
-              <p className="mt-3 text-[14px] text-ink-muted">
-                Tudo o que uma barbearia precisa para funcionar online.
-              </p>
-            </div>
+                {/* Headline */}
+                <h1 className="text-balance text-[2.8rem] font-semibold leading-[0.90] text-white sm:text-[3.8rem] lg:text-[4.4rem]"
+                  style={{ letterSpacing: '-0.04em' }}>
+                  Os clientes marcam.{' '}
+                  <span className="text-white/40">Tu cortas o cabelo.</span>
+                </h1>
 
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {features.map((f) => (
-                <div key={f.title} className="rounded-2xl border border-neutral-200/70 bg-white p-5">
-                  <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
-                    <f.icon size={18} />
-                  </div>
-                  <h3 className="mb-1.5 text-[14px] font-semibold text-ink">{f.title}</h3>
-                  <p className="text-[13px] leading-5 text-ink-muted">{f.text}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ── Como funciona ────────────────────────────────────── */}
-        <section className="border-t border-neutral-100 bg-white py-20 sm:py-24">
-          <div className="mx-auto max-w-6xl px-4 sm:px-6">
-            <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
-              <div>
-                <h2 className="text-[1.75rem] font-semibold tracking-[-0.03em] text-ink sm:text-[2.1rem]">
-                  A começar em 3 passos
-                </h2>
-                <p className="mt-3 text-[14px] leading-6 text-ink-muted">
-                  Não é preciso instalar nada nem saber de tecnologia.
+                {/* Sub */}
+                <p className="mt-6 max-w-md text-[15px] leading-[1.65] text-white/50">
+                  O Trimio dá à tua barbearia uma página de reservas online. Sem WhatsApp,
+                  sem chamadas, sem folhas de papel.
                 </p>
-                <div className="mt-8 space-y-3">
-                  {steps.map((s) => (
-                    <div key={s.n} className="flex items-start gap-4">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-ink text-[13px] font-bold text-white">
-                        {s.n}
-                      </div>
-                      <div className="pt-0.5">
-                        <p className="text-[14px] font-semibold text-ink">{s.title}</p>
-                        <p className="mt-0.5 text-[13px] text-ink-muted">{s.desc}</p>
-                      </div>
+
+                {/* CTA */}
+                <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+                  <Link to="/register">
+                    <Button size="lg" className="w-full sm:w-auto sm:min-w-[200px]">
+                      Começar grátis
+                      <ArrowRight size={15} />
+                    </Button>
+                  </Link>
+                  <p className="text-[12.5px] text-white/30">
+                    Grátis para sempre · Sem cartão de crédito
+                  </p>
+                </div>
+
+                {/* Social proof numbers */}
+                <div className="mt-12 flex items-center gap-6 border-t border-white/[0.07] pt-8">
+                  {[
+                    { val: '< 5 min', label: 'para configurar tudo' },
+                    { val: '24 / 7', label: 'disponível para clientes' },
+                    { val: '0€',     label: 'para começar' },
+                  ].map((s) => (
+                    <div key={s.label}>
+                      <p className="text-[18px] font-semibold text-white" style={{ letterSpacing: '-0.03em' }}>{s.val}</p>
+                      <p className="text-[11px] text-white/30">{s.label}</p>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* O que está incluído no plano grátis */}
-              <div className="rounded-2xl border border-neutral-200/70 bg-neutral-50 p-6 sm:p-7">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink-muted">Plano gratuito</p>
-                <p className="mt-2 text-[1.4rem] font-semibold tracking-tight text-ink">Começa sem pagar nada.</p>
-                <p className="mt-2 text-[13px] leading-6 text-ink-muted">
-                  Testa o produto completo com limites que fazem sentido para uma barbearia a arrancar.
-                </p>
-                <ul className="mt-5 space-y-2.5">
-                  {[
-                    '1 barbeiro ativo',
-                    '30 reservas por mês',
-                    'Página pública com booking',
-                    'Painel de gestão completo',
-                    'Sem cartão de crédito',
-                  ].map((item) => (
-                    <li key={item} className="flex items-center gap-2.5 text-[13px] text-ink-soft">
-                      <CheckCircle2 size={15} className="shrink-0 text-primary-600" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-                <Link to="/register" className="mt-6 block">
-                  <Button className="w-full" size="lg">
-                    Criar conta grátis <ArrowRight size={15} />
-                  </Button>
-                </Link>
+              {/* Right — mockup */}
+              <div className="hidden lg:block lg:self-end">
+                <BookingMockup />
               </div>
             </div>
           </div>
         </section>
 
-        {/* ── Footer mínimo ───────────────────────────────────── */}
-        <footer className="border-t border-neutral-100 py-8">
-          <div className="mx-auto flex max-w-6xl items-center justify-between px-4 sm:px-6">
-            <div className="flex items-center gap-2">
-              <img src={platformLogo} alt="Trimio" className="h-7 w-7 rounded-lg object-contain" />
-              <span className="text-[13px] font-medium text-ink-muted">Trimio</span>
+        {/* ─── Pain section ────────────────────────────────────────── */}
+        <section className="border-t border-neutral-200/60 bg-white py-16 sm:py-20">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6">
+            <div className="mb-10 max-w-xl">
+              <p className="eyebrow mb-3">O problema</p>
+              <h2 className="text-[1.75rem] font-semibold text-ink sm:text-[2.1rem]"
+                style={{ letterSpacing: '-0.03em' }}>
+                Ainda a gerir reservas à mão?
+              </h2>
+              <p className="mt-3 text-[14px] leading-6 text-ink-muted">
+                A maioria das barbearias perde clientes todos os dias por não ter um sistema.
+                Reconheces isto?
+              </p>
             </div>
-            <div className="flex items-center gap-4 text-[12px] text-ink-muted">
-              <Link to="/admin/login" className="hover:text-ink transition-colors">Entrar</Link>
-              <Link to="/register" className="hover:text-ink transition-colors">Criar conta</Link>
+
+            <div className="grid gap-4 sm:grid-cols-3">
+              {pains.map((p) => (
+                <div key={p.title} className="rounded-2xl border border-neutral-200/70 bg-neutral-50 p-5">
+                  <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-danger-50 text-danger-500">
+                    <p.icon size={17} />
+                  </div>
+                  <h3 className="mb-1.5 text-[14px] font-semibold text-ink">{p.title}</h3>
+                  <p className="text-[13px] leading-[1.6] text-ink-muted">{p.text}</p>
+                </div>
+              ))}
             </div>
           </div>
-        </footer>
+        </section>
+
+        {/* ─── Solution / how it works ─────────────────────────────── */}
+        <section className="border-t border-neutral-100 py-16 sm:py-24">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6">
+            <div className="mb-12 text-center">
+              <p className="eyebrow mb-3">Como funciona</p>
+              <h2 className="text-[1.75rem] font-semibold text-ink sm:text-[2.1rem]"
+                style={{ letterSpacing: '-0.03em' }}>
+                Pronto a funcionar em 3 passos
+              </h2>
+              <p className="mx-auto mt-3 max-w-md text-[14px] text-ink-muted">
+                Não é preciso instalar nada. Não é preciso saber de tecnologia.
+              </p>
+            </div>
+
+            <div className="relative grid gap-8 sm:grid-cols-3">
+              {/* Connector line (desktop) */}
+              <div className="absolute left-[calc(16.67%+1.5rem)] right-[calc(16.67%+1.5rem)] top-5 hidden h-px bg-neutral-200 sm:block" />
+
+              {[
+                { n: '1', title: 'Cria a tua barbearia',    desc: 'Nome, serviços, barbeiros e horários. Menos de 5 minutos.' },
+                { n: '2', title: 'Recebe o teu link',       desc: 'Partilhas no Instagram, WhatsApp ou onde quiseres.' },
+                { n: '3', title: 'As reservas chegam',      desc: 'Os clientes marcam online — tu só apareces na hora.' },
+              ].map((s) => (
+                <div key={s.n} className="relative text-center">
+                  <div className="mx-auto mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-ink text-[13px] font-bold text-white">
+                    {s.n}
+                  </div>
+                  <h3 className="mb-1.5 text-[14.5px] font-semibold text-ink">{s.title}</h3>
+                  <p className="text-[13px] leading-[1.6] text-ink-muted">{s.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ─── Benefits ───────────────────────────────────────────── */}
+        <section className="border-t border-neutral-100 bg-white py-16 sm:py-24">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6">
+            <div className="mb-12 text-center">
+              <p className="eyebrow mb-3">Tudo incluído</p>
+              <h2 className="text-[1.75rem] font-semibold text-ink sm:text-[2.1rem]"
+                style={{ letterSpacing: '-0.03em' }}>
+                Não é só agendamento.
+              </h2>
+              <p className="mx-auto mt-3 max-w-md text-[14px] text-ink-muted">
+                O Trimio é a operação completa da tua barbearia numa só ferramenta.
+              </p>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {benefits.map((b) => (
+                <div key={b.title} className="group rounded-2xl border border-neutral-200/70 bg-white p-5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-medium">
+                  <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-primary-50 text-primary-600 transition-colors group-hover:bg-primary-100">
+                    <b.icon size={18} />
+                  </div>
+                  <h3 className="mb-1.5 text-[14px] font-semibold text-ink">{b.title}</h3>
+                  <p className="text-[13px] leading-[1.6] text-ink-muted">{b.text}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ─── Testimonials ────────────────────────────────────────── */}
+        <section className="border-t border-neutral-100 py-16 sm:py-24">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6">
+            <div className="mb-10 text-center">
+              <p className="eyebrow mb-3">Quem já usa</p>
+              <h2 className="text-[1.75rem] font-semibold text-ink sm:text-[2rem]"
+                style={{ letterSpacing: '-0.03em' }}>
+                O que dizem as barbearias
+              </h2>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-3">
+              {testimonials.map((t) => (
+                <div key={t.name} className="flex flex-col rounded-2xl border border-neutral-200/70 bg-white p-5">
+                  {/* Stars */}
+                  <div className="mb-3 flex gap-0.5">
+                    {Array.from({ length: t.stars }).map((_, i) => (
+                      <Star key={i} size={13} className="fill-warning-400 text-warning-400" />
+                    ))}
+                  </div>
+                  <p className="flex-1 text-[13.5px] leading-[1.65] text-ink-soft">"{t.text}"</p>
+                  <div className="mt-4 border-t border-neutral-100 pt-4">
+                    <p className="text-[13px] font-semibold text-ink">{t.name}</p>
+                    <p className="text-[12px] text-ink-muted">{t.role}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ─── Pricing ─────────────────────────────────────────────── */}
+        <section className="border-t border-neutral-100 bg-white py-16 sm:py-24" id="precos">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6">
+            <div className="mb-12 text-center">
+              <p className="eyebrow mb-3">Preços</p>
+              <h2 className="text-[1.75rem] font-semibold text-ink sm:text-[2.1rem]"
+                style={{ letterSpacing: '-0.03em' }}>
+                Começa grátis. Cresce quando quiseres.
+              </h2>
+              <p className="mx-auto mt-3 max-w-sm text-[14px] text-ink-muted">
+                Sem contratos. Cancelas quando quiseres. Sem surpresas.
+              </p>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-3">
+              {plans.map((plan) => (
+                <div
+                  key={plan.id}
+                  className={cn(
+                    'relative flex flex-col rounded-2xl p-6',
+                    plan.highlight
+                      ? 'border-2 border-primary-500 bg-white shadow-[0_0_0_6px_rgba(var(--primary-100),0.4),0_4px_16px_rgba(0,0,0,0.08)]'
+                      : 'border border-neutral-200/70 bg-white'
+                  )}
+                >
+                  {plan.highlight && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                      <span className="inline-flex items-center rounded-full bg-primary-600 px-3 py-1 text-[11px] font-semibold text-white">
+                        Mais popular
+                      </span>
+                    </div>
+                  )}
+
+                  <div className="mb-5">
+                    <p className="text-[13px] font-semibold text-ink-muted">{plan.name}</p>
+                    <div className="mt-1 flex items-baseline gap-1.5">
+                      <span className="text-[2rem] font-semibold text-ink" style={{ letterSpacing: '-0.04em' }}>
+                        {plan.price}
+                      </span>
+                      <span className="text-[13px] text-ink-muted">{plan.period}</span>
+                    </div>
+                    <p className="mt-1 text-[13px] text-ink-muted">{plan.description}</p>
+                  </div>
+
+                  <ul className="mb-6 flex-1 space-y-2.5">
+                    {plan.features.map((f) => (
+                      <li key={f} className="flex items-center gap-2.5 text-[13px] text-ink-soft">
+                        <Check size={14} className="shrink-0 text-success-600" />
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <Link to="/register">
+                    <Button
+                      className="w-full"
+                      variant={plan.highlight ? 'primary' : 'secondary'}
+                      size="md"
+                    >
+                      {plan.cta}
+                    </Button>
+                  </Link>
+
+                  {plan.note && (
+                    <p className="mt-2.5 text-center text-[11.5px] text-ink-muted">{plan.note}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ─── FAQ ─────────────────────────────────────────────────── */}
+        <section className="border-t border-neutral-100 py-16 sm:py-20">
+          <div className="mx-auto max-w-2xl px-4 sm:px-6">
+            <div className="mb-10 text-center">
+              <p className="eyebrow mb-3">Dúvidas frequentes</p>
+              <h2 className="text-[1.6rem] font-semibold text-ink" style={{ letterSpacing: '-0.03em' }}>
+                Tens perguntas. Nós temos respostas.
+              </h2>
+            </div>
+            <div className="space-y-2">
+              {faqs.map((f) => <FaqItem key={f.q} {...f} />)}
+            </div>
+          </div>
+        </section>
+
+        {/* ─── Final CTA ───────────────────────────────────────────── */}
+        <section className="border-t border-neutral-200/60">
+          <div className="relative overflow-hidden bg-[#0b0c11] py-20 sm:py-28">
+            <div className="pointer-events-none absolute inset-0" style={{
+              background: 'radial-gradient(ellipse 60% 70% at 50% 100%, rgba(99,102,241,0.15) 0%, transparent 60%)',
+            }} />
+            <div className="relative mx-auto max-w-2xl px-4 text-center sm:px-6">
+              <h2 className="text-[2rem] font-semibold text-white sm:text-[2.6rem]"
+                style={{ letterSpacing: '-0.04em' }}>
+                A tua barbearia online
+                <span className="block text-white/35">em menos de 5 minutos.</span>
+              </h2>
+              <p className="mx-auto mt-5 max-w-md text-[15px] leading-7 text-white/45">
+                Junta-te às barbearias que já pararam de gerir reservas pelo WhatsApp.
+                Começa grátis, sem cartão de crédito.
+              </p>
+              <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+                <Link to="/register">
+                  <Button size="lg" className="min-w-[200px]">
+                    Criar conta grátis
+                    <ArrowRight size={15} />
+                  </Button>
+                </Link>
+                <Link to="/admin/login">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="min-w-[160px] border-white/[0.12] bg-white/[0.05] text-white/60 hover:bg-white/[0.09] hover:text-white"
+                  >
+                    Já tenho conta
+                  </Button>
+                </Link>
+              </div>
+              <p className="mt-5 text-[12px] text-white/20">
+                Plano gratuito para sempre · 30 reservas/mês incluídas · Sem cartão
+              </p>
+            </div>
+          </div>
+        </section>
 
       </main>
+
+      {/* ─── Footer ──────────────────────────────────────────────── */}
+      <footer className="border-t border-neutral-100 py-8">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 sm:px-6">
+          <div className="flex items-center gap-2">
+            <img src={platformLogo} alt="Trimio" className="h-7 w-7 rounded-lg object-contain" />
+            <span className="text-[13px] font-medium text-ink-muted">Trimio</span>
+          </div>
+          <div className="flex items-center gap-5 text-[12.5px] text-ink-muted">
+            <Link to="/#precos" className="transition-colors hover:text-ink">Preços</Link>
+            <Link to="/admin/login" className="transition-colors hover:text-ink">Entrar</Link>
+            <Link to="/register" className="transition-colors hover:text-ink">Criar conta</Link>
+          </div>
+        </div>
+      </footer>
+
     </div>
   )
 }
