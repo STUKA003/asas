@@ -48,6 +48,7 @@ export function Footer() {
             <Link to={`/${slug}`}           className="text-ink-soft transition-colors hover:text-ink">Início</Link>
             <Link to={`/${slug}/services`}  className="text-ink-soft transition-colors hover:text-ink">Serviços</Link>
             <Link to={`/${slug}/booking`}   className="text-ink-soft transition-colors hover:text-ink">Agendar</Link>
+            <Link to={`/${slug}/privacy`}   className="text-ink-soft transition-colors hover:text-ink">Privacidade</Link>
             <Link to="/admin"               className="text-ink-soft transition-colors hover:text-ink">Área admin</Link>
           </div>
         </div>

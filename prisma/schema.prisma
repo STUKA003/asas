@@ -245,6 +245,9 @@ model Booking {
   status        String        @default("PENDING")
   attendeeName  String?
   notes         String?
+  privacyConsentAt DateTime?
+  privacyConsentVersion String?
+  privacyConsentIp String?
   totalPrice    Float
   totalDuration Int
 

@@ -25,6 +25,10 @@ const bookingManageStartTimeSchema = z.object({
   startTime: z.string().datetime(),
 })
 
+const bookingManageExportSchema = z.object({
+  token: z.string().min(1),
+})
+
 const resendManagementLinkSchema = z.object({
   bookingId: z.string().min(1),
   name: z.string().min(2),
@@ -43,6 +47,18 @@ function setPublicReadCache(res: Response, seconds = 60) {
 
 function setPublicAssetCache(res: Response) {
   res.setHeader('Cache-Control', 'public, max-age=31536000, immutable')
+}
+
+function clientIp(req: Request) {
+  const forwarded = req.headers['x-forwarded-for']
+  if (typeof forwarded === 'string' && forwarded.trim()) {
+    return forwarded.split(',')[0].trim()
+  }
+  return req.ip || null
+}
+
+function anonymizedCustomerName(customerId: string) {
+  return `Cliente removido ${customerId.slice(-6)}`
 }
 
 function readDataUri(value: string | null) {
@@ -334,6 +350,8 @@ const bookingSchema = z.object({
   extraIds: z.array(z.string()).optional(),
   productIds: z.array(z.string()).optional(),
   startTime: z.string().datetime(),
+  privacyConsentAccepted: z.literal(true),
+  privacyConsentVersion: z.string().min(1).max(32),
   customer: z.object({
     attendeeName: z.string().min(2).optional(),
     name: z.string().min(2),
@@ -558,6 +576,9 @@ export async function createPublicBooking(req: Request, res: Response) {
       productIds: productIds ?? [],
       startTime: new Date(startTime),
       notes: customerData.notes,
+      privacyConsentAt: new Date(),
+      privacyConsentVersion: parsed.data.privacyConsentVersion,
+      privacyConsentIp: clientIp(req) ?? undefined,
     })
 
     await notifyBookingCreated({
@@ -611,6 +632,126 @@ export async function getManagedBooking(req: Request, res: Response) {
   }
 
   res.json({ booking: serializeManagedBooking(req.params.slug, result.booking) })
+}
+
+export async function exportManagedBookingData(req: Request, res: Response) {
+  const parsed = bookingManageExportSchema.safeParse(req.body)
+  if (!parsed.success) { res.status(400).json({ error: parsed.error.flatten() }); return }
+
+  const result = await findManagedBooking(req.params.slug, parsed.data.token)
+  if ('error' in result) {
+    res.status(result.error === 'Barbershop not found' ? 404 : 401).json({ error: result.error })
+    return
+  }
+
+  const customer = await prisma.customer.findFirst({
+    where: { id: result.booking.customerId, barbershopId: result.booking.barbershopId },
+    include: {
+      bookings: {
+        where: { barbershopId: result.booking.barbershopId },
+        orderBy: { startTime: 'asc' },
+        include: {
+          barber: { select: { id: true, name: true } },
+          services: { include: { service: { select: { id: true, name: true } } } },
+          extras: { include: { extra: { select: { id: true, name: true } } } },
+          products: { include: { product: { select: { id: true, name: true } } } },
+        },
+      },
+    },
+  })
+
+  if (!customer) {
+    res.status(404).json({ error: 'Customer not found' })
+    return
+  }
+
+  res.json({
+    exportedAt: new Date().toISOString(),
+    barbershop: {
+      id: result.shop.id,
+      name: result.shop.name,
+      slug: result.shop.slug,
+    },
+    customer: {
+      id: customer.id,
+      name: customer.name,
+      email: customer.email,
+      phone: customer.phone,
+      notes: customer.notes,
+      createdAt: customer.createdAt,
+      updatedAt: customer.updatedAt,
+    },
+    bookings: customer.bookings.map((booking) => ({
+      id: booking.id,
+      startTime: booking.startTime,
+      endTime: booking.endTime,
+      status: booking.status,
+      attendeeName: booking.attendeeName,
+      notes: booking.notes,
+      totalPrice: booking.totalPrice,
+      totalDuration: booking.totalDuration,
+      privacyConsentAt: booking.privacyConsentAt,
+      privacyConsentVersion: booking.privacyConsentVersion,
+      barber: booking.barber,
+      services: booking.services.map((item) => item.service),
+      extras: booking.extras.map((item) => item.extra),
+      products: booking.products.map((item) => item.product),
+      createdAt: booking.createdAt,
+      updatedAt: booking.updatedAt,
+    })),
+  })
+}
+
+export async function eraseManagedBookingData(req: Request, res: Response) {
+  const parsed = bookingManageExportSchema.safeParse(req.body)
+  if (!parsed.success) { res.status(400).json({ error: parsed.error.flatten() }); return }
+
+  const result = await findManagedBooking(req.params.slug, parsed.data.token)
+  if ('error' in result) {
+    res.status(result.error === 'Barbershop not found' ? 404 : 401).json({ error: result.error })
+    return
+  }
+
+  const customer = await prisma.customer.findFirst({
+    where: { id: result.booking.customerId, barbershopId: result.booking.barbershopId },
+    select: { id: true },
+  })
+
+  if (!customer) {
+    res.status(404).json({ error: 'Customer not found' })
+    return
+  }
+
+  const bookings = await prisma.booking.findMany({
+    where: { customerId: customer.id, barbershopId: result.booking.barbershopId },
+    select: { id: true },
+  })
+  const bookingIds = bookings.map((booking) => booking.id)
+
+  await prisma.$transaction([
+    prisma.notification.deleteMany({
+      where: { barbershopId: result.booking.barbershopId, bookingId: { in: bookingIds } },
+    }),
+    prisma.booking.updateMany({
+      where: { customerId: customer.id, barbershopId: result.booking.barbershopId },
+      data: { attendeeName: null, notes: null },
+    }),
+    prisma.customer.update({
+      where: { id: customer.id },
+      data: {
+        name: anonymizedCustomerName(customer.id),
+        email: null,
+        phone: null,
+        notes: null,
+        planId: null,
+      },
+    }),
+  ])
+
+  res.json({
+    success: true,
+    message: 'Os teus dados pessoais foram anonimizados nesta barbearia. Os registos operacionais da reserva foram mantidos sem identificação pessoal.',
+  })
 }
 
 export async function resendManagedBookingLink(req: Request, res: Response) {

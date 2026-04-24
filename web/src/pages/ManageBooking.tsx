@@ -2,8 +2,8 @@ import { useMemo, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { format } from 'date-fns'
 import { pt } from 'date-fns/locale'
-import { Calendar, CheckCircle2, Clock3, Copy, Plus, RefreshCw, Scissors, XCircle } from 'lucide-react'
-import { useSearchParams } from 'react-router-dom'
+import { Calendar, CheckCircle2, Clock3, Copy, Download, Plus, RefreshCw, Scissors, ShieldAlert, XCircle } from 'lucide-react'
+import { Link, useSearchParams } from 'react-router-dom'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { Button } from '@/components/ui/Button'
@@ -88,6 +88,38 @@ export default function ManageBooking() {
       setFeedback('Marcação remarcada com sucesso.')
       setSelectedSlot(null)
       await baseMutationOptions.onSuccess()
+    },
+  })
+
+  const exportDataMutation = useMutation({
+    mutationFn: () => publicApi(slug).exportManagedBookingData({ token }),
+    onSuccess: (data) => {
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json;charset=utf-8' })
+      const url = window.URL.createObjectURL(blob)
+      const anchor = document.createElement('a')
+      anchor.href = url
+      anchor.download = `dados-reserva-${booking?.id ?? 'trimio'}.json`
+      anchor.click()
+      window.URL.revokeObjectURL(url)
+      setFeedback('Exportação dos teus dados concluída.')
+      setErrorMessage(null)
+    },
+    onError: (error: unknown) => {
+      setFeedback(null)
+      setErrorMessage(getApiErrorMessage(error))
+    },
+  })
+
+  const eraseDataMutation = useMutation({
+    mutationFn: () => publicApi(slug).eraseManagedBookingData({ token }),
+    onSuccess: (data) => {
+      setFeedback(data.message)
+      setErrorMessage(null)
+      void queryClient.invalidateQueries({ queryKey: ['public-booking-manage', slug, token] })
+    },
+    onError: (error: unknown) => {
+      setFeedback(null)
+      setErrorMessage(getApiErrorMessage(error))
     },
   })
 
@@ -193,6 +225,43 @@ export default function ManageBooking() {
                         Cancelar marcação
                       </Button>
                     </div>
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-neutral-200 bg-white p-5">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                      <p className="text-lg font-semibold text-ink">Privacidade e dados</p>
+                      <p className="mt-1 text-sm text-ink-muted">
+                        Podes exportar os teus dados ou pedir a anonimização dos dados pessoais associados a esta reserva.
+                      </p>
+                    </div>
+                    <Link to={`/${slug}/privacy`} className="text-sm font-medium text-primary-700 underline underline-offset-4">
+                      Política de Privacidade
+                    </Link>
+                  </div>
+                  <div className="mt-4 grid gap-3 md:grid-cols-2">
+                    <Button
+                      variant="secondary"
+                      onClick={() => exportDataMutation.mutate()}
+                      className="w-full"
+                      loading={exportDataMutation.isPending}
+                    >
+                      <Download size={16} />
+                      Exportar os meus dados
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        if (!window.confirm('Isto vai anonimizar os teus dados pessoais nesta barbearia. Queres continuar?')) return
+                        eraseDataMutation.mutate()
+                      }}
+                      className="w-full"
+                      loading={eraseDataMutation.isPending}
+                    >
+                      <ShieldAlert size={16} />
+                      Anonimizar os meus dados
+                    </Button>
                   </div>
                 </div>
 

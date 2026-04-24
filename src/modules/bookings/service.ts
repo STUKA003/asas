@@ -13,10 +13,26 @@ interface CreateBookingInput {
   productIds?: string[]
   startTime: Date
   notes?: string
+  privacyConsentAt?: Date
+  privacyConsentVersion?: string
+  privacyConsentIp?: string
 }
 
 export async function createBooking(input: CreateBookingInput) {
-  const { attendeeName, barbershopId, barberId, customerId, serviceIds, extraIds = [], productIds = [], startTime, notes } = input
+  const {
+    attendeeName,
+    barbershopId,
+    barberId,
+    customerId,
+    serviceIds,
+    extraIds = [],
+    productIds = [],
+    startTime,
+    notes,
+    privacyConsentAt,
+    privacyConsentVersion,
+    privacyConsentIp,
+  } = input
 
   const [barber, customer, services, extras, products] = await Promise.all([
     prisma.barber.findFirst({ where: { id: barberId, barbershopId, active: true } }),
@@ -136,6 +152,9 @@ export async function createBooking(input: CreateBookingInput) {
         endTime,
         attendeeName: attendeeName?.trim() || undefined,
         notes,
+        privacyConsentAt,
+        privacyConsentVersion,
+        privacyConsentIp,
         totalPrice,
         totalDuration,
         barbershopId,

@@ -26,6 +26,8 @@ interface CreateBookingPayload {
   extraIds?:  string[]
   productIds?: string[]
   startTime:  string
+  privacyConsentAccepted: true
+  privacyConsentVersion: string
   customer: {
     attendeeName?: string
     email: string
@@ -36,6 +38,10 @@ interface CreateBookingPayload {
 }
 
 interface ManageBookingPayload {
+  token: string
+}
+
+interface ManagedDataActionPayload {
   token: string
 }
 
@@ -74,6 +80,10 @@ export function publicApi(slug: string) {
       http.get<AvailabilityResponse>(`${base}/bookings/manage/availability`, { params: p }).then((r) => r.data),
     resendManagedBookingLink: (p: ResendManagedBookingLinkPayload) =>
       http.post<{ success: boolean; message: string }>(`${base}/bookings/manage/resend-link`, p).then((r) => r.data),
+    exportManagedBookingData: (p: ManagedDataActionPayload) =>
+      http.post(`${base}/bookings/manage/export-data`, p).then((r) => r.data),
+    eraseManagedBookingData: (p: ManagedDataActionPayload) =>
+      http.post<{ success: boolean; message: string }>(`${base}/bookings/manage/erase-data`, p).then((r) => r.data),
     confirmManagedBooking: (p: ManageBookingPayload) =>
       http.patch<{ booking: ManagedBooking }>(`${base}/bookings/manage/confirm`, p).then((r) => r.data),
     cancelManagedBooking: (p: ManageBookingPayload) =>

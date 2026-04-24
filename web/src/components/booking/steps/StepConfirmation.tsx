@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { format } from 'date-fns'
 import { pt } from 'date-fns/locale'
+import { Link } from 'react-router-dom'
 import { publicApi } from '@/lib/publicApi'
 import { useTenant } from '@/providers/TenantProvider'
 import { type BookingDraft, useBookingStore } from '@/store/booking'
@@ -55,6 +56,7 @@ export function StepConfirmation() {
   const { slug, barbershop } = useTenant()
   const [bookingError, setBookingError] = useState<string | null>(null)
   const [createdBooking, setCreatedBooking] = useState<(BookingDraft & { managementUrl: string | null }) | null>(null)
+  const [privacyAccepted, setPrivacyAccepted] = useState(false)
 
   const { barber, customer, customerPlan, date, extras, products, service, slot } = store
 
@@ -120,6 +122,8 @@ export function StepConfirmation() {
           notes: customer.notes,
           phone: customer.phone,
         },
+        privacyConsentAccepted: true,
+        privacyConsentVersion: '2026-04',
       })
       return {
         ...draft,
@@ -257,9 +261,26 @@ export function StepConfirmation() {
         </div>
       ) : null}
 
+      <label className="flex items-start gap-3 rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-4 text-sm text-ink">
+        <input
+          type="checkbox"
+          checked={privacyAccepted}
+          onChange={(event) => setPrivacyAccepted(event.target.checked)}
+          className="mt-0.5 h-4 w-4 rounded border-neutral-300 text-primary-600 focus:ring-primary-500"
+        />
+        <span className="leading-6">
+          Li e aceito a utilização dos meus dados para gestão da reserva, contacto operacional e envio do link seguro de gestão.
+          {' '}
+          <Link to={`/${slug}/privacy`} className="font-medium text-primary-700 underline underline-offset-4">
+            Política de Privacidade
+          </Link>
+          .
+        </span>
+      </label>
+
       <div className="flex justify-between pt-2">
         <Button variant="outline" onClick={() => store.setStep(5)}>Voltar</Button>
-        <Button loading={createBookingMutation.isPending} disabled={!draft} onClick={() => createBookingMutation.mutate()}>
+        <Button loading={createBookingMutation.isPending} disabled={!draft || !privacyAccepted} onClick={() => createBookingMutation.mutate()}>
           Confirmar reserva
         </Button>
       </div>
