@@ -71,7 +71,11 @@ export async function getMyBarbershop(req: Request, res: Response) {
   const monthEnd   = new Date(now.getFullYear(), now.getMonth() + 1, 1)
   const monthlyBookings = limits.maxMonthlyBookings !== Infinity
     ? await prisma.booking.count({
-        where: { barbershopId: barbershop.id, startTime: { gte: monthStart, lt: monthEnd } },
+        where: {
+          barbershopId: barbershop.id,
+          status: { notIn: ['CANCELLED'] },
+          startTime: { gte: monthStart, lt: monthEnd },
+        },
       })
     : null
   const activeBarbers = limits.maxBarbers !== Infinity

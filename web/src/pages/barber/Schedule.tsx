@@ -63,6 +63,17 @@ function getApiErrorMessage(err: unknown, fallback: string) {
   return err instanceof Error ? err.message : fallback
 }
 
+function getEffectivePortalPlan(barber: ReturnType<typeof useBarberAuthStore.getState>['barber']) {
+  if (!barber?.barbershop?.subscriptionPlan) return 'FREE'
+
+  const endsAt = barber.barbershop.subscriptionEndsAt
+  if (barber.barbershop.subscriptionPlan !== 'FREE' && endsAt && new Date(endsAt) < new Date()) {
+    return 'FREE'
+  }
+
+  return barber.barbershop.subscriptionPlan
+}
+
 export default function BarberSchedule() {
   const qc = useQueryClient()
   const barber = useBarberAuthStore((state) => state.barber)
@@ -79,7 +90,7 @@ export default function BarberSchedule() {
   const suppressClickRef = useRef(false)
   const [draggingId, setDraggingId] = useState<string | null>(null)
   const [dragPreview, setDragPreview] = useState<{ top: number; dayIdx: number; booking: Booking; label: string } | null>(null)
-  const canManageItems = (barber?.barbershop?.subscriptionPlan ?? 'FREE') !== 'FREE'
+  const canManageItems = getEffectivePortalPlan(barber) !== 'FREE'
 
   useEffect(() => {
     if (scrollRef.current) {

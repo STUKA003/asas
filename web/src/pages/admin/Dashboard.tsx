@@ -90,6 +90,15 @@ export default function Dashboard() {
 
   const thisMonth   = allBookings.filter((b) => isWithinInterval(toWallClockDate(b.startTime), { start: monthStart, end: monthEnd }))
   const prevMonth   = allBookings.filter((b) => isWithinInterval(toWallClockDate(b.startTime), { start: prevMonthStart, end: prevMonthEnd }))
+  const operationalThisMonth = thisMonth.filter((b) => b.status !== 'CANCELLED')
+  const operationalPrevMonth = prevMonth.filter((b) => b.status !== 'CANCELLED')
+  const operationalToday = todayBookings.filter((b) => ['PENDING', 'CONFIRMED', 'COMPLETED'].includes(b.status))
+  const customersToday = new Set(operationalToday.map((b) => b.customer.id)).size
+  const monthlyActiveCustomers = new Set(
+    operationalThisMonth
+      .filter((b) => ['PENDING', 'CONFIRMED', 'COMPLETED', 'NO_SHOW'].includes(b.status))
+      .map((b) => b.customer.id)
+  ).size
 
   const completedThis = thisMonth.filter((b) => b.status === 'COMPLETED')
   const completedPrev = prevMonth.filter((b) => b.status === 'COMPLETED')
@@ -99,15 +108,15 @@ export default function Dashboard() {
   const avgTicket      = completedThis.length > 0 ? thisRevenue / completedThis.length : 0
   const prevAvgTicket  = completedPrev.length > 0 ? prevRevenue / completedPrev.length : 0
 
-  const finalizedThis = thisMonth.filter((b) => ['COMPLETED', 'NO_SHOW', 'CANCELLED'].includes(b.status))
-  const finalizedPrev = prevMonth.filter((b) => ['COMPLETED', 'NO_SHOW', 'CANCELLED'].includes(b.status))
+  const finalizedThis = thisMonth.filter((b) => ['COMPLETED', 'NO_SHOW'].includes(b.status))
+  const finalizedPrev = prevMonth.filter((b) => ['COMPLETED', 'NO_SHOW'].includes(b.status))
   const noShows       = thisMonth.filter((b) => b.status === 'NO_SHOW').length
   const prevNoShows   = prevMonth.filter((b) => b.status === 'NO_SHOW').length
   const noShowRate    = finalizedThis.length > 0 ? Math.round((noShows / finalizedThis.length) * 100) : 0
   const prevNoShowRate = finalizedPrev.length > 0 ? Math.round((prevNoShows / finalizedPrev.length) * 100) : 0
 
   const revenueChange  = getChange(thisRevenue, prevRevenue)
-  const bookingChange  = getChange(thisMonth.length, prevMonth.length)
+  const bookingChange  = getChange(operationalThisMonth.length, operationalPrevMonth.length)
   const ticketChange   = getChange(avgTicket, prevAvgTicket)
   const noShowChange   = getChange(noShowRate, prevNoShowRate)
 
@@ -132,17 +141,22 @@ export default function Dashboard() {
   const upcoming = todayBookings.filter((b) => ['PENDING', 'CONFIRMED'].includes(b.status)).slice(0, 8)
 
   const weekStart = startOfWeek(now, { locale: pt })
+  const weekEnd = addDays(weekStart, 6)
+  const currentWeekBookings = allBookings.filter((b) =>
+    b.status !== 'CANCELLED' &&
+    isWithinInterval(toWallClockDate(b.startTime), { start: weekStart, end: weekEnd })
+  )
 
   const dailyDistribution = Array.from({ length: 7 }).map((_, i) => {
     const day = addDays(weekStart, i)
-    const count = thisMonth.filter((b) => format(toWallClockDate(b.startTime), 'yyyy-MM-dd') === format(day, 'yyyy-MM-dd')).length
+    const count = currentWeekBookings.filter((b) => format(toWallClockDate(b.startTime), 'yyyy-MM-dd') === format(day, 'yyyy-MM-dd')).length
     return { day: format(day, 'EEE', { locale: pt }), fullDay: format(day, 'EEEE', { locale: pt }), bookings: count }
   })
   const busiestDay = [...dailyDistribution].sort((a, b) => b.bookings - a.bookings)[0]
 
-  const occupancySignal = todayBookings.length >= Math.max(barbers.length * 3, 6)
+  const occupancySignal = operationalToday.length >= Math.max(barbers.length * 3, 6)
     ? 'Dia forte'
-    : todayBookings.length <= Math.max(barbers.length, 2)
+    : operationalToday.length <= Math.max(barbers.length, 2)
       ? 'Baixa ocupação'
       : 'Fluxo equilibrado'
 
@@ -159,7 +173,7 @@ export default function Dashboard() {
       tone: getTrendTone(revenueChange), icon: TrendingUp,  iconWrap: 'bg-emerald-100 text-emerald-600',
     },
     {
-      label: 'Agendamentos fechados', value: thisMonth.length,
+      label: 'Agendamentos ativos', value: operationalThisMonth.length,
       helper: bookingChange >= 0 ? `+${bookingChange}% vs mês anterior` : `${bookingChange}% vs mês anterior`,
       microcopy: busiestDay ? `Melhor dia: ${busiestDay.fullDay}` : 'Sem histórico suficiente',
       tone: getTrendTone(bookingChange), icon: Calendar, iconWrap: 'bg-blue-100 text-blue-600',
@@ -239,8 +253,8 @@ export default function Dashboard() {
                 <div className="grid gap-3 sm:grid-cols-3">
                   {[
                     { label: 'Receita acumulada', value: formatCurrency(thisRevenue), sub: `${revenueChange >= 0 ? '+' : ''}${revenueChange}% vs mês anterior`, positive: revenueChange >= 0 },
-                    { label: 'Agenda de hoje', value: todayBookings.length, sub: `${upcoming.length} por confirmar` },
-                    { label: 'Clientes ativos', value: customers.length, sub: `${barbers.filter((b) => b.active).length} barbeiros disponíveis` },
+                    { label: 'Agenda de hoje', value: operationalToday.length, sub: `${upcoming.length} por confirmar` },
+                    { label: 'Clientes hoje', value: customersToday, sub: `${monthlyActiveCustomers} ativos no mês · ${customers.length} na base` },
                   ].map((s) => (
                     <div key={s.label} className="rounded-2xl border border-neutral-200/70 bg-white/80 p-4">
                       <p className="text-[10.5px] font-semibold uppercase tracking-[0.16em] text-ink-muted">{s.label}</p>

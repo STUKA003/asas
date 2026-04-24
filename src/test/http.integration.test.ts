@@ -1100,3 +1100,150 @@ test('authenticated barber endpoints never return password hashes', { skip: !int
   assert.equal('password' in updateResponse.body, false)
   assert.equal(updateResponse.body.hasAccess, false)
 })
+
+test('barber token is rejected after access is revoked or barber is deactivated', { skip: !integrationEnabled }, async () => {
+  const barberPassword = await bcrypt.hash('barber123', 10)
+
+  const shop = await prisma.barbershop.create({
+    data: {
+      name: 'Portal Guard Shop',
+      slug: 'portal-guard-shop',
+    },
+  })
+
+  const barber = await prisma.barber.create({
+    data: {
+      name: 'Guarded Barber',
+      email: 'guarded@portal-guard.test',
+      password: barberPassword,
+      active: true,
+      barbershopId: shop.id,
+    },
+  })
+
+  const login = await jsonRequest('/api/barber-auth/login', {
+    method: 'POST',
+    body: JSON.stringify({
+      slug: shop.slug,
+      email: barber.email,
+      password: 'barber123',
+    }),
+  })
+
+  assert.equal(login.response.status, 200)
+  const token = login.body.token as string
+
+  await prisma.barber.update({
+    where: { id: barber.id },
+    data: { password: null },
+  })
+
+  const revokedAccess = await jsonRequest('/api/barber-auth/me', {
+    headers: { Authorization: `Bearer ${token}` },
+  })
+
+  assert.equal(revokedAccess.response.status, 401)
+  assert.equal(revokedAccess.body.error, 'Barbeiro sem acesso ativo')
+
+  await prisma.barber.update({
+    where: { id: barber.id },
+    data: { password: barberPassword, active: false },
+  })
+
+  const deactivated = await jsonRequest('/api/barber-portal/stats', {
+    headers: { Authorization: `Bearer ${token}` },
+  })
+
+  assert.equal(deactivated.response.status, 401)
+  assert.equal(deactivated.body.error, 'Barbeiro sem acesso ativo')
+})
+
+test('blocked time update keeps validation for period order and barber ownership', { skip: !integrationEnabled }, async () => {
+  const ownerPassword = await bcrypt.hash('segredo123', 10)
+
+  const shop = await prisma.barbershop.create({
+    data: {
+      name: 'Blocked Shop',
+      slug: 'blocked-shop',
+      users: {
+        create: {
+          name: 'Owner Blocked',
+          email: 'owner@blocked-shop.test',
+          password: ownerPassword,
+          role: 'OWNER',
+          emailVerifiedAt: new Date(),
+        },
+      },
+    },
+  })
+
+  const barber = await prisma.barber.create({
+    data: {
+      name: 'Blocked Barber',
+      email: 'blocked@barber.test',
+      active: true,
+      barbershopId: shop.id,
+    },
+  })
+
+  const otherShop = await prisma.barbershop.create({
+    data: {
+      name: 'Other Shop',
+      slug: 'other-shop',
+    },
+  })
+
+  const outsiderBarber = await prisma.barber.create({
+    data: {
+      name: 'Outsider Barber',
+      email: 'outsider@barber.test',
+      active: true,
+      barbershopId: otherShop.id,
+    },
+  })
+
+  const login = await jsonRequest('/api/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({
+      slug: shop.slug,
+      email: 'owner@blocked-shop.test',
+      password: 'segredo123',
+    }),
+  })
+
+  assert.equal(login.response.status, 200)
+  const token = login.body.token as string
+
+  const block = await prisma.blockedTime.create({
+    data: {
+      barbershopId: shop.id,
+      barberId: barber.id,
+      startTime: new Date('2026-04-24T09:00:00.000Z'),
+      endTime: new Date('2026-04-24T10:00:00.000Z'),
+      reason: 'Intervalo',
+    },
+  })
+
+  const invalidPeriod = await jsonRequest(`/api/blocked-times/${block.id}`, {
+    method: 'PUT',
+    headers: { Authorization: `Bearer ${token}` },
+    body: JSON.stringify({
+      startTime: '2026-04-24T11:00:00.000Z',
+      endTime: '2026-04-24T10:30:00.000Z',
+    }),
+  })
+
+  assert.equal(invalidPeriod.response.status, 400)
+  assert.equal(invalidPeriod.body.error, 'startTime must be before endTime')
+
+  const foreignBarber = await jsonRequest(`/api/blocked-times/${block.id}`, {
+    method: 'PUT',
+    headers: { Authorization: `Bearer ${token}` },
+    body: JSON.stringify({
+      barberId: outsiderBarber.id,
+    }),
+  })
+
+  assert.equal(foreignBarber.response.status, 404)
+  assert.equal(foreignBarber.body.error, 'Barber not found')
+})

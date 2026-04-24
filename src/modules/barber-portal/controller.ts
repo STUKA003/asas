@@ -52,6 +52,22 @@ async function getPortalPlan(barbershopId: string) {
   return getEffectivePlan(shop?.subscriptionPlan ?? 'FREE', shop?.subscriptionEndsAt ?? null)
 }
 
+function parseDateOnly(value: string) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value)
+  if (!match) return new Date(value)
+
+  const [, year, month, day] = match
+  return new Date(Number(year), Number(month) - 1, Number(day), 0, 0, 0, 0)
+}
+
+function localDateKey(value: Date) {
+  return [
+    value.getFullYear(),
+    String(value.getMonth() + 1).padStart(2, '0'),
+    String(value.getDate()).padStart(2, '0'),
+  ].join('-')
+}
+
 export async function getMyBookings(req: Request, res: Response) {
   const { barberId, barbershopId } = req.barberAuth
   const { date, from, to } = req.query
@@ -59,11 +75,11 @@ export async function getMyBookings(req: Request, res: Response) {
   const where: Record<string, unknown> = { barberId, barbershopId }
 
   if (from && to) {
-    const start = new Date(from as string); start.setHours(0, 0, 0, 0)
-    const end   = new Date(to as string);   end.setHours(23, 59, 59, 999)
+    const start = parseDateOnly(from as string); start.setHours(0, 0, 0, 0)
+    const end   = parseDateOnly(to as string);   end.setHours(23, 59, 59, 999)
     where.startTime = { gte: start, lte: end }
   } else if (date) {
-    const d = new Date(date as string)
+    const d = parseDateOnly(date as string)
     const start = new Date(d); start.setHours(0, 0, 0, 0)
     const end   = new Date(d); end.setHours(23, 59, 59, 999)
     where.startTime = { gte: start, lte: end }
@@ -118,12 +134,12 @@ export async function getMyStats(req: Request, res: Response) {
   // Bookings per day of current week for mini-chart
   const weekDays = Array.from({ length: 7 }, (_, i) => {
     const d = new Date(weekStart); d.setDate(weekStart.getDate() + i)
-    return d.toISOString().slice(0, 10)
+    return localDateKey(d)
   })
   const perDay = weekDays.map(day => ({
     date: day,
     count: weekBookings.filter(b =>
-      b.startTime.toISOString().slice(0, 10) === day &&
+      localDateKey(b.startTime) === day &&
       ['PENDING', 'CONFIRMED', 'COMPLETED'].includes(b.status)
     ).length,
   }))

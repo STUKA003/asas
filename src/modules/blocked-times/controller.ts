@@ -76,12 +76,27 @@ export async function update(req: Request, res: Response) {
   if (!exists) { res.status(404).json({ error: 'Not found' }); return }
 
   const { startTime, endTime, ...rest } = parsed.data
+  const nextStartTime = startTime ? new Date(startTime) : exists.startTime
+  const nextEndTime = endTime ? new Date(endTime) : exists.endTime
+
+  if (nextStartTime >= nextEndTime) {
+    res.status(400).json({ error: 'startTime must be before endTime' })
+    return
+  }
+
+  if (rest.barberId) {
+    const barber = await prisma.barber.findFirst({
+      where: { id: rest.barberId, barbershopId: req.auth.barbershopId },
+    })
+    if (!barber) { res.status(404).json({ error: 'Barber not found' }); return }
+  }
+
   const item = await prisma.blockedTime.update({
     where: { id: req.params.id },
     data: {
       ...rest,
-      ...(startTime && { startTime: new Date(startTime) }),
-      ...(endTime && { endTime: new Date(endTime) }),
+      ...(startTime && { startTime: nextStartTime }),
+      ...(endTime && { endTime: nextEndTime }),
     },
   })
   res.json(item)

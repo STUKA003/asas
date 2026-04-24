@@ -40,6 +40,20 @@ export async function authenticateBarber(req: Request, res: Response, next: Next
       return
     }
 
+    const barber = await prisma.barber.findFirst({
+      where: {
+        id: payload.barberId,
+        barbershopId: payload.barbershopId,
+        active: true,
+        password: { not: null },
+      },
+      select: { id: true },
+    })
+    if (!barber) {
+      res.status(401).json({ error: 'Barbeiro sem acesso ativo' })
+      return
+    }
+
     next()
   } catch {
     res.status(401).json({ error: 'Invalid token' })

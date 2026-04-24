@@ -41,8 +41,10 @@ api.interceptors.response.use(
       }
 
       if (isBarberRequest(requestUrl)) {
-        useBarberAuthStore.getState().logout()
-        window.location.href = '/barber/login'
+        const barberStore = useBarberAuthStore.getState()
+        const slug = barberStore.barber?.barbershop?.slug
+        barberStore.logout()
+        window.location.href = slug ? `/${slug}/barber/login` : '/barber/login'
       } else if (isSuperadminRequest(requestUrl)) {
         useSuperAuthStore.getState().logout()
         window.location.href = '/superadmin/login'
