@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { prisma } from '../../lib/prisma'
 import { PLAN_LIMITS, getEffectivePlan, type SubscriptionPlan } from '../../lib/plans'
 import { getAppUrl, getPlanCheckoutSummary, getStripeClient } from '../../lib/stripe'
+import { invalidatePublicTenantCache } from '../public/tenant'
 
 const imageSchema = z.string().refine(
   (value) => value.startsWith('data:image/') || value.startsWith('http://') || value.startsWith('https://'),
@@ -271,6 +272,15 @@ export async function updateBarbershop(req: Request, res: Response) {
     ...rest
   } = parsed.data
 
+  const currentBarbershop = await prisma.barbershop.findUnique({
+    where: { id: req.auth.barbershopId },
+    select: { id: true, slug: true },
+  })
+  if (!currentBarbershop) {
+    res.status(404).json({ error: 'Barbearia não encontrada.' })
+    return
+  }
+
   const barbershop = await prisma.$transaction(async (tx) => {
     if (adminAvatarUrl !== undefined) {
       await tx.user.update({
@@ -296,6 +306,8 @@ export async function updateBarbershop(req: Request, res: Response) {
       },
     })
   })
+
+  invalidatePublicTenantCache({ id: currentBarbershop.id, slug: currentBarbershop.slug })
 
   res.json({
     ...barbershop,

@@ -2,6 +2,7 @@ import type { Request, Response } from 'express'
 import { prisma } from '../../lib/prisma'
 import { getStripeClient, getStripeWebhookSecret, resolveSubscriptionPlanFromPriceId } from '../../lib/stripe'
 import type { SubscriptionPlan } from '../../lib/plans'
+import { invalidatePublicTenantCache } from '../public/tenant'
 
 type StripeSubscriptionLike = {
   id: string
@@ -40,6 +41,13 @@ async function syncSubscription(subscription: StripeSubscriptionLike) {
 
   if (matches.length === 0) return
 
+  const updatedShops = await prisma.barbershop.findMany({
+    where: {
+      OR: matches,
+    },
+    select: { id: true, slug: true },
+  })
+
   await prisma.barbershop.updateMany({
     where: {
       OR: matches,
@@ -52,6 +60,10 @@ async function syncSubscription(subscription: StripeSubscriptionLike) {
       subscriptionEndsAt: isCanceled ? null : endsAt,
     },
   })
+
+  for (const shop of updatedShops) {
+    invalidatePublicTenantCache(shop)
+  }
 }
 
 export async function handleStripeWebhook(req: Request, res: Response) {
@@ -88,6 +100,7 @@ export async function handleStripeWebhook(req: Request, res: Response) {
             stripeSubscriptionId: subscriptionId ?? undefined,
           },
         })
+        invalidatePublicTenantCache({ id: barbershopId })
       }
       break
     }

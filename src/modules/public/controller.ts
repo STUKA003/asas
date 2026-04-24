@@ -5,7 +5,7 @@ import { prisma } from '../../lib/prisma'
 import { getAvailableSlots, validateSlot } from '../../utils/availability'
 import { createBooking } from '../bookings/service'
 import { getEffectivePlan } from '../../lib/plans'
-import { resolvePublicTenant } from './tenant'
+import { getCachedPublicBarbershopResponse, resolvePublicTenant } from './tenant'
 import { serializeCustomerPlanLookup, serializePublicPlan } from './serializers'
 import { notifyBookingCreated, notifyCustomerBookingAction } from '../../lib/booking-notifications'
 import { issueBookingManagementToken, verifyBookingManagementToken } from '../../lib/booking-management'
@@ -44,10 +44,16 @@ function setPublicReadCache(res: Response, seconds = 60) {
 // ─── Public handlers ─────────────────────────────────────────────────────────
 
 export async function getBarbershop(req: Request, res: Response) {
+  const cachedResponse = getCachedPublicBarbershopResponse(req.params.slug)
+  setPublicReadCache(res)
+  if (cachedResponse) {
+    res.type('application/json').send(cachedResponse)
+    return
+  }
+
   const shop = await resolvePublicTenant(req.params.slug)
   if (!shop) { res.status(404).json({ error: 'Barbershop not found' }); return }
   const { subscriptionPlan, subscriptionEndsAt, ...publicShop } = shop
-  setPublicReadCache(res)
   res.json({ ...publicShop, plan: getEffectivePlan(subscriptionPlan, subscriptionEndsAt) })
 }
 

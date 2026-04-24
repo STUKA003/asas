@@ -5,6 +5,7 @@ import crypto from 'crypto'
 import { z } from 'zod'
 import { prisma } from '../../lib/prisma'
 import { PLAN_LIMITS, type SubscriptionPlan } from '../../lib/plans'
+import { invalidatePublicTenantCache } from '../public/tenant'
 import { generateAvailableSlug, normalizeSlug } from '../../lib/slug'
 import { issueEmailVerification } from '../../lib/auth-tokens'
 
@@ -296,6 +297,7 @@ export async function updateBarbershopSubscription(req: Request, res: Response) 
     select: { id: true, name: true, subscriptionPlan: true, subscriptionEndsAt: true, suspended: true },
   })
 
+  invalidatePublicTenantCache({ id: barbershop.id })
   res.json(barbershop)
 }
 
@@ -345,6 +347,8 @@ export async function updateBarbershopDetails(req: Request, res: Response) {
     },
   })
 
+  invalidatePublicTenantCache({ id: barbershop.id, slug: exists.slug })
+  invalidatePublicTenantCache({ id: barbershop.id, slug: barbershop.slug })
   res.json(barbershop)
 }
 
@@ -421,6 +425,7 @@ export async function suspendBarbershop(req: Request, res: Response) {
     select: { id: true, name: true, suspended: true, suspendedReason: true },
   })
 
+  invalidatePublicTenantCache({ id: barbershop.id })
   res.json(barbershop)
 }
 
