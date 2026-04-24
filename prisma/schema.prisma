@@ -41,6 +41,9 @@ model Barbershop {
   createdAt          DateTime  @default(now())
   updatedAt        DateTime @updatedAt
 
+  @@index([suspended])
+  @@index([subscriptionPlan])
+
   users         User[]
   barbers       Barber[]
   services      Service[]
@@ -258,6 +261,10 @@ model Booking {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([barbershopId, startTime])
+  @@index([barbershopId, status, startTime])
+  @@index([barberId, startTime])
 }
 
 
@@ -303,6 +310,9 @@ model WorkingHours {
   barbershop   Barbershop @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
+
+  @@index([barbershopId])
+  @@index([barbershopId, barberId])
 }
 
 model Notification {
@@ -316,6 +326,8 @@ model Notification {
   bookingId    String?
   read         Boolean    @default(false)
   createdAt    DateTime   @default(now())
+
+  @@index([barbershopId, read, createdAt])
 }
 
 model PushSubscription {

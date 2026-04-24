@@ -273,6 +273,10 @@ app.get('/:slug', async (req, res, next) => {
 app.use((_req, res) => res.status(404).json({ error: 'Route not found' }))
 
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  if (err instanceof SyntaxError && 'body' in err) {
+    res.status(400).json({ error: 'Invalid JSON' })
+    return
+  }
   if (process.env.NODE_ENV !== 'production') console.error(err)
   res.status(500).json({ error: 'Internal server error' })
 })
