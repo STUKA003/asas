@@ -127,7 +127,7 @@ const plans = [
       'Relatórios avançados',
     ],
     cta: 'Começar grátis',
-    note: 'Começa com 14 dias de teste',
+    note: null,
   },
 ]
 
