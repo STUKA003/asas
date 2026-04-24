@@ -2,8 +2,8 @@
 <html lang="pt-PT">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/branding/platform-logo.png" />
-    <link rel="apple-touch-icon" href="/branding/platform-logo.png" />
+    <link rel="icon" type="image/png" href="/branding/platform-logo-favicon.png" />
+    <link rel="apple-touch-icon" href="/branding/platform-logo-touch.png" />
     <meta name="application-name" content="Trimio" />
     <meta name="apple-mobile-web-app-title" content="Trimio" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -18,7 +18,8 @@
           shortTitle: 'Trimio',
           theme: '#09090b',
           background: '#ffffff',
-          iconPath: '/branding/platform-logo.png',
+          iconPath: '/branding/platform-logo-favicon.png',
+          touchPath: '/branding/platform-logo-touch.png',
           appId: '/',
           startUrl: '/',
           scope: '/',
@@ -30,7 +31,8 @@
             shortTitle: 'Studio',
             theme: '#09090b',
             background: '#09090b',
-            iconPath: '/branding/admin-logo.png',
+            iconPath: '/branding/admin-logo-favicon.png',
+            touchPath: '/branding/admin-logo-touch.png',
             appId: '/admin',
             startUrl: '/admin',
             scope: '/admin',
@@ -41,7 +43,8 @@
             shortTitle: 'Command',
             theme: '#0f172a',
             background: '#0f172a',
-            iconPath: '/branding/superadmin-logo.png',
+            iconPath: '/branding/superadmin-logo-favicon.png',
+            touchPath: '/branding/superadmin-logo-touch.png',
             appId: '/superadmin',
             startUrl: '/superadmin',
             scope: '/superadmin',
@@ -52,7 +55,8 @@
             shortTitle: 'Flow',
             theme: '#f97316',
             background: '#f97316',
-            iconPath: '/branding/barber-logo.png',
+            iconPath: '/branding/barber-logo-favicon.png',
+            touchPath: '/branding/barber-logo-touch.png',
             appId: '/barber/login',
             startUrl: '/barber/login',
             scope: '/barber',
@@ -66,7 +70,8 @@
               shortTitle: 'Flow',
               theme: '#f97316',
               background: '#f97316',
-              iconPath: '/branding/barber-logo.png',
+              iconPath: '/branding/barber-logo-favicon.png',
+              touchPath: '/branding/barber-logo-touch.png',
               appId: barberBase,
               startUrl: barberBase,
               scope: barberBase,
@@ -81,7 +86,8 @@
                 shortTitle: 'Clientes',
                 theme: '#09090b',
                 background: '#ffffff',
-                iconPath: '/branding/clients-logo.png',
+                iconPath: '/branding/clients-logo-favicon.png',
+                touchPath: '/branding/clients-logo-touch.png',
                 appId: publicBase,
                 startUrl: publicBase,
                 scope: publicBase,
@@ -121,7 +127,7 @@
         icon.type = 'image/png'
 
         var appleTouchIcon = ensureLink('apple-touch-icon')
-        appleTouchIcon.href = brand.iconPath
+        appleTouchIcon.href = brand.touchPath
         appleTouchIcon.sizes = '180x180'
 
         var manifestLink = ensureLink('manifest')
