@@ -1,6 +1,6 @@
 import { prisma } from './prisma'
 import { sendNotificationPush } from './push'
-import { formatStoredWallClockTime } from './datetime'
+import { formatStoredWallClockDayMonthTime } from './datetime'
 
 type BookingNotificationInput = {
   barberId: string
@@ -21,12 +21,12 @@ type CustomerBookingActionInput = {
 }
 
 function formatTime(date: Date) {
-  return formatStoredWallClockTime(date)
+  return formatStoredWallClockDayMonthTime(date)
 }
 
 export async function notifyBookingCreated(input: BookingNotificationInput) {
   const sourceLabel = input.source === 'public' ? 'online' : 'manual'
-  const message = `Nova marcação ${sourceLabel} de ${input.customerName} para as ${formatTime(input.startTime)}`
+  const message = `Nova marcação ${sourceLabel} de ${input.customerName} para ${formatTime(input.startTime)}`
 
   await prisma.notification.create({
     data: {
@@ -47,7 +47,7 @@ export async function notifyBookingCreated(input: BookingNotificationInput) {
 }
 
 export async function notifyCustomerBookingAction(input: CustomerBookingActionInput) {
-  const details = input.startTime ? ` para as ${formatTime(input.startTime)}` : ''
+  const details = input.startTime ? ` para ${formatTime(input.startTime)}` : ''
   const typeMap = {
     cancelled: 'BOOKING_CUSTOMER_CANCELLED',
     confirmed: 'BOOKING_CUSTOMER_CONFIRMED',

@@ -117,7 +117,7 @@ function BarberNotificationBell() {
                     }}
                     className="text-xs font-medium text-ink-muted transition hover:text-ink"
                   >
-                    Limpar tudo
+                    Marcar tudo como lido
                   </button>
                 ) : null}
               </div>

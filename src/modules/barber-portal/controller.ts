@@ -5,10 +5,10 @@ import { getEffectivePlan } from '../../lib/plans'
 import { validateSlot } from '../../utils/availability'
 import { addBookingItemsToBooking, removeBookingItemFromBooking } from '../bookings/items-service'
 import { sendNotificationPush } from '../../lib/push'
-import { formatStoredWallClockTime } from '../../lib/datetime'
+import { formatStoredWallClockDayMonthTime } from '../../lib/datetime'
 
 function fmtTime(d: Date) {
-  return formatStoredWallClockTime(d)
+  return formatStoredWallClockDayMonthTime(d)
 }
 
 const STATUS_LABELS: Record<string, string> = {
@@ -201,7 +201,7 @@ export async function updateBookingStatus(req: Request, res: Response) {
   const updated = await prisma.booking.update({ where: { id: req.params.id }, data: { status } })
 
   const bookingClientName = booking.attendeeName?.trim() || booking.customer.name
-  const message = `${booking.barber.name} ${STATUS_LABELS[status] ?? 'alterou'} o agendamento de ${bookingClientName}`
+  const message = `${booking.barber.name} ${STATUS_LABELS[status] ?? 'alterou'} o agendamento de ${bookingClientName} em ${fmtTime(booking.startTime)}`
 
   await prisma.notification.create({
     data: {
@@ -259,7 +259,7 @@ export async function rescheduleBooking(req: Request, res: Response) {
   })
 
   const bookingClientName = booking.attendeeName?.trim() || booking.customer.name
-  const message = `${booking.barber.name} remarcou o agendamento de ${bookingClientName} das ${oldTimeStr} para as ${newTimeStr}`
+  const message = `${booking.barber.name} remarcou o agendamento de ${bookingClientName} de ${oldTimeStr} para ${newTimeStr}`
 
   await prisma.notification.create({
     data: {
