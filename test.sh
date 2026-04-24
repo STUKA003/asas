@@ -168,6 +168,7 @@ def check_page(label, url, expected=200):
 def img_ok(url):
     if not url: return None
     if url.startswith("data:image/"): return "data_uri"
+    if url.startswith("/"): url = f"{BASE}{url}"
     s,_,_ = http(url,timeout=8); return s
 
 def html_page(url, timeout=12):
