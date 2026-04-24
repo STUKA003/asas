@@ -5,7 +5,7 @@ import { prisma } from '../../lib/prisma'
 import { getAvailableSlots, validateSlot } from '../../utils/availability'
 import { createBooking } from '../bookings/service'
 import { getEffectivePlan } from '../../lib/plans'
-import { getCachedPublicBarbershopResponse, resolvePublicTenant } from './tenant'
+import { getCachedPublicBarbershopResponse, resolvePublicTenant, serializePublicBarbershop } from './tenant'
 import { serializeCustomerPlanLookup, serializePublicPlan } from './serializers'
 import { notifyBookingCreated, notifyCustomerBookingAction } from '../../lib/booking-notifications'
 import { issueBookingManagementToken, verifyBookingManagementToken } from '../../lib/booking-management'
@@ -41,6 +41,22 @@ function setPublicReadCache(res: Response, seconds = 60) {
   res.setHeader('Cache-Control', `public, max-age=${seconds}, s-maxage=${seconds}, stale-while-revalidate=300`)
 }
 
+function setPublicAssetCache(res: Response) {
+  res.setHeader('Cache-Control', 'public, max-age=31536000, immutable')
+}
+
+function readDataUri(value: string | null) {
+  if (!value?.startsWith('data:image/')) return null
+
+  const match = value.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/)
+  if (!match) return null
+
+  return {
+    mimeType: match[1],
+    buffer: Buffer.from(match[2], 'base64'),
+  }
+}
+
 // ─── Public handlers ─────────────────────────────────────────────────────────
 
 export async function getBarbershop(req: Request, res: Response) {
@@ -53,8 +69,36 @@ export async function getBarbershop(req: Request, res: Response) {
 
   const shop = await resolvePublicTenant(req.params.slug)
   if (!shop) { res.status(404).json({ error: 'Barbershop not found' }); return }
-  const { subscriptionPlan, subscriptionEndsAt, ...publicShop } = shop
-  res.json({ ...publicShop, plan: getEffectivePlan(subscriptionPlan, subscriptionEndsAt) })
+  res.json(serializePublicBarbershop(shop))
+}
+
+export async function getPublicImageAsset(req: Request, res: Response) {
+  const shop = await resolvePublicTenant(req.params.slug)
+  if (!shop) { res.status(404).json({ error: 'Barbershop not found' }); return }
+
+  const asset = req.params.asset
+  let source: string | null = null
+
+  if (asset === 'logo') {
+    source = shop.logoUrl
+  } else if (asset === 'hero') {
+    source = shop.heroImageUrl
+  } else {
+    const galleryMatch = asset.match(/^gallery\/(\d+)$/)
+    if (galleryMatch) {
+      const index = Number(galleryMatch[1])
+      source = Number.isInteger(index) ? shop.galleryImages[index] ?? null : null
+    }
+  }
+
+  const image = readDataUri(source)
+  if (!image) {
+    res.status(404).end()
+    return
+  }
+
+  setPublicAssetCache(res)
+  res.type(image.mimeType).send(image.buffer)
 }
 
 export async function getServices(req: Request, res: Response) {

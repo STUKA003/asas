@@ -4,6 +4,7 @@ import {
   cancelManagedBooking,
   confirmManagedBooking,
   getBarbershop,
+  getPublicImageAsset,
   getServices,
   getBarbers,
   getExtras,
@@ -24,6 +25,7 @@ import {
 const router = Router({ mergeParams: true }) // inherit :slug from parent
 
 router.get('/',             getBarbershop)
+router.get('/assets/:asset(*)', getPublicImageAsset)
 router.get('/services',     getServices)
 router.get('/barbers',      getBarbers)
 router.get('/extras',       getExtras)

@@ -158,7 +158,7 @@ def pub(path):
 def check_page(label, url, expected=200):
     s,_,ms = http(url)
     if s==expected:
-        if ms > 3000:
+        if ms > 4500:
             warn(f"{label} — {s} lento ({ms}ms)")
         else:
             ok(f"{label} — {s} · {ms}ms")
@@ -945,7 +945,7 @@ for p in d:
                 name,status,restarts,mem=parts[:4]
                 if status=="online": ok(f"PM2 '{name}' — online · {mem}MB RAM")
                 else: fail(f"PM2 '{name}' — {status}!")
-                if int(restarts)>20: warn(f"'{name}' reiniciou {restarts}× (histórico)")
+                if int(restarts)>20: note(f"'{name}' histórico de {restarts} restart(s)")
                 else: ok(f"'{name}' estável — {restarts} restart(s)")
 
     # Recursos

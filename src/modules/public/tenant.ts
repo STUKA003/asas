@@ -7,6 +7,7 @@ type RawPublicShop = {
   id: string
   name: string
   slug: string
+  updatedAt: Date
   phone: string | null
   address: string | null
   whatsapp: string | null
@@ -61,18 +62,38 @@ function normalizePublicShop<T extends { galleryImages: string | null }>(shop: T
   return { ...shop, galleryImages }
 }
 
-function buildPublicBarbershopResponse(shop: PublicShop) {
-  const { subscriptionPlan, subscriptionEndsAt, ...publicShop } = shop
+function toVersionToken(updatedAt: Date) {
+  return updatedAt.getTime().toString(36)
+}
+
+function toPublicAssetPath(slug: string, asset: string, version: string) {
+  return `/api/public/${slug}/assets/${asset}?v=${version}`
+}
+
+function normalizePublicAsset(value: string | null, slug: string, asset: string, version: string) {
+  if (!value) return value
+  if (value.startsWith('data:image/')) {
+    return toPublicAssetPath(slug, asset, version)
+  }
+  return value
+}
+
+export function serializePublicBarbershop(shop: PublicShop) {
+  const { subscriptionPlan, subscriptionEndsAt, updatedAt, galleryImages, ...publicShop } = shop
+  const version = toVersionToken(updatedAt)
 
   return {
     ...publicShop,
+    logoUrl: normalizePublicAsset(shop.logoUrl, shop.slug, 'logo', version),
+    heroImageUrl: normalizePublicAsset(shop.heroImageUrl, shop.slug, 'hero', version),
+    galleryImages: galleryImages.map((image, index) => normalizePublicAsset(image, shop.slug, `gallery/${index}`, version) ?? ''),
     plan: getEffectivePlan(subscriptionPlan, subscriptionEndsAt),
   }
 }
 
 function cachePublicTenant(slug: string, shop: PublicShop | null, now: number) {
   const normalizedSlug = slug.trim().toLowerCase()
-  const responseBody = shop ? JSON.stringify(buildPublicBarbershopResponse(shop)) : null
+  const responseBody = shop ? JSON.stringify(serializePublicBarbershop(shop)) : null
   publicTenantCache.set(normalizedSlug, {
     expiresAt: now + PUBLIC_TENANT_CACHE_TTL_MS,
     shop,
@@ -132,6 +153,7 @@ export async function resolvePublicTenant(slug: string): Promise<PublicShop | nu
       id: true,
       name: true,
       slug: true,
+      updatedAt: true,
       phone: true,
       address: true,
       whatsapp: true,
