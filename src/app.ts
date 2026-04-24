@@ -170,9 +170,17 @@ function escHtml(s: string) {
   return s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 }
 
+let cachedIndexHtml = ''
+let cachedIndexHtmlMtimeMs = 0
+
 function readIndexHtml(): string {
   const p = path.resolve(__dirname, '..', 'web', 'dist', 'index.html')
-  return fs.readFileSync(p, 'utf-8')
+  const { mtimeMs } = fs.statSync(p)
+  if (!cachedIndexHtml || cachedIndexHtmlMtimeMs !== mtimeMs) {
+    cachedIndexHtml = fs.readFileSync(p, 'utf-8')
+    cachedIndexHtmlMtimeMs = mtimeMs
+  }
+  return cachedIndexHtml
 }
 
 // Sitemap — lists all barbershop pages for Google to crawl
