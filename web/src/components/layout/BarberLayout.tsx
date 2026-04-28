@@ -17,6 +17,7 @@ import { PanelShell, type PanelNavSection } from './PanelShell'
 import barberLogo from '@/assets/branding/barber-logo.png'
 import { cn } from '@/lib/utils'
 import { formatDistanceToNow } from 'date-fns'
+import { getDateFnsLocale } from '@/i18n/dateFnsLocale'
 import { PushToggle } from './PushToggle'
 
 function BarberNotificationBell() {
@@ -67,10 +68,7 @@ function BarberNotificationBell() {
     }
   })()
 
-  const dateFnsLocale = (() => {
-    try { return require(`date-fns/locale/${i18n.language}`).default ?? require('date-fns/locale/pt').default }
-    catch { try { return require(`date-fns/locale/${i18n.language.split('-')[0]}`).default } catch { return require('date-fns/locale/pt').default } }
-  })()
+  const dateFnsLocale = getDateFnsLocale(i18n.language)
 
   const TYPE_CONFIG: Record<string, { icon: React.ElementType; iconClass: string; bg: string }> = {
     BOOKING_CREATED: { icon: Calendar, iconClass: 'text-primary-600', bg: 'bg-primary-50' },

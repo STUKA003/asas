@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { format, addDays, isSameDay } from 'date-fns'
+import { getDateFnsLocale } from '@/i18n/dateFnsLocale'
 import { publicApi } from '@/lib/publicApi'
 import { useTenant } from '@/providers/TenantProvider'
 import { useBookingStore } from '@/store/booking'
@@ -23,10 +24,7 @@ export function StepDateTime() {
   const days = Array.from({ length: DAYS_VISIBLE }, (_, i) => addDays(today, i + offset))
   const selectedDate = date ? new Date(date) : null
 
-  const dateFnsLocale = (() => {
-    try { return require(`date-fns/locale/${i18n.language}`).default ?? require('date-fns/locale/pt').default }
-    catch { try { return require(`date-fns/locale/${i18n.language.split('-')[0]}`).default } catch { return require('date-fns/locale/pt').default } }
-  })()
+  const dateFnsLocale = getDateFnsLocale(i18n.language)
 
   const { data, isLoading } = useQuery({
     queryKey: ['public', slug, 'availability', barber?.id, date, service?.duration],

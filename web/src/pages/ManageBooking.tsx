@@ -2,6 +2,7 @@ import { useMemo, useState, useRef } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { format } from 'date-fns'
 import { useTranslation } from 'react-i18next'
+import { getDateFnsLocale } from '@/i18n/dateFnsLocale'
 import { Calendar, CheckCircle2, Clock3, Copy, Download, Plus, RefreshCw, Scissors, Shield, ShieldAlert, XCircle } from 'lucide-react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { Header } from '@/components/layout/Header'
@@ -38,10 +39,7 @@ export default function ManageBooking() {
   const [showEraseConfirm, setShowEraseConfirm] = useState(false)
   const eraseConfirmRef = useRef<HTMLDivElement>(null)
 
-  const dateFnsLocale = (() => {
-    try { return require(`date-fns/locale/${i18n.language}`).default ?? require('date-fns/locale/pt').default }
-    catch { try { return require(`date-fns/locale/${i18n.language.split('-')[0]}`).default } catch { return require('date-fns/locale/pt').default } }
-  })()
+  const dateFnsLocale = getDateFnsLocale(i18n.language)
 
   const bookingQuery = useQuery({
     queryKey: ['public-booking-manage', slug, token],

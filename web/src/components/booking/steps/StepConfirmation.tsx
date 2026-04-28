@@ -3,6 +3,7 @@ import { useMutation } from '@tanstack/react-query'
 import { format } from 'date-fns'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { getDateFnsLocale } from '@/i18n/dateFnsLocale'
 import { publicApi } from '@/lib/publicApi'
 import { useTenant } from '@/providers/TenantProvider'
 import { type BookingDraft, useBookingStore } from '@/store/booking'
@@ -44,10 +45,7 @@ export function StepConfirmation() {
   const [privacyAccepted, setPrivacyAccepted] = useState(false)
   const { t, i18n } = useTranslation(['public', 'common'])
 
-  const dateFnsLocale = (() => {
-    try { return require(`date-fns/locale/${i18n.language}`).default ?? require('date-fns/locale/pt').default }
-    catch { try { return require(`date-fns/locale/${i18n.language.split('-')[0]}`).default } catch { return require('date-fns/locale/pt').default } }
-  })()
+  const dateFnsLocale = getDateFnsLocale(i18n.language)
 
   const { barber, customer, customerPlan, date, extras, products, service, slot } = store
 

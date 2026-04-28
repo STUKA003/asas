@@ -28,6 +28,7 @@ import {
 } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { useTranslation } from 'react-i18next'
+import { getDateFnsLocale } from '@/i18n/dateFnsLocale'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/store/auth'
 import { Avatar } from '@/components/ui/Avatar'
@@ -106,13 +107,7 @@ function NotificationBell() {
   }
 
   const { i18n } = useTranslation()
-  const dateFnsLocale = (() => {
-    try {
-      return require(`date-fns/locale/${i18n.language}`).default ?? require('date-fns/locale/pt').default
-    } catch {
-      try { return require(`date-fns/locale/${i18n.language.split('-')[0]}`).default } catch { return require('date-fns/locale/pt').default }
-    }
-  })()
+  const dateFnsLocale = getDateFnsLocale(i18n.language)
 
   return (
     <div ref={ref} className="relative">

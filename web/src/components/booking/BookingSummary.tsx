@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { getDateFnsLocale } from '@/i18n/dateFnsLocale'
 import { useBookingStore } from '@/store/booking'
 import { useTenant } from '@/providers/TenantProvider'
 import { formatCurrency, formatDuration, toWallClockDate } from '@/lib/utils'
@@ -26,6 +27,7 @@ export function BookingSummary() {
     productPrices.reduce((s, p) => s + p.effectivePrice, 0)
 
   const duration = service.duration + extras.reduce((s, e) => s + (e.fitsInService ? 0 : e.duration), 0)
+  const dateFnsLocale = getDateFnsLocale(i18n.language)
   const langLocale = i18n.language || 'pt'
   const lines = [
     date ? { icon: CalendarDays, label: t('booking.summary.date'), value: new Date(date).toLocaleDateString(langLocale, { day: '2-digit', month: 'long' }) } : null,
