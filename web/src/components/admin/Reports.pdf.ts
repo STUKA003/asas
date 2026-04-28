@@ -132,14 +132,14 @@ function getBaseStyles(accentColor: string, twoColTemplate: string) {
 }
 
 function getBranding(barbershop?: Barbershop) {
-  const shopName = barbershop?.name || 'Barbearia'
+  const shopName = barbershop?.name || 'Barbershop'
   const accentColor = barbershop?.accentColor || '#18181b'
   const logoMarkup = barbershop?.logoUrl
     ? `<img src="${escapeHtml(barbershop.logoUrl)}" alt="${escapeHtml(shopName)}" class="logo-image" />`
     : `<div class="logo-fallback">${escapeHtml(shopName.charAt(0).toUpperCase())}</div>`
   const metaItems = [
-    barbershop?.address ? `Morada: ${barbershop.address}` : '',
-    barbershop?.phone ? `Telefone: ${barbershop.phone}` : '',
+    barbershop?.address ? `Address: ${barbershop.address}` : '',
+    barbershop?.phone ? `Phone: ${barbershop.phone}` : '',
     barbershop?.instagram ? `Instagram: ${barbershop.instagram}` : '',
   ].filter(Boolean).map((item) => `<span>${escapeHtml(item)}</span>`).join('<span class="divider">•</span>')
 
@@ -165,9 +165,9 @@ export function buildGeneralReportPdfHtml(data: ReportData, periodLabel: string,
   const { shopName, accentColor, logoMarkup, metaItems } = getBranding(barbershop)
   const generatedAt = new Date().toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit', year: 'numeric' })
   const executiveSummary = [
-    `A faturação total no período foi de ${formatCurrency(data.overview.totalRevenue)}, com ticket médio de ${formatCurrency(data.overview.avgTicket)}.`,
-    `A agenda operou com ${formatPercent(data.occupancy.occupancyRate)} de ocupação e ${formatMinutesToHours(data.occupancy.deadMinutes)} de horas mortas.`,
-    `Foram registados ${data.customers.newCustomers} novos clientes e ${data.customers.recurringCustomers} recorrentes.`,
+    `Total revenue for the period was ${formatCurrency(data.overview.totalRevenue)}, with an average ticket of ${formatCurrency(data.overview.avgTicket)}.`,
+    `The schedule ran at ${formatPercent(data.occupancy.occupancyRate)} occupancy with ${formatMinutesToHours(data.occupancy.deadMinutes)} of dead time.`,
+    `${data.customers.newCustomers} new customers and ${data.customers.recurringCustomers} returning customers were recorded.`,
   ].join(' ')
 
   return `
@@ -175,7 +175,7 @@ export function buildGeneralReportPdfHtml(data: ReportData, periodLabel: string,
     <html lang="pt-PT">
       <head>
         <meta charset="UTF-8" />
-        <title>Relatório ${escapeHtml(periodLabel)}</title>
+        <title>Report ${escapeHtml(periodLabel)}</title>
         <style>${getBaseStyles(accentColor, '1fr 1fr')}</style>
         <script>window.addEventListener('load', () => { setTimeout(() => { window.print() }, 350) })</script>
       </head>
@@ -186,76 +186,76 @@ export function buildGeneralReportPdfHtml(data: ReportData, periodLabel: string,
               <div class="brand">
                 ${logoMarkup}
                 <div>
-                  <div class="report-badge">Relatório executivo</div>
-                  <h1>${escapeHtml(shopName)} · Relatório Geral</h1>
+                  <div class="report-badge">Executive report</div>
+                  <h1>${escapeHtml(shopName)} · General Report</h1>
                 </div>
               </div>
               <div style="text-align:right">
-                <p style="font-size:12px;color:rgba(255,255,255,.72)">Período analisado</p>
+                <p style="font-size:12px;color:rgba(255,255,255,.72)">Analyzed period</p>
                 <p style="font-size:15px;font-weight:700;margin-top:6px">${escapeHtml(periodLabel)}</p>
               </div>
             </div>
             <p class="hero-subtitle">${escapeHtml(executiveSummary)}</p>
-            <div class="hero-meta"><span>Emitido em ${generatedAt}</span>${metaItems ? `<span class="divider">•</span>${metaItems}` : ''}</div>
+            <div class="hero-meta"><span>Generated on ${generatedAt}</span>${metaItems ? `<span class="divider">•</span>${metaItems}` : ''}</div>
           </div>
           <div class="content">
             <div class="grid">
-              <div class="card"><div class="eyebrow">Receita total</div><div class="value">${formatCurrency(data.overview.totalRevenue)}</div></div>
-              <div class="card"><div class="eyebrow">Ticket médio</div><div class="value">${formatCurrency(data.overview.avgTicket)}</div></div>
-              <div class="card"><div class="eyebrow">Agendamentos</div><div class="value">${data.overview.totalBookings}</div></div>
-              <div class="card"><div class="eyebrow">Perda de agenda</div><div class="value">${formatPercent(data.cancellations.lossRate)}</div></div>
+              <div class="card"><div class="eyebrow">Total revenue</div><div class="value">${formatCurrency(data.overview.totalRevenue)}</div></div>
+              <div class="card"><div class="eyebrow">Average ticket</div><div class="value">${formatCurrency(data.overview.avgTicket)}</div></div>
+              <div class="card"><div class="eyebrow">Bookings</div><div class="value">${data.overview.totalBookings}</div></div>
+              <div class="card"><div class="eyebrow">Schedule loss</div><div class="value">${formatPercent(data.cancellations.lossRate)}</div></div>
             </div>
             <div class="section">
-              <div class="section-title"><h2>Resumo executivo</h2><span class="section-chip">Visão geral</span></div>
+              <div class="section-title"><h2>Executive summary</h2><span class="section-chip">Overview</span></div>
               <div class="card card-soft summary">${escapeHtml(executiveSummary)}</div>
             </div>
             <div class="section">
-              <div class="section-title"><h2>Faturação</h2><span class="section-chip">Financeiro</span></div>
+              <div class="section-title"><h2>Billing</h2><span class="section-chip">Financeiro</span></div>
               <div class="two-col">
-                <div class="card"><div class="eyebrow">Diária</div><div class="value">${formatCurrency(data.billing.dailyRevenue)}</div></div>
-                <div class="card"><div class="eyebrow">Semanal</div><div class="value">${formatCurrency(data.billing.weeklyRevenue)}</div></div>
-                <div class="card"><div class="eyebrow">Mensal</div><div class="value">${formatCurrency(data.billing.monthlyRevenue)}</div></div>
-                <div class="card"><div class="eyebrow">Receita de planos</div><div class="value">${formatCurrency(data.overview.planRevenue)}</div></div>
+                <div class="card"><div class="eyebrow">Daily</div><div class="value">${formatCurrency(data.billing.dailyRevenue)}</div></div>
+                <div class="card"><div class="eyebrow">Weekly</div><div class="value">${formatCurrency(data.billing.weeklyRevenue)}</div></div>
+                <div class="card"><div class="eyebrow">Monthly</div><div class="value">${formatCurrency(data.billing.monthlyRevenue)}</div></div>
+                <div class="card"><div class="eyebrow">Plan revenue</div><div class="value">${formatCurrency(data.overview.planRevenue)}</div></div>
               </div>
             </div>
             <div class="section">
-              <div class="section-title"><h2>Performance dos barbeiros</h2><span class="section-chip">Equipa</span></div>
-              <table><thead><tr><th>Barbeiro</th><th>Cortes</th><th>Faturação</th><th>Ocupação</th></tr></thead><tbody>${barbers || '<tr><td colspan="4">Sem dados.</td></tr>'}</tbody></table>
+              <div class="section-title"><h2>Barber performance</h2><span class="section-chip">Team</span></div>
+              <table><thead><tr><th>Barber</th><th>Cuts</th><th>Billing</th><th>Occupancy</th></tr></thead><tbody>${barbers || '<tr><td colspan="4">No data.</td></tr>'}</tbody></table>
             </div>
             <div class="section two-col">
               <div>
-                <div class="section-title"><h2>Serviços mais vendidos</h2><span class="section-chip">Serviços</span></div>
-                <table><thead><tr><th>Serviço</th><th>Qtd.</th><th>Receita</th></tr></thead><tbody>${topServices || '<tr><td colspan="3">Sem dados.</td></tr>'}</tbody></table>
+                <div class="section-title"><h2>Top services</h2><span class="section-chip">Services</span></div>
+                <table><thead><tr><th>Service</th><th>Qtd.</th><th>Receita</th></tr></thead><tbody>${topServices || '<tr><td colspan="3">No data.</td></tr>'}</tbody></table>
               </div>
               <div>
-                <div class="section-title"><h2>Produtos mais vendidos</h2><span class="section-chip">Retalho</span></div>
-                <table><thead><tr><th>Produto</th><th>Qtd.</th><th>Receita</th></tr></thead><tbody>${topProducts || '<tr><td colspan="3">Sem dados.</td></tr>'}</tbody></table>
+                <div class="section-title"><h2>Top products</h2><span class="section-chip">Retail</span></div>
+                <table><thead><tr><th>Product</th><th>Qtd.</th><th>Receita</th></tr></thead><tbody>${topProducts || '<tr><td colspan="3">No data.</td></tr>'}</tbody></table>
               </div>
             </div>
             <div class="section two-col">
               <div>
-                <div class="section-title"><h2>Clientes</h2><span class="section-chip">Fidelização</span></div>
-                <p class="muted">Novos: ${data.customers.newCustomers} | Recorrentes: ${data.customers.recurringCustomers} | Ativos: ${data.customers.activeCustomers}</p>
-                <table><thead><tr><th>Cliente</th><th>Visitas</th></tr></thead><tbody>${topCustomers || '<tr><td colspan="2">Sem dados.</td></tr>'}</tbody></table>
+                <div class="section-title"><h2>Customers</h2><span class="section-chip">Loyalty</span></div>
+                <p class="muted">New: ${data.customers.newCustomers} | Returning: ${data.customers.recurringCustomers} | Active: ${data.customers.activeCustomers}</p>
+                <table><thead><tr><th>Customer</th><th>Visits</th></tr></thead><tbody>${topCustomers || '<tr><td colspan="2">No data.</td></tr>'}</tbody></table>
               </div>
               <div>
-                <div class="section-title"><h2>Cancelamentos e faltas</h2><span class="section-chip">Risco operacional</span></div>
+                <div class="section-title"><h2>Cancellations and no-shows</h2><span class="section-chip">Operational risk</span></div>
                 <div class="card card-soft" style="display:grid;gap:10px">
-                  <p class="muted">Cancelamentos: <strong style="color:var(--text)">${data.cancellations.cancelledBookings}</strong></p>
+                  <p class="muted">Cancellations: <strong style="color:var(--text)">${data.cancellations.cancelledBookings}</strong></p>
                   <p class="muted">No-shows: <strong style="color:var(--text)">${data.cancellations.noShowBookings}</strong></p>
-                  <p class="muted">Taxa de cancelamento: <strong style="color:var(--text)">${formatPercent(data.cancellations.cancellationRate)}</strong></p>
-                  <p class="muted">Taxa de no-show: <strong style="color:var(--text)">${formatPercent(data.cancellations.noShowRate)}</strong></p>
-                  <p class="muted">Ocupação global: <strong style="color:var(--text)">${formatPercent(data.occupancy.occupancyRate)}</strong></p>
+                  <p class="muted">Cancellation rate: <strong style="color:var(--text)">${formatPercent(data.cancellations.cancellationRate)}</strong></p>
+                  <p class="muted">No-show rate: <strong style="color:var(--text)">${formatPercent(data.cancellations.noShowRate)}</strong></p>
+                  <p class="muted">Occupancy global: <strong style="color:var(--text)">${formatPercent(data.occupancy.occupancyRate)}</strong></p>
                 </div>
               </div>
             </div>
             <div class="section">
-              <div class="section-title"><h2>Insights automáticos</h2><span class="section-chip">Ações sugeridas</span></div>
-              <ul>${insights || '<li>Sem insights disponíveis.</li>'}</ul>
+              <div class="section-title"><h2>Automatic insights</h2><span class="section-chip">Suggested actions</span></div>
+              <ul>${insights || '<li>No insights available.</li>'}</ul>
             </div>
             <div class="footer">
-              <span>${escapeHtml(shopName)} • Relatório interno</span>
-              <span>Documento gerado automaticamente pelo painel da barbearia</span>
+              <span>${escapeHtml(shopName)} • Internal report</span>
+              <span>Document generated automatically by the barbershop dashboard</span>
             </div>
           </div>
         </div>
@@ -268,9 +268,9 @@ export function buildPlanReportPdfHtml(report: PlanReport, periodLabel: string, 
   const { shopName, accentColor, logoMarkup, metaItems } = getBranding(barbershop)
   const generatedAt = new Date().toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit', year: 'numeric' })
   const executiveSummary = [
-    `A base ativa tem ${report.overview.totalSubscribers} assinantes distribuídos por ${report.overview.activePlans} plano(s) ativo(s).`,
-    `A receita recorrente estimada no período é de ${formatCurrency(report.overview.totalEstimatedRecurringRevenue)}.`,
-    `Foram registadas ${report.overview.totalBookingsUsed} utilizações, com média de ${report.overview.averageUsagePerSubscriber.toFixed(1)} por assinante.`,
+    `The active base has ${report.overview.totalSubscribers} subscribers across ${report.overview.activePlans} active plan(s).`,
+    `Estimated recurring revenue for the period is ${formatCurrency(report.overview.totalEstimatedRecurringRevenue)}.`,
+    `${report.overview.totalBookingsUsed} uses were recorded, with an average of ${report.overview.averageUsagePerSubscriber.toFixed(1)} per subscriber.`,
   ].join(' ')
   const planRows = report.plans.map((plan) => `
     <tr><td>${escapeHtml(plan.name)}</td><td>${plan.subscribers}</td><td>${plan.bookingsUsed}</td><td>${formatCurrency(plan.estimatedRecurringRevenue)}</td><td>${plan.usagePerSubscriber.toFixed(1)}</td></tr>
@@ -282,7 +282,7 @@ export function buildPlanReportPdfHtml(report: PlanReport, periodLabel: string, 
     <html lang="pt-PT">
       <head>
         <meta charset="UTF-8" />
-        <title>Relatório de planos ${escapeHtml(periodLabel)}</title>
+        <title>Plan report ${escapeHtml(periodLabel)}</title>
         <style>${getBaseStyles(accentColor, '1.35fr 1fr')}</style>
         <script>window.addEventListener('load', () => setTimeout(() => window.print(), 350))</script>
       </head>
@@ -293,42 +293,42 @@ export function buildPlanReportPdfHtml(report: PlanReport, periodLabel: string, 
               <div class="brand">
                 ${logoMarkup}
                 <div>
-                  <div class="report-badge">Relatório executivo</div>
-                  <h1>${escapeHtml(shopName)} · Relatório de Planos</h1>
+                  <div class="report-badge">Executive report</div>
+                  <h1>${escapeHtml(shopName)} · Plan Report</h1>
                 </div>
               </div>
               <div style="text-align:right">
-                <p style="font-size:12px;color:rgba(255,255,255,.72)">Período analisado</p>
+                <p style="font-size:12px;color:rgba(255,255,255,.72)">Analyzed period</p>
                 <p style="font-size:15px;font-weight:700;margin-top:6px">${escapeHtml(periodLabel)}</p>
               </div>
             </div>
             <p class="hero-subtitle">${escapeHtml(executiveSummary)}</p>
-            <div class="hero-meta"><span>Emitido em ${generatedAt}</span>${metaItems ? `<span class="divider">•</span>${metaItems}` : ''}</div>
+            <div class="hero-meta"><span>Generated on ${generatedAt}</span>${metaItems ? `<span class="divider">•</span>${metaItems}` : ''}</div>
           </div>
           <div class="content">
             <div class="grid">
-              <div class="card"><div class="eyebrow">Assinantes</div><div class="value">${report.overview.totalSubscribers}</div></div>
-              <div class="card"><div class="eyebrow">Receita recorrente</div><div class="value">${formatCurrency(report.overview.totalEstimatedRecurringRevenue)}</div></div>
-              <div class="card"><div class="eyebrow">Utilizações</div><div class="value">${report.overview.totalBookingsUsed}</div></div>
-              <div class="card"><div class="eyebrow">Sem uso</div><div class="value">${report.overview.inactiveSubscribers}</div></div>
+              <div class="card"><div class="eyebrow">Subscribers</div><div class="value">${report.overview.totalSubscribers}</div></div>
+              <div class="card"><div class="eyebrow">Recurring revenue</div><div class="value">${formatCurrency(report.overview.totalEstimatedRecurringRevenue)}</div></div>
+              <div class="card"><div class="eyebrow">Uses</div><div class="value">${report.overview.totalBookingsUsed}</div></div>
+              <div class="card"><div class="eyebrow">Unused</div><div class="value">${report.overview.inactiveSubscribers}</div></div>
             </div>
             <div class="section">
-              <div class="section-title"><h2>Resumo executivo</h2><span class="section-chip">Visão geral</span></div>
+              <div class="section-title"><h2>Executive summary</h2><span class="section-chip">Overview</span></div>
               <div class="card card-soft summary">${escapeHtml(executiveSummary)}</div>
             </div>
             <div class="section two-col">
               <div>
-                <div class="section-title"><h2>Desempenho por plano</h2><span class="section-chip">Planos</span></div>
-                <table><thead><tr><th>Plano</th><th>Assinantes</th><th>Usos</th><th>Recorrência</th><th>Uso médio</th></tr></thead><tbody>${planRows || '<tr><td colspan="5">Sem dados.</td></tr>'}</tbody></table>
+                <div class="section-title"><h2>Performance by plan</h2><span class="section-chip">Plans</span></div>
+                <table><thead><tr><th>Plan</th><th>Subscribers</th><th>Uses</th><th>Recurring</th><th>Average use</th></tr></thead><tbody>${planRows || '<tr><td colspan="5">No data.</td></tr>'}</tbody></table>
               </div>
               <div>
-                <div class="section-title"><h2>Insights automáticos</h2><span class="section-chip">Ações sugeridas</span></div>
-                <ul>${insights || '<li>Sem insights disponíveis.</li>'}</ul>
+                <div class="section-title"><h2>Automatic insights</h2><span class="section-chip">Suggested actions</span></div>
+                <ul>${insights || '<li>No insights available.</li>'}</ul>
               </div>
             </div>
             <div class="footer">
-              <span>${escapeHtml(shopName)} • Relatório interno</span>
-              <span>Documento gerado automaticamente pelo painel da barbearia</span>
+              <span>${escapeHtml(shopName)} • Internal report</span>
+              <span>Document generated automatically by the barbershop dashboard</span>
             </div>
           </div>
         </div>

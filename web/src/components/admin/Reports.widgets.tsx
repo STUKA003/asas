@@ -36,12 +36,14 @@ export function RankList({
   items,
   accent,
   empty,
+  saleLabel = 'sales',
 }: {
   title: string
   icon: LucideIcon
   items: RankItem[]
   accent: string
   empty: string
+  saleLabel?: string
 }) {
   const max = items[0]?.count ?? 1
 
@@ -62,7 +64,7 @@ export function RankList({
                 <p className="truncate text-sm font-medium">{item.name}</p>
                 <div className="shrink-0 text-right">
                   <p className="text-sm font-semibold">{formatCurrency(item.revenue)}</p>
-                  <p className="text-xs text-zinc-400">{item.count} vendas</p>
+                  <p className="text-xs text-zinc-400">{item.count} {saleLabel}</p>
                 </div>
               </div>
               <div className="h-2 rounded-full bg-zinc-100 dark:bg-zinc-800">

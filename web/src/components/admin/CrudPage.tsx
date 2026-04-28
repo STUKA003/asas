@@ -42,7 +42,7 @@ export function CrudPage<T extends FieldValues, R>({
 }: CrudPageProps<T, R>) {
   const qc = useQueryClient()
   const { success, error: showError } = useToast()
-  const { t } = useTranslation('common')
+  const { t } = useTranslation(['common', 'admin'])
   const [open, setOpen]             = useState(false)
   const [editing, setEditing]       = useState<R | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<R | null>(null)
@@ -57,18 +57,18 @@ export function CrudPage<T extends FieldValues, R>({
 
   const createMutation = useMutation({
     mutationFn: api.create,
-    onSuccess: () => { invalidate(); close(); success(`${singularTitle} criado com sucesso.`) },
-    onError: () => showError(`Não foi possível criar o ${singularTitle.toLowerCase()}.`),
+    onSuccess: () => { invalidate(); close(); success(t('admin:crud.created', { item: singularTitle })) },
+    onError: () => showError(t('admin:crud.createError', { item: singularTitle.toLowerCase() })),
   })
   const updateMutation = useMutation({
     mutationFn: (d: T) => api.update(getId(editing!), d),
-    onSuccess: () => { invalidate(); close(); success('Alterações guardadas.') },
-    onError: () => showError('Não foi possível guardar as alterações.'),
+    onSuccess: () => { invalidate(); close(); success(t('admin:crud.saved')) },
+    onError: () => showError(t('admin:crud.saveError')),
   })
   const removeMutation = useMutation({
     mutationFn: api.remove,
-    onSuccess: () => { invalidate(); setDeleteTarget(null); success(`${singularTitle} removido.`) },
-    onError: () => showError(`Não foi possível remover o ${singularTitle.toLowerCase()}.`),
+    onSuccess: () => { invalidate(); setDeleteTarget(null); success(t('admin:crud.removed', { item: singularTitle })) },
+    onError: () => showError(t('admin:crud.removeError', { item: singularTitle.toLowerCase() })),
   })
 
   const openCreate = () => { setEditing(null); reset(defaultValues); setOpen(true) }
@@ -96,7 +96,7 @@ export function CrudPage<T extends FieldValues, R>({
       <div className="space-y-6">
         <PageHeader
           title={title}
-          subtitle={subtitle ?? `${count} ${singularTitle.toLowerCase()}${count !== 1 ? 's' : ''} registado${count !== 1 ? 's' : ''}`}
+          subtitle={subtitle ?? t('admin:crud.registeredCount', { count, item: singularTitle.toLowerCase() })}
           actions={
             <Button onClick={openCreate} size="sm">
               <Plus size={14} />
@@ -114,8 +114,8 @@ export function CrudPage<T extends FieldValues, R>({
               data={data as R[]}
               keyExtractor={getId}
               columns={columns}
-              emptyMessage={`Nenhum${singularTitle.toLowerCase() !== singularTitle ? 'a' : ''} ${singularTitle.toLowerCase()} ainda`}
-              emptyDescription={`Clica em "Novo ${singularTitle}" para adicionar o primeiro.`}
+              emptyMessage={t('admin:crud.emptyMessage', { item: singularTitle.toLowerCase() })}
+              emptyDescription={t('admin:crud.emptyDescription', { item: singularTitle })}
               actions={(row) => (
                 <DataTable.RowActions
                   onEdit={() => openEdit(row)}
@@ -147,7 +147,7 @@ export function CrudPage<T extends FieldValues, R>({
       </Modal>
 
       {/* ── Delete confirmation modal ── */}
-      <Modal open={!!deleteTarget} onClose={() => setDeleteTarget(null)} title="Confirmar remoção" size="sm">
+      <Modal open={!!deleteTarget} onClose={() => setDeleteTarget(null)} title={t('admin:crud.confirmDeleteTitle')} size="sm">
         <div className="space-y-4">
           <div className="flex items-start gap-3 rounded-xl border border-danger-100 bg-danger-50/60 p-4">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-danger-100">
@@ -155,10 +155,10 @@ export function CrudPage<T extends FieldValues, R>({
             </div>
             <div>
               <p className="text-[13.5px] font-medium text-ink">
-                Remover {targetName.length > 40 ? targetName.slice(0, 40) + '…' : targetName}?
+                {t('admin:crud.confirmDeleteQuestion', { item: targetName.length > 40 ? targetName.slice(0, 40) + '…' : targetName })}
               </p>
               <p className="mt-1 text-[12.5px] text-ink-muted">
-                Esta ação não pode ser desfeita.
+                {t('admin:crud.irreversible')}
               </p>
             </div>
           </div>

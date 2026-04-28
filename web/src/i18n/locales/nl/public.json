@@ -121,6 +121,14 @@
           "downloadIcs": ".ics-bestand downloaden",
           "manageBooking": "Boeking beheren",
           "backHome": "Terug naar home"
+        },
+        "defaultLocation": "Barbershop",
+        "calendar": {
+          "with": "with",
+          "bookingAt": "Booking at",
+          "customer": "Customer",
+          "responsible": "Responsible person",
+          "contact": "Contact"
         }
       }
     }
@@ -220,6 +228,10 @@
       "confirmButton": "Abonnement bevestigen",
       "successTitle": "Plan geactiveerd!",
       "successMsg": "Het verzoek voor {{name}} is geregistreerd."
+    },
+    "period": {
+      "month": "/mo",
+      "year": "/year"
     }
   },
   "manageBooking": {
@@ -261,7 +273,9 @@
         "bullet2": "· Deze actie kan niet ongedaan worden gemaakt.",
         "bullet3": "· De link naar deze boeking werkt niet meer na anonimisering.",
         "confirmButton": "Anonimisering bevestigen"
-      }
+      },
+      "versionSuffix": " · versie {{version}}",
+      "otherRequests": "Om gegevens te exporteren of anonimiseren bij andere barbershops waar je boekingen hebt, gebruik je de beheerlink van die boekingen. Voor andere AVG-verzoeken neem contact op met"
     },
     "reschedule": {
       "title": "Verzetten",
@@ -274,7 +288,192 @@
   "privacy": {
     "eyebrow": "Gegevensbescherming",
     "title": "Privacybeleid",
-    "versionDate": "Versie {{version}} · Bijgewerkt op {{date}}"
+    "versionDate": "Versie {{version}} · Bijgewerkt op {{date}}",
+    "shopFallback": "the barbershop",
+    "policyDate": "April 27, 2026",
+    "intro": "This policy explains how your personal data is processed when you use the booking system for {{shopName}}, supported by the Trimio platform. Read it before making a booking.",
+    "controller": {
+      "title": "Controller and processor",
+      "p1": "The controller of your personal data is {{shopName}}, the entity that defines the purposes and means of processing data collected for bookings.",
+      "p2": "Trimio acts as processor and provides the technology platform, processing data only under instructions from {{shopName}} and without editorial access to booking content for its own purposes.",
+      "shopContact": "For questions about your booking or personal data, contact {{shopName}} through the channels available on this site.",
+      "platformContact": "For questions about the Trimio platform, write to"
+    },
+    "data": {
+      "title": "Processed data, purposes and legal bases",
+      "intro": "We process only the data strictly necessary to provide the booking service.",
+      "headers": [
+        "Data",
+        "Purpose",
+        "Legal basis",
+        "Retention"
+      ],
+      "rows": [
+        [
+          "Name",
+          "Identify the customer and attendee",
+          "Contract performance - GDPR Art. 6(1)(b)",
+          "3 years after the last booking"
+        ],
+        [
+          "Phone",
+          "Operational contact for confirmations, cancellations and rescheduling",
+          "Contract performance - GDPR Art. 6(1)(b)",
+          "3 years after the last booking"
+        ],
+        [
+          "Optional email",
+          "Send the secure booking management link and confirmations",
+          "Contract performance - GDPR Art. 6(1)(b)",
+          "3 years after the last booking"
+        ],
+        [
+          "Optional notes",
+          "Service-specific information shared by the customer",
+          "Contract performance - GDPR Art. 6(1)(b)",
+          "3 years after the last booking"
+        ],
+        [
+          "Date, time, service and barber",
+          "Schedule organization and service delivery",
+          "Contract performance - GDPR Art. 6(1)(b)",
+          "3 years after the last booking"
+        ],
+        [
+          "IP address at consent",
+          "Audit record of the consent given",
+          "Legal obligation / legitimate interest - GDPR Art. 6(1)(c)(f)",
+          "3 years after the booking"
+        ],
+        [
+          "Consent date and version",
+          "Proof that valid consent was obtained",
+          "Legal obligation - GDPR Art. 6(1)(c)",
+          "5 years"
+        ]
+      ],
+      "noMarketing": "We do not use your data for marketing, profiling or automated decisions with legal effects."
+    },
+    "retention": {
+      "title": "Retention period and automatic anonymization",
+      "intro": "Identifying personal data is retained for the period required to manage the service, defend rights and comply with legal obligations.",
+      "items": [
+        "Active operational data - while pending or confirmed bookings exist.",
+        "Historical data - up to 3 years after the last booking.",
+        "Consent record - up to 5 years for audit and compliance.",
+        "After the period or an anonymization request, identifying data is replaced by an anonymous identifier."
+      ],
+      "footer": "The system automatically anonymizes customer data after more than 3 years of inactivity. You can exercise erasure rights through the secure link for your booking."
+    },
+    "processors": {
+      "title": "Processors and recipients",
+      "intro": "To provide the service, {{shopName}} and Trimio use technical processors that process data under documented instructions and GDPR safeguards.",
+      "headers": [
+        "Processor",
+        "Function",
+        "Location",
+        "Safeguards"
+      ],
+      "rows": [
+        [
+          "OVH SAS",
+          "Hosting and infrastructure",
+          "France (EU)",
+          "GDPR / standard clauses"
+        ],
+        [
+          "Cloudflare, Inc.",
+          "CDN, firewall and security",
+          "USA / global edge",
+          "EU-US DPF / standard clauses"
+        ],
+        [
+          "Stripe, Inc.",
+          "Payment processing",
+          "USA / global edge",
+          "EU-US DPF / standard clauses"
+        ],
+        [
+          "Resend, Inc.",
+          "Transactional email delivery",
+          "USA",
+          "EU-US DPF / standard clauses"
+        ]
+      ],
+      "noSale": "We do not sell or share personal data with third parties for marketing, advertising or profiling."
+    },
+    "transfers": {
+      "title": "International transfers",
+      "body": "Some processors operate outside the European Union. Those transfers are made through appropriate legal mechanisms, including the EU-US Data Privacy Framework where applicable and standard contractual clauses approved by the European Commission."
+    },
+    "rights": {
+      "title": "Your rights",
+      "intro": "As a data subject, you have the following rights and can exercise them at any time:",
+      "items": [
+        {
+          "title": "Access",
+          "desc": "Know what data we hold about you and obtain a copy through your booking link."
+        },
+        {
+          "title": "Portability",
+          "desc": "Receive your data in a structured, machine-readable format."
+        },
+        {
+          "title": "Rectification",
+          "desc": "Correct inaccurate data by contacting the barbershop or rescheduling with updated data."
+        },
+        {
+          "title": "Erasure / Anonymization",
+          "desc": "Request removal of identifying data; anonymous operational records may be retained."
+        },
+        {
+          "title": "Restriction",
+          "desc": "Request that data be stored but not actively processed."
+        },
+        {
+          "title": "Objection",
+          "desc": "Object to processing based on legitimate interest."
+        },
+        {
+          "title": "No automated decisions",
+          "desc": "We do not make solely automated decisions with significant legal effects."
+        },
+        {
+          "title": "Withdraw consent",
+          "desc": "Where applicable, you can withdraw consent without affecting prior lawful processing."
+        }
+      ],
+      "contact": "To exercise rights that cannot be fulfilled through the booking link, contact {{shopName}} through the public channels on this site or Trimio at",
+      "responseTime": "We respond within 30 days, extendable by another 60 days in complex cases."
+    },
+    "cookies": {
+      "title": "Cookies and local storage",
+      "intro": "This site does not use tracking, advertising or third-party analytics cookies. It only uses:",
+      "items": [
+        "Local storage (localStorage) to keep the admin/barber session token while you are authenticated.",
+        "Cloudflare may set technical security and performance cookies required for the infrastructure to work."
+      ],
+      "footer": "Because we do not use analytics or marketing cookies, no cookie consent banner is shown."
+    },
+    "security": {
+      "title": "Security",
+      "body": "We adopt appropriate technical and organizational measures, including encrypted transmission via TLS, restricted database access, firewall, expiring access tokens and cryptographic key authentication."
+    },
+    "authority": {
+      "title": "Supervisory authority",
+      "body": "You have the right to lodge a complaint with the competent supervisory authority. In Portugal, the competent authority is:",
+      "name": "CNPD - Portuguese Data Protection Authority",
+      "address": "Rua de São Bento 148-3.º, 1200-821 Lisbon · geral@cnpd.pt · cnpd.pt"
+    },
+    "changes": {
+      "title": "Changes to this policy",
+      "body": "This policy may be updated to reflect legal, technical or service changes. The version and date at the top of this page always identify the version in force."
+    },
+    "contact": {
+      "title": "Privacy contact",
+      "shop": "For questions related to your data in a specific booking, use the public contacts for {{shopName}} available on this site.",
+      "platform": "For questions about the Trimio platform as processor:"
+    }
   },
   "brand": {
     "clients": "Trimio Clientes"

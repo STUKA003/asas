@@ -146,8 +146,8 @@ export default function Plans() {
                   {(plans as Plan[] | undefined)?.map((p, i) => {
                     const highlighted = i === 1
                     const period =
-                      p.intervalDays === 30  ? t('platform:register.freePlan.desc', { defaultValue: '/mês' }).slice(0,4) :
-                      p.intervalDays === 365 ? '/ano' :
+                      p.intervalDays === 30  ? t('plans.period.month') :
+                      p.intervalDays === 365 ? t('plans.period.year') :
                       `/${p.intervalDays}d`
                     const featuresList = [
                       t('plans.days', { days: formatAllowedDays(p.allowedDays, t) }),

@@ -41,13 +41,13 @@ export function Header() {
             ) : (
               <img
                 src={clientsLogo}
-                alt="Trimio Clientes"
+                alt={t('brand.clients')}
                 className="h-10 w-10 shrink-0 rounded-xl object-contain"
               />
             )}
             <div className="hidden min-w-0 sm:block">
               <span className="block truncate text-[13px] font-semibold tracking-[-0.01em] text-ink">
-                {barbershop?.name ?? 'Trimio Clientes'}
+                {barbershop?.name ?? t('brand.clients')}
               </span>
             </div>
           </Link>

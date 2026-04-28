@@ -204,7 +204,7 @@ export default function Register() {
                     <span className="select-none pl-4 pr-1 text-[12.5px] text-ink-muted whitespace-nowrap">{t('register.form.slugPrefix')}</span>
                     <input
                       className="h-12 min-w-0 flex-1 pr-4 bg-transparent text-sm text-ink outline-none placeholder-ink-muted/50"
-                      placeholder="minha-barbearia"
+                      placeholder={t('register.form.slugPlaceholder')}
                       {...register('slug')}
                       onChange={(e) => { setSlugManual(true); setValue('slug', normalizeSlug(e.target.value)) }}
                     />

@@ -63,5 +63,9 @@
   "table": {
     "noResults": "Sem resultados",
     "actions": "Ações"
+  },
+  "phone": {
+    "country": "País",
+    "countryFor": "{{label}} país"
   }
 }

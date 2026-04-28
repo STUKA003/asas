@@ -12,145 +12,6 @@ import platformLogo from '@/assets/branding/platform-logo.png'
 import { useInstallBrand } from '@/lib/installBrand'
 import { cn } from '@/lib/utils'
 
-/* ─── Data ────────────────────────────────────────────────────── */
-
-const pains = [
-  {
-    icon: MessageSquareOff,
-    title: 'WhatsApp a transbordar',
-    text: 'Dezenas de mensagens por dia só para marcar e remarcar. E ainda há as que ficam sem resposta.',
-  },
-  {
-    icon: PhoneOff,
-    title: 'Chamadas na hora errada',
-    text: 'O telefone toca quando tens uma tesoura na mão. E às 22h já não atendeste — o cliente foi à concorrência.',
-  },
-  {
-    icon: Clock,
-    title: 'Sem visibilidade do negócio',
-    text: 'Não sabes quanto vais ganhar esta semana, quem está a trabalhar ou se tens agenda para amanhã.',
-  },
-]
-
-const benefits = [
-  {
-    icon: Calendar,
-    title: 'Agenda sempre organizada',
-    text: 'Os clientes escolhem serviço, barbeiro, dia e hora — sem te interromper. Funciona 24h por dia.',
-  },
-  {
-    icon: Users,
-    title: 'Equipa na mesma página',
-    text: 'Cada barbeiro vê a sua agenda no telemóvel. Tu vês tudo numa vista de calendário em tempo real.',
-  },
-  {
-    icon: Smartphone,
-    title: 'Página pública pronta a usar',
-    text: 'O teu link personalizado com serviços, galeria e botão de reserva. Partilha no Instagram e está feito.',
-  },
-  {
-    icon: BarChart2,
-    title: 'Dados que fazem sentido',
-    text: 'Relatórios de faturação, histórico de clientes e taxa de cancelamentos — tudo num só painel.',
-  },
-]
-
-const testimonials = [
-  {
-    name: 'Ricardo Fernandes',
-    role: 'Studio RF · Lisboa',
-    stars: 5,
-    text: 'Antes atendia marcações pelo WhatsApp até à meia-noite. Agora os clientes marcam sozinhos quando querem. Libertou-me completamente.',
-  },
-  {
-    name: 'Diogo Almeida',
-    role: 'Barber House · Porto',
-    stars: 5,
-    text: 'Tenho 3 barbeiros e a gestão de horários era um caos. Em 15 minutos de configuração, o problema desapareceu.',
-  },
-  {
-    name: 'Carlos Mendes',
-    role: 'Fade Studio · Braga',
-    stars: 5,
-    text: 'Os clientes adoram poder escolher o barbeiro preferido. As faltas reduziram e os comentários do Instagram aumentaram.',
-  },
-]
-
-const plans = [
-  {
-    id: 'FREE',
-    name: 'Grátis',
-    price: '0€',
-    period: 'para sempre',
-    highlight: false,
-    description: 'Para testar sem risco.',
-    features: [
-      '1 barbeiro',
-      '30 reservas por mês',
-      'Página pública com booking',
-      'Painel de gestão completo',
-      'Sem cartão de crédito',
-    ],
-    cta: 'Começar grátis',
-    note: null,
-  },
-  {
-    id: 'BASIC',
-    name: 'Básico',
-    price: '19€',
-    period: 'por mês',
-    highlight: true,
-    description: 'Para barbearias a crescer.',
-    features: [
-      'Até 3 barbeiros',
-      'Reservas ilimitadas',
-      'Extras e produtos',
-      'Planos de subscrição para clientes',
-      'Relatórios de negócio',
-      'Suporte prioritário',
-    ],
-    cta: 'Começar grátis',
-    note: 'Começa com 14 dias de teste',
-  },
-  {
-    id: 'PRO',
-    name: 'Pro',
-    price: '39€',
-    period: 'por mês',
-    highlight: false,
-    description: 'Para espaços com mais equipa.',
-    features: [
-      'Barbeiros ilimitados',
-      'Reservas ilimitadas',
-      'Tudo do plano Básico',
-      'Portal dedicado por barbeiro',
-      'Notificações push',
-      'Relatórios avançados',
-    ],
-    cta: 'Começar grátis',
-    note: null,
-  },
-]
-
-const faqs = [
-  {
-    q: 'Preciso de saber informática ou programação?',
-    a: 'Não. O Trimio está desenhado para qualquer pessoa. Crias a conta, adicionas os teus serviços e barbeiros, e partilhas o link. O setup típico demora menos de 5 minutos.',
-  },
-  {
-    q: 'Como é que os clientes fazem a marcação?',
-    a: 'Recebes um link personalizado (ex: trimio.pt/o-teu-nome). Partilhas no Instagram, WhatsApp ou onde quiseres. Os clientes abrem, escolhem e marcam — sem app, sem cadastro.',
-  },
-  {
-    q: 'Posso cancelar quando quiser?',
-    a: 'Sim, a qualquer momento e sem penalizações. Não há contratos anuais obrigatórios. Se cancelares, o teu plano mantém-se até ao fim do período pago.',
-  },
-  {
-    q: 'O que acontece quando atinjo o limite do plano gratuito?',
-    a: 'Recebemos avisos antes de atingires o limite. Quando o atinges, os clientes não conseguem fazer novas marcações até ao mês seguinte ou até fazeres upgrade — os dados ficam todos guardados.',
-  },
-]
-
 /* ─── Sub-components ──────────────────────────────────────────── */
 
 function FaqItem({ q, a }: { q: string; a: string }) {
@@ -176,6 +37,7 @@ function FaqItem({ q, a }: { q: string; a: string }) {
 
 /* ─── Booking mockup ──────────────────────────────────────────── */
 function BookingMockup() {
+  const { t } = useTranslation('platform')
   return (
     <div className="relative mx-auto w-full max-w-[320px] select-none">
       {/* Phone frame */}
@@ -196,18 +58,18 @@ function BookingMockup() {
           </div>
           <div>
             <p className="text-[12px] font-semibold text-ink">Stuka Barber</p>
-            <p className="text-[10px] text-ink-muted">Taipas, Guimarães</p>
+            <p className="text-[10px] text-ink-muted">{t('home.mockup.shopLocation')}</p>
           </div>
         </div>
         {/* Content */}
         <div className="bg-[#f7f7fa] px-3.5 py-4 space-y-3">
           {/* Service selected */}
           <div>
-            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-ink-muted">Serviço</p>
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-ink-muted">{t('home.mockup.service')}</p>
             <div className="flex items-center justify-between rounded-xl border-[1.5px] border-primary-400 bg-primary-50/60 px-3 py-2.5"
               style={{ boxShadow: '0 0 0 3px rgba(129,140,248,0.15)' }}>
               <div>
-                <p className="text-[12px] font-semibold text-ink">Cabelo + Barba</p>
+                <p className="text-[12px] font-semibold text-ink">{t('home.mockup.serviceName')}</p>
                 <p className="text-[10px] text-ink-muted">60 min</p>
               </div>
               <p className="text-[13px] font-semibold text-primary-700">15€</p>
@@ -215,7 +77,7 @@ function BookingMockup() {
           </div>
           {/* Barber */}
           <div>
-            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-ink-muted">Barbeiro</p>
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-ink-muted">{t('home.mockup.barber')}</p>
             <div className="flex items-center gap-2.5 rounded-xl border border-neutral-200 bg-white px-3 py-2.5">
               <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary-100 text-[10px] font-bold text-primary-700">ST</div>
               <p className="text-[12px] font-semibold text-ink">Stuka</p>
@@ -223,7 +85,7 @@ function BookingMockup() {
           </div>
           {/* Time slots */}
           <div>
-            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-ink-muted">Amanhã, Sex 25 Abr</p>
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-ink-muted">{t('home.mockup.tomorrow')}</p>
             <div className="grid grid-cols-3 gap-1.5">
               {['10:00','10:30','11:00','12:00','14:30','15:00'].map((t, i) => (
                 <div key={t} className={cn(
@@ -237,7 +99,7 @@ function BookingMockup() {
           </div>
           {/* CTA */}
           <div className="rounded-xl bg-primary-600 py-2.5 text-center">
-            <p className="text-[12px] font-semibold text-white">Confirmar reserva</p>
+            <p className="text-[12px] font-semibold text-white">{t('home.mockup.confirmBooking')}</p>
           </div>
         </div>
       </div>
@@ -248,8 +110,8 @@ function BookingMockup() {
             <Check size={12} className="text-success-600" />
           </div>
           <div>
-            <p className="text-[11px] font-semibold text-ink">Reserva confirmada</p>
-            <p className="text-[10px] text-ink-muted">Sex 25 Abr · 11:00</p>
+            <p className="text-[11px] font-semibold text-ink">{t('home.mockup.bookingConfirmed')}</p>
+            <p className="text-[10px] text-ink-muted">{t('home.mockup.bookingDate')}</p>
           </div>
         </div>
       </div>
@@ -260,8 +122,67 @@ function BookingMockup() {
 /* ─── Page ─────────────────────────────────────────────────────── */
 
 export default function PlatformHome() {
+  const { t } = useTranslation('platform')
   useEffect(() => { applyPlatformAccent() }, [])
   useInstallBrand('platform')
+  const localizedPains = [
+    { icon: MessageSquareOff, title: t('home.pain.pain1Title'), text: t('home.pain.pain1Desc') },
+    { icon: PhoneOff, title: t('home.pain.pain2Title'), text: t('home.pain.pain2Desc') },
+    { icon: Clock, title: t('home.pain.pain3Title'), text: t('home.pain.pain3Desc') },
+  ]
+  const localizedBenefits = [
+    { icon: Calendar, title: t('home.benefits.b1Title'), text: t('home.benefits.b1Desc') },
+    { icon: Users, title: t('home.benefits.b2Title'), text: t('home.benefits.b2Desc') },
+    { icon: Smartphone, title: t('home.benefits.b3Title'), text: t('home.benefits.b3Desc') },
+    { icon: BarChart2, title: t('home.benefits.b4Title'), text: t('home.benefits.b4Desc') },
+  ]
+  const localizedPlans = [
+    {
+      id: 'FREE',
+      name: t('home.pricing.freeName'),
+      price: '0€',
+      period: t('home.pricing.freePeriod'),
+      highlight: false,
+      description: t('home.pricing.freeDesc'),
+      features: [1, 2, 3, 4, 5].map((n) => t(`home.pricing.freeFeature${n}`)),
+      cta: t('home.pricing.startFree'),
+      note: null,
+    },
+    {
+      id: 'BASIC',
+      name: t('home.pricing.basicName'),
+      price: '19€',
+      period: t('home.pricing.basicPeriod'),
+      highlight: true,
+      description: t('home.pricing.basicDesc'),
+      features: [1, 2, 3, 4, 5, 6].map((n) => t(`home.pricing.basicFeature${n}`)),
+      cta: t('home.pricing.startFree'),
+      note: t('home.pricing.basicNote'),
+    },
+    {
+      id: 'PRO',
+      name: t('home.pricing.proName'),
+      price: '39€',
+      period: t('home.pricing.proPeriod'),
+      highlight: false,
+      description: t('home.pricing.proDesc'),
+      features: [1, 2, 3, 4, 5, 6].map((n) => t(`home.pricing.proFeature${n}`)),
+      cta: t('home.pricing.startFree'),
+      note: null,
+    },
+  ]
+  const localizedFaqs = [
+    { q: t('home.faq.q1'), a: t('home.faq.a1') },
+    { q: t('home.faq.q2'), a: t('home.faq.a2') },
+    { q: t('home.faq.q3'), a: t('home.faq.a3') },
+    { q: t('home.faq.q4'), a: t('home.faq.a4') },
+  ]
+  const testimonials = [1, 2, 3].map((n) => ({
+    name: t(`home.testimonials.items.${n}.name`),
+    role: t(`home.testimonials.items.${n}.role`),
+    stars: 5,
+    text: t(`home.testimonials.items.${n}.text`),
+  }))
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-[#fafafc] text-ink">
@@ -275,11 +196,11 @@ export default function PlatformHome() {
           </Link>
           <div className="flex items-center gap-2">
             <Link to="/admin/login">
-              <Button variant="ghost" size="sm">Entrar</Button>
+              <Button variant="ghost" size="sm">{t('home.nav.login')}</Button>
             </Link>
             <Link to="/register">
               <Button size="sm">
-                Começar grátis
+                {t('home.nav.startFree')}
               </Button>
             </Link>
           </div>
@@ -307,42 +228,41 @@ export default function PlatformHome() {
                 <div className="mb-6 inline-flex items-center gap-1.5 rounded-full border border-primary-400/20 bg-primary-500/10 px-3 py-1">
                   <span className="h-1.5 w-1.5 rounded-full bg-primary-400" />
                   <span className="text-[11.5px] font-semibold text-primary-300" style={{ letterSpacing: '0.04em' }}>
-                    Sistema de reservas para barbearias
+                    {t('home.hero.pill')}
                   </span>
                 </div>
 
                 {/* Headline */}
                 <h1 className="text-balance text-[2.8rem] font-semibold leading-[0.90] text-white sm:text-[3.8rem] lg:text-[4.4rem]"
                   style={{ letterSpacing: '-0.04em' }}>
-                  Os clientes marcam.{' '}
-                  <span className="text-white/40">Tu cortas o cabelo.</span>
+                  {t('home.hero.line1')}{' '}
+                  <span className="text-white/40">{t('home.hero.line2')}</span>
                 </h1>
 
                 {/* Sub */}
                 <p className="mt-6 max-w-md text-[15px] leading-[1.65] text-white/50">
-                  O Trimio dá à tua barbearia uma página de reservas online. Sem WhatsApp,
-                  sem chamadas, sem folhas de papel.
+                  {t('home.hero.desc')}
                 </p>
 
                 {/* CTA */}
                 <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
                   <Link to="/register">
                     <Button size="lg" className="w-full sm:w-auto sm:min-w-[200px]">
-                      Começar grátis
+                      {t('home.hero.cta')}
                       <ArrowRight size={15} />
                     </Button>
                   </Link>
                   <p className="text-[12.5px] text-white/30">
-                    Grátis para sempre · Sem cartão de crédito
+                    {t('home.hero.ctaNote')}
                   </p>
                 </div>
 
                 {/* Social proof numbers */}
                 <div className="mt-12 flex items-center gap-6 border-t border-white/[0.07] pt-8">
                   {[
-                    { val: '< 5 min', label: 'para configurar tudo' },
-                    { val: '24 / 7', label: 'disponível para clientes' },
-                    { val: '0€',     label: 'para começar' },
+                    { val: t('home.hero.stat1Value'), label: t('home.hero.stat1Label') },
+                    { val: t('home.hero.stat2Value'), label: t('home.hero.stat2Label') },
+                    { val: t('home.hero.stat3Value'), label: t('home.hero.stat3Label') },
                   ].map((s) => (
                     <div key={s.label}>
                       <p className="text-[18px] font-semibold text-white" style={{ letterSpacing: '-0.03em' }}>{s.val}</p>
@@ -364,19 +284,18 @@ export default function PlatformHome() {
         <section className="border-t border-neutral-200/60 bg-white py-16 sm:py-20">
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <div className="mb-10 max-w-xl">
-              <p className="eyebrow mb-3">O problema</p>
+              <p className="eyebrow mb-3">{t('home.pain.section')}</p>
               <h2 className="text-[1.75rem] font-semibold text-ink sm:text-[2.1rem]"
                 style={{ letterSpacing: '-0.03em' }}>
-                Ainda a gerir reservas à mão?
+                {t('home.pain.title')}
               </h2>
               <p className="mt-3 text-[14px] leading-6 text-ink-muted">
-                A maioria das barbearias perde clientes todos os dias por não ter um sistema.
-                Reconheces isto?
+                {t('home.pain.desc')}
               </p>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-3">
-              {pains.map((p) => (
+              {localizedPains.map((p) => (
                 <div key={p.title} className="rounded-2xl border border-neutral-200/70 bg-neutral-50 p-5">
                   <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-danger-50 text-danger-500">
                     <p.icon size={17} />
@@ -393,13 +312,13 @@ export default function PlatformHome() {
         <section className="border-t border-neutral-100 py-16 sm:py-24">
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <div className="mb-12 text-center">
-              <p className="eyebrow mb-3">Como funciona</p>
+              <p className="eyebrow mb-3">{t('home.howItWorks.section')}</p>
               <h2 className="text-[1.75rem] font-semibold text-ink sm:text-[2.1rem]"
                 style={{ letterSpacing: '-0.03em' }}>
-                Pronto a funcionar em 3 passos
+                {t('home.howItWorks.title')}
               </h2>
               <p className="mx-auto mt-3 max-w-md text-[14px] text-ink-muted">
-                Não é preciso instalar nada. Não é preciso saber de tecnologia.
+                {t('home.howItWorks.desc')}
               </p>
             </div>
 
@@ -408,9 +327,9 @@ export default function PlatformHome() {
               <div className="absolute left-[calc(16.67%+1.5rem)] right-[calc(16.67%+1.5rem)] top-5 hidden h-px bg-neutral-200 sm:block" />
 
               {[
-                { n: '1', title: 'Cria a tua barbearia',    desc: 'Nome, serviços, barbeiros e horários. Menos de 5 minutos.' },
-                { n: '2', title: 'Recebe o teu link',       desc: 'Partilhas no Instagram, WhatsApp ou onde quiseres.' },
-                { n: '3', title: 'As reservas chegam',      desc: 'Os clientes marcam online — tu só apareces na hora.' },
+                { n: '1', title: t('home.howItWorks.step1Title'), desc: t('home.howItWorks.step1Desc') },
+                { n: '2', title: t('home.howItWorks.step2Title'), desc: t('home.howItWorks.step2Desc') },
+                { n: '3', title: t('home.howItWorks.step3Title'), desc: t('home.howItWorks.step3Desc') },
               ].map((s) => (
                 <div key={s.n} className="relative text-center">
                   <div className="mx-auto mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-ink text-[13px] font-bold text-white">
@@ -428,18 +347,18 @@ export default function PlatformHome() {
         <section className="border-t border-neutral-100 bg-white py-16 sm:py-24">
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <div className="mb-12 text-center">
-              <p className="eyebrow mb-3">Tudo incluído</p>
+              <p className="eyebrow mb-3">{t('home.benefits.section')}</p>
               <h2 className="text-[1.75rem] font-semibold text-ink sm:text-[2.1rem]"
                 style={{ letterSpacing: '-0.03em' }}>
-                Não é só agendamento.
+                {t('home.benefits.title')}
               </h2>
               <p className="mx-auto mt-3 max-w-md text-[14px] text-ink-muted">
-                O Trimio é a operação completa da tua barbearia numa só ferramenta.
+                {t('home.benefits.desc')}
               </p>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {benefits.map((b) => (
+              {localizedBenefits.map((b) => (
                 <div key={b.title} className="group rounded-2xl border border-neutral-200/70 bg-white p-5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-medium">
                   <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-primary-50 text-primary-600 transition-colors group-hover:bg-primary-100">
                     <b.icon size={18} />
@@ -456,10 +375,10 @@ export default function PlatformHome() {
         <section className="border-t border-neutral-100 py-16 sm:py-24">
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <div className="mb-10 text-center">
-              <p className="eyebrow mb-3">Quem já usa</p>
+              <p className="eyebrow mb-3">{t('home.testimonials.section')}</p>
               <h2 className="text-[1.75rem] font-semibold text-ink sm:text-[2rem]"
                 style={{ letterSpacing: '-0.03em' }}>
-                O que dizem as barbearias
+                {t('home.testimonials.title')}
               </h2>
             </div>
 
@@ -487,18 +406,18 @@ export default function PlatformHome() {
         <section className="border-t border-neutral-100 bg-white py-16 sm:py-24" id="precos">
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <div className="mb-12 text-center">
-              <p className="eyebrow mb-3">Preços</p>
+              <p className="eyebrow mb-3">{t('home.pricing.section')}</p>
               <h2 className="text-[1.75rem] font-semibold text-ink sm:text-[2.1rem]"
                 style={{ letterSpacing: '-0.03em' }}>
-                Começa grátis. Cresce quando quiseres.
+                {t('home.pricing.title')}
               </h2>
               <p className="mx-auto mt-3 max-w-sm text-[14px] text-ink-muted">
-                Sem contratos. Cancelas quando quiseres. Sem surpresas.
+                {t('home.pricing.desc')}
               </p>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-3">
-              {plans.map((plan) => (
+              {localizedPlans.map((plan) => (
                 <div
                   key={plan.id}
                   className={cn(
@@ -511,7 +430,7 @@ export default function PlatformHome() {
                   {plan.highlight && (
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                       <span className="inline-flex items-center rounded-full bg-primary-600 px-3 py-1 text-[11px] font-semibold text-white">
-                        Mais popular
+                        {t('home.pricing.popular')}
                       </span>
                     </div>
                   )}
@@ -559,13 +478,13 @@ export default function PlatformHome() {
         <section className="border-t border-neutral-100 py-16 sm:py-20">
           <div className="mx-auto max-w-2xl px-4 sm:px-6">
             <div className="mb-10 text-center">
-              <p className="eyebrow mb-3">Dúvidas frequentes</p>
+              <p className="eyebrow mb-3">{t('home.faq.section')}</p>
               <h2 className="text-[1.6rem] font-semibold text-ink" style={{ letterSpacing: '-0.03em' }}>
-                Tens perguntas. Nós temos respostas.
+                {t('home.faq.title')}
               </h2>
             </div>
             <div className="space-y-2">
-              {faqs.map((f) => <FaqItem key={f.q} {...f} />)}
+              {localizedFaqs.map((f) => <FaqItem key={f.q} {...f} />)}
             </div>
           </div>
         </section>
@@ -579,17 +498,16 @@ export default function PlatformHome() {
             <div className="relative mx-auto max-w-2xl px-4 text-center sm:px-6">
               <h2 className="text-[2rem] font-semibold text-white sm:text-[2.6rem]"
                 style={{ letterSpacing: '-0.04em' }}>
-                A tua barbearia online
-                <span className="block text-white/35">em menos de 5 minutos.</span>
+                {t('home.finalCta.title')}
+                <span className="block text-white/35">{t('home.finalCta.titleAccent')}</span>
               </h2>
               <p className="mx-auto mt-5 max-w-md text-[15px] leading-7 text-white/45">
-                Junta-te às barbearias que já pararam de gerir reservas pelo WhatsApp.
-                Começa grátis, sem cartão de crédito.
+                {t('home.finalCta.desc')}
               </p>
               <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
                 <Link to="/register">
                   <Button size="lg" className="min-w-[200px]">
-                    Criar conta grátis
+                    {t('home.finalCta.createAccount')}
                     <ArrowRight size={15} />
                   </Button>
                 </Link>
@@ -599,12 +517,12 @@ export default function PlatformHome() {
                     variant="outline"
                     className="min-w-[160px] border-white/[0.12] bg-white/[0.05] text-white/60 hover:bg-white/[0.09] hover:text-white"
                   >
-                    Já tenho conta
+                    {t('home.finalCta.alreadyHaveAccount')}
                   </Button>
                 </Link>
               </div>
               <p className="mt-5 text-[12px] text-white/20">
-                Plano gratuito para sempre · 30 reservas/mês incluídas · Sem cartão
+                {t('home.finalCta.note')}
               </p>
             </div>
           </div>
@@ -620,9 +538,9 @@ export default function PlatformHome() {
             <span className="text-[13px] font-medium text-ink-muted">Trimio</span>
           </div>
           <div className="flex items-center gap-5 text-[12.5px] text-ink-muted">
-            <Link to="/#precos" className="transition-colors hover:text-ink">Preços</Link>
-            <Link to="/admin/login" className="transition-colors hover:text-ink">Entrar</Link>
-            <Link to="/register" className="transition-colors hover:text-ink">Criar conta</Link>
+            <Link to="/#precos" className="transition-colors hover:text-ink">{t('home.nav.pricing')}</Link>
+            <Link to="/admin/login" className="transition-colors hover:text-ink">{t('home.nav.login')}</Link>
+            <Link to="/register" className="transition-colors hover:text-ink">{t('home.footer.createAccount')}</Link>
           </div>
         </div>
       </footer>

@@ -121,6 +121,14 @@
           "downloadIcs": "Descarregar ficheiro .ics",
           "manageBooking": "Gerir reserva",
           "backHome": "Voltar ao início"
+        },
+        "defaultLocation": "Barbearia",
+        "calendar": {
+          "with": "com",
+          "bookingAt": "Reserva em",
+          "customer": "Cliente",
+          "responsible": "Responsável",
+          "contact": "Contacto"
         }
       }
     }
@@ -220,6 +228,10 @@
       "confirmButton": "Confirmar assinatura",
       "successTitle": "Plano activado!",
       "successMsg": "O pedido para {{name}} foi registado."
+    },
+    "period": {
+      "month": "/mês",
+      "year": "/ano"
     }
   },
   "manageBooking": {
@@ -261,7 +273,9 @@
         "bullet2": "· Esta acção não pode ser revertida.",
         "bullet3": "· O link desta reserva deixará de funcionar após a anonimização.",
         "confirmButton": "Confirmar anonimização"
-      }
+      },
+      "versionSuffix": " · versão {{version}}",
+      "otherRequests": "Para exportar ou anonimizar dados noutras barbearias onde tenhas reservas, acede ao link de gestão dessas reservas. Para outros pedidos RGPD, contacta"
     },
     "reschedule": {
       "title": "Remarcar",
@@ -274,7 +288,192 @@
   "privacy": {
     "eyebrow": "Privacidade",
     "title": "Política de Privacidade",
-    "versionDate": "Versão {{version}} · Actualizada em {{date}}"
+    "versionDate": "Versão {{version}} · Actualizada em {{date}}",
+    "shopFallback": "a barbearia",
+    "policyDate": "27 de abril de 2026",
+    "intro": "Esta política explica como os teus dados pessoais são tratados quando utilizas o sistema de agendamento de {{shopName}}, suportado pela plataforma Trimio. Lê-a antes de fazeres uma marcação.",
+    "controller": {
+      "title": "Responsável pelo tratamento e subcontratante",
+      "p1": "O responsável pelo tratamento dos teus dados pessoais é {{shopName}}, enquanto entidade que define as finalidades e meios de tratamento dos dados recolhidos no âmbito das reservas.",
+      "p2": "A Trimio actua como subcontratante e fornece a plataforma tecnológica, tratando dados apenas sob instrução de {{shopName}} e sem acesso editorial ao conteúdo das reservas para fins próprios.",
+      "shopContact": "Para questões relativas à tua reserva ou dados pessoais, contacta {{shopName}} através dos meios disponíveis neste site.",
+      "platformContact": "Para questões relativas à plataforma Trimio, escreve para"
+    },
+    "data": {
+      "title": "Dados tratados, finalidades e bases legais",
+      "intro": "Tratamos apenas os dados estritamente necessários para prestar o serviço de agendamento.",
+      "headers": [
+        "Dado",
+        "Finalidade",
+        "Base legal",
+        "Conservação"
+      ],
+      "rows": [
+        [
+          "Nome",
+          "Identificar o cliente e a pessoa atendida",
+          "Execução de contrato - Art. 6.º(1)(b) RGPD",
+          "3 anos após última reserva"
+        ],
+        [
+          "Telefone",
+          "Contacto operacional para confirmações, cancelamentos e remarcações",
+          "Execução de contrato - Art. 6.º(1)(b) RGPD",
+          "3 anos após última reserva"
+        ],
+        [
+          "Email opcional",
+          "Envio do link seguro de gestão da reserva e confirmações",
+          "Execução de contrato - Art. 6.º(1)(b) RGPD",
+          "3 anos após última reserva"
+        ],
+        [
+          "Observações opcionais",
+          "Informações específicas do serviço comunicadas pelo cliente",
+          "Execução de contrato - Art. 6.º(1)(b) RGPD",
+          "3 anos após última reserva"
+        ],
+        [
+          "Data, hora, serviço e barbeiro",
+          "Organização da agenda e prestação do serviço",
+          "Execução de contrato - Art. 6.º(1)(b) RGPD",
+          "3 anos após última reserva"
+        ],
+        [
+          "Endereço IP no consentimento",
+          "Registo de auditoria do consentimento dado",
+          "Obrigação legal / interesse legítimo - Art. 6.º(1)(c)(f)",
+          "3 anos após a reserva"
+        ],
+        [
+          "Data e versão do consentimento",
+          "Prova de consentimento válido",
+          "Obrigação legal - Art. 6.º(1)(c) RGPD",
+          "5 anos"
+        ]
+      ],
+      "noMarketing": "Não utilizamos os teus dados para marketing, criação de perfis ou decisões automatizadas com efeitos jurídicos."
+    },
+    "retention": {
+      "title": "Período de conservação e anonimização automática",
+      "intro": "Os dados pessoais identificativos são conservados pelo período necessário à gestão do serviço, defesa de direitos e cumprimento de obrigações legais.",
+      "items": [
+        "Dados operacionais activos - enquanto houver reservas pendentes ou confirmadas.",
+        "Dados históricos - até 3 anos após a última reserva realizada.",
+        "Registo de consentimento - até 5 anos para auditoria e conformidade.",
+        "Após o prazo ou pedido de anonimização, os dados identificativos são substituídos por um identificador anónimo."
+      ],
+      "footer": "O sistema aplica anonimização automática dos dados de clientes sem actividade há mais de 3 anos. Podes exercer o direito de apagamento através do link seguro da tua reserva."
+    },
+    "processors": {
+      "title": "Subcontratantes e destinatários",
+      "intro": "Para prestar o serviço, {{shopName}} e a Trimio recorrem a subcontratantes técnicos que tratam dados sob instruções documentadas e com garantias RGPD.",
+      "headers": [
+        "Subcontratante",
+        "Função",
+        "Localização",
+        "Garantias"
+      ],
+      "rows": [
+        [
+          "OVH SAS",
+          "Alojamento e infra-estrutura",
+          "França (UE)",
+          "RGPD / cláusulas-tipo"
+        ],
+        [
+          "Cloudflare, Inc.",
+          "CDN, firewall e segurança",
+          "EUA / edge global",
+          "DPF UE-EUA / cláusulas-tipo"
+        ],
+        [
+          "Stripe, Inc.",
+          "Processamento de pagamentos",
+          "EUA / edge global",
+          "DPF UE-EUA / cláusulas-tipo"
+        ],
+        [
+          "Resend, Inc.",
+          "Envio de emails transaccionais",
+          "EUA",
+          "DPF UE-EUA / cláusulas-tipo"
+        ]
+      ],
+      "noSale": "Não vendemos nem partilhamos dados pessoais com terceiros para fins de marketing, publicidade ou criação de perfis."
+    },
+    "transfers": {
+      "title": "Transferências internacionais",
+      "body": "Alguns subcontratantes operam fora da União Europeia. Essas transferências são efectuadas através de mecanismos legais adequados, incluindo Data Privacy Framework UE-EUA quando aplicável e cláusulas contratuais-tipo aprovadas pela Comissão Europeia."
+    },
+    "rights": {
+      "title": "Os teus direitos",
+      "intro": "Enquanto titular dos dados, tens os seguintes direitos, que podes exercer a qualquer momento:",
+      "items": [
+        {
+          "title": "Acesso",
+          "desc": "Saber que dados temos sobre ti e obter uma cópia através do link da tua reserva."
+        },
+        {
+          "title": "Portabilidade",
+          "desc": "Receber os teus dados em formato estruturado e legível por máquina."
+        },
+        {
+          "title": "Retificação",
+          "desc": "Corrigir dados incorrectos contactando a barbearia ou remarcando com dados actualizados."
+        },
+        {
+          "title": "Apagamento / Anonimização",
+          "desc": "Pedir a eliminação dos dados identificativos; os registos operacionais anónimos podem ser mantidos."
+        },
+        {
+          "title": "Limitação do tratamento",
+          "desc": "Solicitar que os dados sejam conservados mas não tratados activamente."
+        },
+        {
+          "title": "Oposição",
+          "desc": "Opor-te ao tratamento com base em interesse legítimo."
+        },
+        {
+          "title": "Não sujeição a decisões automatizadas",
+          "desc": "Não tomamos decisões exclusivamente automatizadas com efeitos jurídicos significativos."
+        },
+        {
+          "title": "Retirar o consentimento",
+          "desc": "Quando aplicável, podes retirar consentimento sem afectar a licitude do tratamento anterior."
+        }
+      ],
+      "contact": "Para exercer direitos que não possam ser satisfeitos pelo link da reserva, contacta {{shopName}} através dos meios públicos disponíveis neste site ou a Trimio em",
+      "responseTime": "Respondemos no prazo de 30 dias, prorrogável por mais 60 dias em casos complexos."
+    },
+    "cookies": {
+      "title": "Cookies e armazenamento local",
+      "intro": "Este site não utiliza cookies de rastreamento, publicidade ou análise de terceiros. São utilizados apenas:",
+      "items": [
+        "Armazenamento local (localStorage) para guardar o token de sessão de administrador/barbeiro enquanto estás autenticado.",
+        "Cloudflare pode definir cookies técnicos de segurança e desempenho necessários ao funcionamento da infra-estrutura."
+      ],
+      "footer": "Por não utilizarmos cookies de análise ou marketing, não é apresentado um banner de consentimento de cookies."
+    },
+    "security": {
+      "title": "Segurança",
+      "body": "Adoptamos medidas técnicas e organizacionais adequadas, incluindo transmissão encriptada via TLS, acesso restrito à base de dados, firewall, tokens de acesso com expiração e autenticação por chave criptográfica."
+    },
+    "authority": {
+      "title": "Autoridade de controlo",
+      "body": "Tens o direito de apresentar uma reclamação junto da autoridade de controlo competente. Em Portugal, a autoridade competente é a:",
+      "name": "CNPD - Comissão Nacional de Protecção de Dados",
+      "address": "Rua de São Bento 148-3.º, 1200-821 Lisboa · geral@cnpd.pt · cnpd.pt"
+    },
+    "changes": {
+      "title": "Alterações a esta política",
+      "body": "Esta política pode ser actualizada para reflectir alterações legais, técnicas ou de serviço. A versão e data no topo desta página identificam sempre a versão em vigor."
+    },
+    "contact": {
+      "title": "Contacto para questões de privacidade",
+      "shop": "Para questões relacionadas com os teus dados no âmbito de uma reserva específica, utiliza os contactos públicos de {{shopName}} disponíveis neste site.",
+      "platform": "Para questões relativas à plataforma Trimio enquanto subcontratante:"
+    }
   },
   "brand": {
     "clients": "Trimio Clientes"

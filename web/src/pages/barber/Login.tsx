@@ -63,7 +63,7 @@ export default function BarberLogin() {
         'response' in error &&
         typeof (error as { response?: { data?: { error?: string } } }).response?.data?.error === 'string'
           ? (error as { response?: { data?: { error?: string } } }).response!.data!.error!
-          : 'Credenciais inválidas'
+          : t('login.form.errors.invalidCredentials')
 
       setSubmitError(message === 'Invalid credentials' ? t('login.form.errors.invalidCredentials') : message)
     }

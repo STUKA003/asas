@@ -88,6 +88,159 @@
   },
   "barbershops": {
     "title": "Friseursalons",
-    "subtitle": "Zentrale Verwaltung von Konten und Betrieb."
+    "subtitle": "Zentrale Verwaltung von Konten und Betrieb.",
+    "plans": {
+      "FREE": "Gratis",
+      "BASIC": "Basis",
+      "PRO": "Pro"
+    },
+    "durations": {
+      "month1": "1 Monat",
+      "months3": "3 Monate",
+      "months6": "6 Monate",
+      "year1": "1 Jahr"
+    },
+    "identity": {
+      "shopName": "Salonname",
+      "namePlaceholder": "Name",
+      "siteSlug": "Website-Slug",
+      "slugPlaceholder": "slug",
+      "generateFromName": "Aus dem Namen generieren",
+      "saving": "Speichern…",
+      "save": "Speichern",
+      "cancel": "Abbrechen",
+      "errorSave": "Fehler beim Speichern"
+    },
+    "plan": {
+      "plan": "Plan",
+      "expiration": "Ablauf",
+      "expiresOn": "Läuft ab am {{date}}"
+    },
+    "suspend": {
+      "reason": "Sperrgrund (optional)",
+      "reasonPlaceholder": "z. B.: Zahlungsverzug",
+      "suspending": "Sperren…",
+      "suspend": "Sperren",
+      "suspended": "Gesperrt: {{reason}}",
+      "noReason": "kein Grund",
+      "reactivating": "…",
+      "reactivate": "Reaktivieren",
+      "close": "Schließen"
+    },
+    "password": {
+      "noAdmin": "Dieser Salon hat kein zugeordnetes Admin-Konto.",
+      "newPasswordFor": "Du legst ein neues Passwort fest für",
+      "newPassword": "Neues Passwort",
+      "minChars": "Mindestens 6 Zeichen",
+      "confirmPassword": "Passwort bestätigen",
+      "repeatPassword": "Passwort wiederholen",
+      "saveNew": "Neues Passwort speichern",
+      "errorMin": "Das Passwort muss mindestens 6 Zeichen haben",
+      "errorMismatch": "Passwörter stimmen nicht überein",
+      "errorUpdate": "Fehler beim Aktualisieren des Passworts"
+    },
+    "create": {
+      "title": "Neuer Salon",
+      "shopName": "Salonname",
+      "shopNamePlaceholder": "Hans Friseursalon",
+      "addressSlug": "Adresse (Slug)",
+      "adminName": "Admin-Name",
+      "adminNamePlaceholder": "Hans Müller",
+      "adminEmail": "Admin-E-Mail",
+      "adminEmailPlaceholder": "hans@email.de",
+      "password": "Passwort",
+      "passwordPlaceholder": "Mindestens 6 Zeichen",
+      "initialPlan": "Anfangsplan",
+      "creating": "Erstelle…",
+      "createButton": "Salon erstellen",
+      "errorCreate": "Fehler beim Erstellen des Salons",
+      "errorSlugTaken": "Diese Adresse wird bereits verwendet."
+    },
+    "list": {
+      "title": "Friseursalons",
+      "registered": "{{count}} registriert",
+      "newButton": "Neuer Salon",
+      "searchPlaceholder": "Suche nach Name, Slug, E-Mail oder Inhaber…",
+      "verification": "Verifizierung",
+      "accountHealth": "Kontostatus",
+      "loading": "Lade…",
+      "noneFound": "Kein Salon gefunden."
+    },
+    "verificationFilter": {
+      "all": "Alle",
+      "pending": "Ausstehend",
+      "verified": "Verifiziert"
+    },
+    "healthFilter": {
+      "all": "Alle",
+      "active": "Aktives Abo",
+      "suspended": "Gesperrt",
+      "unverified": "E-Mail ausstehend",
+      "no-plan": "Kein Plan"
+    },
+    "badges": {
+      "suspended": "Gesperrt",
+      "expired": "Abgelaufen",
+      "emailPending": "E-Mail ausstehend"
+    },
+    "stats": {
+      "customers": "Kunden",
+      "bookings": "Buchungen",
+      "barber_one": "Barbier",
+      "barber_other": "Barbiere",
+      "expires": "Läuft ab: {{date}}",
+      "lastLogin": "Letzter Login: {{date}}"
+    },
+    "actions": {
+      "opening": "Öffne…",
+      "supportSession": "Support-Sitzung",
+      "resending": "Sende erneut…",
+      "resendVerification": "Verifizierung erneut senden",
+      "confirming": "Bestätige…",
+      "markEmailVerified": "E-Mail als verifiziert markieren",
+      "editIdentity": "Name / Slug bearbeiten",
+      "changePlan": "Plan ändern",
+      "changePassword": "Passwort ändern",
+      "reactivate": "Reaktivieren",
+      "suspend": "Sperren",
+      "sure": "Bist du sicher?",
+      "deleting": "Lösche…",
+      "delete": "Löschen",
+      "cancel": "Abbrechen"
+    },
+    "detail": {
+      "adminAccount": "Admin-Konto",
+      "name": "Name:",
+      "email": "E-Mail:",
+      "state": "Status:",
+      "verified": "Verifiziert",
+      "pending": "Ausstehend",
+      "createdAt": "Erstellt am:",
+      "noOwner": "Kein Inhaber zugeordnet.",
+      "health": "Kontostatus",
+      "subscriptionActive": "Aktives Abo",
+      "noSubscription": "Kein Abo",
+      "active": "Aktiv",
+      "suspended": "Gesperrt",
+      "emailVerified": "E-Mail verifiziert",
+      "emailPending": "E-Mail ausstehend",
+      "planLabel": "Plan {{plan}}",
+      "noPlan": "Kein Plan",
+      "stripe": "Stripe:"
+    },
+    "security": {
+      "title": "Sicherheit",
+      "loginsOk": "Logins OK",
+      "failures": "Fehler",
+      "resets": "Resets",
+      "lastLogin": "Letzter Login",
+      "lastFailure": "Letzter Fehler",
+      "lastReset": "Letzter Reset",
+      "recentActivity": "Letzte Aktivität",
+      "noActivity": "Keine Aktivität erfasst.",
+      "eventLoginSuccess": "Erfolgreicher Login",
+      "eventLoginFailure": "Login fehlgeschlagen",
+      "eventPasswordReset": "Passwort-Reset-Anfrage"
+    }
   }
 }

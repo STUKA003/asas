@@ -13,15 +13,7 @@ import { Input } from '@/components/ui/Input'
 import { applyPlatformAccent } from '@/lib/theme'
 import { useInstallBrand } from '@/lib/installBrand'
 
-const schema = z.object({
-  password: z.string().min(6, 'Mínimo 6 caracteres'),
-  confirmPassword: z.string().min(6, 'Confirma a password'),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: 'As passwords têm de coincidir',
-  path: ['confirmPassword'],
-})
-
-type FormData = z.infer<typeof schema>
+type FormData = { password: string; confirmPassword: string }
 
 export default function ResetPassword() {
   const navigate = useNavigate()
@@ -29,6 +21,13 @@ export default function ResetPassword() {
   const token = params.get('token') ?? ''
   const [successMessage, setSuccessMessage] = useState('')
   const { t } = useTranslation('admin')
+  const schema = z.object({
+    password: z.string().min(6, t('resetPassword.errors.passwordMin')),
+    confirmPassword: z.string().min(6, t('resetPassword.errors.confirmRequired')),
+  }).refine((data) => data.password === data.confirmPassword, {
+    message: t('resetPassword.errors.passwordMismatch'),
+    path: ['confirmPassword'],
+  })
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
   })
@@ -55,7 +54,7 @@ export default function ResetPassword() {
           <h1 className="mt-8 text-3xl font-semibold text-zinc-950">{t('resetPassword.title')}</h1>
           {!token ? (
             <div className="mt-3 rounded-2xl border border-red-200 bg-red-50 px-4 py-4 text-sm text-red-700">
-              O link de recuperação está incompleto.
+              {t('resetPassword.errors.missingToken')}
             </div>
           ) : (
             <form onSubmit={handleSubmit((data) => mutation.mutate(data))} className="mt-6 space-y-4">
@@ -68,7 +67,7 @@ export default function ResetPassword() {
               )}
               {mutation.error && (
                 <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-                  {(mutation.error as { response?: { data?: { error?: string } } })?.response?.data?.error ?? 'Não foi possível atualizar a password.'}
+                  {(mutation.error as { response?: { data?: { error?: string } } })?.response?.data?.error ?? t('resetPassword.errors.updateFailed')}
                 </div>
               )}
               <Button type="submit" className="w-full" loading={mutation.isPending}>

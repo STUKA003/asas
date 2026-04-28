@@ -24,12 +24,12 @@ export function Footer() {
           <Link to={`/${slug}`} className="inline-flex items-center gap-2.5">
             <img
               src={clientsLogo}
-              alt="Trimio Clientes"
+              alt={t('brand.clients')}
               className="h-9 w-9 shrink-0 rounded-xl object-contain"
             />
             <div>
               <p className="text-[13px] font-semibold text-ink">
-                {barbershop?.name ?? 'Trimio Clientes'}
+                {barbershop?.name ?? t('brand.clients')}
               </p>
               <p className="text-[11.5px] text-ink-muted">
                 {t('footer.tagline')}

@@ -1,4 +1,5 @@
 import { type ReactNode, type WheelEvent as ReactWheelEvent, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import { cn, redirectVerticalWheelToParent } from '@/lib/utils'
 import { Button } from '@/components/ui/Button'
 import { SkeletonTableRows } from '@/components/ui/Skeleton'
@@ -44,6 +45,7 @@ export function DataTable<T>({
   emptyMessage, emptyDescription, actions,
 }: DataTableProps<T>) {
   const tableScrollRef = useRef<HTMLDivElement>(null)
+  const { t } = useTranslation('common')
 
   if (loading) {
     return <SkeletonTableRows rows={5} cols={columns.length + (actions ? 1 : 0)} />
@@ -57,7 +59,7 @@ export function DataTable<T>({
         </div>
         <div className="text-center">
           <p className="text-[13.5px] font-medium text-ink">
-            {emptyMessage ?? 'Sem resultados'}
+            {emptyMessage ?? t('table.noResults')}
           </p>
           {emptyDescription && (
             <p className="mt-1 text-[12.5px] text-ink-muted">{emptyDescription}</p>
@@ -119,7 +121,7 @@ export function DataTable<T>({
                 ))}
                 {actions && (
                   <th className="px-6 py-3 text-right text-[12px] font-medium text-ink-muted">
-                    Ações
+                    {t('table.actions')}
                   </th>
                 )}
               </tr>

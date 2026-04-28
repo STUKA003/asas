@@ -40,7 +40,8 @@
         "emailInvalid": "E-mail inválido",
         "passwordMin": "Mínimo 6 caracteres",
         "slugTaken": "Este endereço já está em uso. Escolhe outro."
-      }
+      },
+      "slugPlaceholder": "minha-barbearia"
     },
     "success": {
       "title": "Confirma o teu e-mail",
@@ -126,7 +127,24 @@
     },
     "testimonials": {
       "section": "Quem já usa",
-      "title": "O que dizem as barbearias"
+      "title": "O que dizem as barbearias",
+      "items": {
+        "1": {
+          "name": "Ricardo Fernandes",
+          "role": "Studio RF · Lisboa",
+          "text": "Antes atendia marcações pelo WhatsApp até à meia-noite. Agora os clientes marcam sozinhos quando querem. Libertou-me completamente."
+        },
+        "2": {
+          "name": "Diogo Almeida",
+          "role": "Barber House · Porto",
+          "text": "Tenho 3 barbeiros e a gestão de horários era um caos. Em 15 minutos de configuração, o problema desapareceu."
+        },
+        "3": {
+          "name": "Carlos Mendes",
+          "role": "Fade Studio · Braga",
+          "text": "Os clientes adoram poder escolher o barbeiro preferido. As faltas reduziram e os comentários do Instagram aumentaram."
+        }
+      }
     },
     "pricing": {
       "section": "Preços",
@@ -184,6 +202,16 @@
     },
     "footer": {
       "createAccount": "Criar conta"
+    },
+    "mockup": {
+      "service": "Serviço",
+      "serviceName": "Cabelo + Barba",
+      "barber": "Barbeiro",
+      "tomorrow": "Amanhã, Sex 25 Abr",
+      "confirmBooking": "Confirmar reserva",
+      "bookingConfirmed": "Reserva confirmada",
+      "bookingDate": "Sex 25 Abr · 11:00",
+      "shopLocation": "Taipas, Guimarães"
     }
   }
 }

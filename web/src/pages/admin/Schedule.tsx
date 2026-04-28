@@ -121,15 +121,15 @@ export default function Schedule() {
     <AdminLayout>
       <div className="max-w-5xl space-y-6">
         <div>
-          <h1 className="text-2xl font-bold">Horários de funcionamento</h1>
+          <h1 className="text-2xl font-bold">{t('admin:schedule.title')}</h1>
           <p className="mt-1 text-sm text-zinc-500">
-            Configure os dias e horários de abertura diretamente em cada dia.
+            {t('admin:schedule.description')}
           </p>
         </div>
 
         <div className="max-w-xs">
           <Select
-            label="Configurar horários para"
+            label={t('admin:schedule.configureFor')}
             options={barberOptions}
             value={barberId}
             onChange={(e) => setBarberId(e.target.value)}
@@ -141,9 +141,9 @@ export default function Schedule() {
             <div className="flex items-start gap-3">
               <AlertTriangle size={16} className="mt-0.5 shrink-0 text-amber-600 dark:text-amber-400" />
               <div className="text-sm text-amber-800 dark:text-amber-300">
-                <p className="font-medium">Barbeiros com horário próprio (ignoram o padrão)</p>
+                <p className="font-medium">{t('admin:schedule.barbersWithOwnHours')}</p>
                 <p className="mt-0.5 text-xs text-amber-700 dark:text-amber-400">
-                  Seleciona o barbeiro no selector acima para editar o horário dele. Ou clica em "Herdar padrão" para remover o horário próprio e usar o da barbearia.
+                  {t('admin:schedule.barbersWithOwnHoursHint')}
                 </p>
               </div>
             </div>
@@ -154,7 +154,7 @@ export default function Schedule() {
                   onClick={() => setBarberId(b.id)}
                   className="inline-flex items-center gap-1.5 rounded-lg border border-amber-300 bg-white px-2.5 py-1 text-xs font-medium text-amber-800 hover:bg-amber-100 transition-colors dark:bg-zinc-900 dark:text-amber-300 dark:border-amber-700"
                 >
-                  {b.name} → editar
+                  {b.name} {t('admin:schedule.editButton')}
                 </button>
               ))}
             </div>
@@ -204,7 +204,7 @@ export default function Schedule() {
                             onClick={() => addInterval(dayOfWeek)}
                           >
                             <Plus size={13} />
-                            Novo período
+                            {t('admin:schedule.newPeriod')}
                           </Button>
                         </div>
                       ) : null}
@@ -230,7 +230,7 @@ export default function Schedule() {
                                 onChange={(e) => updateTime(hour.id, 'startTime', e.target.value)}
                                 className="w-28"
                               />
-                              <span className="text-sm text-zinc-400">até</span>
+                              <span className="text-sm text-zinc-400">{t('admin:schedule.until')}</span>
                               <Select
                                 options={TIMES.map((time) => ({ value: time, label: time }))}
                                 value={hour.endTime}

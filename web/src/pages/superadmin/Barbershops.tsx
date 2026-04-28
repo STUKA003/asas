@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { format, addMonths, addYears, isPast } from 'date-fns'
-import { pt } from 'date-fns/locale'
+import type { Locale } from 'date-fns'
 import { useTranslation } from 'react-i18next'
+import type { TFunction } from 'i18next'
 import { getDateFnsLocale } from '@/i18n/dateFnsLocale'
 import {
   Search, Scissors, Calendar, Users, Ban, CheckCircle,
@@ -39,15 +40,24 @@ const PLAN_STYLES: Record<Plan, { badge: string; dot: string; activeButton: stri
     button:       'bg-amber-500/10 text-amber-300 hover:bg-amber-500/20',
   },
 }
-const PLAN_LABELS: Record<Plan, string> = { FREE: 'Grátis', BASIC: 'Básico', PRO: 'Pro' }
 const ALL_PLANS: Plan[] = ['FREE', 'BASIC', 'PRO']
 
-const QUICK_DURATIONS = [
-  { label: '1 mês',   getDate: () => addMonths(new Date(), 1) },
-  { label: '3 meses', getDate: () => addMonths(new Date(), 3) },
-  { label: '6 meses', getDate: () => addMonths(new Date(), 6) },
-  { label: '1 ano',   getDate: () => addYears(new Date(), 1) },
-]
+function getPlanLabels(t: TFunction): Record<Plan, string> {
+  return {
+    FREE: t('superadmin:barbershops.plans.FREE'),
+    BASIC: t('superadmin:barbershops.plans.BASIC'),
+    PRO: t('superadmin:barbershops.plans.PRO'),
+  }
+}
+
+function getQuickDurations(t: TFunction) {
+  return [
+    { label: t('superadmin:barbershops.durations.month1'),  getDate: () => addMonths(new Date(), 1) },
+    { label: t('superadmin:barbershops.durations.months3'), getDate: () => addMonths(new Date(), 3) },
+    { label: t('superadmin:barbershops.durations.months6'), getDate: () => addMonths(new Date(), 6) },
+    { label: t('superadmin:barbershops.durations.year1'),   getDate: () => addYears(new Date(), 1) },
+  ]
+}
 
 interface Barbershop {
   id: string
@@ -77,9 +87,9 @@ interface Barbershop {
 type VerificationFilter = 'all' | 'pending' | 'verified'
 type HealthFilter = 'all' | 'active' | 'suspended' | 'unverified' | 'no-plan'
 
-function formatSecurityDate(v?: string | null, locale = pt) {
+function formatSecurityDate(v?: string | null, locale?: Locale) {
   if (!v) return '—'
-  return format(new Date(v), 'd MMM yyyy, HH:mm', { locale })
+  return format(new Date(v), 'd MMM yyyy, HH:mm', locale ? { locale } : undefined)
 }
 
 const SECURITY_TONES = {
@@ -107,7 +117,7 @@ const darkInput = 'h-10 w-full rounded-xl border border-white/[0.10] bg-white/[0
 const darkBtn   = 'rounded-xl px-4 py-2 text-xs font-semibold transition-all duration-150 disabled:opacity-50'
 
 /* ── Sub-editors ───────────────────────────────────────────── */
-function IdentityEditor({ b, token, onDone }: { b: Barbershop; token: string; onDone: () => void }) {
+function IdentityEditor({ b, token, onDone, t }: { b: Barbershop; token: string; onDone: () => void; t: TFunction }) {
   const qc = useQueryClient()
   const [name, setName]           = useState(b.name)
   const [slug, setSlug]           = useState(b.slug)
@@ -123,41 +133,43 @@ function IdentityEditor({ b, token, onDone }: { b: Barbershop; token: string; on
         : undefined
       if (typeof msg === 'string') { setError(msg); return }
       const fe = typeof msg === 'object' && msg?.fieldErrors ? msg.fieldErrors : undefined
-      setError(fe?.slug?.[0] ?? fe?.name?.[0] ?? 'Erro ao guardar alterações')
+      setError(fe?.slug?.[0] ?? fe?.name?.[0] ?? t('superadmin:barbershops.identity.errorSave'))
     },
   })
 
   return (
     <div className="mt-4 space-y-3 border-t border-white/[0.07] pt-4">
       <div className="space-y-1.5">
-        <p className="text-[11px] text-white/35">Nome da barbearia</p>
-        <input className={darkInput} value={name} onChange={(e) => { setName(e.target.value); if (!slugManual) setSlug(slugify(e.target.value)) }} placeholder="Nome" />
+        <p className="text-[11px] text-white/35">{t('superadmin:barbershops.identity.shopName')}</p>
+        <input className={darkInput} value={name} onChange={(e) => { setName(e.target.value); if (!slugManual) setSlug(slugify(e.target.value)) }} placeholder={t('superadmin:barbershops.identity.namePlaceholder')} />
       </div>
       <div className="space-y-1.5">
-        <p className="text-[11px] text-white/35">Slug do site</p>
+        <p className="text-[11px] text-white/35">{t('superadmin:barbershops.identity.siteSlug')}</p>
         <div className="flex items-center overflow-hidden rounded-xl border border-white/[0.10] bg-white/[0.06] focus-within:border-primary-500/50 focus-within:ring-4 focus-within:ring-primary-500/10">
           <span className="pl-3 pr-1 text-[11px] text-white/25 select-none">/</span>
-          <input className="h-10 min-w-0 flex-1 pr-3 bg-transparent text-sm text-white outline-none placeholder-white/25" value={slug} onChange={(e) => { setSlugManual(true); setSlug(normalizeSlug(e.target.value)) }} placeholder="slug" />
+          <input className="h-10 min-w-0 flex-1 pr-3 bg-transparent text-sm text-white outline-none placeholder-white/25" value={slug} onChange={(e) => { setSlugManual(true); setSlug(normalizeSlug(e.target.value)) }} placeholder={t('superadmin:barbershops.identity.slugPlaceholder')} />
         </div>
         <button onClick={() => { setSlugManual(false); setSlug(slugify(name)) }} className="text-[11px] text-primary-400 hover:text-primary-300 transition-colors">
-          Gerar a partir do nome
+          {t('superadmin:barbershops.identity.generateFromName')}
         </button>
       </div>
       {error && <p className="text-xs text-red-400">{error}</p>}
       <div className="flex gap-2">
         <button onClick={() => mut.mutate()} disabled={mut.isPending || !name.trim() || !slug.trim()} className={cn(darkBtn, 'bg-primary-600 text-white hover:bg-primary-700')}>
-          {mut.isPending ? 'A guardar…' : 'Guardar'}
+          {mut.isPending ? t('superadmin:barbershops.identity.saving') : t('superadmin:barbershops.identity.save')}
         </button>
-        <button onClick={onDone} className={cn(darkBtn, 'bg-white/[0.06] text-white/50 hover:bg-white/[0.10] hover:text-white/75')}>Cancelar</button>
+        <button onClick={onDone} className={cn(darkBtn, 'bg-white/[0.06] text-white/50 hover:bg-white/[0.10] hover:text-white/75')}>{t('superadmin:barbershops.identity.cancel')}</button>
       </div>
     </div>
   )
 }
 
-function PlanEditor({ b, token, onDone }: { b: Barbershop; token: string; onDone: () => void }) {
+function PlanEditor({ b, token, onDone, t, dateFnsLocale }: { b: Barbershop; token: string; onDone: () => void; t: TFunction; dateFnsLocale: Locale }) {
   const qc = useQueryClient()
   const [selectedPlan, setSelectedPlan] = useState<Plan>(b.subscriptionPlan)
   const [endsAt, setEndsAt]             = useState(b.subscriptionEndsAt ? b.subscriptionEndsAt.slice(0, 10) : '')
+  const PLAN_LABELS = getPlanLabels(t)
+  const QUICK_DURATIONS = getQuickDurations(t)
 
   const mut = useMutation({
     mutationFn: () => superadminApi.updateSubscription(token, b.id, {
@@ -170,7 +182,7 @@ function PlanEditor({ b, token, onDone }: { b: Barbershop; token: string; onDone
   return (
     <div className="mt-4 space-y-3 border-t border-white/[0.07] pt-4">
       <div className="space-y-1.5">
-        <p className="text-[11px] text-white/35">Plano</p>
+        <p className="text-[11px] text-white/35">{t('superadmin:barbershops.plan.plan')}</p>
         <div className="flex flex-wrap gap-2">
           {ALL_PLANS.map((p) => (
             <button key={p} onClick={() => setSelectedPlan(p)} className={cn('rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-all', selectedPlan === p ? PLAN_STYLES[p].activeButton : PLAN_STYLES[p].button)}>
@@ -181,7 +193,7 @@ function PlanEditor({ b, token, onDone }: { b: Barbershop; token: string; onDone
       </div>
       {selectedPlan !== 'FREE' && (
         <div className="space-y-1.5">
-          <p className="text-[11px] text-white/35">Expiração</p>
+          <p className="text-[11px] text-white/35">{t('superadmin:barbershops.plan.expiration')}</p>
           <div className="flex flex-wrap gap-1.5">
             {QUICK_DURATIONS.map((d) => (
               <button key={d.label} onClick={() => setEndsAt(format(d.getDate(), 'yyyy-MM-dd'))} className="rounded-lg border border-white/[0.08] bg-white/[0.04] px-3 py-1 text-[11.5px] text-white/50 transition-all hover:bg-white/[0.09] hover:text-white/75">
@@ -190,20 +202,20 @@ function PlanEditor({ b, token, onDone }: { b: Barbershop; token: string; onDone
             ))}
           </div>
           <input type="date" value={endsAt} onChange={(e) => setEndsAt(e.target.value)} className={cn(darkInput, 'w-auto')} />
-          {endsAt && <p className="text-[11px] text-white/30">Expira em {format(new Date(endsAt), "d 'de' MMMM yyyy", { locale: pt })}</p>}
+          {endsAt && <p className="text-[11px] text-white/30">{t('superadmin:barbershops.plan.expiresOn', { date: format(new Date(endsAt), "d MMMM yyyy", { locale: dateFnsLocale }) })}</p>}
         </div>
       )}
       <div className="flex gap-2">
         <button onClick={() => mut.mutate()} disabled={mut.isPending} className={cn(darkBtn, 'bg-primary-600 text-white hover:bg-primary-700')}>
-          {mut.isPending ? 'A guardar…' : 'Guardar'}
+          {mut.isPending ? t('superadmin:barbershops.identity.saving') : t('superadmin:barbershops.identity.save')}
         </button>
-        <button onClick={onDone} className={cn(darkBtn, 'bg-white/[0.06] text-white/50 hover:bg-white/[0.10] hover:text-white/75')}>Cancelar</button>
+        <button onClick={onDone} className={cn(darkBtn, 'bg-white/[0.06] text-white/50 hover:bg-white/[0.10] hover:text-white/75')}>{t('superadmin:barbershops.identity.cancel')}</button>
       </div>
     </div>
   )
 }
 
-function SuspendEditor({ b, token, onDone }: { b: Barbershop; token: string; onDone: () => void }) {
+function SuspendEditor({ b, token, onDone, t }: { b: Barbershop; token: string; onDone: () => void; t: TFunction }) {
   const qc = useQueryClient()
   const [reason, setReason] = useState(b.suspendedReason ?? '')
 
@@ -215,30 +227,30 @@ function SuspendEditor({ b, token, onDone }: { b: Barbershop; token: string; onD
   if (b.suspended) {
     return (
       <div className="mt-3 flex items-center gap-3 border-t border-white/[0.07] pt-3">
-        <p className="flex-1 text-[12px] text-red-400">Suspensa: {b.suspendedReason || 'sem motivo'}</p>
+        <p className="flex-1 text-[12px] text-red-400">{t('superadmin:barbershops.suspend.suspended', { reason: b.suspendedReason || t('superadmin:barbershops.suspend.noReason') })}</p>
         <button onClick={() => mut.mutate(false)} disabled={mut.isPending} className={cn(darkBtn, 'bg-emerald-500/15 text-emerald-300 hover:bg-emerald-500/25')}>
-          {mut.isPending ? '…' : 'Reativar'}
+          {mut.isPending ? t('superadmin:barbershops.suspend.reactivating') : t('superadmin:barbershops.suspend.reactivate')}
         </button>
-        <button onClick={onDone} className="text-[11px] text-white/30 hover:text-white/60 transition-colors">Fechar</button>
+        <button onClick={onDone} className="text-[11px] text-white/30 hover:text-white/60 transition-colors">{t('superadmin:barbershops.suspend.close')}</button>
       </div>
     )
   }
 
   return (
     <div className="mt-3 space-y-3 border-t border-white/[0.07] pt-3">
-      <p className="text-[11px] text-white/35">Motivo da suspensão (opcional)</p>
-      <input value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Ex: pagamento em atraso" className={darkInput} />
+      <p className="text-[11px] text-white/35">{t('superadmin:barbershops.suspend.reason')}</p>
+      <input value={reason} onChange={(e) => setReason(e.target.value)} placeholder={t('superadmin:barbershops.suspend.reasonPlaceholder')} className={darkInput} />
       <div className="flex gap-2">
         <button onClick={() => mut.mutate(true)} disabled={mut.isPending} className={cn(darkBtn, 'bg-red-500/15 text-red-300 hover:bg-red-500/25')}>
-          {mut.isPending ? 'A suspender…' : 'Suspender'}
+          {mut.isPending ? t('superadmin:barbershops.suspend.suspending') : t('superadmin:barbershops.suspend.suspend')}
         </button>
-        <button onClick={onDone} className={cn(darkBtn, 'bg-white/[0.06] text-white/50 hover:bg-white/[0.10] hover:text-white/75')}>Cancelar</button>
+        <button onClick={onDone} className={cn(darkBtn, 'bg-white/[0.06] text-white/50 hover:bg-white/[0.10] hover:text-white/75')}>{t('superadmin:barbershops.identity.cancel')}</button>
       </div>
     </div>
   )
 }
 
-function PasswordEditor({ b, token, onDone }: { b: Barbershop; token: string; onDone: () => void }) {
+function PasswordEditor({ b, token, onDone, t }: { b: Barbershop; token: string; onDone: () => void; t: TFunction }) {
   const qc = useQueryClient()
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
@@ -259,17 +271,17 @@ function PasswordEditor({ b, token, onDone }: { b: Barbershop; token: string; on
         return
       }
       const fe = typeof msg === 'object' && msg?.fieldErrors ? msg.fieldErrors : undefined
-      setError(fe?.password?.[0] ?? 'Erro ao atualizar password')
+      setError(fe?.password?.[0] ?? t('superadmin:barbershops.password.errorUpdate'))
     },
   })
 
   const handleSubmit = () => {
     if (password.length < 6) {
-      setError('A password tem de ter pelo menos 6 caracteres')
+      setError(t('superadmin:barbershops.password.errorMin'))
       return
     }
     if (password !== confirm) {
-      setError('As passwords não coincidem')
+      setError(t('superadmin:barbershops.password.errorMismatch'))
       return
     }
     setError('')
@@ -279,7 +291,7 @@ function PasswordEditor({ b, token, onDone }: { b: Barbershop; token: string; on
   if (!b.owner) {
     return (
       <div className="mt-4 border-t border-white/[0.07] pt-4">
-        <p className="text-xs text-white/35">Esta barbearia não tem conta admin associada.</p>
+        <p className="text-xs text-white/35">{t('superadmin:barbershops.password.noAdmin')}</p>
       </div>
     )
   }
@@ -287,53 +299,54 @@ function PasswordEditor({ b, token, onDone }: { b: Barbershop; token: string; on
   return (
     <div className="mt-4 space-y-3 border-t border-white/[0.07] pt-4">
       <p className="text-[12px] text-white/45">
-        Vais definir uma nova password para <span className="text-white/75">{b.owner.email}</span>.
+        {t('superadmin:barbershops.password.newPasswordFor')} <span className="text-white/75">{b.owner.email}</span>.
       </p>
       <div className="space-y-1.5">
-        <p className="text-[11px] text-white/35">Nova password</p>
+        <p className="text-[11px] text-white/35">{t('superadmin:barbershops.password.newPassword')}</p>
         <input
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="Mínimo 6 caracteres"
+          placeholder={t('superadmin:barbershops.password.minChars')}
           className={darkInput}
         />
       </div>
       <div className="space-y-1.5">
-        <p className="text-[11px] text-white/35">Confirmar password</p>
+        <p className="text-[11px] text-white/35">{t('superadmin:barbershops.password.confirmPassword')}</p>
         <input
           type="password"
           value={confirm}
           onChange={(e) => setConfirm(e.target.value)}
-          placeholder="Repete a password"
+          placeholder={t('superadmin:barbershops.password.repeatPassword')}
           className={darkInput}
         />
       </div>
       {error && <p className="text-xs text-red-400">{error}</p>}
       <div className="flex gap-2">
         <button onClick={handleSubmit} disabled={mut.isPending} className={cn(darkBtn, 'bg-primary-600 text-white hover:bg-primary-700')}>
-          {mut.isPending ? 'A guardar…' : 'Guardar nova password'}
+          {mut.isPending ? t('superadmin:barbershops.identity.saving') : t('superadmin:barbershops.password.saveNew')}
         </button>
-        <button onClick={onDone} className={cn(darkBtn, 'bg-white/[0.06] text-white/50 hover:bg-white/[0.10] hover:text-white/75')}>Cancelar</button>
+        <button onClick={onDone} className={cn(darkBtn, 'bg-white/[0.06] text-white/50 hover:bg-white/[0.10] hover:text-white/75')}>{t('superadmin:barbershops.identity.cancel')}</button>
       </div>
     </div>
   )
 }
 
-function CreateModal({ token, onClose }: { token: string; onClose: () => void }) {
+function CreateModal({ token, onClose, t }: { token: string; onClose: () => void; t: TFunction }) {
   const qc = useQueryClient()
   const [form, setForm]         = useState({ barbershopName: '', slug: '', adminName: '', adminEmail: '', adminPassword: '', plan: 'FREE' as Plan })
   const [slugManual, setSlugManual] = useState(false)
   const [error, setError]       = useState('')
+  const PLAN_LABELS = getPlanLabels(t)
 
   const mut = useMutation({
     mutationFn: () => superadminApi.createBarbershop(token, form),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['superadmin'] }); onClose() },
     onError: (err: unknown) => {
       const msg = typeof err === 'object' && err !== null && 'response' in err
-        ? (err as { response?: { data?: { error?: string } } }).response?.data?.error ?? 'Erro ao criar barbearia'
-        : 'Erro ao criar barbearia'
-      setError(msg === 'Slug already taken' ? 'Este endereço já está em uso.' : msg)
+        ? (err as { response?: { data?: { error?: string } } }).response?.data?.error ?? t('superadmin:barbershops.create.errorCreate')
+        : t('superadmin:barbershops.create.errorCreate')
+      setError(msg === 'Slug already taken' ? t('superadmin:barbershops.create.errorSlugTaken') : msg)
     },
   })
 
@@ -343,14 +356,14 @@ function CreateModal({ token, onClose }: { token: string; onClose: () => void })
   }
 
   return (
-    <Modal open onClose={onClose} title="Nova barbearia" size="md">
+    <Modal open onClose={onClose} title={t('superadmin:barbershops.create.title')} size="md">
       <div className="space-y-3">
         <div className="space-y-1.5">
-          <label className="ui-label">Nome da barbearia</label>
-          <input className="ui-control" placeholder="Barbearia do João" value={form.barbershopName} onChange={(e) => set('barbershopName', e.target.value)} />
+          <label className="ui-label">{t('superadmin:barbershops.create.shopName')}</label>
+          <input className="ui-control" placeholder={t('superadmin:barbershops.create.shopNamePlaceholder')} value={form.barbershopName} onChange={(e) => set('barbershopName', e.target.value)} />
         </div>
         <div className="space-y-1.5">
-          <label className="ui-label">Endereço (slug)</label>
+          <label className="ui-label">{t('superadmin:barbershops.create.addressSlug')}</label>
           <div className="flex items-center overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-soft focus-within:border-primary-400 focus-within:ring-4 focus-within:ring-primary-100/80">
             <span className="pl-3 pr-1 text-[11px] text-ink-muted select-none">trimio.app/</span>
             <input className="h-12 min-w-0 flex-1 pr-3 bg-transparent text-sm text-ink outline-none" value={form.slug} onChange={(e) => { setSlugManual(true); setForm((f) => ({ ...f, slug: normalizeSlug(e.target.value) })) }} />
@@ -358,20 +371,20 @@ function CreateModal({ token, onClose }: { token: string; onClose: () => void })
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-1.5">
-            <label className="ui-label">Nome do admin</label>
-            <input className="ui-control" placeholder="João Silva" value={form.adminName} onChange={(e) => set('adminName', e.target.value)} />
+            <label className="ui-label">{t('superadmin:barbershops.create.adminName')}</label>
+            <input className="ui-control" placeholder={t('superadmin:barbershops.create.adminNamePlaceholder')} value={form.adminName} onChange={(e) => set('adminName', e.target.value)} />
           </div>
           <div className="space-y-1.5">
-            <label className="ui-label">E-mail do admin</label>
-            <input className="ui-control" type="email" placeholder="joao@email.com" value={form.adminEmail} onChange={(e) => set('adminEmail', e.target.value)} />
+            <label className="ui-label">{t('superadmin:barbershops.create.adminEmail')}</label>
+            <input className="ui-control" type="email" placeholder={t('superadmin:barbershops.create.adminEmailPlaceholder')} value={form.adminEmail} onChange={(e) => set('adminEmail', e.target.value)} />
           </div>
         </div>
         <div className="space-y-1.5">
-          <label className="ui-label">Password</label>
-          <input className="ui-control" type="password" placeholder="Mínimo 6 caracteres" value={form.adminPassword} onChange={(e) => set('adminPassword', e.target.value)} />
+          <label className="ui-label">{t('superadmin:barbershops.create.password')}</label>
+          <input className="ui-control" type="password" placeholder={t('superadmin:barbershops.create.passwordPlaceholder')} value={form.adminPassword} onChange={(e) => set('adminPassword', e.target.value)} />
         </div>
         <div className="space-y-1.5">
-          <label className="ui-label">Plano inicial</label>
+          <label className="ui-label">{t('superadmin:barbershops.create.initialPlan')}</label>
           <div className="grid grid-cols-3 gap-2">
             {ALL_PLANS.map((p) => (
               <button key={p} onClick={() => setForm((f) => ({ ...f, plan: p }))} className={cn(
@@ -398,7 +411,7 @@ function CreateModal({ token, onClose }: { token: string; onClose: () => void })
           disabled={mut.isPending || !form.barbershopName || !form.slug || !form.adminName || !form.adminEmail || !form.adminPassword}
           className="mt-1 w-full rounded-xl bg-gradient-to-b from-primary-500 to-primary-600 py-2.5 text-sm font-semibold text-white shadow-[0_1px_3px_rgba(0,0,0,0.16),inset_0_1px_0_rgba(255,255,255,0.12)] transition-all hover:from-primary-600 hover:to-primary-700 active:scale-[0.98] disabled:opacity-50"
         >
-          {mut.isPending ? 'A criar…' : 'Criar barbearia'}
+          {mut.isPending ? t('superadmin:barbershops.create.creating') : t('superadmin:barbershops.create.createButton')}
         </button>
       </div>
     </Modal>
@@ -407,8 +420,9 @@ function CreateModal({ token, onClose }: { token: string; onClose: () => void })
 
 /* ── Main page ─────────────────────────────────────────────── */
 export default function SuperAdminBarbershops() {
-  const { i18n } = useTranslation()
+  const { t, i18n } = useTranslation(['superadmin', 'common'])
   const dateFnsLocale = getDateFnsLocale(i18n.language)
+  const PLAN_LABELS = getPlanLabels(t)
   const qc = useQueryClient()
   const { token }   = useSuperAuthStore()
   const { setAuth } = useAuthStore()
@@ -482,18 +496,18 @@ export default function SuperAdminBarbershops() {
         {/* ── Header ─────────────────────────────────────── */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-[1.5rem] font-semibold tracking-[-0.02em] text-white">Barbearias</h1>
-            <p className="mt-0.5 text-[12.5px] text-white/35">{barbershops.length} registadas</p>
+            <h1 className="text-[1.5rem] font-semibold tracking-[-0.02em] text-white">{t('superadmin:barbershops.list.title')}</h1>
+            <p className="mt-0.5 text-[12.5px] text-white/35">{t('superadmin:barbershops.list.registered', { count: barbershops.length })}</p>
           </div>
           <button
             onClick={() => setShowCreate(true)}
             className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-primary-600 px-4 py-2.5 text-[13px] font-semibold text-white shadow-[0_1px_3px_rgba(0,0,0,0.3)] transition-all hover:bg-primary-700 active:scale-[0.97]"
           >
-            <Plus size={14} /> Nova barbearia
+            <Plus size={14} /> {t('superadmin:barbershops.list.newButton')}
           </button>
         </div>
 
-        {showCreate && <CreateModal token={token!} onClose={() => setShowCreate(false)} />}
+        {showCreate && <CreateModal token={token!} onClose={() => setShowCreate(false)} t={t} />}
 
         {/* ── Search ─────────────────────────────────────── */}
         <div className="relative">
@@ -502,7 +516,7 @@ export default function SuperAdminBarbershops() {
             type="text"
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Pesquisar por nome, slug, email ou dono…"
+            placeholder={t('superadmin:barbershops.list.searchPlaceholder')}
             className="h-10 w-full rounded-xl border border-white/[0.09] bg-white/[0.05] pl-10 pr-4 text-[13px] text-white placeholder-white/25 outline-none transition-all focus:border-primary-500/50 focus:ring-4 focus:ring-primary-500/10"
           />
         </div>
@@ -510,23 +524,20 @@ export default function SuperAdminBarbershops() {
         {/* ── Filters ────────────────────────────────────── */}
         <div className="grid gap-3 md:grid-cols-2">
           <div>
-            <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/25">Verificação</p>
+            <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/25">{t('superadmin:barbershops.list.verification')}</p>
             <div className="flex flex-wrap gap-1.5">
               {(['all','pending','verified'] as VerificationFilter[]).map((v) => (
                 <button key={v} onClick={() => setVerificationFilter(v)} className={filterBtn(verificationFilter === v)}>
-                  {{ all: 'Todas', pending: 'Pendentes', verified: 'Verificadas' }[v]}
+                  {t(`superadmin:barbershops.verificationFilter.${v}`)}
                 </button>
               ))}
             </div>
           </div>
           <div>
-            <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/25">Saúde da conta</p>
+            <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/25">{t('superadmin:barbershops.list.accountHealth')}</p>
             <div className="flex flex-wrap gap-1.5">
-              {([
-                ['all', 'Todas'], ['active', 'Subscrição ativa'], ['suspended', 'Suspensas'],
-                ['unverified', 'Email pendente'], ['no-plan', 'Sem plano'],
-              ] as [HealthFilter, string][]).map(([v, l]) => (
-                <button key={v} onClick={() => setHealthFilter(v)} className={filterBtn(healthFilter === v)}>{l}</button>
+              {(['all', 'active', 'suspended', 'unverified', 'no-plan'] as HealthFilter[]).map((v) => (
+                <button key={v} onClick={() => setHealthFilter(v)} className={filterBtn(healthFilter === v)}>{t(`superadmin:barbershops.healthFilter.${v}`)}</button>
               ))}
             </div>
           </div>
@@ -534,13 +545,13 @@ export default function SuperAdminBarbershops() {
 
         {/* ── List ───────────────────────────────────────── */}
         {isLoading ? (
-          <div className="py-16 text-center text-[13px] text-white/25">A carregar…</div>
+          <div className="py-16 text-center text-[13px] text-white/25">{t('superadmin:barbershops.list.loading')}</div>
         ) : barbershops.length === 0 ? (
           <div className="flex flex-col items-center gap-3 py-16">
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/[0.05]">
               <Scissors size={18} className="text-white/30" />
             </div>
-            <p className="text-[13px] text-white/30">Nenhuma barbearia encontrada.</p>
+            <p className="text-[13px] text-white/30">{t('superadmin:barbershops.list.noneFound')}</p>
           </div>
         ) : (
           <div className="space-y-2">
@@ -589,12 +600,12 @@ export default function SuperAdminBarbershops() {
                             )}
                             {expired && !b.suspended && (
                               <span className="inline-flex items-center gap-1 rounded-full bg-orange-500/15 px-2 py-0.5 text-[11px] font-medium text-orange-300">
-                                <span className="h-1.5 w-1.5 rounded-full bg-orange-400" /> Expirado
+                                <span className="h-1.5 w-1.5 rounded-full bg-orange-400" /> {t('superadmin:barbershops.badges.expired')}
                               </span>
                             )}
                             {b.health.unverifiedEmail && (
                               <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 px-2 py-0.5 text-[11px] font-medium text-amber-300">
-                                <span className="h-1.5 w-1.5 rounded-full bg-amber-400" /> Email pendente
+                                <span className="h-1.5 w-1.5 rounded-full bg-amber-400" /> {t('superadmin:barbershops.badges.emailPending')}
                               </span>
                             )}
                           </div>
@@ -609,16 +620,16 @@ export default function SuperAdminBarbershops() {
 
                           {/* Stats row */}
                           <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11.5px] text-white/30">
-                            <span className="flex items-center gap-1.5"><Users size={10} /> {b._count.customers} clientes</span>
-                            <span className="flex items-center gap-1.5"><Calendar size={10} /> {b._count.bookings} agendamentos</span>
-                            <span className="flex items-center gap-1.5"><Scissors size={10} /> {b._count.barbers} barbeiro{b._count.barbers !== 1 ? 's' : ''}</span>
+                            <span className="flex items-center gap-1.5"><Users size={10} /> {b._count.customers} {t('superadmin:barbershops.stats.customers')}</span>
+                            <span className="flex items-center gap-1.5"><Calendar size={10} /> {b._count.bookings} {t('superadmin:barbershops.stats.bookings')}</span>
+                            <span className="flex items-center gap-1.5"><Scissors size={10} /> {b._count.barbers} {t('superadmin:barbershops.stats.barber', { count: b._count.barbers })}</span>
                             {b.subscriptionEndsAt && plan !== 'FREE' && (
                               <span className={expired ? 'text-orange-400' : ''}>
-                                Expira: {format(new Date(b.subscriptionEndsAt), 'd MMM yyyy', { locale: dateFnsLocale })}
+                                {t('superadmin:barbershops.stats.expires', { date: format(new Date(b.subscriptionEndsAt), 'd MMM yyyy', { locale: dateFnsLocale }) })}
                               </span>
                             )}
                             {b.security.latestLoginAt && (
-                              <span>Último login: {format(new Date(b.security.latestLoginAt), 'd MMM, HH:mm', { locale: dateFnsLocale })}</span>
+                              <span>{t('superadmin:barbershops.stats.lastLogin', { date: format(new Date(b.security.latestLoginAt), 'd MMM, HH:mm', { locale: dateFnsLocale }) })}</span>
                             )}
                           </div>
                         </div>
@@ -640,40 +651,40 @@ export default function SuperAdminBarbershops() {
                         {editMode === null && (
                           <div className="mt-4 flex flex-col gap-1.5 border-t border-white/[0.06] pt-4 sm:flex-row sm:flex-wrap">
                             <button onClick={() => openSupportSession(b.id)} disabled={supportSessionMutation.isPending} className={actionBtn('primary')}>
-                              <LogIn size={12} /> {supportSessionMutation.isPending ? 'A abrir…' : 'Sessão de suporte'}
+                              <LogIn size={12} /> {supportSessionMutation.isPending ? t('superadmin:barbershops.actions.opening') : t('superadmin:barbershops.actions.supportSession')}
                             </button>
                             {b.health.unverifiedEmail && (
                               <>
                                 <button onClick={() => resendVerificationMutation.mutate(b.id)} disabled={resendVerificationMutation.isPending} className={actionBtn()}>
-                                  <RotateCw size={12} /> {resendVerificationMutation.isPending ? 'A reenviar…' : 'Reenviar confirmação'}
+                                  <RotateCw size={12} /> {resendVerificationMutation.isPending ? t('superadmin:barbershops.actions.resending') : t('superadmin:barbershops.actions.resendVerification')}
                                 </button>
                                 <button onClick={() => verifyEmailMutation.mutate(b.id)} disabled={verifyEmailMutation.isPending} className={actionBtn('success')}>
-                                  <UserCheck size={12} /> {verifyEmailMutation.isPending ? 'A confirmar…' : 'Marcar email verificado'}
+                                  <UserCheck size={12} /> {verifyEmailMutation.isPending ? t('superadmin:barbershops.actions.confirming') : t('superadmin:barbershops.actions.markEmailVerified')}
                                 </button>
                               </>
                             )}
-                            <button onClick={() => setEditMode('identity')} className={actionBtn()}>Editar nome / slug</button>
-                            <button onClick={() => setEditMode('plan')} className={actionBtn()}>Alterar plano</button>
+                            <button onClick={() => setEditMode('identity')} className={actionBtn()}>{t('superadmin:barbershops.actions.editIdentity')}</button>
+                            <button onClick={() => setEditMode('plan')} className={actionBtn()}>{t('superadmin:barbershops.actions.changePlan')}</button>
                             <button onClick={() => setEditMode('password')} className={actionBtn()}>
-                              <KeyRound size={12} /> Trocar password
+                              <KeyRound size={12} /> {t('superadmin:barbershops.actions.changePassword')}
                             </button>
                             <button onClick={() => setEditMode('suspend')} className={actionBtn(b.suspended ? 'success' : 'danger')}>
-                              {b.suspended ? <><CheckCircle size={12} /> Reativar</> : <><Ban size={12} /> Suspender</>}
+                              {b.suspended ? <><CheckCircle size={12} /> {t('superadmin:barbershops.actions.reactivate')}</> : <><Ban size={12} /> {t('superadmin:barbershops.actions.suspend')}</>}
                             </button>
 
                             {/* Delete */}
                             <div className="sm:ml-auto">
                               {confirmDeleteId === b.id ? (
                                 <div className="flex items-center gap-2">
-                                  <span className="text-[11.5px] text-white/35">Tens a certeza?</span>
+                                  <span className="text-[11.5px] text-white/35">{t('superadmin:barbershops.actions.sure')}</span>
                                   <button onClick={() => deleteMutation.mutate(b.id)} disabled={deleteMutation.isPending} className={cn(darkBtn, 'bg-red-600 text-white hover:bg-red-700')}>
-                                    {deleteMutation.isPending ? 'A apagar…' : 'Apagar'}
+                                    {deleteMutation.isPending ? t('superadmin:barbershops.actions.deleting') : t('superadmin:barbershops.actions.delete')}
                                   </button>
-                                  <button onClick={() => setConfirmDeleteId(null)} className="text-[11px] text-white/25 hover:text-white/50 transition-colors">Cancelar</button>
+                                  <button onClick={() => setConfirmDeleteId(null)} className="text-[11px] text-white/25 hover:text-white/50 transition-colors">{t('superadmin:barbershops.actions.cancel')}</button>
                                 </div>
                               ) : (
                                 <button onClick={() => setConfirmDeleteId(b.id)} className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-[12px] text-white/20 transition-all hover:bg-red-500/10 hover:text-red-400">
-                                  <Trash2 size={12} /> Apagar
+                                  <Trash2 size={12} /> {t('superadmin:barbershops.actions.delete')}
                                 </button>
                               )}
                             </div>
@@ -687,36 +698,36 @@ export default function SuperAdminBarbershops() {
                             {/* Admin account */}
                             <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4">
                               <p className="mb-3 flex items-center gap-2 text-[12.5px] font-semibold text-white/70">
-                                <Mail size={13} className="text-white/30" /> Conta admin
+                                <Mail size={13} className="text-white/30" /> {t('superadmin:barbershops.detail.adminAccount')}
                               </p>
                               {b.owner ? (
                                 <div className="space-y-1.5 text-[12.5px]">
-                                  <p><span className="text-white/30">Nome:</span> <span className="text-white/70">{b.owner.name}</span></p>
-                                  <p><span className="text-white/30">Email:</span> <span className="text-white/70">{b.owner.email}</span></p>
+                                  <p><span className="text-white/30">{t('superadmin:barbershops.detail.name')}</span> <span className="text-white/70">{b.owner.name}</span></p>
+                                  <p><span className="text-white/30">{t('superadmin:barbershops.detail.email')}</span> <span className="text-white/70">{b.owner.email}</span></p>
                                   <p>
-                                    <span className="text-white/30">Estado:</span>{' '}
+                                    <span className="text-white/30">{t('superadmin:barbershops.detail.state')}</span>{' '}
                                     {b.owner.emailVerifiedAt
-                                      ? <span className="text-emerald-300">Verificado</span>
-                                      : <span className="text-amber-300">Pendente</span>}
+                                      ? <span className="text-emerald-300">{t('superadmin:barbershops.detail.verified')}</span>
+                                      : <span className="text-amber-300">{t('superadmin:barbershops.detail.pending')}</span>}
                                   </p>
-                                  <p><span className="text-white/30">Criada em:</span> <span className="text-white/55">{format(new Date(b.owner.createdAt), "d 'de' MMM yyyy", { locale: dateFnsLocale })}</span></p>
+                                  <p><span className="text-white/30">{t('superadmin:barbershops.detail.createdAt')}</span> <span className="text-white/55">{format(new Date(b.owner.createdAt), 'd MMM yyyy', { locale: dateFnsLocale })}</span></p>
                                 </div>
                               ) : (
-                                <p className="text-[12.5px] text-white/30">Sem dono associado.</p>
+                                <p className="text-[12.5px] text-white/30">{t('superadmin:barbershops.detail.noOwner')}</p>
                               )}
                             </div>
 
                             {/* Health */}
                             <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4">
                               <p className="mb-3 flex items-center gap-2 text-[12.5px] font-semibold text-white/70">
-                                <ShieldCheck size={13} className="text-white/30" /> Saúde da conta
+                                <ShieldCheck size={13} className="text-white/30" /> {t('superadmin:barbershops.detail.health')}
                               </p>
                               <div className="flex flex-wrap gap-1.5">
                                 {[
-                                  { ok: b.health.subscriptionActive, yes: 'Subscrição ativa',    no: 'Sem subscrição' },
-                                  { ok: !b.health.suspended,          yes: 'Ativa',              no: 'Suspensa' },
-                                  { ok: !b.health.unverifiedEmail,    yes: 'Email verificado',   no: 'Email pendente' },
-                                  { ok: !b.health.noPlan,             yes: `Plano ${PLAN_LABELS[plan]}`, no: 'Sem plano' },
+                                  { ok: b.health.subscriptionActive, yes: t('superadmin:barbershops.detail.subscriptionActive'), no: t('superadmin:barbershops.detail.noSubscription') },
+                                  { ok: !b.health.suspended, yes: t('superadmin:barbershops.detail.active'), no: t('superadmin:barbershops.detail.suspended') },
+                                  { ok: !b.health.unverifiedEmail, yes: t('superadmin:barbershops.detail.emailVerified'), no: t('superadmin:barbershops.detail.emailPending') },
+                                  { ok: !b.health.noPlan, yes: t('superadmin:barbershops.detail.planLabel', { plan: PLAN_LABELS[plan] }), no: t('superadmin:barbershops.detail.noPlan') },
                                 ].map((item, i) => (
                                   <span key={i} className={cn('rounded-full px-2.5 py-1 text-[11px] font-medium', item.ok ? 'bg-emerald-500/10 text-emerald-300' : 'bg-white/[0.05] text-white/35')}>
                                     {item.ok ? item.yes : item.no}
@@ -725,7 +736,7 @@ export default function SuperAdminBarbershops() {
                               </div>
                               {b.stripeSubscriptionStatus && (
                                 <p className="mt-3 text-[11.5px] text-white/30">
-                                  Stripe: <span className="text-white/55">{b.stripeSubscriptionStatus}</span>
+                                  {t('superadmin:barbershops.detail.stripe')} <span className="text-white/55">{b.stripeSubscriptionStatus}</span>
                                 </p>
                               )}
                             </div>
@@ -734,21 +745,21 @@ export default function SuperAdminBarbershops() {
                           {/* Security panel */}
                           <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4">
                             <p className="mb-4 flex items-center gap-2 text-[12.5px] font-semibold text-white/70">
-                              <ShieldAlert size={13} className="text-white/30" /> Segurança
+                              <ShieldAlert size={13} className="text-white/30" /> {t('superadmin:barbershops.security.title')}
                             </p>
                             <div className="grid gap-2 sm:grid-cols-3">
-                              <SecurityStat icon={ShieldCheck} label="Logins OK"   value={b.security.successLogins}           tone="good"   />
-                              <SecurityStat icon={ShieldAlert} label="Falhas"      value={b.security.failedLogins}            tone="danger" />
-                              <SecurityStat icon={KeyRound}    label="Resets"      value={b.security.passwordResetRequests}   tone="warn"   />
+                              <SecurityStat icon={ShieldCheck} label={t('superadmin:barbershops.security.loginsOk')} value={b.security.successLogins} tone="good" />
+                              <SecurityStat icon={ShieldAlert} label={t('superadmin:barbershops.security.failures')} value={b.security.failedLogins} tone="danger" />
+                              <SecurityStat icon={KeyRound} label={t('superadmin:barbershops.security.resets')} value={b.security.passwordResetRequests} tone="warn" />
                             </div>
                             <div className="mt-2 grid gap-2 sm:grid-cols-3">
-                              <SecurityStat icon={Calendar} label="Último login" value={formatSecurityDate(b.security.latestLoginAt)} />
-                              <SecurityStat icon={Calendar} label="Última falha" value={formatSecurityDate(b.security.latestFailedLoginAt)} />
-                              <SecurityStat icon={Calendar} label="Último reset" value={formatSecurityDate(b.security.latestPasswordResetAt)} />
+                              <SecurityStat icon={Calendar} label={t('superadmin:barbershops.security.lastLogin')} value={formatSecurityDate(b.security.latestLoginAt)} />
+                              <SecurityStat icon={Calendar} label={t('superadmin:barbershops.security.lastFailure')} value={formatSecurityDate(b.security.latestFailedLoginAt)} />
+                              <SecurityStat icon={Calendar} label={t('superadmin:barbershops.security.lastReset')} value={formatSecurityDate(b.security.latestPasswordResetAt)} />
                             </div>
 
                             <div className="mt-4">
-                              <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/25">Atividade recente</p>
+                              <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/25">{t('superadmin:barbershops.security.recentActivity')}</p>
                               <div className="space-y-1.5">
                                 {b.security.recentEvents.length === 0 ? (
                                   <div className="rounded-xl border border-white/[0.05] bg-white/[0.03] px-3 py-3 text-[12.5px] text-white/30">
@@ -775,10 +786,10 @@ export default function SuperAdminBarbershops() {
                         </div>
 
                         {/* Inline editors */}
-                        {editMode === 'identity' && <IdentityEditor b={b} token={token!} onDone={() => setEditMode(null)} />}
-                        {editMode === 'plan'     && <PlanEditor     b={b} token={token!} onDone={() => setEditMode(null)} />}
-                        {editMode === 'suspend'  && <SuspendEditor  b={b} token={token!} onDone={() => setEditMode(null)} />}
-                        {editMode === 'password' && <PasswordEditor b={b} token={token!} onDone={() => setEditMode(null)} />}
+                        {editMode === 'identity' && <IdentityEditor b={b} token={token!} onDone={() => setEditMode(null)} t={t} />}
+                        {editMode === 'plan'     && <PlanEditor     b={b} token={token!} onDone={() => setEditMode(null)} t={t} dateFnsLocale={dateFnsLocale} />}
+                        {editMode === 'suspend'  && <SuspendEditor  b={b} token={token!} onDone={() => setEditMode(null)} t={t} />}
+                        {editMode === 'password' && <PasswordEditor b={b} token={token!} onDone={() => setEditMode(null)} t={t} />}
                       </>
                     )}
                   </div>

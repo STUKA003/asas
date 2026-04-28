@@ -1,6 +1,7 @@
 import { Component, Suspense, lazy, type ComponentType, type ReactNode } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, Outlet, useParams } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import i18n from '@/i18n/config'
 import { useAuthStore } from '@/store/auth'
 import { TenantProvider } from '@/providers/TenantProvider'
 import { PageLoader } from '@/components/ui/Spinner'
@@ -137,16 +138,16 @@ class RouteErrorBoundary extends Component<{ children: ReactNode }, { hasError: 
       return (
         <div className="flex min-h-[40vh] items-center justify-center px-6">
           <div className="max-w-md rounded-3xl border border-zinc-200 bg-white p-6 text-center shadow-sm">
-            <h1 className="text-lg font-semibold text-zinc-950">Falha ao abrir a página</h1>
+            <h1 className="text-lg font-semibold text-zinc-950">{i18n.t('common:error.pageLoad')}</h1>
             <p className="mt-2 text-sm text-zinc-600">
-              Ocorreu um erro no carregamento. Atualiza a página para voltar a sincronizar a app.
+              {i18n.t('common:error.pageLoadDesc')}
             </p>
             <button
               type="button"
               onClick={this.handleReload}
               className="mt-5 inline-flex items-center justify-center rounded-xl bg-zinc-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-zinc-800"
             >
-              Atualizar página
+              {i18n.t('common:btn.refresh')}
             </button>
           </div>
         </div>

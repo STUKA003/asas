@@ -14,17 +14,16 @@ import { applyPlatformAccent } from '@/lib/theme'
 import { useInstallBrand } from '@/lib/installBrand'
 import { getInboxLink } from '@/lib/emailLinks'
 
-const schema = z.object({
-  slug: z.string().min(1, 'Slug obrigatório'),
-  email: z.string().email('E-mail inválido'),
-})
-
-type FormData = z.infer<typeof schema>
+type FormData = { slug: string; email: string }
 
 export default function ForgotPassword() {
   const [message, setMessage] = useState('')
   const [submittedEmail, setSubmittedEmail] = useState('')
   const { t } = useTranslation('admin')
+  const schema = z.object({
+    slug: z.string().min(1, t('validation.slugRequired')),
+    email: z.string().email(t('validation.emailInvalid')),
+  })
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
   })

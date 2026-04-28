@@ -1,22 +1,48 @@
 {
   "layout": {
-    "nav": { "platform": "Platform", "dashboard": "Dashboard", "barbershops": "Barbershops" },
-    "pageMeta": {
-      "dashboard": { "title": "Dashboard", "subtitle": "Consolidated read of the platform's commercial and operational health." },
-      "barbershops": { "title": "Barbershops", "subtitle": "Centralised management of accounts, plans and operational status." }
+    "nav": {
+      "platform": "Platform",
+      "dashboard": "Dashboard",
+      "barbershops": "Barbershops"
     },
-    "account": { "name": "Super Admin", "platform": "Trimio Platform", "logout": "Log out" },
+    "pageMeta": {
+      "dashboard": {
+        "title": "Dashboard",
+        "subtitle": "Consolidated read of the platform's commercial and operational health."
+      },
+      "barbershops": {
+        "title": "Barbershops",
+        "subtitle": "Centralised management of accounts, plans and operational status."
+      }
+    },
+    "account": {
+      "name": "Super Admin",
+      "platform": "Trimio Platform",
+      "logout": "Log out"
+    },
     "sidebar": {
       "scopeLabel": "Scope",
       "scopeTitle": "Central operations",
       "scopeDesc": "Cross-cutting view of growth, accounts and monetisation."
     },
-    "topbar": { "viewBarbershops": "View barbershops" },
-    "pull": { "refreshing": "Refreshing...", "releaseToRefresh": "Release to refresh", "pullToRefresh": "Pull to refresh" },
-    "brand": { "name": "Trimio Command", "subtitle": "Platform control" }
+    "topbar": {
+      "viewBarbershops": "View barbershops"
+    },
+    "pull": {
+      "refreshing": "Refreshing...",
+      "releaseToRefresh": "Release to refresh",
+      "pullToRefresh": "Pull to refresh"
+    },
+    "brand": {
+      "name": "Trimio Command",
+      "subtitle": "Platform control"
+    }
   },
   "login": {
-    "brand": { "name": "Trimio Command", "subtitle": "Platform control" },
+    "brand": {
+      "name": "Trimio Command",
+      "subtitle": "Platform control"
+    },
     "panel": {
       "eyebrow": "Platform control",
       "title": "Global view of the entire operation.",
@@ -60,5 +86,161 @@
       "paidAdoption": "Paid adoption"
     }
   },
-  "barbershops": { "title": "Barbershops", "subtitle": "Centralised management of accounts, plans and operational status." }
+  "barbershops": {
+    "title": "Barbershops",
+    "subtitle": "Centralised management of accounts, plans and operational status.",
+    "plans": {
+      "FREE": "Free",
+      "BASIC": "Basic",
+      "PRO": "Pro"
+    },
+    "durations": {
+      "month1": "1 month",
+      "months3": "3 months",
+      "months6": "6 months",
+      "year1": "1 year"
+    },
+    "identity": {
+      "shopName": "Shop name",
+      "namePlaceholder": "Name",
+      "siteSlug": "Site slug",
+      "slugPlaceholder": "slug",
+      "generateFromName": "Generate from name",
+      "saving": "Saving…",
+      "save": "Save",
+      "cancel": "Cancel",
+      "errorSave": "Error saving changes"
+    },
+    "plan": {
+      "plan": "Plan",
+      "expiration": "Expiration",
+      "expiresOn": "Expires on {{date}}"
+    },
+    "suspend": {
+      "reason": "Suspension reason (optional)",
+      "reasonPlaceholder": "E.g.: late payment",
+      "suspending": "Suspending…",
+      "suspend": "Suspend",
+      "suspended": "Suspended: {{reason}}",
+      "noReason": "no reason",
+      "reactivating": "…",
+      "reactivate": "Reactivate",
+      "close": "Close"
+    },
+    "password": {
+      "noAdmin": "This shop has no associated admin account.",
+      "newPasswordFor": "You will set a new password for",
+      "newPassword": "New password",
+      "minChars": "Minimum 6 characters",
+      "confirmPassword": "Confirm password",
+      "repeatPassword": "Repeat the password",
+      "saveNew": "Save new password",
+      "errorMin": "Password must be at least 6 characters",
+      "errorMismatch": "Passwords do not match",
+      "errorUpdate": "Error updating password"
+    },
+    "create": {
+      "title": "New shop",
+      "shopName": "Shop name",
+      "shopNamePlaceholder": "John's Barbershop",
+      "addressSlug": "Address (slug)",
+      "adminName": "Admin name",
+      "adminNamePlaceholder": "John Smith",
+      "adminEmail": "Admin email",
+      "adminEmailPlaceholder": "john@email.com",
+      "password": "Password",
+      "passwordPlaceholder": "Minimum 6 characters",
+      "initialPlan": "Initial plan",
+      "creating": "Creating…",
+      "createButton": "Create shop",
+      "errorCreate": "Error creating shop",
+      "errorSlugTaken": "This address is already in use."
+    },
+    "list": {
+      "title": "Barbershops",
+      "registered": "{{count}} registered",
+      "newButton": "New shop",
+      "searchPlaceholder": "Search by name, slug, email or owner…",
+      "verification": "Verification",
+      "accountHealth": "Account health",
+      "loading": "Loading…",
+      "noneFound": "No shop found."
+    },
+    "verificationFilter": {
+      "all": "All",
+      "pending": "Pending",
+      "verified": "Verified"
+    },
+    "healthFilter": {
+      "all": "All",
+      "active": "Active subscription",
+      "suspended": "Suspended",
+      "unverified": "Email pending",
+      "no-plan": "No plan"
+    },
+    "badges": {
+      "suspended": "Suspended",
+      "expired": "Expired",
+      "emailPending": "Email pending"
+    },
+    "stats": {
+      "customers": "customers",
+      "bookings": "bookings",
+      "barber_one": "barber",
+      "barber_other": "barbers",
+      "expires": "Expires: {{date}}",
+      "lastLogin": "Last login: {{date}}"
+    },
+    "actions": {
+      "opening": "Opening…",
+      "supportSession": "Support session",
+      "resending": "Resending…",
+      "resendVerification": "Resend verification",
+      "confirming": "Confirming…",
+      "markEmailVerified": "Mark email verified",
+      "editIdentity": "Edit name / slug",
+      "changePlan": "Change plan",
+      "changePassword": "Change password",
+      "reactivate": "Reactivate",
+      "suspend": "Suspend",
+      "sure": "Are you sure?",
+      "deleting": "Deleting…",
+      "delete": "Delete",
+      "cancel": "Cancel"
+    },
+    "detail": {
+      "adminAccount": "Admin account",
+      "name": "Name:",
+      "email": "Email:",
+      "state": "State:",
+      "verified": "Verified",
+      "pending": "Pending",
+      "createdAt": "Created at:",
+      "noOwner": "No owner associated.",
+      "health": "Account health",
+      "subscriptionActive": "Active subscription",
+      "noSubscription": "No subscription",
+      "active": "Active",
+      "suspended": "Suspended",
+      "emailVerified": "Email verified",
+      "emailPending": "Email pending",
+      "planLabel": "{{plan}} plan",
+      "noPlan": "No plan",
+      "stripe": "Stripe:"
+    },
+    "security": {
+      "title": "Security",
+      "loginsOk": "Logins OK",
+      "failures": "Failures",
+      "resets": "Resets",
+      "lastLogin": "Last login",
+      "lastFailure": "Last failure",
+      "lastReset": "Last reset",
+      "recentActivity": "Recent activity",
+      "noActivity": "No activity recorded.",
+      "eventLoginSuccess": "Successful login",
+      "eventLoginFailure": "Failed login",
+      "eventPasswordReset": "Password reset request"
+    }
+  }
 }

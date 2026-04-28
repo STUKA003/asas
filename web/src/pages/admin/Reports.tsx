@@ -32,17 +32,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { PageLoader } from '@/components/ui/Spinner'
 
 const now = new Date()
-const MONTH_OPTIONS = Array.from({ length: 12 }, (_, index) => ({
-  value: index,
-  label: new Date(now.getFullYear(), index, 1).toLocaleDateString('pt-PT', { month: 'long' }),
-}))
 const YEAR_OPTIONS = Array.from({ length: 6 }, (_, index) => now.getFullYear() - 3 + index)
 const PERIODS = [
-  { label: 'Este mês', from: startOfMonth(now), to: endOfMonth(now) },
-  { label: 'Mês passado', from: startOfMonth(subMonths(now, 1)), to: endOfMonth(subMonths(now, 1)) },
-  { label: 'Últimos 7 dias', from: subDays(now, 6), to: now },
-  { label: 'Últimos 30 dias', from: subDays(now, 29), to: now },
-  { label: 'Este ano', from: startOfYear(now), to: now },
+  { labelKey: 'reports.general.periods.thisMonth', from: startOfMonth(now), to: endOfMonth(now) },
+  { labelKey: 'reports.general.periods.lastMonth', from: startOfMonth(subMonths(now, 1)), to: endOfMonth(subMonths(now, 1)) },
+  { labelKey: 'reports.general.periods.last7Days', from: subDays(now, 6), to: now },
+  { labelKey: 'reports.general.periods.last30Days', from: subDays(now, 29), to: now },
+  { labelKey: 'reports.general.periods.thisYear', from: startOfYear(now), to: now },
 ]
 
 function escapeHtml(value: string) {
@@ -63,8 +59,13 @@ function formatMinutesToHours(value: number) {
 }
 
 export default function Reports() {
-  const { i18n } = useTranslation()
+  const { t, i18n } = useTranslation('admin')
   const dateFnsLocale = getDateFnsLocale(i18n.language)
+  const locale = i18n.resolvedLanguage || i18n.language || 'pt'
+  const monthOptions = Array.from({ length: 12 }, (_, index) => ({
+    value: index,
+    label: new Intl.DateTimeFormat(locale, { month: 'long' }).format(new Date(now.getFullYear(), index, 1)),
+  }))
   const [reportSection, setReportSection] = useState<'general' | 'plans'>('general')
   const [planPeriodIdx, setPlanPeriodIdx] = useState(0)
   const [filterMode, setFilterMode] = useState<'preset' | 'month'>('preset')
@@ -74,13 +75,16 @@ export default function Reports() {
   const period = filterMode === 'preset'
     ? PERIODS[periodIdx]
     : {
-        label: `${MONTH_OPTIONS[selectedMonth].label} de ${selectedYear}`,
+        labelKey: '',
         from: startOfMonth(new Date(selectedYear, selectedMonth, 1)),
         to: endOfMonth(new Date(selectedYear, selectedMonth, 1)),
       }
+  const periodLabel = filterMode === 'preset'
+    ? t(period.labelKey)
+    : t('reports.general.monthYear', { month: monthOptions[selectedMonth].label, year: selectedYear })
 
   const { data, isLoading, isError, error } = useQuery<ReportData>({
-    queryKey: ['reports', filterMode, period.label, period.from.toISOString(), period.to.toISOString()],
+    queryKey: ['reports', filterMode, periodLabel, period.from.toISOString(), period.to.toISOString()],
     queryFn: () => bookingsApi.reports({
       from: period.from.toISOString(),
       to: period.to.toISOString(),
@@ -139,9 +143,9 @@ export default function Reports() {
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">Relatórios</h1>
+            <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{t('reports.title')}</h1>
             <p className="mt-0.5 text-sm text-zinc-500">
-              Analisa o desempenho da barbearia por período.
+              {t('reports.general.subtitle')}
             </p>
           </div>
         </div>
@@ -156,7 +160,7 @@ export default function Reports() {
                 : 'text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300'
             }`}
           >
-            Relatório geral
+            {t('reports.general.tabs.general')}
           </button>
           <button
             type="button"
@@ -167,7 +171,7 @@ export default function Reports() {
                 : 'text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300'
             }`}
           >
-            Relatório de planos
+            {t('reports.general.tabs.plans')}
           </button>
         </div>
 
@@ -187,19 +191,19 @@ export default function Reports() {
                 className="inline-flex items-center gap-2 rounded-xl bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
               >
                 <Download size={16} />
-                Descarregar PDF
+                {t('reports.general.downloadPdf')}
               </button>
             }
           />
         ) : isLoading ? <PageLoader /> : isError ? (
           <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-4 text-sm text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300">
-            Erro ao carregar relatório: {error instanceof Error ? error.message : 'Erro desconhecido'}
+            {t('reports.general.loadError')}: {error instanceof Error ? error.message : t('reports.planReport.unknownError')}
           </div>
         ) : !data ? null : (
           <>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between gap-4">
-                <CardTitle>Relatório geral</CardTitle>
+                <CardTitle>{t('reports.general.title')}</CardTitle>
                 <div className="flex flex-wrap items-center gap-2">
                   <div className="relative">
                     <select
@@ -207,8 +211,8 @@ export default function Reports() {
                       onChange={(e) => setFilterMode(e.target.value as 'preset' | 'month')}
                       className="cursor-pointer appearance-none rounded-xl border border-zinc-200 bg-white py-2 pl-4 pr-10 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-accent-500 dark:border-zinc-700 dark:bg-zinc-900"
                     >
-                      <option value="preset">Períodos rápidos</option>
-                      <option value="month">Mês / ano</option>
+                      <option value="preset">{t('reports.general.filter.quickPeriods')}</option>
+                      <option value="month">{t('reports.general.filter.monthYear')}</option>
                     </select>
                     <ChevronDown size={14} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400" />
                   </div>
@@ -221,7 +225,7 @@ export default function Reports() {
                         className="cursor-pointer appearance-none rounded-xl border border-zinc-200 bg-white py-2 pl-4 pr-10 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-accent-500 dark:border-zinc-700 dark:bg-zinc-900"
                       >
                         {PERIODS.map((item, idx) => (
-                          <option key={item.label} value={idx}>{item.label}</option>
+                          <option key={item.labelKey} value={idx}>{t(item.labelKey)}</option>
                         ))}
                       </select>
                       <ChevronDown size={14} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400" />
@@ -234,7 +238,7 @@ export default function Reports() {
                           onChange={(e) => setSelectedMonth(Number(e.target.value))}
                           className="cursor-pointer appearance-none rounded-xl border border-zinc-200 bg-white py-2 pl-4 pr-10 text-sm font-medium capitalize focus:outline-none focus:ring-2 focus:ring-accent-500 dark:border-zinc-700 dark:bg-zinc-900"
                         >
-                          {MONTH_OPTIONS.map((item) => (
+                          {monthOptions.map((item) => (
                             <option key={item.value} value={item.value}>{item.label}</option>
                           ))}
                         </select>
@@ -263,7 +267,7 @@ export default function Reports() {
                     className="inline-flex items-center gap-2 rounded-xl bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
                   >
                     <Download size={16} />
-                    Descarregar PDF
+                    {t('reports.general.downloadPdf')}
                   </button>
                 </div>
               </CardHeader>
@@ -274,34 +278,34 @@ export default function Reports() {
                 <div className="grid gap-4 md:grid-cols-4">
                   {[
                     {
-                      label: 'Receita total',
+                      label: t('reports.general.metrics.totalRevenue'),
                       value: formatCurrency(data.overview.totalRevenue),
                       icon: Wallet,
-                      helper: `${formatCurrency(data.overview.planRevenue)} de planos`,
+                      helper: t('reports.general.metrics.fromPlans', { value: formatCurrency(data.overview.planRevenue) }),
                       iconBg: 'bg-emerald-50 dark:bg-emerald-900/20',
                       iconColor: 'text-emerald-600 dark:text-emerald-400',
                     },
                     {
-                      label: 'Ticket médio',
+                      label: t('reports.general.metrics.avgTicket'),
                       value: formatCurrency(data.overview.avgTicket),
                       icon: BadgePercent,
-                      helper: `${data.overview.completedBookings} concluídos`,
+                      helper: t('reports.general.metrics.completed', { count: data.overview.completedBookings }),
                       iconBg: 'bg-blue-50 dark:bg-blue-900/20',
                       iconColor: 'text-blue-600 dark:text-blue-400',
                     },
                     {
-                      label: 'Agendamentos',
+                      label: t('reports.bookings'),
                       value: data.overview.totalBookings,
                       icon: Calendar,
-                      helper: `${data.cancellations.cancelledBookings} cancelados`,
+                      helper: t('reports.general.metrics.cancelled', { count: data.cancellations.cancelledBookings }),
                       iconBg: 'bg-violet-50 dark:bg-violet-900/20',
                       iconColor: 'text-violet-600 dark:text-violet-400',
                     },
                     {
-                      label: 'Perda de agenda',
+                      label: t('reports.general.metrics.scheduleLoss'),
                       value: formatPercent(data.cancellations.lossRate),
                       icon: AlertTriangle,
-                      helper: `${data.cancellations.noShowBookings} faltas`,
+                      helper: t('reports.general.metrics.noShows', { count: data.cancellations.noShowBookings }),
                       iconBg: 'bg-red-50 dark:bg-red-900/20',
                       iconColor: 'text-red-600 dark:text-red-400',
                     },
@@ -322,25 +326,25 @@ export default function Reports() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <TrendingUp size={16} className="text-emerald-500" /> 1. Faturação
+                  <TrendingUp size={16} className="text-emerald-500" /> {t('reports.general.sections.billing')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-5 pt-0">
                 <div className="grid gap-4 md:grid-cols-4">
                   <div className="rounded-2xl bg-zinc-50 p-4 dark:bg-zinc-900/60">
-                    <p className="text-xs uppercase tracking-wide text-zinc-400">Diária</p>
+                    <p className="text-xs uppercase tracking-wide text-zinc-400">{t('reports.general.metrics.daily')}</p>
                     <p className="mt-2 text-2xl font-bold">{formatCurrency(data.billing.dailyRevenue)}</p>
                   </div>
                   <div className="rounded-2xl bg-zinc-50 p-4 dark:bg-zinc-900/60">
-                    <p className="text-xs uppercase tracking-wide text-zinc-400">Semanal</p>
+                    <p className="text-xs uppercase tracking-wide text-zinc-400">{t('reports.general.metrics.weekly')}</p>
                     <p className="mt-2 text-2xl font-bold">{formatCurrency(data.billing.weeklyRevenue)}</p>
                   </div>
                   <div className="rounded-2xl bg-zinc-50 p-4 dark:bg-zinc-900/60">
-                    <p className="text-xs uppercase tracking-wide text-zinc-400">Mensal</p>
+                    <p className="text-xs uppercase tracking-wide text-zinc-400">{t('reports.general.metrics.monthly')}</p>
                     <p className="mt-2 text-2xl font-bold">{formatCurrency(data.billing.monthlyRevenue)}</p>
                   </div>
                   <div className="rounded-2xl bg-zinc-50 p-4 dark:bg-zinc-900/60">
-                    <p className="text-xs uppercase tracking-wide text-zinc-400">Planos</p>
+                    <p className="text-xs uppercase tracking-wide text-zinc-400">{t('plans.title')}</p>
                     <p className="mt-2 text-2xl font-bold">{formatCurrency(data.overview.planRevenue)}</p>
                   </div>
                 </div>
@@ -349,16 +353,16 @@ export default function Reports() {
                   <div className="rounded-2xl border border-zinc-100 p-4 dark:border-zinc-800">
                     <div className="mb-4 flex items-center justify-between gap-3">
                       <div>
-                        <p className="text-sm font-semibold">Evolução no período</p>
-                        <p className="text-xs text-zinc-400">Mostra a série disponível mais granular para o intervalo escolhido.</p>
+                        <p className="text-sm font-semibold">{t('reports.general.billing.evolution')}</p>
+                        <p className="text-xs text-zinc-400">{t('reports.general.billing.evolutionDesc')}</p>
                       </div>
                       <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-300">
-                        {headlineSeries.length} pontos
+                        {t('reports.general.billing.points', { count: headlineSeries.length })}
                       </span>
                     </div>
                     <div className="space-y-3">
                       {headlineSeries.length === 0 ? (
-                        <p className="py-6 text-center text-sm text-zinc-400">Sem faturação concluída neste período.</p>
+                        <p className="py-6 text-center text-sm text-zinc-400">{t('reports.general.billing.noRevenue')}</p>
                       ) : (
                         headlineSeries.slice(-6).map((item) => (
                           <div key={item.label}>
@@ -380,7 +384,7 @@ export default function Reports() {
                     </div>
                   </div>
 
-                  <RankList title="Serviços mais vendidos" icon={Scissors} items={data.topServices} accent="text-blue-500" empty="Sem serviços vendidos." />
+                  <RankList title={t('reports.general.sales.topServices')} icon={Scissors} items={data.topServices} accent="text-blue-500" empty={t('reports.general.sales.noServices')} saleLabel={t('reports.general.sales.sales')} />
                 </div>
               </CardContent>
             </Card>
@@ -388,12 +392,12 @@ export default function Reports() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Award size={16} className="text-amber-500" /> 2. Performance dos barbeiros
+                  <Award size={16} className="text-amber-500" /> {t('reports.general.sections.barberPerformance')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
                 {data.barbers.length === 0 ? (
-                  <p className="py-6 text-center text-sm text-zinc-400">Sem dados de barbeiros no período.</p>
+                  <p className="py-6 text-center text-sm text-zinc-400">{t('reports.general.barbers.noData')}</p>
                 ) : (
                   <div className="space-y-3">
                     {data.barbers.map((barber, index) => (
@@ -406,41 +410,41 @@ export default function Reports() {
                               </span>
                               <div>
                                 <p className="font-semibold">{barber.name}</p>
-                                <p className="text-xs text-zinc-400">{barber.bookings} cortes concluídos</p>
+                                <p className="text-xs text-zinc-400">{t('reports.general.barbers.completedCuts', { count: barber.bookings })}</p>
                               </div>
                             </div>
                           </div>
                           <div className="grid grid-cols-2 gap-4 text-right sm:grid-cols-4">
                             <div>
-                              <p className="text-xs text-zinc-400">Faturação</p>
+                              <p className="text-xs text-zinc-400">{t('reports.general.metrics.revenue')}</p>
                               <p className="font-semibold text-emerald-600">{formatCurrency(barber.revenue)}</p>
                             </div>
                             <div>
-                              <p className="text-xs text-zinc-400">Ticket</p>
+                              <p className="text-xs text-zinc-400">{t('reports.general.metrics.ticket')}</p>
                               <p className="font-semibold">{formatCurrency(barber.avgTicket)}</p>
                             </div>
                             <div>
-                              <p className="text-xs text-zinc-400">Ocupação</p>
+                              <p className="text-xs text-zinc-400">{t('reports.general.metrics.occupancy')}</p>
                               <p className="font-semibold">{formatPercent(barber.occupancyRate)}</p>
                             </div>
                             <div>
-                              <p className="text-xs text-zinc-400">Planos</p>
+                              <p className="text-xs text-zinc-400">{t('plans.title')}</p>
                               <p className="font-semibold">{barber.planCustomersCount}</p>
                             </div>
                           </div>
                         </div>
                         <div className="mt-4 grid gap-3 md:grid-cols-3">
                           <div className="rounded-xl bg-zinc-50 p-3 dark:bg-zinc-900/60">
-                            <p className="text-xs text-zinc-400">Tempo ocupado</p>
+                            <p className="text-xs text-zinc-400">{t('reports.general.barbers.occupiedTime')}</p>
                             <p className="mt-1 text-sm font-semibold">{formatMinutesToHours(barber.occupiedMinutes)} / {formatMinutesToHours(barber.availableMinutes)}</p>
                           </div>
                           <div className="rounded-xl bg-amber-50 p-3 dark:bg-amber-900/20">
-                            <p className="text-xs text-amber-700 dark:text-amber-300">Extras</p>
-                            <p className="mt-1 text-sm font-semibold text-amber-700 dark:text-amber-300">{barber.extrasCount} vendidos · {formatCurrency(barber.extrasRevenue)}</p>
+                            <p className="text-xs text-amber-700 dark:text-amber-300">{t('extras.title')}</p>
+                            <p className="mt-1 text-sm font-semibold text-amber-700 dark:text-amber-300">{t('reports.general.sales.soldWithRevenue', { count: barber.extrasCount, revenue: formatCurrency(barber.extrasRevenue) })}</p>
                           </div>
                           <div className="rounded-xl bg-emerald-50 p-3 dark:bg-emerald-900/20">
-                            <p className="text-xs text-emerald-700 dark:text-emerald-300">Produtos</p>
-                            <p className="mt-1 text-sm font-semibold text-emerald-700 dark:text-emerald-300">{barber.productsCount} vendidos · {formatCurrency(barber.productsRevenue)}</p>
+                            <p className="text-xs text-emerald-700 dark:text-emerald-300">{t('products.title')}</p>
+                            <p className="mt-1 text-sm font-semibold text-emerald-700 dark:text-emerald-300">{t('reports.general.sales.soldWithRevenue', { count: barber.productsCount, revenue: formatCurrency(barber.productsRevenue) })}</p>
                           </div>
                         </div>
                       </div>
@@ -453,42 +457,42 @@ export default function Reports() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Clock3 size={16} className="text-blue-500" /> 3. Ocupação da agenda
+                  <Clock3 size={16} className="text-blue-500" /> {t('reports.general.sections.occupancy')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-5 pt-0">
                 <div className="grid gap-4 md:grid-cols-4">
                   <div className="rounded-2xl bg-zinc-50 p-4 dark:bg-zinc-900/60">
-                    <p className="text-xs uppercase tracking-wide text-zinc-400">Ocupação</p>
+                    <p className="text-xs uppercase tracking-wide text-zinc-400">{t('reports.general.metrics.occupancy')}</p>
                     <p className="mt-2 text-2xl font-bold">{formatPercent(data.occupancy.occupancyRate)}</p>
                   </div>
                   <div className="rounded-2xl bg-zinc-50 p-4 dark:bg-zinc-900/60">
-                    <p className="text-xs uppercase tracking-wide text-zinc-400">Horas ocupadas</p>
+                    <p className="text-xs uppercase tracking-wide text-zinc-400">{t('reports.general.occupancy.occupiedHours')}</p>
                     <p className="mt-2 text-2xl font-bold">{formatMinutesToHours(data.occupancy.totalOccupiedMinutes)}</p>
                   </div>
                   <div className="rounded-2xl bg-zinc-50 p-4 dark:bg-zinc-900/60">
-                    <p className="text-xs uppercase tracking-wide text-zinc-400">Horas mortas</p>
+                    <p className="text-xs uppercase tracking-wide text-zinc-400">{t('reports.general.occupancy.deadHours')}</p>
                     <p className="mt-2 text-2xl font-bold">{formatMinutesToHours(data.occupancy.deadMinutes)}</p>
                   </div>
                   <div className="rounded-2xl bg-zinc-50 p-4 dark:bg-zinc-900/60">
-                    <p className="text-xs uppercase tracking-wide text-zinc-400">Capacidade</p>
+                    <p className="text-xs uppercase tracking-wide text-zinc-400">{t('reports.general.occupancy.capacity')}</p>
                     <p className="mt-2 text-2xl font-bold">{formatMinutesToHours(data.occupancy.totalAvailableMinutes)}</p>
                   </div>
                 </div>
 
                 <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
                   <div className="rounded-2xl border border-zinc-100 p-4 dark:border-zinc-800">
-                    <p className="mb-4 text-sm font-semibold">Dias com mais movimento</p>
+                    <p className="mb-4 text-sm font-semibold">{t('reports.general.occupancy.busiestDays')}</p>
                     <div className="space-y-3">
                       {data.occupancy.busiestDays.length === 0 ? (
-                        <p className="py-6 text-center text-sm text-zinc-400">Sem dados de agenda.</p>
+                        <p className="py-6 text-center text-sm text-zinc-400">{t('reports.general.occupancy.noScheduleData')}</p>
                       ) : (
                         data.occupancy.busiestDays.map((day) => (
                           <div key={day.day} className="rounded-xl bg-zinc-50 p-3 dark:bg-zinc-900/60">
                             <div className="flex items-center justify-between gap-3">
                               <div>
                                 <p className="font-medium">{day.label}</p>
-                                <p className="text-xs text-zinc-400">{day.bookings} marcações</p>
+                                <p className="text-xs text-zinc-400">{t('reports.general.occupancy.bookings', { count: day.bookings })}</p>
                               </div>
                               <div className="text-right">
                                 <p className="font-semibold">{formatPercent(day.occupancyRate)}</p>
@@ -502,7 +506,7 @@ export default function Reports() {
                   </div>
 
                   <div className="rounded-2xl border border-zinc-100 p-4 dark:border-zinc-800">
-                    <p className="mb-4 text-sm font-semibold">Leitura diária</p>
+                    <p className="mb-4 text-sm font-semibold">{t('reports.general.occupancy.dailyRead')}</p>
                     <div className="space-y-3">
                       {data.occupancy.dailyAgenda.slice(-5).map((day) => (
                         <div key={day.day}>
@@ -525,25 +529,25 @@ export default function Reports() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Users size={16} className="text-violet-500" /> 4. Clientes
+                    <Users size={16} className="text-violet-500" /> {t('reports.general.sections.customers')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4 pt-0">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="rounded-2xl bg-zinc-50 p-4 dark:bg-zinc-900/60">
-                      <p className="text-xs uppercase tracking-wide text-zinc-400">Novos</p>
+                      <p className="text-xs uppercase tracking-wide text-zinc-400">{t('reports.general.customers.new')}</p>
                       <p className="mt-2 text-2xl font-bold">{data.customers.newCustomers}</p>
                     </div>
                     <div className="rounded-2xl bg-zinc-50 p-4 dark:bg-zinc-900/60">
-                      <p className="text-xs uppercase tracking-wide text-zinc-400">Recorrentes</p>
+                      <p className="text-xs uppercase tracking-wide text-zinc-400">{t('reports.general.customers.recurring')}</p>
                       <p className="mt-2 text-2xl font-bold">{data.customers.recurringCustomers}</p>
                     </div>
                   </div>
                   <CompactList
-                    title="Clientes mais frequentes"
+                    title={t('reports.general.customers.top')}
                     items={data.customers.topCustomers}
-                    empty="Sem frequência relevante neste período."
-                    renderRight={(item) => `${item.periodVisits ?? 0} visitas`}
+                    empty={t('reports.general.customers.noFrequency')}
+                    renderRight={(item) => t('reports.general.customers.visits', { count: item.periodVisits ?? 0 })}
                   />
                 </CardContent>
               </Card>
@@ -551,28 +555,28 @@ export default function Reports() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Package size={16} className="text-emerald-500" /> 5. Serviços e produtos
+                    <Package size={16} className="text-emerald-500" /> {t('reports.general.sections.servicesProducts')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4 pt-0">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="rounded-2xl bg-zinc-50 p-4 dark:bg-zinc-900/60">
-                      <p className="text-xs uppercase tracking-wide text-zinc-400">Receita de serviços</p>
+                      <p className="text-xs uppercase tracking-wide text-zinc-400">{t('reports.general.sales.servicesRevenue')}</p>
                       <p className="mt-2 text-2xl font-bold">{formatCurrency(data.sales.servicesRevenue)}</p>
                     </div>
                     <div className="rounded-2xl bg-zinc-50 p-4 dark:bg-zinc-900/60">
-                      <p className="text-xs uppercase tracking-wide text-zinc-400">Produtos vendidos</p>
+                      <p className="text-xs uppercase tracking-wide text-zinc-400">{t('reports.general.sales.productsSold')}</p>
                       <p className="mt-2 text-2xl font-bold">{data.sales.productsSold}</p>
                     </div>
                   </div>
 
                   <div className="rounded-2xl border border-zinc-100 p-4 dark:border-zinc-800">
-                    <p className="mb-3 text-sm font-semibold">Mix de vendas</p>
+                    <p className="mb-3 text-sm font-semibold">{t('reports.general.sales.mix')}</p>
                     <div className="space-y-3">
                       {[
-                        { label: 'Serviços', value: data.sales.salesMix.services, color: 'bg-blue-400' },
-                        { label: 'Extras', value: data.sales.salesMix.extras, color: 'bg-amber-400' },
-                        { label: 'Produtos', value: data.sales.salesMix.products, color: 'bg-emerald-400' },
+                        { label: t('services.title'), value: data.sales.salesMix.services, color: 'bg-blue-400' },
+                        { label: t('extras.title'), value: data.sales.salesMix.extras, color: 'bg-amber-400' },
+                        { label: t('products.title'), value: data.sales.salesMix.products, color: 'bg-emerald-400' },
                       ].map((item) => (
                         <div key={item.label}>
                           <div className="mb-1 flex items-center justify-between gap-3 text-sm">
@@ -588,8 +592,8 @@ export default function Reports() {
                   </div>
 
                   <div className="grid gap-4 md:grid-cols-2">
-                    <RankList title="Produtos" icon={Package} items={data.topProducts} accent="text-emerald-500" empty="Sem produtos vendidos." />
-                    <RankList title="Extras" icon={Sparkles} items={data.topExtras} accent="text-amber-500" empty="Sem extras vendidos." />
+                    <RankList title={t('products.title')} icon={Package} items={data.topProducts} accent="text-emerald-500" empty={t('reports.general.sales.noProducts')} saleLabel={t('reports.general.sales.sales')} />
+                    <RankList title={t('extras.title')} icon={Sparkles} items={data.topExtras} accent="text-amber-500" empty={t('reports.general.sales.noExtras')} saleLabel={t('reports.general.sales.sales')} />
                   </div>
                 </CardContent>
               </Card>
@@ -599,21 +603,21 @@ export default function Reports() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <UserMinus size={16} className="text-red-500" /> 6. Cancelamentos e faltas
+                    <UserMinus size={16} className="text-red-500" /> {t('reports.general.sections.cancellations')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4 pt-0">
                   <div className="grid grid-cols-3 gap-4">
                     <div className="rounded-2xl bg-red-50 p-4 dark:bg-red-900/20">
-                      <p className="text-xs uppercase tracking-wide text-red-700 dark:text-red-300">Cancelamentos</p>
+                      <p className="text-xs uppercase tracking-wide text-red-700 dark:text-red-300">{t('reports.general.cancellations.cancelled')}</p>
                       <p className="mt-2 text-2xl font-bold text-red-700 dark:text-red-300">{data.cancellations.cancelledBookings}</p>
                     </div>
                     <div className="rounded-2xl bg-amber-50 p-4 dark:bg-amber-900/20">
-                      <p className="text-xs uppercase tracking-wide text-amber-700 dark:text-amber-300">No-shows</p>
+                      <p className="text-xs uppercase tracking-wide text-amber-700 dark:text-amber-300">{t('reports.general.cancellations.noShows')}</p>
                       <p className="mt-2 text-2xl font-bold text-amber-700 dark:text-amber-300">{data.cancellations.noShowBookings}</p>
                     </div>
                     <div className="rounded-2xl bg-zinc-50 p-4 dark:bg-zinc-900/60">
-                      <p className="text-xs uppercase tracking-wide text-zinc-400">Perda</p>
+                      <p className="text-xs uppercase tracking-wide text-zinc-400">{t('reports.general.cancellations.loss')}</p>
                       <p className="mt-2 text-2xl font-bold">{formatPercent(data.cancellations.lossRate)}</p>
                     </div>
                   </div>
@@ -621,8 +625,8 @@ export default function Reports() {
                   <div className="rounded-2xl border border-zinc-100 p-4 dark:border-zinc-800">
                     <div className="space-y-3">
                       {[
-                        { label: 'Taxa de cancelamento', value: data.cancellations.cancellationRate, color: 'bg-red-400' },
-                        { label: 'Taxa de falta', value: data.cancellations.noShowRate, color: 'bg-amber-400' },
+                        { label: t('reports.general.cancellations.cancellationRate'), value: data.cancellations.cancellationRate, color: 'bg-red-400' },
+                        { label: t('reports.general.cancellations.noShowRate'), value: data.cancellations.noShowRate, color: 'bg-amber-400' },
                       ].map((item) => (
                         <div key={item.label}>
                           <div className="mb-1 flex items-center justify-between gap-3 text-sm">
@@ -641,21 +645,21 @@ export default function Reports() {
 
               <div className="space-y-4">
                 <CompactList
-                  title="Clientes inativos"
+                  title={t('reports.general.customers.inactive')}
                   items={data.customers.inactiveCustomers}
-                  empty="Nenhum cliente inativo detetado."
+                  empty={t('reports.general.customers.noInactive')}
                   renderRight={(item) => item.lastBookingAt ? format(new Date(item.lastBookingAt), "d MMM yyyy", { locale: dateFnsLocale }) : '—'}
                 />
 
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <Sparkles size={16} className="text-violet-500" /> 7. Insights automáticos
+                      <Sparkles size={16} className="text-violet-500" /> {t('reports.general.sections.insights')}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3 pt-0">
                     {data.insights.length === 0 ? (
-                      <p className="py-6 text-center text-sm text-zinc-400">Ainda não há insights suficientes neste período.</p>
+                      <p className="py-6 text-center text-sm text-zinc-400">{t('reports.general.insights.noInsights')}</p>
                     ) : (
                       data.insights.map((insight, index) => (
                         <div
@@ -679,8 +683,8 @@ export default function Reports() {
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">
-              <MetricCard label="Clientes com plano" value={data.overview.planBookingsCount} icon={CreditCard} tone="bg-violet-50 text-violet-600 dark:bg-violet-900/20 dark:text-violet-300" helper={`${formatCurrency(data.overview.planRevenue)} faturados`} />
-              <MetricCard label="Clientes ativos no período" value={data.customers.activeCustomers} icon={Users} tone="bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-300" />
+              <MetricCard label={t('reports.general.customers.withPlan')} value={data.overview.planBookingsCount} icon={CreditCard} tone="bg-violet-50 text-violet-600 dark:bg-violet-900/20 dark:text-violet-300" helper={t('reports.general.metrics.billed', { value: formatCurrency(data.overview.planRevenue) })} />
+              <MetricCard label={t('reports.general.customers.activeInPeriod')} value={data.customers.activeCustomers} icon={Users} tone="bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-300" />
             </div>
           </>
         )}

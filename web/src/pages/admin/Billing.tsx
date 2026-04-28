@@ -16,43 +16,20 @@ const PLANS: {
   price: number
   icon: React.ElementType
   color: string
-  description: string
-  features: string[]
-  limits: { barbers: string; bookings: string }
 }[] = [
   {
     id: 'FREE',
-    label: 'Grátis',
+    label: 'FREE',
     price: 0,
     icon: Sparkles,
     color: 'zinc',
-    description: 'Para começar sem compromisso.',
-    limits: { barbers: '1 barbeiro ativo', bookings: '30 agendamentos/mês' },
-    features: [
-      '1 barbeiro ativo',
-      '30 agendamentos por mês',
-      'Página pública de reservas',
-      'Gestão de clientes',
-      'Horários e bloqueios',
-    ],
   },
   {
     id: 'BASIC',
-    label: 'Básico',
+    label: 'BASIC',
     price: 19,
     icon: Zap,
     color: 'blue',
-    description: 'Para barbearias em crescimento.',
-    limits: { barbers: 'Até 3 barbeiros', bookings: 'Agendamentos ilimitados' },
-    features: [
-      'Até 3 barbeiros ativos',
-      'Agendamentos ilimitados',
-      'Página pública de reservas',
-      'Gestão de clientes',
-      'Planos de subscrição para clientes',
-      'Extras e produtos',
-      'Relatórios básicos',
-    ],
   },
   {
     id: 'PRO',
@@ -60,18 +37,6 @@ const PLANS: {
     price: 39,
     icon: Crown,
     color: 'amber',
-    description: 'Para operações profissionais.',
-    limits: { barbers: 'Barbeiros ilimitados', bookings: 'Agendamentos ilimitados' },
-    features: [
-      'Barbeiros ilimitados',
-      'Agendamentos ilimitados',
-      'Página pública personalizada',
-      'Gestão de clientes avançada',
-      'Planos de subscrição para clientes',
-      'Extras e produtos',
-      'Estatísticas e relatórios completos',
-      'Suporte prioritário',
-    ],
   },
 ]
 
@@ -83,7 +48,7 @@ const COLOR_STYLES: Record<string, {
   amber: { badge: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300', border: 'border-amber-400 dark:border-amber-500', button: 'bg-amber-500 hover:bg-amber-400 text-white', icon: 'text-amber-500', check: 'text-amber-500', ring: 'shadow-amber-100 dark:shadow-amber-900/20' },
 }
 
-function UsageBar({ used, max, label }: { used: number | null; max: number | null; label: string }) {
+function UsageBar({ used, max, label, usedLabel }: { used: number | null; max: number | null; label: string; usedLabel: string }) {
   if (used === null) return null
   const pct = max === null ? 0 : Math.min(100, (used / max) * 100)
   const warning = max !== null && pct >= 80
@@ -93,7 +58,7 @@ function UsageBar({ used, max, label }: { used: number | null; max: number | nul
       <div className="flex items-center justify-between text-xs">
         <span className="text-zinc-500">{label}</span>
         <span className={cn('font-medium', warning ? 'text-orange-600' : 'text-zinc-600 dark:text-zinc-400')}>
-          {max === null ? `${used} utilizados` : `${used} / ${max}`}
+          {max === null ? usedLabel : `${used} / ${max}`}
         </span>
       </div>
       {max !== null && (
@@ -109,7 +74,7 @@ function UsageBar({ used, max, label }: { used: number | null; max: number | nul
 }
 
 export default function Billing() {
-  const { i18n } = useTranslation()
+  const { t, i18n } = useTranslation('admin')
   const dateFnsLocale = getDateFnsLocale(i18n.language)
   const qc = useQueryClient()
   const [searchParams] = useSearchParams()
@@ -134,26 +99,36 @@ export default function Billing() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['barbershop'] }),
   })
 
-  const currentPlanData = PLANS.find((p) => p.id === currentPlan)
+  const plans = PLANS.map((plan) => ({
+    ...plan,
+    label: t(`billing.plans.${plan.id}.label`),
+    description: t(`billing.plans.${plan.id}.description`),
+    limits: {
+      barbers: t(`billing.plans.${plan.id}.limits.barbers`),
+      bookings: t(`billing.plans.${plan.id}.limits.bookings`),
+    },
+    features: t(`billing.plans.${plan.id}.features`, { returnObjects: true }) as string[],
+  }))
+  const currentPlanData = plans.find((p) => p.id === currentPlan)
   const checkoutStatus = searchParams.get('checkout')
 
   return (
     <AdminLayout>
       <div className="space-y-8">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">Assinatura</h1>
-          <p className="text-zinc-500 text-sm mt-0.5">Gere o teu plano e limites da plataforma.</p>
+          <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{t('billing.subscriptionTitle')}</h1>
+          <p className="text-zinc-500 text-sm mt-0.5">{t('billing.subscriptionSubtitle')}</p>
         </div>
 
         {checkoutStatus === 'success' && (
           <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
-            Checkout concluído. O plano será sincronizado automaticamente assim que o Stripe confirmar a subscrição.
+            {t('billing.checkoutSuccess')}
           </div>
         )}
 
         {checkoutStatus === 'cancel' && (
           <div className="rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-700">
-            O checkout foi cancelado. Nenhuma alteração foi aplicada.
+            {t('billing.checkoutCancelled')}
           </div>
         )}
 
@@ -162,7 +137,7 @@ export default function Billing() {
           <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-100 dark:border-zinc-800 p-6 shadow-sm">
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
               <div>
-                <p className="text-xs text-zinc-400 font-semibold uppercase tracking-widest mb-1">Plano atual</p>
+                <p className="text-xs text-zinc-400 font-semibold uppercase tracking-widest mb-1">{t('billing.currentPlan')}</p>
                 <div className="flex items-center gap-3">
                   <div className={cn('h-10 w-10 rounded-xl flex items-center justify-center', COLOR_STYLES[currentPlanData.color].badge)}>
                     <currentPlanData.icon size={18} className={COLOR_STYLES[currentPlanData.color].icon} />
@@ -170,7 +145,7 @@ export default function Billing() {
                   <div>
                     <p className="text-xl font-bold text-zinc-900 dark:text-zinc-100">{currentPlanData.label}</p>
                     {currentPlanData.price > 0 && (
-                      <p className="text-sm text-zinc-500">{currentPlanData.price}€/mês</p>
+                      <p className="text-sm text-zinc-500">{t('billing.pricePerMonth', { price: currentPlanData.price })}</p>
                     )}
                   </div>
                 </div>
@@ -179,7 +154,7 @@ export default function Billing() {
                 {sub.endsAt && (
                   <div className="flex items-center gap-2 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 px-4 py-2.5 text-sm">
                     <CalendarDays size={14} className="text-zinc-400" />
-                    <span className="text-zinc-500">Válido até</span>
+                    <span className="text-zinc-500">{t('billing.validUntil')}</span>
                     <span className="font-semibold text-zinc-900 dark:text-zinc-100">
                       {format(new Date(sub.endsAt), "d 'de' MMMM yyyy", { locale: dateFnsLocale })}
                     </span>
@@ -191,7 +166,7 @@ export default function Billing() {
                     disabled={portal.isPending}
                     className="rounded-xl border border-zinc-200 px-4 py-2 text-sm font-semibold text-zinc-700 transition hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-60 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
                   >
-                    {portal.isPending ? 'A abrir portal...' : 'Gerir faturação no Stripe'}
+                    {portal.isPending ? t('billing.openingPortal') : t('billing.manageStripeBilling')}
                   </button>
                 )}
               </div>
@@ -201,7 +176,8 @@ export default function Billing() {
             {(sub.limits.monthlyBookings !== null || sub.limits.activeBarbers !== null) && (
               <div className="mt-5 pt-5 border-t border-zinc-100 dark:border-zinc-800 grid sm:grid-cols-2 gap-4">
                 <UsageBar
-                  label="Agendamentos este mês"
+                  label={t('billing.usage.bookingsThisMonth')}
+                  usedLabel={t('billing.usage.used', { count: sub.limits.monthlyBookings })}
                   used={sub.limits.monthlyBookings}
                   max={sub.limits.maxMonthlyBookings}
                 />
@@ -210,7 +186,7 @@ export default function Billing() {
                     <Scissors size={14} className="text-zinc-500" />
                   </div>
                   <div>
-                    <p className="text-xs text-zinc-400">Barbeiros ativos</p>
+                    <p className="text-xs text-zinc-400">{t('billing.usage.activeBarbers')}</p>
                     <p className="font-semibold text-zinc-900 dark:text-zinc-100">
                       {sub.limits.activeBarbers !== null
                         ? sub.limits.maxBarbers !== null
@@ -227,7 +203,7 @@ export default function Billing() {
 
         {/* Plan cards */}
         <div className="grid gap-5 pt-2 md:grid-cols-3 md:items-stretch">
-          {PLANS.map((plan) => {
+          {plans.map((plan) => {
             const isCurrent = plan.id === currentPlan
             const isPro = plan.id === 'PRO'
             const s = COLOR_STYLES[plan.color]
@@ -258,14 +234,14 @@ export default function Billing() {
                         ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300'
                         : s.badge
                     )}>
-                      Plano atual
+                      {t('billing.currentPlan')}
                     </span>
                   ) : <span />}
 
                   {isPro && (
                     <div className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-400 px-3 py-1 text-xs font-bold text-white shadow-lg shadow-amber-500/30">
                       <Star size={11} className="shrink-0 fill-white" />
-                      Mais recomendado
+                      {t('billing.recommended')}
                     </div>
                   )}
                 </div>
@@ -279,13 +255,13 @@ export default function Billing() {
 
                 <div className="relative mb-4">
                   {plan.price === 0 ? (
-                    <span className="text-3xl font-extrabold text-zinc-900 dark:text-zinc-100">Grátis</span>
+                    <span className="text-3xl font-extrabold text-zinc-900 dark:text-zinc-100">{t('billing.freePrice')}</span>
                   ) : (
                     <div className="flex items-end gap-1">
                       <span className={cn('text-3xl font-extrabold', isPro ? 'text-amber-600 dark:text-amber-400' : 'text-zinc-900 dark:text-zinc-100')}>
                         {plan.price}€
                       </span>
-                      <span className="text-zinc-400 text-sm pb-1">/mês</span>
+                      <span className="text-zinc-400 text-sm pb-1">{t('billing.monthSuffix')}</span>
                     </div>
                   )}
                 </div>
@@ -331,12 +307,12 @@ export default function Billing() {
                   )}
                 >
                   {isCurrent
-                    ? 'Plano ativo'
+                    ? t('billing.activePlan')
                     : plan.price === 0
-                      ? 'Gerir no portal'
+                      ? t('billing.manageInPortal')
                       : checkout.isPending
-                        ? 'A abrir checkout...'
-                        : 'Fazer upgrade'}
+                        ? t('billing.openingCheckout')
+                        : t('billing.upgrade')}
                 </button>
               </div>
             )
@@ -344,7 +320,7 @@ export default function Billing() {
         </div>
 
         <p className="text-xs text-zinc-400 text-center">
-          Os upgrades e a gestão da assinatura são tratados no Stripe. Cancelamentos e mudanças de método de pagamento ficam no portal de faturação.
+          {t('billing.stripeNote')}
         </p>
       </div>
     </AdminLayout>

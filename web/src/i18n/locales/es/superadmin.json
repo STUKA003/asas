@@ -88,6 +88,159 @@
   },
   "barbershops": {
     "title": "Barberías",
-    "subtitle": "Gestión centralizada de cuentas y operaciones."
+    "subtitle": "Gestión centralizada de cuentas y operaciones.",
+    "plans": {
+      "FREE": "Gratis",
+      "BASIC": "Básico",
+      "PRO": "Pro"
+    },
+    "durations": {
+      "month1": "1 mes",
+      "months3": "3 meses",
+      "months6": "6 meses",
+      "year1": "1 año"
+    },
+    "identity": {
+      "shopName": "Nombre de la barbería",
+      "namePlaceholder": "Nombre",
+      "siteSlug": "Slug del sitio",
+      "slugPlaceholder": "slug",
+      "generateFromName": "Generar desde el nombre",
+      "saving": "Guardando…",
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "errorSave": "Error al guardar cambios"
+    },
+    "plan": {
+      "plan": "Plan",
+      "expiration": "Expiración",
+      "expiresOn": "Expira el {{date}}"
+    },
+    "suspend": {
+      "reason": "Motivo de la suspensión (opcional)",
+      "reasonPlaceholder": "Ej: pago atrasado",
+      "suspending": "Suspendiendo…",
+      "suspend": "Suspender",
+      "suspended": "Suspendida: {{reason}}",
+      "noReason": "sin motivo",
+      "reactivating": "…",
+      "reactivate": "Reactivar",
+      "close": "Cerrar"
+    },
+    "password": {
+      "noAdmin": "Esta barbería no tiene cuenta admin asociada.",
+      "newPasswordFor": "Vas a definir una nueva contraseña para",
+      "newPassword": "Nueva contraseña",
+      "minChars": "Mínimo 6 caracteres",
+      "confirmPassword": "Confirmar contraseña",
+      "repeatPassword": "Repite la contraseña",
+      "saveNew": "Guardar nueva contraseña",
+      "errorMin": "La contraseña debe tener al menos 6 caracteres",
+      "errorMismatch": "Las contraseñas no coinciden",
+      "errorUpdate": "Error al actualizar contraseña"
+    },
+    "create": {
+      "title": "Nueva barbería",
+      "shopName": "Nombre de la barbería",
+      "shopNamePlaceholder": "Barbería de Juan",
+      "addressSlug": "Dirección (slug)",
+      "adminName": "Nombre del admin",
+      "adminNamePlaceholder": "Juan Pérez",
+      "adminEmail": "Email del admin",
+      "adminEmailPlaceholder": "juan@email.com",
+      "password": "Contraseña",
+      "passwordPlaceholder": "Mínimo 6 caracteres",
+      "initialPlan": "Plan inicial",
+      "creating": "Creando…",
+      "createButton": "Crear barbería",
+      "errorCreate": "Error al crear la barbería",
+      "errorSlugTaken": "Esta dirección ya está en uso."
+    },
+    "list": {
+      "title": "Barberías",
+      "registered": "{{count}} registradas",
+      "newButton": "Nueva barbería",
+      "searchPlaceholder": "Buscar por nombre, slug, email o dueño…",
+      "verification": "Verificación",
+      "accountHealth": "Salud de la cuenta",
+      "loading": "Cargando…",
+      "noneFound": "No se encontraron barberías."
+    },
+    "verificationFilter": {
+      "all": "Todas",
+      "pending": "Pendientes",
+      "verified": "Verificadas"
+    },
+    "healthFilter": {
+      "all": "Todas",
+      "active": "Suscripción activa",
+      "suspended": "Suspendidas",
+      "unverified": "Email pendiente",
+      "no-plan": "Sin plan"
+    },
+    "badges": {
+      "suspended": "Suspendida",
+      "expired": "Expirada",
+      "emailPending": "Email pendiente"
+    },
+    "stats": {
+      "customers": "clientes",
+      "bookings": "reservas",
+      "barber_one": "barbero",
+      "barber_other": "barberos",
+      "expires": "Expira: {{date}}",
+      "lastLogin": "Último acceso: {{date}}"
+    },
+    "actions": {
+      "opening": "Abriendo…",
+      "supportSession": "Sesión de soporte",
+      "resending": "Reenviando…",
+      "resendVerification": "Reenviar verificación",
+      "confirming": "Confirmando…",
+      "markEmailVerified": "Marcar email verificado",
+      "editIdentity": "Editar nombre / slug",
+      "changePlan": "Cambiar plan",
+      "changePassword": "Cambiar contraseña",
+      "reactivate": "Reactivar",
+      "suspend": "Suspender",
+      "sure": "¿Estás seguro?",
+      "deleting": "Eliminando…",
+      "delete": "Eliminar",
+      "cancel": "Cancelar"
+    },
+    "detail": {
+      "adminAccount": "Cuenta admin",
+      "name": "Nombre:",
+      "email": "Email:",
+      "state": "Estado:",
+      "verified": "Verificado",
+      "pending": "Pendiente",
+      "createdAt": "Creada el:",
+      "noOwner": "Sin dueño asociado.",
+      "health": "Salud de la cuenta",
+      "subscriptionActive": "Suscripción activa",
+      "noSubscription": "Sin suscripción",
+      "active": "Activa",
+      "suspended": "Suspendida",
+      "emailVerified": "Email verificado",
+      "emailPending": "Email pendiente",
+      "planLabel": "Plan {{plan}}",
+      "noPlan": "Sin plan",
+      "stripe": "Stripe:"
+    },
+    "security": {
+      "title": "Seguridad",
+      "loginsOk": "Logins OK",
+      "failures": "Fallos",
+      "resets": "Reinicios",
+      "lastLogin": "Último login",
+      "lastFailure": "Último fallo",
+      "lastReset": "Último reinicio",
+      "recentActivity": "Actividad reciente",
+      "noActivity": "Sin actividad registrada.",
+      "eventLoginSuccess": "Login exitoso",
+      "eventLoginFailure": "Login fallido",
+      "eventPasswordReset": "Solicitud de reinicio de contraseña"
+    }
   }
 }

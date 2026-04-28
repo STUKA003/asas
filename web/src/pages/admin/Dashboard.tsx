@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/Button'
 import { SkeletonCard } from '@/components/ui/Skeleton'
 import { formatCurrency, getBookingClientName, toWallClockDate } from '@/lib/utils'
 import { addDays, endOfMonth, format, isWithinInterval, startOfMonth, startOfWeek, subMonths } from 'date-fns'
-import { pt } from 'date-fns/locale'
+import { getDateFnsLocale } from '@/i18n/dateFnsLocale'
 import {
   AlertTriangle, ArrowDownRight, ArrowUpRight,
   BadgePercent, Calendar, Scissors, Sparkles,
@@ -40,6 +40,8 @@ function serviceColor(serviceId?: string) {
 }
 
 export default function Dashboard() {
+  const { t, i18n } = useTranslation(['admin', 'common'])
+  const dateFnsLocale = getDateFnsLocale(i18n.language)
   const today = format(new Date(), 'yyyy-MM-dd')
   const { data: todayBookings = [], isLoading: l1 } = useQuery({ queryKey: ['bookings', 'today'],    queryFn: () => bookingsApi.list({ date: today }) as Promise<Booking[]> })
   const { data: barbers       = [], isLoading: l2 } = useQuery({ queryKey: ['barbers'],             queryFn: () => barbersApi.list() as Promise<Barber[]> })
@@ -141,7 +143,7 @@ export default function Dashboard() {
 
   const upcoming = todayBookings.filter((b) => ['PENDING', 'CONFIRMED'].includes(b.status)).slice(0, 8)
 
-  const weekStart = startOfWeek(now, { locale: pt })
+  const weekStart = startOfWeek(now, { locale: dateFnsLocale })
   const weekEnd = addDays(weekStart, 6)
   const currentWeekBookings = allBookings.filter((b) =>
     b.status !== 'CANCELLED' &&
@@ -151,15 +153,17 @@ export default function Dashboard() {
   const dailyDistribution = Array.from({ length: 7 }).map((_, i) => {
     const day = addDays(weekStart, i)
     const count = currentWeekBookings.filter((b) => format(toWallClockDate(b.startTime), 'yyyy-MM-dd') === format(day, 'yyyy-MM-dd')).length
-    return { day: format(day, 'EEE', { locale: pt }), fullDay: format(day, 'EEEE', { locale: pt }), bookings: count }
+    return { day: format(day, 'EEE', { locale: dateFnsLocale }), fullDay: format(day, 'EEEE', { locale: dateFnsLocale }), bookings: count }
   })
   const busiestDay = [...dailyDistribution].sort((a, b) => b.bookings - a.bookings)[0]
 
-  const occupancySignal = operationalToday.length >= Math.max(barbers.length * 3, 6)
-    ? 'Dia forte'
+  type OccupancyKey = 'strong' | 'low' | 'balanced'
+  const occupancyKey: OccupancyKey = operationalToday.length >= Math.max(barbers.length * 3, 6)
+    ? 'strong'
     : operationalToday.length <= Math.max(barbers.length, 2)
-      ? 'Baixa ocupação'
-      : 'Fluxo equilibrado'
+      ? 'low'
+      : 'balanced'
+  const occupancySignal = t(`admin:dashboard.occupancy.${occupancyKey}`)
 
   const heroTone        = revenueChange >= 0 ? 'positive' : 'negative'
   const heroGradient    = heroTone === 'positive'
@@ -168,51 +172,69 @@ export default function Dashboard() {
 
   const monthStats = [
     {
-      label: 'Receita do mês',        value: formatCurrency(thisRevenue),
-      helper: revenueChange >= 0 ? `${revenueChange}% acima do mês passado` : `${Math.abs(revenueChange)}% abaixo do mês passado`,
-      microcopy: revenueChange >= 0 ? 'Ritmo saudável de faturação' : 'Vale rever horários e campanhas',
-      tone: getTrendTone(revenueChange), icon: TrendingUp,  iconWrap: 'bg-emerald-100 text-emerald-600',
+      label: t('admin:dashboard.monthStats.revenue'),
+      value: formatCurrency(thisRevenue),
+      helper: revenueChange >= 0
+        ? t('admin:dashboard.monthStats.revenueAbove', { pct: revenueChange })
+        : t('admin:dashboard.monthStats.revenueBelow', { pct: Math.abs(revenueChange) }),
+      microcopy: revenueChange >= 0
+        ? t('admin:dashboard.monthStats.healthyBilling')
+        : t('admin:dashboard.monthStats.reviewSchedules'),
+      tone: getTrendTone(revenueChange), icon: TrendingUp, iconWrap: 'bg-emerald-100 text-emerald-600',
     },
     {
-      label: 'Agendamentos ativos', value: operationalThisMonth.length,
-      helper: bookingChange >= 0 ? `+${bookingChange}% vs mês anterior` : `${bookingChange}% vs mês anterior`,
-      microcopy: busiestDay ? `Melhor dia: ${busiestDay.fullDay}` : 'Sem histórico suficiente',
+      label: t('admin:dashboard.monthStats.bookings'),
+      value: operationalThisMonth.length,
+      helper: t('admin:dashboard.monthStats.bookingsChange', { pct: bookingChange >= 0 ? `+${bookingChange}` : bookingChange }),
+      microcopy: busiestDay
+        ? t('admin:dashboard.monthStats.bestDay', { day: busiestDay.fullDay })
+        : t('admin:dashboard.monthStats.noHistory'),
       tone: getTrendTone(bookingChange), icon: Calendar, iconWrap: 'bg-blue-100 text-blue-600',
     },
     {
-      label: 'Ticket médio',           value: formatCurrency(avgTicket),
-      helper: ticketChange >= 0 ? `+${ticketChange}% por visita` : `${ticketChange}% por visita`,
-      microcopy: avgTicket >= 25 ? 'Boa valorização por cliente' : 'Há margem para upsell',
+      label: t('admin:dashboard.monthStats.avgTicket'),
+      value: formatCurrency(avgTicket),
+      helper: t('admin:dashboard.monthStats.ticketChange', { pct: ticketChange >= 0 ? `+${ticketChange}` : ticketChange }),
+      microcopy: avgTicket >= 25
+        ? t('admin:dashboard.monthStats.goodValue')
+        : t('admin:dashboard.monthStats.upsellMargin'),
       tone: getTrendTone(ticketChange), icon: BadgePercent, iconWrap: 'bg-violet-100 text-violet-600',
     },
     {
-      label: 'Taxa de no-show',        value: `${noShowRate}%`,
-      helper: noShowChange === 0 ? 'Sem alteração face ao mês passado' : `${Math.abs(noShowChange)}% ${noShowChange < 0 ? 'melhor' : 'pior'} que o mês passado`,
-      microcopy: noShowRate >= 12 ? 'Atenção a confirmações e lembretes' : 'Nível saudável para operação',
+      label: t('admin:dashboard.monthStats.noShowRate'),
+      value: `${noShowRate}%`,
+      helper: noShowChange === 0
+        ? t('admin:dashboard.monthStats.noShowNoChange')
+        : noShowChange < 0
+          ? t('admin:dashboard.monthStats.noShowBetter', { pct: Math.abs(noShowChange) })
+          : t('admin:dashboard.monthStats.noShowWorse', { pct: Math.abs(noShowChange) }),
+      microcopy: noShowRate >= 12
+        ? t('admin:dashboard.monthStats.noShowAttention')
+        : t('admin:dashboard.monthStats.noShowHealthy'),
       tone: getTrendTone(noShowChange, true), icon: AlertTriangle, iconWrap: 'bg-rose-100 text-rose-600',
     },
   ] as const
 
   const insights = [
     {
-      title: 'Pulse do dia',
-      text: occupancySignal === 'Dia forte'
-        ? 'Agenda quente. Mantém foco no tempo médio entre serviços.'
-        : occupancySignal === 'Baixa ocupação'
-          ? 'Hoje está abaixo do ideal. Vale destacar slots livres nas redes.'
-          : 'Operação equilibrada. Bom momento para encaixar extras e produtos.',
+      title: t('admin:dashboard.insights.pulseTitle'),
+      text: occupancyKey === 'strong'
+        ? t('admin:dashboard.insights.strongDay')
+        : occupancyKey === 'low'
+          ? t('admin:dashboard.insights.lowDay')
+          : t('admin:dashboard.insights.balancedDay'),
       icon: Sparkles,
-      tone: occupancySignal === 'Dia forte'
+      tone: occupancyKey === 'strong'
         ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
-        : occupancySignal === 'Baixa ocupação'
+        : occupancyKey === 'low'
           ? 'border-warning-100 bg-warning-50 text-warning-700'
           : 'border-blue-100 bg-blue-50 text-blue-700',
     },
     {
-      title: 'Janela de atenção',
+      title: t('admin:dashboard.insights.alertTitle'),
       text: noShowRate >= 12
-        ? 'No-show acima do saudável. Reforça lembretes e confirmação manual.'
-        : 'Faltas controladas. Dá para operar com previsibilidade.',
+        ? t('admin:dashboard.insights.noShowHigh')
+        : t('admin:dashboard.insights.noShowOk'),
       icon: TriangleAlert,
       tone: noShowRate >= 12
         ? 'border-danger-100 bg-danger-50 text-danger-700'
@@ -224,11 +246,11 @@ export default function Dashboard() {
     <AdminLayout>
       <div className="space-y-6">
         <PageHeader
-          title="Dashboard"
-          subtitle="Visão consolidada do dia, desempenho mensal e sinais rápidos para atuação."
+          title={t('admin:dashboard.title')}
+          subtitle={t('admin:dashboard.subtitle')}
           actions={
             <Link to="/admin/bookings">
-              <Button size="sm">Ver agendamentos</Button>
+              <Button size="sm">{t('admin:dashboard.viewBookings')}</Button>
             </Link>
           }
         />
@@ -241,21 +263,27 @@ export default function Dashboard() {
             <div className="relative grid gap-6 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,0.9fr)] lg:items-end">
               <div className="space-y-5">
                 <div>
-                  <p className="text-[10.5px] font-semibold uppercase tracking-[0.2em] text-ink-muted">Control center</p>
+                  <p className="text-[10.5px] font-semibold uppercase tracking-[0.2em] text-ink-muted">{t('admin:dashboard.hero.eyebrow')}</p>
                   <h2 className="mt-2.5 text-[1.5rem] font-semibold tracking-[-0.03em] text-ink sm:text-[1.75rem]">
-                    Hoje a operação está {occupancySignal === 'Dia forte' ? 'forte' : occupancySignal === 'Baixa ocupação' ? 'mais calma' : 'estável'}.
+                    {t('admin:dashboard.hero.todayIs', {
+                      signal: occupancyKey === 'strong'
+                        ? t('admin:dashboard.hero.strong')
+                        : occupancyKey === 'low'
+                          ? t('admin:dashboard.hero.calm')
+                          : t('admin:dashboard.hero.stable'),
+                    })}
                   </h2>
                   <p className="mt-2.5 max-w-2xl text-[13.5px] leading-6 text-ink-muted">
-                    {format(now, "EEEE, d 'de' MMMM", { locale: pt })}. Usa este painel para perceber o ritmo da casa, onde estás a ganhar margem e onde convém agir cedo.
+                    {t('admin:dashboard.hero.subtitle', { date: format(now, "EEEE, d 'de' MMMM", { locale: dateFnsLocale }) })}
                   </p>
                 </div>
 
                 {/* Mini stats */}
                 <div className="grid gap-3 sm:grid-cols-3">
                   {[
-                    { label: 'Receita acumulada', value: formatCurrency(thisRevenue), sub: `${revenueChange >= 0 ? '+' : ''}${revenueChange}% vs mês anterior`, positive: revenueChange >= 0 },
-                    { label: 'Agenda de hoje', value: operationalToday.length, sub: `${upcoming.length} por confirmar` },
-                    { label: 'Clientes hoje', value: customersToday, sub: `${monthlyActiveCustomers} ativos no mês · ${customers.length} na base` },
+                    { label: t('admin:dashboard.stats.accumulated'), value: formatCurrency(thisRevenue), sub: t('admin:dashboard.stats.revenueVsPrevious', { pct: `${revenueChange >= 0 ? '+' : ''}${revenueChange}` }), positive: revenueChange >= 0 },
+                    { label: t('admin:dashboard.stats.todaySchedule'), value: operationalToday.length, sub: t('admin:dashboard.stats.toConfirm', { count: upcoming.length }) },
+                    { label: t('admin:dashboard.stats.todayCustomers'), value: customersToday, sub: t('admin:dashboard.stats.activeInMonth', { count: monthlyActiveCustomers, total: customers.length }) },
                   ].map((s) => (
                     <div key={s.label} className="rounded-2xl border border-neutral-200/70 bg-white/80 p-4">
                       <p className="text-[10.5px] font-semibold uppercase tracking-[0.16em] text-ink-muted">{s.label}</p>
@@ -295,22 +323,22 @@ export default function Dashboard() {
           {/* Focus card */}
           <Card>
             <CardContent className="pt-6">
-              <p className="eyebrow mb-4 text-ink-muted">Foco imediato</p>
+              <p className="eyebrow mb-4 text-ink-muted">{t('admin:dashboard.focus.title')}</p>
               <div className="space-y-3">
                 <div className="rounded-2xl border border-neutral-200/70 bg-neutral-50 px-4 py-4">
-                  <p className="text-[13px] font-medium text-ink">Agenda por confirmar</p>
+                  <p className="text-[13px] font-medium text-ink">{t('admin:dashboard.focus.toConfirmTitle')}</p>
                   <p className="mt-1.5 text-[2rem] font-semibold tracking-tight text-ink leading-none">{upcoming.length}</p>
-                  <p className="mt-2 text-[12.5px] text-ink-muted">Reservas pendentes ou confirmadas para hoje.</p>
+                  <p className="mt-2 text-[12.5px] text-ink-muted">{t('admin:dashboard.focus.toConfirmDesc')}</p>
                 </div>
                 <div className="rounded-2xl border border-neutral-200/70 bg-neutral-50 px-4 py-4">
-                  <p className="text-[13px] font-medium text-ink">Estado do dia</p>
+                  <p className="text-[13px] font-medium text-ink">{t('admin:dashboard.focus.dayStateTitle')}</p>
                   <p className="mt-1.5 text-[15px] font-semibold text-ink">{occupancySignal}</p>
                   <p className="mt-1 text-[12.5px] text-ink-muted">
-                    {occupancySignal === 'Dia forte'
-                      ? 'Prioriza pontualidade e encaixes curtos.'
-                      : occupancySignal === 'Baixa ocupação'
-                        ? 'Bom momento para divulgar horários livres.'
-                        : 'Fluxo estável e margem para extras.'}
+                    {occupancyKey === 'strong'
+                      ? t('admin:dashboard.focus.prioritizePunctuality')
+                      : occupancyKey === 'low'
+                        ? t('admin:dashboard.focus.promoteSlots')
+                        : t('admin:dashboard.focus.stableFlow')}
                   </p>
                 </div>
               </div>
@@ -352,13 +380,13 @@ export default function Dashboard() {
           <Card className="overflow-hidden">
             <CardHeader className="flex-col gap-4 border-b border-neutral-100 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <p className="eyebrow mb-2 text-ink-muted">Momentum</p>
-                <CardTitle className="text-[17px]">Tendência desta semana</CardTitle>
-                <p className="mt-1 text-[13px] text-ink-muted">Leitura rápida do fluxo de bookings no arranque da semana.</p>
+                <p className="eyebrow mb-2 text-ink-muted">{t('admin:dashboard.chart.eyebrow')}</p>
+                <CardTitle className="text-[17px]">{t('admin:dashboard.chart.title')}</CardTitle>
+                <p className="mt-1 text-[13px] text-ink-muted">{t('admin:dashboard.chart.subtitle')}</p>
               </div>
               <div className="rounded-2xl border border-neutral-200/70 bg-neutral-50 px-3 py-2 text-right">
-                <p className="eyebrow text-ink-muted/70">Melhor dia</p>
-                <p className="mt-1 text-[13px] font-semibold text-ink">{busiestDay?.fullDay ?? 'Sem dados'}</p>
+                <p className="eyebrow text-ink-muted/70">{t('admin:dashboard.chart.bestDay')}</p>
+                <p className="mt-1 text-[13px] font-semibold text-ink">{busiestDay?.fullDay ?? t('admin:dashboard.chart.noData')}</p>
               </div>
             </CardHeader>
             <CardContent className="pt-5">
@@ -387,14 +415,14 @@ export default function Dashboard() {
 
           <Card>
             <CardHeader>
-              <p className="eyebrow text-ink-muted">Próximos</p>
-              <CardTitle className="mt-1.5 text-[17px]">Agenda de hoje</CardTitle>
+              <p className="eyebrow text-ink-muted">{t('admin:dashboard.today.eyebrow')}</p>
+              <CardTitle className="mt-1.5 text-[17px]">{t('admin:dashboard.today.title')}</CardTitle>
             </CardHeader>
             <CardContent className="pt-2">
               {upcoming.length === 0 ? (
                 <div className="rounded-2xl border border-dashed border-neutral-200 bg-neutral-50/70 px-4 py-8 text-center">
-                  <p className="text-[13px] font-medium text-ink">Sem bookings pendentes para hoje.</p>
-                  <p className="mt-1 text-[12.5px] text-ink-muted">A agenda está limpa neste momento.</p>
+                  <p className="text-[13px] font-medium text-ink">{t('admin:dashboard.today.noPending')}</p>
+                  <p className="mt-1 text-[12.5px] text-ink-muted">{t('admin:dashboard.today.cleanSchedule')}</p>
                 </div>
               ) : (
                 <div className="space-y-2.5">
@@ -404,7 +432,7 @@ export default function Dashboard() {
                       className="flex w-full items-center gap-3 rounded-2xl border border-neutral-200/70 bg-white px-3.5 py-3 shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-all duration-150 hover:-translate-y-0.5 hover:shadow-medium"
                     >
                       <div className="flex h-11 w-11 shrink-0 flex-col items-center justify-center rounded-xl bg-ink text-white">
-                        <span className="text-[9px] uppercase tracking-[0.12em] text-white/40">hora</span>
+                        <span className="text-[9px] uppercase tracking-[0.12em] text-white/40">{t('admin:dashboard.today.timeLabel')}</span>
                         <span className="text-[13px] font-semibold">{format(toWallClockDate(booking.startTime), 'HH:mm')}</span>
                       </div>
                       <div className="min-w-0 flex-1">
@@ -413,7 +441,7 @@ export default function Dashboard() {
                           <StatusBadge status={booking.status} />
                         </div>
                         <p className="mt-0.5 truncate text-[12px] text-ink-muted">
-                          {booking.services[0]?.service.name ?? 'Serviço'} · {booking.barber.name}
+                          {booking.services[0]?.service.name ?? t('admin:bookings.columns.service')} · {booking.barber.name}
                         </p>
                       </div>
                     </div>
@@ -428,13 +456,13 @@ export default function Dashboard() {
         <section className="grid gap-4 xl:grid-cols-2">
           <Card>
             <CardHeader>
-              <p className="eyebrow text-ink-muted">Performance</p>
-              <CardTitle className="mt-1.5 text-[17px]">Top barbeiros</CardTitle>
+              <p className="eyebrow text-ink-muted">{t('admin:dashboard.topBarbers.eyebrow')}</p>
+              <CardTitle className="mt-1.5 text-[17px]">{t('admin:dashboard.topBarbers.title')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2.5 pt-1">
               {topBarbers.length === 0 ? (
                 <p className="rounded-2xl border border-dashed border-neutral-200 bg-neutral-50/70 px-4 py-8 text-center text-[13px] text-ink-muted">
-                  Sem dados fechados este mês.
+                  {t('admin:dashboard.topBarbers.noData')}
                 </p>
               ) : topBarbers.map((barber, i) => (
                 <div key={barber.name} className="rounded-2xl border border-neutral-200/70 bg-white p-4">
@@ -447,7 +475,7 @@ export default function Dashboard() {
                         <p className="truncate text-[13.5px] font-semibold text-ink">{barber.name}</p>
                         <p className="text-[13.5px] font-semibold text-ink">{formatCurrency(barber.revenue)}</p>
                       </div>
-                      <p className="mt-0.5 text-[12px] text-ink-muted">{barber.count} serviços concluídos no mês</p>
+                      <p className="mt-0.5 text-[12px] text-ink-muted">{t('admin:dashboard.topBarbers.servicesCompleted', { count: barber.count })}</p>
                     </div>
                   </div>
                   <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-neutral-100">
@@ -463,13 +491,13 @@ export default function Dashboard() {
 
           <Card>
             <CardHeader>
-              <p className="eyebrow text-ink-muted">Procura</p>
-              <CardTitle className="mt-1.5 text-[17px]">Serviços mais pedidos</CardTitle>
+              <p className="eyebrow text-ink-muted">{t('admin:dashboard.topServices.eyebrow')}</p>
+              <CardTitle className="mt-1.5 text-[17px]">{t('admin:dashboard.topServices.title')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2.5 pt-1">
               {topServices.length === 0 ? (
                 <p className="rounded-2xl border border-dashed border-neutral-200 bg-neutral-50/70 px-4 py-8 text-center text-[13px] text-ink-muted">
-                  Sem dados para mostrar este mês.
+                  {t('admin:dashboard.topServices.noData')}
                 </p>
               ) : topServices.map((service) => (
                 <div key={service.serviceId} className="rounded-2xl border border-neutral-200/70 bg-white p-4">
@@ -483,7 +511,7 @@ export default function Dashboard() {
                         <p className="text-[13.5px] font-semibold text-ink">{service.count}×</p>
                       </div>
                       <p className="mt-0.5 text-[12px] text-ink-muted">
-                        {service.count === maxServiceCount ? 'Serviço líder do mês' : 'Continua a puxar ocupação'}
+                        {service.count === maxServiceCount ? t('admin:dashboard.topServices.leader') : t('admin:dashboard.topServices.pullsOccupancy')}
                       </p>
                     </div>
                   </div>

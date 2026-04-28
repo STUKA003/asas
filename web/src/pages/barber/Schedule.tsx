@@ -22,9 +22,9 @@ const TOTAL_HOURS = END_HOUR - START_HOUR
 const HOUR_HEIGHT = 64
 
 const VIEW_OPTIONS = [
-  { label: '1 dia', days: 1 },
-  { label: '3 dias', days: 3 },
-  { label: '7 dias', days: 7 },
+  { labelKey: 'schedule.view.oneDay', days: 1 },
+  { labelKey: 'schedule.view.threeDays', days: 3 },
+  { labelKey: 'schedule.view.sevenDays', days: 7 },
 ]
 
 const STATUS_COLORS: Record<string, string> = {
@@ -33,14 +33,6 @@ const STATUS_COLORS: Record<string, string> = {
   COMPLETED: 'bg-emerald-50 border-l-emerald-500 text-emerald-800',
   CANCELLED: 'bg-zinc-100 border-l-zinc-400 text-zinc-400',
   NO_SHOW: 'bg-red-50 border-l-red-400 text-red-700',
-}
-
-const STATUS_LABELS: Record<BookingStatus, string> = {
-  PENDING: 'pendente',
-  CONFIRMED: 'confirmado',
-  COMPLETED: 'concluído',
-  CANCELLED: 'cancelado',
-  NO_SHOW: 'não compareceu',
 }
 
 function minutesFromDayStart(date: Date) {
@@ -76,7 +68,7 @@ function getEffectivePortalPlan(barber: ReturnType<typeof useBarberAuthStore.get
 }
 
 export default function BarberSchedule() {
-  const { i18n } = useTranslation()
+  const { t, i18n } = useTranslation(['barber', 'admin', 'common'])
   const dateFnsLocale = getDateFnsLocale(i18n.language)
   const qc = useQueryClient()
   const barber = useBarberAuthStore((state) => state.barber)
@@ -138,10 +130,10 @@ export default function BarberSchedule() {
       setSelectedExtraId('')
       setSelectedProductId('')
       setAddItemsError(null)
-      setFeedback({ type: 'success', message: `Agendamento marcado como ${STATUS_LABELS[variables.status as BookingStatus] ?? variables.status.toLowerCase()}.` })
+      setFeedback({ type: 'success', message: t('schedule.feedback.statusUpdated', { status: t(`admin:bookings.status.${variables.status as BookingStatus}`) }) })
     },
     onError: (err: unknown) => {
-      setFeedback({ type: 'error', message: getApiErrorMessage(err, 'Não foi possível alterar o estado do agendamento.') })
+      setFeedback({ type: 'error', message: getApiErrorMessage(err, t('schedule.feedback.statusError')) })
     },
   })
 
@@ -151,11 +143,11 @@ export default function BarberSchedule() {
       invalidate()
       setFeedback({
         type: 'success',
-        message: `Agendamento movido para ${format(toWallClockDate(variables.startTime), "d MMM 'às' HH:mm", { locale: dateFnsLocale })}.`,
+        message: t('schedule.feedback.rescheduled', { date: format(toWallClockDate(variables.startTime), "d MMM HH:mm", { locale: dateFnsLocale }) }),
       })
     },
     onError: (err: unknown) => {
-      setFeedback({ type: 'error', message: getApiErrorMessage(err, 'Não foi possível remarcar o agendamento.') })
+      setFeedback({ type: 'error', message: getApiErrorMessage(err, t('schedule.feedback.rescheduleError')) })
     },
   })
 
@@ -171,10 +163,10 @@ export default function BarberSchedule() {
       setModalBooking(updated)
       setSelectedExtraId('')
       setSelectedProductId('')
-      setFeedback({ type: 'success', message: 'Extra/produto adicionado ao agendamento.' })
+      setFeedback({ type: 'success', message: t('schedule.feedback.itemAdded') })
     },
     onError: (err: unknown) => {
-      const message = getApiErrorMessage(err, 'Não foi possível adicionar o item ao agendamento')
+      const message = getApiErrorMessage(err, t('schedule.feedback.addItemError'))
       setAddItemsError(message)
       setFeedback({ type: 'error', message })
     },
@@ -187,10 +179,10 @@ export default function BarberSchedule() {
       setAddItemsError(null)
       invalidate()
       setModalBooking(updated)
-      setFeedback({ type: 'success', message: 'Item removido do agendamento.' })
+      setFeedback({ type: 'success', message: t('schedule.feedback.itemRemoved') })
     },
     onError: (err: unknown) => {
-      const message = getApiErrorMessage(err, 'Não foi possível remover o item do agendamento')
+      const message = getApiErrorMessage(err, t('schedule.feedback.removeItemError'))
       setAddItemsError(message)
       setFeedback({ type: 'error', message })
     },
@@ -233,8 +225,8 @@ export default function BarberSchedule() {
     <BarberLayout>
       <div className="space-y-6">
         <PageHeader
-          title="Agenda"
-          subtitle="Acompanha horários, remarcações e detalhe dos atendimentos em curso."
+          title={t('schedule.title')}
+          subtitle={t('schedule.pageSubtitle')}
         />
 
         <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_18rem]">
@@ -243,7 +235,7 @@ export default function BarberSchedule() {
               <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 <div className="flex items-center gap-2">
                   <button onClick={goToday} className="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm font-medium transition-colors hover:bg-zinc-50">
-                    Hoje
+                    {t('schedule.today')}
                   </button>
                   <div className="flex overflow-hidden rounded-lg border border-zinc-200">
                     <button onClick={prev} className="p-1.5 transition-colors hover:bg-zinc-50">
@@ -269,7 +261,7 @@ export default function BarberSchedule() {
                         viewDays === opt.days ? 'bg-primary-600 text-white' : 'text-zinc-600 hover:bg-zinc-50'
                       }`}
                     >
-                      {opt.label}
+                      {t(opt.labelKey)}
                     </button>
                   ))}
                 </div>
@@ -291,15 +283,15 @@ export default function BarberSchedule() {
 
           <Card>
             <CardContent className="pt-6">
-              <p className="eyebrow mb-3">Resumo</p>
+              <p className="eyebrow mb-3">{t('schedule.summary.title')}</p>
               <div className="space-y-3">
                 <div className="rounded-2xl border border-neutral-200/70 bg-neutral-50 px-4 py-4">
-                  <p className="text-[13px] font-medium text-ink">Slot base</p>
+                  <p className="text-[13px] font-medium text-ink">{t('schedule.summary.baseSlot')}</p>
                   <p className="mt-1 text-lg font-semibold text-ink">{snapMinutes} min</p>
                 </div>
                 <div className="rounded-2xl border border-neutral-200/70 bg-neutral-50 px-4 py-4">
-                  <p className="text-[13px] font-medium text-ink">Intervalo ativo</p>
-                  <p className="mt-1 text-lg font-semibold text-ink">{viewDays} {viewDays === 1 ? 'dia' : 'dias'}</p>
+                  <p className="text-[13px] font-medium text-ink">{t('schedule.summary.activeInterval')}</p>
+                  <p className="mt-1 text-lg font-semibold text-ink">{t('schedule.summary.days', { count: viewDays })}</p>
                 </div>
               </div>
             </CardContent>

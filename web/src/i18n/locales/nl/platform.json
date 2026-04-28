@@ -40,7 +40,8 @@
         "emailInvalid": "Ongeldig e-mailadres",
         "passwordMin": "Minimaal 6 tekens",
         "slugTaken": "Dit adres is al in gebruik. Kies een ander."
-      }
+      },
+      "slugPlaceholder": "mijn-kapperszaak"
     },
     "success": {
       "title": "Bevestig uw e-mail",
@@ -137,7 +138,24 @@
     },
     "testimonials": {
       "section": "Wie gebruikt het al",
-      "title": "Wat kapperszaken zeggen"
+      "title": "Wat kapperszaken zeggen",
+      "items": {
+        "1": {
+          "name": "Ricardo Fernandes",
+          "role": "Studio RF · Lissabon",
+          "text": "Vroeger beheerde ik boekingen via WhatsApp tot middernacht. Nu boeken klanten zelf wanneer ze willen. Dat heeft me volledig ontlast."
+        },
+        "2": {
+          "name": "Diogo Almeida",
+          "role": "Barber House · Porto",
+          "text": "Ik heb 3 barbiers en roosters beheren was chaos. Na 15 minuten instellen was het probleem verdwenen."
+        },
+        "3": {
+          "name": "Carlos Mendes",
+          "role": "Fade Studio · Braga",
+          "text": "Klanten vinden het geweldig dat ze hun favoriete barbier kunnen kiezen. No-shows daalden en Instagram-reacties namen toe."
+        }
+      }
     },
     "pricing": {
       "section": "Prijzen",
@@ -184,6 +202,16 @@
       "a3": "Ja, op elk moment en zonder boetes. Er zijn geen verplichte jaarcontracten. Als u opzegt, loopt uw ​​abonnement door tot het einde van de betaalde periode.",
       "q4": "Wat gebeurt er als ik de limiet voor het gratis abonnement bereik?",
       "a4": "We waarschuwen u voordat u de limiet bereikt. Eenmaal bereikt, kunnen klanten pas volgende maand nieuwe boekingen maken of totdat u upgradet. Alle gegevens worden bewaard."
+    },
+    "mockup": {
+      "service": "Dienst",
+      "serviceName": "Knippen + Baard",
+      "barber": "Kapper",
+      "tomorrow": "Morgen, Vr 25 Apr",
+      "confirmBooking": "Reservering bevestigen",
+      "bookingConfirmed": "Reservering bevestigd",
+      "bookingDate": "Vr 25 Apr · 11:00",
+      "shopLocation": "Taipas, Guimarães"
     }
   }
 }

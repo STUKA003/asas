@@ -34,13 +34,13 @@ import { useAuthStore } from '@/store/auth'
 import { Avatar } from '@/components/ui/Avatar'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
-import { LanguageSelector } from '@/components/ui/LanguageSelector'
 import { PanelShell, type PanelNavSection } from './PanelShell'
 import { applyAccentColor } from '@/lib/theme'
 import { useInstallBrand } from '@/lib/installBrand'
 import { barbershopApi, notificationsApi } from '@/lib/api'
 import adminLogo from '@/assets/branding/barbershop-logo.png'
 import { PushToggle } from './PushToggle'
+import { LanguageMenuOptions } from '@/components/ui/LanguageSelector'
 
 type PlanTier = 'FREE' | 'BASIC' | 'PRO'
 
@@ -254,6 +254,9 @@ function AdminAccountMenu({
               <Zap size={16} />
               {t('admin:layout.account.billingLink')}
             </Link>
+            <div className="my-2 border-y border-neutral-100">
+              <LanguageMenuOptions />
+            </div>
             <button
               onClick={onLogout}
               className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-danger-600 transition hover:bg-danger-50"
@@ -428,7 +431,6 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
       }
       topbarAside={
         <>
-          <LanguageSelector />
           <PushToggle variant="admin" />
           <NotificationBell />
           <AdminAccountMenu

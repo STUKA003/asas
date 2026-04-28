@@ -88,6 +88,159 @@
   },
   "barbershops": {
     "title": "Saloni",
-    "subtitle": "Gestione centralizzata di account e operazioni."
+    "subtitle": "Gestione centralizzata di account e operazioni.",
+    "plans": {
+      "FREE": "Gratis",
+      "BASIC": "Base",
+      "PRO": "Pro"
+    },
+    "durations": {
+      "month1": "1 mese",
+      "months3": "3 mesi",
+      "months6": "6 mesi",
+      "year1": "1 anno"
+    },
+    "identity": {
+      "shopName": "Nome del salone",
+      "namePlaceholder": "Nome",
+      "siteSlug": "Slug del sito",
+      "slugPlaceholder": "slug",
+      "generateFromName": "Genera dal nome",
+      "saving": "Salvataggio…",
+      "save": "Salva",
+      "cancel": "Annulla",
+      "errorSave": "Errore nel salvataggio"
+    },
+    "plan": {
+      "plan": "Piano",
+      "expiration": "Scadenza",
+      "expiresOn": "Scade il {{date}}"
+    },
+    "suspend": {
+      "reason": "Motivo della sospensione (facoltativo)",
+      "reasonPlaceholder": "Es.: pagamento in ritardo",
+      "suspending": "Sospensione…",
+      "suspend": "Sospendi",
+      "suspended": "Sospeso: {{reason}}",
+      "noReason": "nessun motivo",
+      "reactivating": "…",
+      "reactivate": "Riattiva",
+      "close": "Chiudi"
+    },
+    "password": {
+      "noAdmin": "Questo salone non ha un account admin associato.",
+      "newPasswordFor": "Imposterai una nuova password per",
+      "newPassword": "Nuova password",
+      "minChars": "Minimo 6 caratteri",
+      "confirmPassword": "Conferma password",
+      "repeatPassword": "Ripeti la password",
+      "saveNew": "Salva nuova password",
+      "errorMin": "La password deve avere almeno 6 caratteri",
+      "errorMismatch": "Le password non coincidono",
+      "errorUpdate": "Errore nell'aggiornamento della password"
+    },
+    "create": {
+      "title": "Nuovo salone",
+      "shopName": "Nome del salone",
+      "shopNamePlaceholder": "Salone di Mario",
+      "addressSlug": "Indirizzo (slug)",
+      "adminName": "Nome dell'admin",
+      "adminNamePlaceholder": "Mario Rossi",
+      "adminEmail": "E-mail dell'admin",
+      "adminEmailPlaceholder": "mario@email.com",
+      "password": "Password",
+      "passwordPlaceholder": "Minimo 6 caratteri",
+      "initialPlan": "Piano iniziale",
+      "creating": "Creazione…",
+      "createButton": "Crea salone",
+      "errorCreate": "Errore nella creazione del salone",
+      "errorSlugTaken": "Questo indirizzo è già in uso."
+    },
+    "list": {
+      "title": "Saloni",
+      "registered": "{{count}} registrati",
+      "newButton": "Nuovo salone",
+      "searchPlaceholder": "Cerca per nome, slug, email o proprietario…",
+      "verification": "Verifica",
+      "accountHealth": "Salute account",
+      "loading": "Caricamento…",
+      "noneFound": "Nessun salone trovato."
+    },
+    "verificationFilter": {
+      "all": "Tutti",
+      "pending": "In attesa",
+      "verified": "Verificati"
+    },
+    "healthFilter": {
+      "all": "Tutti",
+      "active": "Abbonamento attivo",
+      "suspended": "Sospesi",
+      "unverified": "Email in attesa",
+      "no-plan": "Senza piano"
+    },
+    "badges": {
+      "suspended": "Sospeso",
+      "expired": "Scaduto",
+      "emailPending": "Email in attesa"
+    },
+    "stats": {
+      "customers": "clienti",
+      "bookings": "prenotazioni",
+      "barber_one": "barbiere",
+      "barber_other": "barbieri",
+      "expires": "Scade: {{date}}",
+      "lastLogin": "Ultimo accesso: {{date}}"
+    },
+    "actions": {
+      "opening": "Apertura…",
+      "supportSession": "Sessione di supporto",
+      "resending": "Reinvio…",
+      "resendVerification": "Reinvia verifica",
+      "confirming": "Conferma…",
+      "markEmailVerified": "Segna email verificata",
+      "editIdentity": "Modifica nome / slug",
+      "changePlan": "Cambia piano",
+      "changePassword": "Cambia password",
+      "reactivate": "Riattiva",
+      "suspend": "Sospendi",
+      "sure": "Sei sicuro?",
+      "deleting": "Eliminazione…",
+      "delete": "Elimina",
+      "cancel": "Annulla"
+    },
+    "detail": {
+      "adminAccount": "Account admin",
+      "name": "Nome:",
+      "email": "Email:",
+      "state": "Stato:",
+      "verified": "Verificato",
+      "pending": "In attesa",
+      "createdAt": "Creato il:",
+      "noOwner": "Nessun proprietario associato.",
+      "health": "Salute account",
+      "subscriptionActive": "Abbonamento attivo",
+      "noSubscription": "Nessun abbonamento",
+      "active": "Attivo",
+      "suspended": "Sospeso",
+      "emailVerified": "Email verificata",
+      "emailPending": "Email in attesa",
+      "planLabel": "Piano {{plan}}",
+      "noPlan": "Senza piano",
+      "stripe": "Stripe:"
+    },
+    "security": {
+      "title": "Sicurezza",
+      "loginsOk": "Login OK",
+      "failures": "Falliti",
+      "resets": "Reset",
+      "lastLogin": "Ultimo accesso",
+      "lastFailure": "Ultimo fallimento",
+      "lastReset": "Ultimo reset",
+      "recentActivity": "Attività recente",
+      "noActivity": "Nessuna attività registrata.",
+      "eventLoginSuccess": "Accesso riuscito",
+      "eventLoginFailure": "Accesso fallito",
+      "eventPasswordReset": "Richiesta reset password"
+    }
   }
 }

@@ -72,13 +72,13 @@ export default function SuperAdminLogin() {
         {/* Middle — headline + stats */}
         <div className="relative">
           <p className="mb-5 text-[10.5px] font-semibold uppercase tracking-[0.2em] text-white/25">
-            Platform control
+            {t('login.panel.eyebrow')}
           </p>
           <h1 className="max-w-xs text-[2.6rem] font-semibold leading-[1.06] tracking-[-0.04em] text-white">
-            Visão global sobre toda a operação.
+            {t('login.panel.title')}
           </h1>
           <p className="mt-5 max-w-sm text-[14px] leading-7 text-white/40">
-            Gestão centralizada de barbearias, planos, faturação e saúde da plataforma — num único ponto de comando.
+            {t('login.panel.desc')}
           </p>
 
           <div className="mt-10 space-y-3">
@@ -101,7 +101,7 @@ export default function SuperAdminLogin() {
 
         {/* Bottom */}
         <p className="relative text-[11px] text-white/15">
-          © {new Date().getFullYear()} Trimio · Acesso restrito
+          {t('login.panel.footer', { year: new Date().getFullYear() })}
         </p>
       </div>
 
@@ -135,13 +135,13 @@ export default function SuperAdminLogin() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
               <label className="block text-[10.5px] font-semibold uppercase tracking-[0.15em] text-white/35">
-                E-mail
+                {t('login.form.emailLabel')}
               </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@trimio.app"
+                placeholder={t('login.form.emailPlaceholder')}
                 autoComplete="email"
                 required
                 className="h-12 w-full rounded-xl border border-white/[0.10] bg-white/[0.06] px-4 text-sm text-white placeholder-white/20 outline-none transition-all duration-150 hover:border-white/[0.16] focus:border-primary-500/60 focus:ring-4 focus:ring-primary-500/10"
@@ -150,13 +150,13 @@ export default function SuperAdminLogin() {
 
             <div className="space-y-1.5">
               <label className="block text-[10.5px] font-semibold uppercase tracking-[0.15em] text-white/35">
-                Password
+                {t('login.form.passwordLabel')}
               </label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
+                placeholder={t('login.form.passwordPlaceholder')}
                 autoComplete="current-password"
                 required
                 className="h-12 w-full rounded-xl border border-white/[0.10] bg-white/[0.06] px-4 text-sm text-white placeholder-white/20 outline-none transition-all duration-150 hover:border-white/[0.16] focus:border-primary-500/60 focus:ring-4 focus:ring-primary-500/10"

@@ -40,7 +40,8 @@
         "emailInvalid": "Email inválido",
         "passwordMin": "Mínimo 6 caracteres",
         "slugTaken": "Esta dirección ya está en uso. Elige otra."
-      }
+      },
+      "slugPlaceholder": "mi-barberia"
     },
     "success": {
       "title": "Confirma tu email",
@@ -137,7 +138,24 @@
     },
     "testimonials": {
       "section": "¿Quién ya lo está usando?",
-      "title": "Lo que dicen las barberías"
+      "title": "Lo que dicen las barberías",
+      "items": {
+        "1": {
+          "name": "Ricardo Fernandes",
+          "role": "Studio RF · Lisboa",
+          "text": "Antes gestionaba reservas por WhatsApp hasta medianoche. Ahora los clientes reservan solos cuando quieren. Me liberó por completo."
+        },
+        "2": {
+          "name": "Diogo Almeida",
+          "role": "Barber House · Oporto",
+          "text": "Tengo 3 barberos y gestionar horarios era un caos. En 15 minutos de configuración, el problema desapareció."
+        },
+        "3": {
+          "name": "Carlos Mendes",
+          "role": "Fade Studio · Braga",
+          "text": "A los clientes les encanta elegir su barbero favorito. Las ausencias bajaron y aumentaron los comentarios en Instagram."
+        }
+      }
     },
     "pricing": {
       "section": "Precios",
@@ -184,6 +202,16 @@
       "a3": "Sí, en cualquier momento y sin penalizaciones. No existen contratos anuales obligatorios. Si cancelas, tu plan continúa hasta el final del período pagado.",
       "q4": "¿Qué sucede cuando llego al límite del plan gratuito?",
       "a4": "Te avisaremos antes de que llegues al límite. Una vez alcanzado, los clientes no pueden hacer nuevas reservas hasta el próximo mes o hasta que actualices; todos los datos se conservan."
+    },
+    "mockup": {
+      "service": "Servicio",
+      "serviceName": "Corte + Barba",
+      "barber": "Barbero",
+      "tomorrow": "Mañana, Vie 25 Abr",
+      "confirmBooking": "Confirmar reserva",
+      "bookingConfirmed": "Reserva confirmada",
+      "bookingDate": "Vie 25 Abr · 11:00",
+      "shopLocation": "Taipas, Guimarães"
     }
   }
 }

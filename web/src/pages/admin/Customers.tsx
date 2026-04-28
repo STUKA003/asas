@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { format } from 'date-fns'
-import { pt } from 'date-fns/locale'
+import { getDateFnsLocale } from '@/i18n/dateFnsLocale'
 import { Users, UserCheck, Search, X, Download, Upload, AlertTriangle, ShieldCheck, Sparkles } from 'lucide-react'
 import { customersApi, customersImportApi, plansApi } from '@/lib/api'
 import { AdminLayout } from '@/components/layout/AdminLayout'
@@ -22,13 +22,14 @@ import type { Customer, CustomerDetail, Plan } from '@/lib/types'
 type ImportRow = { name: string; phone?: string; email?: string; notes?: string }
 
 function ReliabilityBadge({ level }: { level?: 'NEW' | 'TRUSTED' | 'ATTENTION' | 'RISK' }) {
+  const { t } = useTranslation('admin')
   if (!level) return <span className="text-xs text-ink-muted">—</span>
 
   const config = {
-    NEW: { label: 'Novo', className: 'border-neutral-200 bg-neutral-100 text-ink-muted', icon: Sparkles },
-    TRUSTED: { label: 'Fiável', className: 'border-success-200 bg-success-50 text-success-700', icon: ShieldCheck },
-    ATTENTION: { label: 'Atenção', className: 'border-warning-200 bg-warning-50 text-warning-700', icon: AlertTriangle },
-    RISK: { label: 'Risco', className: 'border-danger-200 bg-danger-50 text-danger-700', icon: AlertTriangle },
+    NEW: { label: t('customers.reliability.new'), className: 'border-neutral-200 bg-neutral-100 text-ink-muted', icon: Sparkles },
+    TRUSTED: { label: t('customers.reliability.trusted'), className: 'border-success-200 bg-success-50 text-success-700', icon: ShieldCheck },
+    ATTENTION: { label: t('customers.reliability.attention'), className: 'border-warning-200 bg-warning-50 text-warning-700', icon: AlertTriangle },
+    RISK: { label: t('customers.reliability.risk'), className: 'border-danger-200 bg-danger-50 text-danger-700', icon: AlertTriangle },
   } as const
 
   const item = config[level]
@@ -106,7 +107,7 @@ function parseCustomerCsv(text: string): ImportRow[] {
   const notesIndex = headers.findIndex((header) => ['notes', 'nota', 'notas', 'observacoes', 'observacao'].includes(header))
 
   if (nameIndex === -1) {
-    throw new Error('O CSV precisa de uma coluna "name" ou "nome".')
+    throw new Error('CSV_NAME_COLUMN_REQUIRED')
   }
 
   return lines.slice(1).map((line) => {
@@ -139,6 +140,8 @@ function buildCustomersCsv(rows: Customer[]) {
 
 export default function Customers() {
   const qc = useQueryClient()
+  const { t, i18n } = useTranslation(['admin', 'common'])
+  const dateFnsLocale = getDateFnsLocale(i18n.language)
   const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null)
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [editingPlanId, setEditingPlanId] = useState<string | null>(null)
@@ -197,7 +200,7 @@ export default function Customers() {
         setEditError((error as { response?: { data?: { error?: string } } }).response!.data!.error!)
         return
       }
-      setEditError(error instanceof Error ? error.message : 'Não foi possível guardar o cliente.')
+      setEditError(error instanceof Error ? error.message : t('customers.errors.saveCustomer'))
     },
   })
 
@@ -215,7 +218,7 @@ export default function Customers() {
     onSuccess: (result: { created: number; updated: number; skipped: number; total: number }) => {
       qc.invalidateQueries({ queryKey: ['customers'] })
       setImportError(null)
-      setImportMessage(`Importação concluída: ${result.created} criados, ${result.updated} atualizados, ${result.skipped} ignorados.`)
+      setImportMessage(t('customers.importResult', { created: result.created, updated: result.updated, skipped: result.skipped }))
     },
     onError: (error: unknown) => {
       if (
@@ -227,20 +230,20 @@ export default function Customers() {
         setImportError((error as { response?: { data?: { error?: string } } }).response!.data!.error!)
         return
       }
-      setImportError(error instanceof Error ? error.message : 'Não foi possível importar os clientes.')
+      setImportError(error instanceof Error ? error.message : t('customers.errors.importCustomers'))
     },
   })
 
   const totalSpent = detail?.insights?.totalSpent ?? 0
 
   const planOptions = [
-    { value: '', label: 'Todos os planos' },
+    { value: '', label: t('customers.allPlans') },
     ...plans.map((plan) => ({ value: plan.id, label: plan.name })),
   ]
   const planStatusOptions = [
-    { value: '', label: 'Com e sem plano' },
-    { value: 'true', label: 'Com plano' },
-    { value: 'false', label: 'Sem plano' },
+    { value: '', label: t('customers.withAndWithoutPlan') },
+    { value: 'true', label: t('customers.withPlan') },
+    { value: 'false', label: t('customers.withoutPlan') },
   ]
 
   const withPlanCount = data.filter((c) => !!c.plan).length
@@ -263,7 +266,7 @@ export default function Customers() {
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = 'clientes.csv'
+    a.download = 'customers.csv'
     a.click()
     URL.revokeObjectURL(url)
   }
@@ -279,13 +282,17 @@ export default function Customers() {
       const rows = parseCustomerCsv(text)
 
       if (rows.length === 0) {
-        setImportError('O ficheiro não tem linhas válidas para importar.')
+        setImportError(t('customers.errors.noValidRows'))
         return
       }
 
       importMutation.mutate(rows)
     } catch (error) {
-      setImportError(error instanceof Error ? error.message : 'Não foi possível ler o ficheiro CSV.')
+      setImportError(
+        error instanceof Error && error.message === 'CSV_NAME_COLUMN_REQUIRED'
+          ? t('customers.errors.csvNameColumn')
+          : error instanceof Error ? error.message : t('customers.errors.readCsv')
+      )
     } finally {
       event.target.value = ''
     }
@@ -295,15 +302,15 @@ export default function Customers() {
     <AdminLayout>
       <div className="space-y-6">
         <PageHeader
-          title="Clientes"
-          subtitle={`${data.length} cliente${data.length !== 1 ? 's' : ''} registado${data.length !== 1 ? 's' : ''}. Pesquisa, filtra e abre detalhe sem ruído visual.`}
+          title={t('customers.title')}
+          subtitle={t('customers.subtitle', { count: data.length })}
           actions={
             <>
               <Button type="button" variant="outline" className="gap-1.5" onClick={handleExport} disabled={!data.length}>
-                <Download size={14} /> Exportar CSV
+                <Download size={14} /> {t('customers.exportCsv')}
               </Button>
               <label className="inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-neutral-200 bg-white px-4 py-2.5 text-sm font-medium text-ink shadow-soft transition hover:bg-neutral-50">
-                <Upload size={14} /> {importMutation.isPending ? 'A importar…' : 'Importar CSV'}
+                <Upload size={14} /> {importMutation.isPending ? t('customers.importing') : t('customers.importCsv')}
                 <input type="file" accept=".csv,text/csv" className="hidden" onChange={handleImport} />
               </label>
             </>
@@ -316,7 +323,7 @@ export default function Customers() {
               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-50">
                 <Users size={17} className="text-blue-500" />
               </div>
-              <p className="text-xs font-medium text-ink-muted">Total de clientes</p>
+              <p className="text-xs font-medium text-ink-muted">{t('customers.totalCustomers')}</p>
             </div>
             <p className="text-2xl font-bold text-ink">{data.length}</p>
           </div>
@@ -325,7 +332,7 @@ export default function Customers() {
               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-neutral-50">
                 <UserCheck size={17} className="text-violet-500" />
               </div>
-              <p className="text-xs font-medium text-ink-muted">Com plano ativo</p>
+              <p className="text-xs font-medium text-ink-muted">{t('customers.withActivePlan')}</p>
             </div>
             <p className="text-2xl font-bold text-ink">{withPlanCount}</p>
           </div>
@@ -337,15 +344,15 @@ export default function Customers() {
               <div className="relative">
                 <Search size={15} className="pointer-events-none absolute left-3.5 top-[2.9rem] -translate-y-1/2 text-ink-muted" />
                 <Input
-                  label="Pesquisar"
+                  label={t('customers.searchLabel')}
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Nome, telefone ou e-mail"
+                  placeholder={t('customers.searchPlaceholder')}
                   className="pl-10"
                 />
               </div>
-              <Select label="Plano" options={planOptions} value={planId} onChange={(e) => setPlanId(e.target.value)} />
-              <Select label="Estado do plano" options={planStatusOptions} value={hasPlan} onChange={(e) => setHasPlan(e.target.value)} disabled={!!planId} />
+              <Select label={t('customers.planLabel')} options={planOptions} value={planId} onChange={(e) => setPlanId(e.target.value)} />
+              <Select label={t('customers.planStatus')} options={planStatusOptions} value={hasPlan} onChange={(e) => setHasPlan(e.target.value)} disabled={!!planId} />
               <div className="flex gap-2 xl:justify-end">
                 {hasActiveFilters && (
                   <Button
@@ -354,7 +361,7 @@ export default function Customers() {
                     className="gap-1.5"
                     onClick={() => { setQuery(''); setPlanId(''); setHasPlan('') }}
                   >
-                    <X size={13} /> Limpar
+                    <X size={13} /> {t('common:btn.clear')}
                   </Button>
                 )}
               </div>
@@ -369,7 +376,7 @@ export default function Customers() {
         )}
 
         <div className="rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm text-ink-muted">
-          Formato CSV esperado: `name`, `phone`, `email`, `notes`. Se o telefone já existir, o cliente é atualizado; se não existir, é criado.
+          {t('customers.csvFormat')}
         </div>
 
         <Card>
@@ -379,11 +386,11 @@ export default function Customers() {
               data={data}
               keyExtractor={(customer) => customer.id}
               onRowClick={(customer) => setSelectedCustomerId(customer.id)}
-              emptyMessage="Ainda não existem clientes registados."
+              emptyMessage={t('customers.emptyMessage')}
               columns={[
                 {
                   key: 'name',
-                  label: 'Cliente',
+                  label: t('customers.columns.customer'),
                   render: (customer) => (
                     <div className="flex items-center gap-3">
                       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-50">
@@ -393,45 +400,45 @@ export default function Customers() {
                       </div>
                       <div className="min-w-0">
                         <span className="block truncate font-medium text-ink">{customer.name}</span>
-                        <span className="block text-xs text-ink-muted">{customer.email || customer.phone || 'Sem contacto principal'}</span>
+                        <span className="block text-xs text-ink-muted">{customer.email || customer.phone || t('customers.noContact')}</span>
                       </div>
                     </div>
                   ),
                 },
                 {
                   key: 'phone',
-                  label: 'Telefone',
+                  label: t('customers.columns.phone'),
                   render: (customer) => <span className="text-ink-muted">{customer.phone || '—'}</span>,
                 },
                 {
                   key: 'email',
-                  label: 'E-mail',
+                  label: t('customers.columns.email'),
                   render: (customer) => <span className="text-ink-muted">{customer.email || '—'}</span>,
                 },
                 {
                   key: 'plan',
-                  label: 'Plano',
+                  label: t('customers.columns.plan'),
                   render: (customer) => customer.plan?.name
                     ? <Badge>{customer.plan.name}</Badge>
                     : <span className="text-xs text-ink-muted">—</span>,
                 },
                 {
                   key: 'spent',
-                  label: 'Total gasto',
+                  label: t('customers.columns.totalSpent'),
                   render: (customer) => (
                     <span className="font-medium text-ink">{formatCurrency(customer.insights?.totalSpent ?? 0)}</span>
                   ),
                 },
                 {
                   key: 'lastVisit',
-                  label: 'Última visita',
+                  label: t('customers.columns.lastVisit'),
                   render: (customer) => customer.insights?.lastVisitAt
                     ? <span className="text-ink-muted">{format(new Date(customer.insights.lastVisitAt), 'dd/MM/yyyy')}</span>
                     : <span className="text-xs text-ink-muted">—</span>,
                 },
                 {
                   key: 'reliability',
-                  label: 'Fiabilidade',
+                  label: t('customers.columns.reliability'),
                   render: (customer) => <ReliabilityBadge level={customer.insights?.reliability} />,
                 },
               ]}
@@ -449,67 +456,67 @@ export default function Customers() {
           setIsEditingCustomer(false)
           setEditError(null)
         }}
-        title="Detalhe do cliente"
+        title={t('customers.detail.title')}
       >
         {!detail || loadingDetail ? (
-          <p className="text-sm text-zinc-500">A carregar...</p>
+          <p className="text-sm text-zinc-500">{t('customers.detail.loading')}</p>
         ) : (
           <div className="space-y-4">
             {/* Top KPIs */}
             <div className="grid gap-3 text-sm sm:grid-cols-2 xl:grid-cols-4">
               <div className="bg-zinc-50 dark:bg-zinc-800/50 rounded-xl p-3">
-                <p className="text-zinc-400 text-xs mb-1">Cliente</p>
+                <p className="text-zinc-400 text-xs mb-1">{t('customers.detail.customerLabel')}</p>
                 <p className="font-medium text-zinc-900 dark:text-zinc-100">{detail.name}</p>
-                <p className="text-zinc-400 text-xs mt-0.5">{detail.phone || 'Sem telefone'}</p>
+                <p className="text-zinc-400 text-xs mt-0.5">{detail.phone || t('customers.noPhone')}</p>
               </div>
               <div className="bg-zinc-50 dark:bg-zinc-800/50 rounded-xl p-3">
-                <p className="text-zinc-400 text-xs mb-1">Total gasto</p>
+                <p className="text-zinc-400 text-xs mb-1">{t('customers.detail.totalSpent')}</p>
                 <p className="font-bold text-lg text-emerald-600">{formatCurrency(totalSpent)}</p>
-                <p className="text-zinc-400 text-xs mt-0.5">{detail.insights?.completedBookings ?? 0} visitas concluídas</p>
+                <p className="text-zinc-400 text-xs mt-0.5">{t('customers.detail.completedVisits', { count: detail.insights?.completedBookings ?? 0 })}</p>
               </div>
               <div className="bg-zinc-50 dark:bg-zinc-800/50 rounded-xl p-3">
-                <p className="text-zinc-400 text-xs mb-1">Fiabilidade</p>
+                <p className="text-zinc-400 text-xs mb-1">{t('customers.detail.reliability')}</p>
                 <div className="pt-1">
                   <ReliabilityBadge level={detail.insights?.reliability} />
                 </div>
-                <p className="text-zinc-400 text-xs mt-2">{detail.insights?.noShowBookings ?? 0} no-show · {detail.insights?.cancelledBookings ?? 0} canceladas</p>
+                <p className="text-zinc-400 text-xs mt-2">{t('customers.detail.noShowBookings', { ns: detail.insights?.noShowBookings ?? 0, cb: detail.insights?.cancelledBookings ?? 0 })}</p>
               </div>
               <div className="bg-zinc-50 dark:bg-zinc-800/50 rounded-xl p-3">
-                <p className="text-zinc-400 text-xs mb-1">Última visita</p>
+                <p className="text-zinc-400 text-xs mb-1">{t('customers.detail.lastVisit')}</p>
                 <p className="font-medium text-zinc-900 dark:text-zinc-100">
                   {detail.insights?.lastVisitAt
-                    ? format(new Date(detail.insights.lastVisitAt), "dd 'de' MMM", { locale: pt })
-                    : 'Sem visita concluída'}
+                    ? format(new Date(detail.insights.lastVisitAt), 'PP', { locale: dateFnsLocale })
+                    : t('customers.detail.noVisit')}
                 </p>
-                <p className="text-zinc-400 text-xs mt-0.5">{detail.insights?.activeBookings ?? 0} agendamentos ativos</p>
+                <p className="text-zinc-400 text-xs mt-0.5">{t('customers.detail.activeBookings', { count: detail.insights?.activeBookings ?? 0 })}</p>
               </div>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-3">
               <div className="rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm">
-                <p className="text-xs text-ink-muted uppercase tracking-wide">Histórico total</p>
+                <p className="text-xs text-ink-muted uppercase tracking-wide">{t('customers.detail.historyTotal')}</p>
                 <p className="mt-2 text-xl font-semibold text-ink">{detail.insights?.totalBookings ?? 0}</p>
-                <p className="mt-1 text-xs text-ink-muted">marcações registadas</p>
+                <p className="mt-1 text-xs text-ink-muted">{t('customers.detail.bookingsRegistered')}</p>
               </div>
               <div className="rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm">
-                <p className="text-xs text-ink-muted uppercase tracking-wide">No-show</p>
+                <p className="text-xs text-ink-muted uppercase tracking-wide">{t('customers.detail.noShow')}</p>
                 <p className="mt-2 text-xl font-semibold text-danger-600">{detail.insights?.noShowBookings ?? 0}</p>
-                <p className="mt-1 text-xs text-ink-muted">faltas marcadas</p>
+                <p className="mt-1 text-xs text-ink-muted">{t('customers.detail.missedBookings')}</p>
               </div>
               <div className="rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm">
-                <p className="text-xs text-ink-muted uppercase tracking-wide">Canceladas</p>
+                <p className="text-xs text-ink-muted uppercase tracking-wide">{t('customers.detail.cancelled')}</p>
                 <p className="mt-2 text-xl font-semibold text-warning-700">{detail.insights?.cancelledBookings ?? 0}</p>
-                <p className="mt-1 text-xs text-ink-muted">reservas anuladas</p>
+                <p className="mt-1 text-xs text-ink-muted">{t('customers.detail.cancelledBookings')}</p>
               </div>
             </div>
 
             {/* Customer data section */}
             <div className="rounded-xl border border-zinc-100 dark:border-zinc-800 overflow-hidden">
               <div className="flex items-center justify-between gap-3 px-4 py-3 bg-zinc-50 dark:bg-zinc-800/50 border-b border-zinc-100 dark:border-zinc-800">
-                <p className="text-xs text-zinc-500 font-semibold uppercase tracking-wide">Dados do cliente</p>
+                <p className="text-xs text-zinc-500 font-semibold uppercase tracking-wide">{t('customers.detail.customerData')}</p>
                 {!isEditingCustomer ? (
                   <Button size="sm" variant="outline" onClick={() => { setIsEditingCustomer(true); setEditError(null) }}>
-                    Editar
+                    {t('customers.detail.editButton')}
                   </Button>
                 ) : null}
               </div>
@@ -519,7 +526,7 @@ export default function Customers() {
                   <div className="space-y-3">
                     <div className="grid gap-3 sm:grid-cols-2">
                       <label className="space-y-1.5 text-sm">
-                        <span className="text-zinc-500">Nome</span>
+                        <span className="text-zinc-500">{t('customers.detail.nameLabel')}</span>
                         <input
                           type="text"
                           value={editForm.name}
@@ -528,28 +535,28 @@ export default function Customers() {
                         />
                       </label>
                       <PhoneInput
-                        label="Telefone"
+                        label={t('customers.detail.phoneLabel')}
                         value={editForm.phone}
                         onChange={(value) => setEditForm((current) => ({ ...current, phone: value }))}
                         placeholder="912 345 678"
                       />
                     </div>
                     <label className="space-y-1.5 text-sm">
-                      <span className="text-zinc-500">E-mail</span>
+                      <span className="text-zinc-500">{t('customers.detail.emailLabel')}</span>
                       <input
                         type="email"
                         value={editForm.email}
                         onChange={(e) => setEditForm((current) => ({ ...current, email: e.target.value }))}
-                        placeholder="Sem e-mail"
+                        placeholder={t('customers.detail.noEmail')}
                         className="h-10 w-full rounded-xl border border-zinc-200 bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-accent-500 dark:border-zinc-700 dark:bg-zinc-900"
                       />
                     </label>
                     <label className="space-y-1.5 text-sm">
-                      <span className="text-zinc-500">Notas</span>
+                      <span className="text-zinc-500">{t('customers.detail.notesLabel')}</span>
                       <textarea
                         value={editForm.notes}
                         onChange={(e) => setEditForm((current) => ({ ...current, notes: e.target.value }))}
-                        placeholder="Adicionar nota interna"
+                        placeholder={t('customers.detail.notesPlaceholder')}
                         rows={3}
                         className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-500 dark:border-zinc-700 dark:bg-zinc-900"
                       />
@@ -561,7 +568,7 @@ export default function Customers() {
                     ) : null}
                     <div className="flex flex-col gap-2 sm:flex-row">
                       <Button size="sm" loading={updateCustomerMutation.isPending} onClick={() => updateCustomerMutation.mutate(editForm)}>
-                        Guardar
+                        {t('customers.detail.saveButton')}
                       </Button>
                       <Button
                         size="sm"
@@ -572,27 +579,27 @@ export default function Customers() {
                           setEditForm({ name: detail.name ?? '', phone: detail.phone ?? '', email: detail.email ?? '', notes: detail.notes ?? '' })
                         }}
                       >
-                        Cancelar
+                        {t('common:btn.cancel')}
                       </Button>
                     </div>
                   </div>
                 ) : (
                   <div className="grid gap-3 text-sm sm:grid-cols-2">
                     <div>
-                      <p className="text-xs text-zinc-400 mb-0.5">Nome</p>
+                      <p className="text-xs text-zinc-400 mb-0.5">{t('customers.detail.nameLabel')}</p>
                       <p className="font-medium">{detail.name}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-zinc-400 mb-0.5">Telefone</p>
+                      <p className="text-xs text-zinc-400 mb-0.5">{t('customers.detail.phoneLabel')}</p>
                       <p className="font-medium">{detail.phone || '—'}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-zinc-400 mb-0.5">E-mail</p>
+                      <p className="text-xs text-zinc-400 mb-0.5">{t('customers.detail.emailLabel')}</p>
                       <p className="font-medium break-all">{detail.email || '—'}</p>
                     </div>
                     {detail.notes && (
                       <div>
-                        <p className="text-xs text-zinc-400 mb-0.5">Notas</p>
+                        <p className="text-xs text-zinc-400 mb-0.5">{t('customers.detail.notesLabel')}</p>
                         <p className="font-medium">{detail.notes}</p>
                       </div>
                     )}
@@ -604,7 +611,7 @@ export default function Customers() {
             {/* Plan section */}
             <div className="rounded-xl border border-zinc-100 dark:border-zinc-800 overflow-hidden">
               <div className="flex items-center justify-between gap-3 px-4 py-3 bg-zinc-50 dark:bg-zinc-800/50 border-b border-zinc-100 dark:border-zinc-800">
-                <p className="text-xs text-zinc-500 font-semibold uppercase tracking-wide">Plano</p>
+                <p className="text-xs text-zinc-500 font-semibold uppercase tracking-wide">{t('customers.detail.planLabel')}</p>
               </div>
               <div className="p-4">
                 {editingPlanId !== null ? (
@@ -614,15 +621,15 @@ export default function Customers() {
                       value={editingPlanId}
                       onChange={e => setEditingPlanId(e.target.value)}
                       options={[
-                        { value: '', label: 'Sem plano' },
+                        { value: '', label: t('customers.detail.noPlan') },
                         ...(plans as Plan[]).map(p => ({ value: p.id, label: p.name })),
                       ]}
                     />
                     <Button size="sm" loading={updatePlanMutation.isPending} onClick={() => updatePlanMutation.mutate(editingPlanId || null)}>
-                      Guardar
+                      {t('customers.detail.saveButton')}
                     </Button>
                     <Button size="sm" variant="outline" onClick={() => setEditingPlanId(null)}>
-                      Cancelar
+                      {t('common:btn.cancel')}
                     </Button>
                   </div>
                 ) : (
@@ -630,11 +637,11 @@ export default function Customers() {
                     <span className="text-sm font-medium">
                       {detail.plan?.name
                         ? <Badge>{detail.plan.name}</Badge>
-                        : <span className="text-zinc-400 text-sm">Sem plano</span>
+                        : <span className="text-zinc-400 text-sm">{t('customers.detail.noPlan')}</span>
                       }
                     </span>
                     <Button size="sm" variant="outline" onClick={() => setEditingPlanId(detail.plan?.id ?? '')}>
-                      Alterar
+                      {t('customers.detail.changeButton')}
                     </Button>
                   </div>
                 )}
@@ -643,16 +650,16 @@ export default function Customers() {
 
             {/* Booking history */}
             <div>
-              <p className="text-sm font-semibold mb-3 text-zinc-900 dark:text-zinc-100">Últimos agendamentos</p>
+              <p className="text-sm font-semibold mb-3 text-zinc-900 dark:text-zinc-100">{t('customers.detail.recentBookings')}</p>
               {!detail.bookings.length ? (
-                <p className="text-sm text-zinc-400 py-4 text-center">Sem histórico de agendamentos.</p>
+                <p className="text-sm text-zinc-400 py-4 text-center">{t('customers.detail.noBookings')}</p>
               ) : (
                 <div className="space-y-2">
                   {detail.bookings.map((booking) => (
                     <div key={booking.id} className="flex flex-col gap-3 rounded-xl border border-zinc-100 px-4 py-3 dark:border-zinc-800 sm:flex-row sm:items-center">
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                          {format(toWallClockDate(booking.startTime), "dd 'de' MMMM, HH:mm", { locale: pt })}
+                          {format(toWallClockDate(booking.startTime), 'PPp', { locale: dateFnsLocale })}
                         </p>
                         <p className="text-xs text-zinc-400 mt-0.5">
                           {formatCurrency(booking.totalPrice)}{booking.barber?.name ? ` · ${booking.barber.name}` : ''}
@@ -670,7 +677,7 @@ export default function Customers() {
               {confirmDelete ? (
                 <div className="rounded-xl border border-red-200 bg-red-50 dark:bg-red-900/20 dark:border-red-800 p-4 space-y-3">
                   <p className="text-sm text-red-700 dark:text-red-300 font-medium">
-                    Tens a certeza? Esta ação é irreversível.
+                    {t('customers.detail.irreversible')}
                   </p>
                   <div className="flex flex-col gap-2 sm:flex-row">
                     <Button
@@ -679,10 +686,10 @@ export default function Customers() {
                       loading={deleteMutation.isPending}
                       onClick={() => deleteMutation.mutate()}
                     >
-                      Apagar cliente
+                      {t('customers.detail.deleteButton')}
                     </Button>
                     <Button variant="outline" onClick={() => setConfirmDelete(false)}>
-                      Cancelar
+                      {t('common:btn.cancel')}
                     </Button>
                   </div>
                 </div>
@@ -692,7 +699,7 @@ export default function Customers() {
                   className="w-full text-red-600 border-red-200 hover:bg-red-50 dark:hover:bg-red-900/20"
                   onClick={() => setConfirmDelete(true)}
                 >
-                  Apagar cliente
+                  {t('customers.detail.deleteButton')}
                 </Button>
               )}
             </div>

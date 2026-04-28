@@ -4,7 +4,7 @@ import { Globe } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { SUPPORTED_LANGUAGES, type SupportedLanguage } from '@/i18n/config'
 
-const FLAG: Record<SupportedLanguage, string> = {
+export const LANGUAGE_FLAG: Record<SupportedLanguage, string> = {
   pt: '🇵🇹',
   en: '🇬🇧',
   es: '🇪🇸',
@@ -52,8 +52,8 @@ export function LanguageSelector({ variant = 'light', compact = false }: Languag
         title={t('lang.label')}
       >
         <Globe size={14} />
-        {!compact && <span className="hidden sm:inline">{FLAG[currentLang]} {t(`lang.${currentLang}`)}</span>}
-        {compact && <span>{FLAG[currentLang]}</span>}
+        {!compact && <span className="hidden sm:inline">{LANGUAGE_FLAG[currentLang]} {t(`lang.${currentLang}`)}</span>}
+        {compact && <span>{LANGUAGE_FLAG[currentLang]}</span>}
       </button>
 
       {open ? (
@@ -82,12 +82,86 @@ export function LanguageSelector({ variant = 'light', compact = false }: Languag
                     : 'text-ink-soft hover:bg-neutral-50 hover:text-ink'
               )}
             >
-              <span className="text-base leading-none">{FLAG[lang]}</span>
+              <span className="text-base leading-none">{LANGUAGE_FLAG[lang]}</span>
               <span>{t(`lang.${lang}`)}</span>
             </button>
           ))}
         </div>
       ) : null}
+    </div>
+  )
+}
+
+export function LanguagePreferences() {
+  const { i18n, t } = useTranslation('common')
+
+  const currentLang = (SUPPORTED_LANGUAGES.includes(i18n.language as SupportedLanguage)
+    ? i18n.language
+    : 'pt') as SupportedLanguage
+
+  return (
+    <div className="rounded-xl border border-zinc-200 p-4">
+      <div>
+        <p className="text-sm font-semibold text-ink">{t('lang.settingsTitle')}</p>
+        <p className="mt-1 text-xs leading-5 text-ink-muted">{t('lang.settingsDescription')}</p>
+      </div>
+      <div className="mt-4 grid gap-2 sm:grid-cols-2">
+        {SUPPORTED_LANGUAGES.map((lang) => (
+          <button
+            key={lang}
+            type="button"
+            onClick={() => i18n.changeLanguage(lang)}
+            className={cn(
+              'flex items-center gap-2.5 rounded-xl border px-3.5 py-3 text-left text-sm transition-colors',
+              lang === currentLang
+                ? 'border-primary-200 bg-primary-50 font-semibold text-primary-700'
+                : 'border-zinc-200 text-ink-soft hover:border-zinc-300 hover:bg-zinc-50 hover:text-ink'
+            )}
+          >
+            <span className="text-base leading-none">{LANGUAGE_FLAG[lang]}</span>
+            <span className="flex-1">{t(`lang.${lang}`)}</span>
+            {lang === currentLang ? (
+              <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-primary-600">
+                {t('lang.current')}
+              </span>
+            ) : null}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+export function LanguageMenuOptions() {
+  const { i18n, t } = useTranslation('common')
+
+  const currentLang = (SUPPORTED_LANGUAGES.includes(i18n.language as SupportedLanguage)
+    ? i18n.language
+    : 'pt') as SupportedLanguage
+
+  return (
+    <div className="space-y-2 px-3 py-3">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">
+        {t('lang.label')}
+      </p>
+      <div className="grid grid-cols-2 gap-1.5">
+        {SUPPORTED_LANGUAGES.map((lang) => (
+          <button
+            key={lang}
+            type="button"
+            onClick={() => i18n.changeLanguage(lang)}
+            className={cn(
+              'flex items-center gap-2 rounded-lg px-2.5 py-2 text-left text-[12px] transition-colors',
+              lang === currentLang
+                ? 'bg-primary-50 font-semibold text-primary-700'
+                : 'text-ink-soft hover:bg-neutral-100 hover:text-ink'
+            )}
+          >
+            <span className="text-base leading-none">{LANGUAGE_FLAG[lang]}</span>
+            <span className="truncate">{t(`lang.${lang}`)}</span>
+          </button>
+        ))}
+      </div>
     </div>
   )
 }

@@ -54,9 +54,9 @@ export default function Login() {
         'response' in error &&
         typeof (error as { response?: { data?: { error?: string } } }).response?.data?.error === 'string'
           ? (error as { response?: { data?: { error?: string } } }).response!.data!.error!
-          : 'Credenciais inválidas'
+          : t('login.form.errors.invalidCredentials')
 
-      setError('password', { message: 'Credenciais inválidas' })
+      setError('password', { message: t('login.form.errors.invalidCredentials') })
       setUnverifiedEmail('')
       setSubmitError(
         message === 'Invalid credentials'
@@ -131,7 +131,7 @@ export default function Login() {
 
         {/* Bottom — tagline */}
         <p className="relative text-[11px] text-white/20">
-          © {new Date().getFullYear()} Trimio · Plataforma de gestão para barbearias
+          {t('login.panel.footer', { year: new Date().getFullYear() })}
         </p>
       </div>
 
@@ -203,7 +203,7 @@ export default function Login() {
             {unverifiedEmail && (
               <a href={getInboxLink(unverifiedEmail)} target="_blank" rel="noreferrer" className="block">
                 <Button type="button" variant="outline" className="w-full">
-                  Abrir caixa de email
+                  {t('login.form.openInbox')}
                 </Button>
               </a>
             )}

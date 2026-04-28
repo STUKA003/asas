@@ -167,7 +167,8 @@
       "strong": "stark",
       "calm": "leiser",
       "stable": "stabil",
-      "todayIs": "Heute ist die Operation {{signal}}."
+      "todayIs": "Heute ist die Operation {{signal}}.",
+      "subtitle": "{{date}}. Nutze dieses Panel, um den Rhythmus des Salons zu verstehen, wo du Marge gewinnst und wo es sich lohnt, früh zu handeln."
     },
     "stats": {
       "accumulated": "Kumulierter Umsatz",
@@ -453,7 +454,13 @@
     },
     "ofMax": "von {{max}}",
     "errors": {
-      "photoUpload": "Das Foto konnte nicht hochgeladen werden"
+      "photoUpload": "Das Foto konnte nicht hochgeladen werden",
+      "passwordMin": "Minimum 6 characters",
+      "passwordMismatch": "Passwords do not match",
+      "accessSave": "Could not save. Check that the server is up to date.",
+      "IMAGE_READ_ERROR": "Could not read the image",
+      "IMAGE_PREPARE_ERROR": "Could not prepare the image",
+      "IMAGE_PROCESS_ERROR": "Could not process the image"
     },
     "subtitle": "{{active}} aktiv{{maxStr}} · {{total}} registriert",
     "atLimit": "Sie haben das Limit von {{max}} aktiven Friseuren in Ihrem Plan erreicht.",
@@ -508,7 +515,8 @@
       "price": "Preis",
       "duration": "Dauer",
       "status": "Zustand"
-    }
+    },
+    "placeholder": "Pflege"
   },
   "products": {
     "title": "Produkte",
@@ -525,10 +533,11 @@
       "plan": "Planen",
       "price": "Preis",
       "status": "Zustand"
-    }
+    },
+    "placeholder": "Monthly Plan"
   },
   "schedule": {
-    "title": "Zeiten",
+    "title": "Öffnungszeiten",
     "days": {
       "0": "Sonntag",
       "1": "Montag",
@@ -538,7 +547,14 @@
       "5": "Freitag",
       "6": "Samstag"
     },
-    "addSlot": "Steckplatz hinzufügen"
+    "addSlot": "Steckplatz hinzufügen",
+    "description": "Konfiguriere die Tage und Öffnungszeiten direkt an jedem Tag.",
+    "configureFor": "Zeiten konfigurieren für",
+    "barbersWithOwnHours": "Barbiere mit eigenen Zeiten (ignorieren den Standard)",
+    "barbersWithOwnHoursHint": "Wähle den Barbier im Selektor oben aus, um seine Zeiten zu bearbeiten. Oder klicke auf \"Standard übernehmen\", um die eigenen Zeiten zu entfernen und die des Salons zu verwenden.",
+    "editButton": "→ bearbeiten",
+    "newPeriod": "Neuer Zeitraum",
+    "until": "bis"
   },
   "reports": {
     "title": "Berichte",
@@ -786,7 +802,16 @@
       "imageAlt": "Vorschau {{index}}"
     },
     "save": "Änderungen speichern",
-    "saved": "Änderungen gespeichert."
+    "saved": "Änderungen gespeichert.",
+    "instagramPlaceholder": "@mein_friseursalon",
+    "errors": {
+      "imagesTooLargeBatch": "The images are too large to save at once. Try fewer photos at a time or lighter images.",
+      "saveGallery": "Could not save the gallery",
+      "uploadLogo": "Could not upload the logo",
+      "uploadAccountPhoto": "Could not upload the account photo",
+      "uploadHeroImage": "Could not upload the main image",
+      "uploadGallery": "Could not upload the gallery images"
+    }
   },
   "billing": {
     "title": "Abrechnung",
@@ -897,7 +922,14 @@
     "confirmLabel": "Passwort bestätigen",
     "submitButton": "Passwort speichern",
     "successTitle": "Passwort aktualisiert",
-    "successMsg": "Sie können sich nun mit Ihrem neuen Passwort anmelden."
+    "successMsg": "Sie können sich nun mit Ihrem neuen Passwort anmelden.",
+    "errors": {
+      "passwordMin": "Minimum 6 characters",
+      "confirmRequired": "Confirm the password",
+      "passwordMismatch": "Passwords must match",
+      "missingToken": "The recovery link is incomplete.",
+      "updateFailed": "Could not update the password."
+    }
   },
   "resendVerification": {
     "title": "Bestätigung erneut senden",

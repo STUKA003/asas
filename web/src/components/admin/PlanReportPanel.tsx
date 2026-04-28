@@ -1,6 +1,7 @@
 import { useRef, type WheelEvent as ReactWheelEvent } from 'react'
+import { useTranslation } from 'react-i18next'
 import { endOfMonth, format, startOfMonth, startOfYear, subDays, subMonths } from 'date-fns'
-import { pt } from 'date-fns/locale'
+import { getDateFnsLocale } from '@/i18n/dateFnsLocale'
 import { Activity, CreditCard, TrendingUp, Users } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { PageLoader } from '@/components/ui/Spinner'
@@ -37,10 +38,10 @@ export interface PlanReport {
 
 const now = new Date()
 export const PLAN_REPORT_PERIODS = [
-  { label: 'Este mês', from: startOfMonth(now), to: endOfMonth(now) },
-  { label: 'Mês passado', from: startOfMonth(subMonths(now, 1)), to: endOfMonth(subMonths(now, 1)) },
-  { label: 'Últimos 30 dias', from: subDays(now, 29), to: now },
-  { label: 'Este ano', from: startOfYear(now), to: now },
+  { labelKey: 'reports.planReport.periods.thisMonth', from: startOfMonth(now), to: endOfMonth(now) },
+  { labelKey: 'reports.planReport.periods.lastMonth', from: startOfMonth(subMonths(now, 1)), to: endOfMonth(subMonths(now, 1)) },
+  { labelKey: 'reports.planReport.periods.last30Days', from: subDays(now, 29), to: now },
+  { labelKey: 'reports.planReport.periods.thisYear', from: startOfYear(now), to: now },
 ]
 
 interface PlanReportPanelProps {
@@ -63,6 +64,8 @@ export function PlanReportPanel({
   actions,
 }: PlanReportPanelProps) {
   const tableScrollRef = useRef<HTMLDivElement>(null)
+  const { t, i18n } = useTranslation('admin')
+  const dateFnsLocale = getDateFnsLocale(i18n.language)
 
   if (isLoading) {
     return (
@@ -79,7 +82,7 @@ export function PlanReportPanel({
       <Card>
         <CardContent className="pt-6">
           <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-4 text-sm text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300">
-            Erro ao carregar relatório de planos: {error instanceof Error ? error.message : 'Erro desconhecido'}
+            {t('reports.planReport.loadError')}: {error instanceof Error ? error.message : t('reports.planReport.unknownError')}
           </div>
         </CardContent>
       </Card>
@@ -94,7 +97,7 @@ export function PlanReportPanel({
     return (
       <Card>
         <CardContent className="pt-6">
-          <p className="text-sm text-zinc-400">Sem dados de planos neste período.</p>
+          <p className="text-sm text-zinc-400">{t('reports.planReport.noData')}</p>
         </CardContent>
       </Card>
     )
@@ -103,7 +106,7 @@ export function PlanReportPanel({
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Relatório de planos</CardTitle>
+        <CardTitle>{t('reports.planReport.title')}</CardTitle>
         <div className="flex flex-wrap items-center gap-2">
           <select
             value={periodIdx}
@@ -111,7 +114,7 @@ export function PlanReportPanel({
             className="rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900"
           >
             {PLAN_REPORT_PERIODS.map((item, idx) => (
-              <option key={item.label} value={idx}>{item.label}</option>
+              <option key={item.labelKey} value={idx}>{t(item.labelKey)}</option>
             ))}
           </select>
           {actions}
@@ -119,15 +122,15 @@ export function PlanReportPanel({
       </CardHeader>
       <CardContent className="space-y-5 pt-0">
         <p className="text-sm text-zinc-500">
-          {format(new Date(report.period.from), "d MMM", { locale: pt })} - {format(new Date(report.period.to), "d 'de' MMMM yyyy", { locale: pt })}
+          {format(new Date(report.period.from), 'PP', { locale: dateFnsLocale })} - {format(new Date(report.period.to), 'PP', { locale: dateFnsLocale })}
         </p>
 
         <div className="grid gap-4 md:grid-cols-4">
           {[
-            { label: 'Assinantes ativos', value: report.overview.totalSubscribers, icon: Users, helper: `${report.overview.inactiveSubscribers} sem uso no período` },
-            { label: 'Receita recorrente estimada', value: formatCurrency(report.overview.totalEstimatedRecurringRevenue), icon: TrendingUp, helper: `${report.overview.totalPlans} planos cadastrados` },
-            { label: 'Utilizações no período', value: report.overview.totalBookingsUsed, icon: Activity, helper: `${report.overview.averageUsagePerSubscriber.toFixed(1)} uso(s) por assinante` },
-            { label: 'Planos ativos', value: report.overview.activePlans, icon: CreditCard, helper: 'Somente planos habilitados' },
+            { label: t('reports.planReport.metrics.activeSubscribers'), value: report.overview.totalSubscribers, icon: Users, helper: t('reports.planReport.metrics.inactiveSubscribers', { count: report.overview.inactiveSubscribers }) },
+            { label: t('reports.planReport.metrics.estimatedRevenue'), value: formatCurrency(report.overview.totalEstimatedRecurringRevenue), icon: TrendingUp, helper: t('reports.planReport.metrics.registeredPlans', { count: report.overview.totalPlans }) },
+            { label: t('reports.planReport.metrics.periodUsage'), value: report.overview.totalBookingsUsed, icon: Activity, helper: t('reports.planReport.metrics.usagePerSubscriber', { count: report.overview.averageUsagePerSubscriber.toFixed(1) }) },
+            { label: t('reports.planReport.metrics.activePlans'), value: report.overview.activePlans, icon: CreditCard, helper: t('reports.planReport.metrics.enabledPlansOnly') },
           ].map((item) => (
             <div key={item.label} className="rounded-2xl border border-zinc-100 p-4 dark:border-zinc-800">
               <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 text-violet-600 dark:bg-violet-900/20 dark:text-violet-300">
@@ -143,16 +146,16 @@ export function PlanReportPanel({
         <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
           <div className="rounded-2xl border border-zinc-100 dark:border-zinc-800">
             <div className="border-b border-zinc-100 px-4 py-3 dark:border-zinc-800">
-              <p className="font-semibold">Desempenho por plano</p>
+              <p className="font-semibold">{t('reports.planReport.performanceByPlan')}</p>
             </div>
             <div ref={tableScrollRef} onWheel={handleWheel} className="overflow-x-auto px-4 py-2">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-zinc-100 dark:border-zinc-800">
-                    <th className="py-3 text-left text-xs uppercase tracking-wide text-zinc-400">Plano</th>
-                    <th className="py-3 text-right text-xs uppercase tracking-wide text-zinc-400">Assinantes</th>
-                    <th className="py-3 text-right text-xs uppercase tracking-wide text-zinc-400">Usos</th>
-                    <th className="py-3 text-right text-xs uppercase tracking-wide text-zinc-400">Recorrência</th>
+                    <th className="py-3 text-left text-xs uppercase tracking-wide text-zinc-400">{t('reports.planReport.table.plan')}</th>
+                    <th className="py-3 text-right text-xs uppercase tracking-wide text-zinc-400">{t('reports.planReport.table.subscribers')}</th>
+                    <th className="py-3 text-right text-xs uppercase tracking-wide text-zinc-400">{t('reports.planReport.table.usage')}</th>
+                    <th className="py-3 text-right text-xs uppercase tracking-wide text-zinc-400">{t('reports.planReport.table.recurring')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -161,7 +164,7 @@ export function PlanReportPanel({
                       <td className="py-3">
                         <div>
                           <p className="font-medium">{plan.name}</p>
-                          <p className="text-xs text-zinc-400">{plan.allowedServicesCount} serviço(s) · {plan.intervalDays} dias</p>
+                          <p className="text-xs text-zinc-400">{t('reports.planReport.table.planMeta', { services: plan.allowedServicesCount, days: plan.intervalDays })}</p>
                         </div>
                       </td>
                       <td className="py-3 text-right">{plan.subscribers}</td>
@@ -177,11 +180,11 @@ export function PlanReportPanel({
           <div className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle>Insights</CardTitle>
+                <CardTitle>{t('reports.planReport.insights')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3 pt-0">
                 {report.insights.length === 0 ? (
-                  <p className="text-sm text-zinc-400">Sem insights no período.</p>
+                  <p className="text-sm text-zinc-400">{t('reports.planReport.noInsights')}</p>
                 ) : (
                   report.insights.map((insight) => (
                     <div key={insight} className="rounded-xl bg-zinc-50 px-4 py-3 text-sm dark:bg-zinc-800/50">
@@ -194,16 +197,16 @@ export function PlanReportPanel({
 
             <Card>
               <CardHeader>
-                <CardTitle>Oportunidades</CardTitle>
+                <CardTitle>{t('reports.planReport.opportunities')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3 pt-0">
                 {report.plans.slice(0, 4).map((plan) => (
                   <div key={plan.id} className="rounded-xl border border-zinc-100 px-4 py-3 dark:border-zinc-800">
                     <div className="flex items-center justify-between gap-3">
                       <p className="font-medium">{plan.name}</p>
-                      <span className="text-xs text-zinc-400">{plan.usagePerSubscriber.toFixed(1)} uso(s)/cliente</span>
+                      <span className="text-xs text-zinc-400">{t('reports.planReport.usagePerCustomer', { count: plan.usagePerSubscriber.toFixed(1) })}</span>
                     </div>
-                    <p className="mt-1 text-xs text-zinc-500">{plan.inactiveSubscribers} assinante(s) sem uso no período</p>
+                    <p className="mt-1 text-xs text-zinc-500">{t('reports.planReport.inactiveSubscribersPeriod', { count: plan.inactiveSubscribers })}</p>
                   </div>
                 ))}
               </CardContent>

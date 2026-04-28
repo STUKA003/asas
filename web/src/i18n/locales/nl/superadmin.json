@@ -88,6 +88,159 @@
   },
   "barbershops": {
     "title": "Kapperswinkels",
-    "subtitle": "Gecentraliseerd beheer van accounts en operaties."
+    "subtitle": "Gecentraliseerd beheer van accounts en operaties.",
+    "plans": {
+      "FREE": "Gratis",
+      "BASIC": "Basis",
+      "PRO": "Pro"
+    },
+    "durations": {
+      "month1": "1 maand",
+      "months3": "3 maanden",
+      "months6": "6 maanden",
+      "year1": "1 jaar"
+    },
+    "identity": {
+      "shopName": "Naam van de zaak",
+      "namePlaceholder": "Naam",
+      "siteSlug": "Site-slug",
+      "slugPlaceholder": "slug",
+      "generateFromName": "Genereren uit naam",
+      "saving": "Opslaan…",
+      "save": "Opslaan",
+      "cancel": "Annuleren",
+      "errorSave": "Fout bij opslaan"
+    },
+    "plan": {
+      "plan": "Plan",
+      "expiration": "Vervaldatum",
+      "expiresOn": "Verloopt op {{date}}"
+    },
+    "suspend": {
+      "reason": "Reden voor opschorting (optioneel)",
+      "reasonPlaceholder": "Bijv.: betalingsachterstand",
+      "suspending": "Opschorten…",
+      "suspend": "Opschorten",
+      "suspended": "Opgeschort: {{reason}}",
+      "noReason": "geen reden",
+      "reactivating": "…",
+      "reactivate": "Heractiveren",
+      "close": "Sluiten"
+    },
+    "password": {
+      "noAdmin": "Deze zaak heeft geen gekoppeld admin-account.",
+      "newPasswordFor": "Je gaat een nieuw wachtwoord instellen voor",
+      "newPassword": "Nieuw wachtwoord",
+      "minChars": "Minimaal 6 tekens",
+      "confirmPassword": "Wachtwoord bevestigen",
+      "repeatPassword": "Herhaal het wachtwoord",
+      "saveNew": "Nieuw wachtwoord opslaan",
+      "errorMin": "Wachtwoord moet minimaal 6 tekens bevatten",
+      "errorMismatch": "Wachtwoorden komen niet overeen",
+      "errorUpdate": "Fout bij bijwerken wachtwoord"
+    },
+    "create": {
+      "title": "Nieuwe zaak",
+      "shopName": "Naam van de zaak",
+      "shopNamePlaceholder": "Kapperszaak van Jan",
+      "addressSlug": "Adres (slug)",
+      "adminName": "Naam van admin",
+      "adminNamePlaceholder": "Jan de Vries",
+      "adminEmail": "E-mail van admin",
+      "adminEmailPlaceholder": "jan@email.nl",
+      "password": "Wachtwoord",
+      "passwordPlaceholder": "Minimaal 6 tekens",
+      "initialPlan": "Beginplan",
+      "creating": "Aanmaken…",
+      "createButton": "Zaak aanmaken",
+      "errorCreate": "Fout bij aanmaken zaak",
+      "errorSlugTaken": "Dit adres is al in gebruik."
+    },
+    "list": {
+      "title": "Kapperszaken",
+      "registered": "{{count}} geregistreerd",
+      "newButton": "Nieuwe zaak",
+      "searchPlaceholder": "Zoek op naam, slug, e-mail of eigenaar…",
+      "verification": "Verificatie",
+      "accountHealth": "Accountstatus",
+      "loading": "Laden…",
+      "noneFound": "Geen zaak gevonden."
+    },
+    "verificationFilter": {
+      "all": "Alle",
+      "pending": "In afwachting",
+      "verified": "Geverifieerd"
+    },
+    "healthFilter": {
+      "all": "Alle",
+      "active": "Actief abonnement",
+      "suspended": "Opgeschort",
+      "unverified": "E-mail in afwachting",
+      "no-plan": "Geen plan"
+    },
+    "badges": {
+      "suspended": "Opgeschort",
+      "expired": "Verlopen",
+      "emailPending": "E-mail in afwachting"
+    },
+    "stats": {
+      "customers": "klanten",
+      "bookings": "reserveringen",
+      "barber_one": "kapper",
+      "barber_other": "kappers",
+      "expires": "Verloopt: {{date}}",
+      "lastLogin": "Laatste login: {{date}}"
+    },
+    "actions": {
+      "opening": "Openen…",
+      "supportSession": "Supportsessie",
+      "resending": "Opnieuw verzenden…",
+      "resendVerification": "Verificatie opnieuw verzenden",
+      "confirming": "Bevestigen…",
+      "markEmailVerified": "E-mail als geverifieerd markeren",
+      "editIdentity": "Naam / slug bewerken",
+      "changePlan": "Plan wijzigen",
+      "changePassword": "Wachtwoord wijzigen",
+      "reactivate": "Heractiveren",
+      "suspend": "Opschorten",
+      "sure": "Weet je het zeker?",
+      "deleting": "Verwijderen…",
+      "delete": "Verwijderen",
+      "cancel": "Annuleren"
+    },
+    "detail": {
+      "adminAccount": "Admin-account",
+      "name": "Naam:",
+      "email": "E-mail:",
+      "state": "Status:",
+      "verified": "Geverifieerd",
+      "pending": "In afwachting",
+      "createdAt": "Aangemaakt op:",
+      "noOwner": "Geen eigenaar gekoppeld.",
+      "health": "Accountstatus",
+      "subscriptionActive": "Actief abonnement",
+      "noSubscription": "Geen abonnement",
+      "active": "Actief",
+      "suspended": "Opgeschort",
+      "emailVerified": "E-mail geverifieerd",
+      "emailPending": "E-mail in afwachting",
+      "planLabel": "Plan {{plan}}",
+      "noPlan": "Geen plan",
+      "stripe": "Stripe:"
+    },
+    "security": {
+      "title": "Beveiliging",
+      "loginsOk": "Logins OK",
+      "failures": "Mislukt",
+      "resets": "Resets",
+      "lastLogin": "Laatste login",
+      "lastFailure": "Laatste mislukking",
+      "lastReset": "Laatste reset",
+      "recentActivity": "Recente activiteit",
+      "noActivity": "Geen activiteit geregistreerd.",
+      "eventLoginSuccess": "Login geslaagd",
+      "eventLoginFailure": "Login mislukt",
+      "eventPasswordReset": "Wachtwoord-reset-aanvraag"
+    }
   }
 }

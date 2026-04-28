@@ -167,7 +167,8 @@
       "strong": "forte",
       "calm": "più silenzioso",
       "stable": "stabile",
-      "todayIs": "Oggi l'operazione è {{signal}}."
+      "todayIs": "Oggi l'operazione è {{signal}}.",
+      "subtitle": "{{date}}. Usa questo pannello per capire il ritmo del salone, dove stai guadagnando margine e dove conviene agire presto."
     },
     "stats": {
       "accumulated": "Entrate accumulate",
@@ -453,7 +454,13 @@
     },
     "ofMax": "di {{max}}",
     "errors": {
-      "photoUpload": "Impossibile caricare la foto"
+      "photoUpload": "Impossibile caricare la foto",
+      "passwordMin": "Minimum 6 characters",
+      "passwordMismatch": "Passwords do not match",
+      "accessSave": "Could not save. Check that the server is up to date.",
+      "IMAGE_READ_ERROR": "Could not read the image",
+      "IMAGE_PREPARE_ERROR": "Could not prepare the image",
+      "IMAGE_PROCESS_ERROR": "Could not process the image"
     },
     "subtitle": "{{active}} attivo{{maxStr}} · {{total}} registrato",
     "atLimit": "Hai raggiunto il limite di {{max}} barbieri attivi nel tuo piano.",
@@ -508,7 +515,8 @@
       "price": "Prezzo",
       "duration": "Durata",
       "status": "Stato"
-    }
+    },
+    "placeholder": "Idratazione"
   },
   "products": {
     "title": "Prodotti",
@@ -525,10 +533,11 @@
       "plan": "Piano",
       "price": "Prezzo",
       "status": "Stato"
-    }
+    },
+    "placeholder": "Monthly Plan"
   },
   "schedule": {
-    "title": "Orari",
+    "title": "Orari di apertura",
     "days": {
       "0": "Domenica",
       "1": "Lunedì",
@@ -538,7 +547,14 @@
       "5": "Venerdì",
       "6": "Sabato"
     },
-    "addSlot": "Aggiungi slot"
+    "addSlot": "Aggiungi slot",
+    "description": "Configura i giorni e gli orari di apertura direttamente su ogni giorno.",
+    "configureFor": "Configura orari per",
+    "barbersWithOwnHours": "Barbieri con orario proprio (ignorano il predefinito)",
+    "barbersWithOwnHoursHint": "Seleziona il barbiere nel selettore sopra per modificare il suo orario. O fai clic su \"Eredita predefinito\" per rimuovere il suo orario proprio e usare quello del salone.",
+    "editButton": "→ modifica",
+    "newPeriod": "Nuovo periodo",
+    "until": "fino a"
   },
   "reports": {
     "title": "Report",
@@ -786,7 +802,16 @@
       "imageAlt": "Anteprima {{index}}"
     },
     "save": "Salva modifiche",
-    "saved": "Modifiche salvate."
+    "saved": "Modifiche salvate.",
+    "instagramPlaceholder": "@mio_salone",
+    "errors": {
+      "imagesTooLargeBatch": "The images are too large to save at once. Try fewer photos at a time or lighter images.",
+      "saveGallery": "Could not save the gallery",
+      "uploadLogo": "Could not upload the logo",
+      "uploadAccountPhoto": "Could not upload the account photo",
+      "uploadHeroImage": "Could not upload the main image",
+      "uploadGallery": "Could not upload the gallery images"
+    }
   },
   "billing": {
     "title": "Fatturazione",
@@ -897,7 +922,14 @@
     "confirmLabel": "Conferma password",
     "submitButton": "Salva password",
     "successTitle": "Password aggiornata",
-    "successMsg": "Ora puoi accedere con la tua nuova password."
+    "successMsg": "Ora puoi accedere con la tua nuova password.",
+    "errors": {
+      "passwordMin": "Minimum 6 characters",
+      "confirmRequired": "Confirm the password",
+      "passwordMismatch": "Passwords must match",
+      "missingToken": "The recovery link is incomplete.",
+      "updateFailed": "Could not update the password."
+    }
   },
   "resendVerification": {
     "title": "Invia nuovamente la conferma",

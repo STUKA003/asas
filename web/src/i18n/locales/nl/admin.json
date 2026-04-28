@@ -167,7 +167,8 @@
       "strong": "sterk",
       "calm": "stiller",
       "stable": "stabiel",
-      "todayIs": "Vandaag is de operatie {{signal}}."
+      "todayIs": "Vandaag is de operatie {{signal}}.",
+      "subtitle": "{{date}}. Gebruik dit paneel om het ritme van de zaak te begrijpen, waar je marge wint en waar het loont om vroeg te handelen."
     },
     "stats": {
       "accumulated": "Gecumuleerde inkomsten",
@@ -453,7 +454,13 @@
     },
     "ofMax": "van {{max}}",
     "errors": {
-      "photoUpload": "De foto kon niet worden geüpload"
+      "photoUpload": "De foto kon niet worden geüpload",
+      "passwordMin": "Minimum 6 characters",
+      "passwordMismatch": "Passwords do not match",
+      "accessSave": "Could not save. Check that the server is up to date.",
+      "IMAGE_READ_ERROR": "Could not read the image",
+      "IMAGE_PREPARE_ERROR": "Could not prepare the image",
+      "IMAGE_PROCESS_ERROR": "Could not process the image"
     },
     "subtitle": "{{active}} actief{{maxStr}} · {{total}} geregistreerd",
     "atLimit": "Je hebt de limiet van {{max}} actieve kapper(s) voor je abonnement bereikt.",
@@ -508,7 +515,8 @@
       "price": "Prijs",
       "duration": "Duur",
       "status": "Toestand"
-    }
+    },
+    "placeholder": "Hydratatie"
   },
   "products": {
     "title": "Producten",
@@ -525,10 +533,11 @@
       "plan": "Abonnement",
       "price": "Prijs",
       "status": "Toestand"
-    }
+    },
+    "placeholder": "Monthly Plan"
   },
   "schedule": {
-    "title": "Tijden",
+    "title": "Openingstijden",
     "days": {
       "0": "Zondag",
       "1": "Maandag",
@@ -538,7 +547,14 @@
       "5": "Vrijdag",
       "6": "Zaterdag"
     },
-    "addSlot": "Voeg slot toe"
+    "addSlot": "Voeg slot toe",
+    "description": "Configureer de dagen en openingstijden direct op elke dag.",
+    "configureFor": "Tijden configureren voor",
+    "barbersWithOwnHours": "Kappers met eigen tijden (negeren standaard)",
+    "barbersWithOwnHoursHint": "Selecteer de kapper in de selector hierboven om zijn tijden te bewerken. Of klik op \"Standaard overnemen\" om eigen tijden te verwijderen en die van de zaak te gebruiken.",
+    "editButton": "→ bewerken",
+    "newPeriod": "Nieuwe periode",
+    "until": "tot"
   },
   "reports": {
     "title": "Rapporten",
@@ -786,7 +802,16 @@
       "imageAlt": "Voorbeeld {{index}}"
     },
     "save": "Wijzigingen opslaan",
-    "saved": "Wijzigingen opgeslagen."
+    "saved": "Wijzigingen opgeslagen.",
+    "instagramPlaceholder": "@mijn_kapperszaak",
+    "errors": {
+      "imagesTooLargeBatch": "The images are too large to save at once. Try fewer photos at a time or lighter images.",
+      "saveGallery": "Could not save the gallery",
+      "uploadLogo": "Could not upload the logo",
+      "uploadAccountPhoto": "Could not upload the account photo",
+      "uploadHeroImage": "Could not upload the main image",
+      "uploadGallery": "Could not upload the gallery images"
+    }
   },
   "billing": {
     "title": "Facturatie",
@@ -897,7 +922,14 @@
     "confirmLabel": "Bevestig wachtwoord",
     "submitButton": "Wachtwoord opslaan",
     "successTitle": "Wachtwoord bijgewerkt",
-    "successMsg": "U kunt nu inloggen met uw nieuwe wachtwoord."
+    "successMsg": "U kunt nu inloggen met uw nieuwe wachtwoord.",
+    "errors": {
+      "passwordMin": "Minimum 6 characters",
+      "confirmRequired": "Confirm the password",
+      "passwordMismatch": "Passwords must match",
+      "missingToken": "The recovery link is incomplete.",
+      "updateFailed": "Could not update the password."
+    }
   },
   "resendVerification": {
     "title": "Bevestiging opnieuw verzenden",

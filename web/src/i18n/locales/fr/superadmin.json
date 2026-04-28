@@ -88,6 +88,159 @@
   },
   "barbershops": {
     "title": "Salons",
-    "subtitle": "Gestion centralisée des comptes et opérations."
+    "subtitle": "Gestion centralisée des comptes et opérations.",
+    "plans": {
+      "FREE": "Gratuit",
+      "BASIC": "Basique",
+      "PRO": "Pro"
+    },
+    "durations": {
+      "month1": "1 mois",
+      "months3": "3 mois",
+      "months6": "6 mois",
+      "year1": "1 an"
+    },
+    "identity": {
+      "shopName": "Nom du salon",
+      "namePlaceholder": "Nom",
+      "siteSlug": "Slug du site",
+      "slugPlaceholder": "slug",
+      "generateFromName": "Générer à partir du nom",
+      "saving": "Enregistrement…",
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "errorSave": "Erreur lors de l'enregistrement"
+    },
+    "plan": {
+      "plan": "Plan",
+      "expiration": "Expiration",
+      "expiresOn": "Expire le {{date}}"
+    },
+    "suspend": {
+      "reason": "Motif de suspension (facultatif)",
+      "reasonPlaceholder": "Ex : paiement en retard",
+      "suspending": "Suspension…",
+      "suspend": "Suspendre",
+      "suspended": "Suspendu : {{reason}}",
+      "noReason": "sans motif",
+      "reactivating": "…",
+      "reactivate": "Réactiver",
+      "close": "Fermer"
+    },
+    "password": {
+      "noAdmin": "Ce salon n'a aucun compte admin associé.",
+      "newPasswordFor": "Vous allez définir un nouveau mot de passe pour",
+      "newPassword": "Nouveau mot de passe",
+      "minChars": "Minimum 6 caractères",
+      "confirmPassword": "Confirmer le mot de passe",
+      "repeatPassword": "Répétez le mot de passe",
+      "saveNew": "Enregistrer le nouveau mot de passe",
+      "errorMin": "Le mot de passe doit contenir au moins 6 caractères",
+      "errorMismatch": "Les mots de passe ne correspondent pas",
+      "errorUpdate": "Erreur lors de la mise à jour du mot de passe"
+    },
+    "create": {
+      "title": "Nouveau salon",
+      "shopName": "Nom du salon",
+      "shopNamePlaceholder": "Salon de Jean",
+      "addressSlug": "Adresse (slug)",
+      "adminName": "Nom de l'admin",
+      "adminNamePlaceholder": "Jean Dupont",
+      "adminEmail": "E-mail de l'admin",
+      "adminEmailPlaceholder": "jean@email.com",
+      "password": "Mot de passe",
+      "passwordPlaceholder": "Minimum 6 caractères",
+      "initialPlan": "Plan initial",
+      "creating": "Création…",
+      "createButton": "Créer le salon",
+      "errorCreate": "Erreur lors de la création du salon",
+      "errorSlugTaken": "Cette adresse est déjà utilisée."
+    },
+    "list": {
+      "title": "Salons",
+      "registered": "{{count}} enregistrés",
+      "newButton": "Nouveau salon",
+      "searchPlaceholder": "Rechercher par nom, slug, e-mail ou propriétaire…",
+      "verification": "Vérification",
+      "accountHealth": "Santé du compte",
+      "loading": "Chargement…",
+      "noneFound": "Aucun salon trouvé."
+    },
+    "verificationFilter": {
+      "all": "Tous",
+      "pending": "En attente",
+      "verified": "Vérifiés"
+    },
+    "healthFilter": {
+      "all": "Tous",
+      "active": "Abonnement actif",
+      "suspended": "Suspendus",
+      "unverified": "E-mail en attente",
+      "no-plan": "Sans plan"
+    },
+    "badges": {
+      "suspended": "Suspendu",
+      "expired": "Expiré",
+      "emailPending": "E-mail en attente"
+    },
+    "stats": {
+      "customers": "clients",
+      "bookings": "réservations",
+      "barber_one": "barbier",
+      "barber_other": "barbiers",
+      "expires": "Expire : {{date}}",
+      "lastLogin": "Dernière connexion : {{date}}"
+    },
+    "actions": {
+      "opening": "Ouverture…",
+      "supportSession": "Session de support",
+      "resending": "Renvoi…",
+      "resendVerification": "Renvoyer la confirmation",
+      "confirming": "Confirmation…",
+      "markEmailVerified": "Marquer e-mail vérifié",
+      "editIdentity": "Modifier nom / slug",
+      "changePlan": "Changer de plan",
+      "changePassword": "Changer le mot de passe",
+      "reactivate": "Réactiver",
+      "suspend": "Suspendre",
+      "sure": "Êtes-vous sûr ?",
+      "deleting": "Suppression…",
+      "delete": "Supprimer",
+      "cancel": "Annuler"
+    },
+    "detail": {
+      "adminAccount": "Compte admin",
+      "name": "Nom :",
+      "email": "E-mail :",
+      "state": "État :",
+      "verified": "Vérifié",
+      "pending": "En attente",
+      "createdAt": "Créé le :",
+      "noOwner": "Aucun propriétaire associé.",
+      "health": "Santé du compte",
+      "subscriptionActive": "Abonnement actif",
+      "noSubscription": "Aucun abonnement",
+      "active": "Actif",
+      "suspended": "Suspendu",
+      "emailVerified": "E-mail vérifié",
+      "emailPending": "E-mail en attente",
+      "planLabel": "Plan {{plan}}",
+      "noPlan": "Sans plan",
+      "stripe": "Stripe :"
+    },
+    "security": {
+      "title": "Sécurité",
+      "loginsOk": "Connexions OK",
+      "failures": "Échecs",
+      "resets": "Réinit.",
+      "lastLogin": "Dernière connexion",
+      "lastFailure": "Dernier échec",
+      "lastReset": "Dernière réinit.",
+      "recentActivity": "Activité récente",
+      "noActivity": "Aucune activité enregistrée.",
+      "eventLoginSuccess": "Connexion réussie",
+      "eventLoginFailure": "Échec de connexion",
+      "eventPasswordReset": "Demande de réinit. mot de passe"
+    }
   }
 }

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { publicApi } from '@/lib/publicApi'
 import { useTenant } from '@/providers/TenantProvider'
 import { useBookingStore } from '@/store/booking'
@@ -10,6 +11,7 @@ import { Plus, Minus, Clock, ShoppingCart, ChevronDown } from 'lucide-react'
 import type { Extra, Product } from '@/lib/types'
 
 export function StepExtrasProducts() {
+  const { t } = useTranslation(['public', 'common'])
   const { slug } = useTenant()
   const { extras: selectedExtras, products: selectedProducts, toggleExtra, toggleProduct, setStep } = useBookingStore()
   const [expandedId, setExpandedId] = useState<string | null>(null)
@@ -35,18 +37,18 @@ export function StepExtrasProducts() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-bold">Extras & Produtos</h2>
-        <p className="text-zinc-500 text-sm mt-1">Adicione ao seu atendimento (opcional)</p>
+        <h2 className="text-xl font-bold">{t('booking.steps.extrasProducts.title')}</h2>
+        <p className="text-zinc-500 text-sm mt-1">{t('booking.steps.extrasProducts.subtitle')}</p>
       </div>
 
       {!hasContent && (
-        <p className="text-sm text-zinc-400 py-8 text-center">Sem extras ou produtos disponíveis.</p>
+        <p className="text-sm text-zinc-400 py-8 text-center">{t('booking.steps.extrasProducts.noItems')}</p>
       )}
 
       {/* Extras */}
       {extraList.length > 0 && (
         <div className="space-y-2">
-          <p className="text-xs font-semibold uppercase tracking-wider text-zinc-400">Extras</p>
+          <p className="text-xs font-semibold uppercase tracking-wider text-zinc-400">{t('booking.steps.extrasProducts.extras')}</p>
           {extraList.map((e) => {
             const isSelected = selectedExtras.some((s) => s.id === e.id)
             return (
@@ -91,7 +93,7 @@ export function StepExtrasProducts() {
       {/* Products */}
       {productList.length > 0 && (
         <div className="space-y-3">
-          <p className="text-xs font-semibold uppercase tracking-wider text-zinc-400">Produtos</p>
+          <p className="text-xs font-semibold uppercase tracking-wider text-zinc-400">{t('booking.steps.extrasProducts.products')}</p>
           <div className="grid gap-3 sm:grid-cols-2">
             {productList.map((p) => {
               const isSelected = selectedProducts.some((s) => s.id === p.id)
@@ -151,8 +153,8 @@ export function StepExtrasProducts() {
       )}
 
       <div className="flex justify-between pt-2">
-        <Button variant="outline" onClick={() => setStep(2)}>Voltar</Button>
-        <Button onClick={() => setStep(4)}>Próximo</Button>
+        <Button variant="outline" onClick={() => setStep(2)}>{t('common:btn.back')}</Button>
+        <Button onClick={() => setStep(4)}>{t('common:btn.next')}</Button>
       </div>
     </div>
   )

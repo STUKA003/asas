@@ -1,15 +1,17 @@
 import { cn } from '@/lib/utils'
 import type { BookingStatus } from '@/lib/types'
+import { useTranslation } from 'react-i18next'
 
-const statusConfig: Record<BookingStatus, { dot: string; container: string; label: string }> = {
-  PENDING:   { dot: 'bg-warning-500',  container: 'border-warning-200/60  bg-warning-50/80  text-warning-700',  label: 'Pendente'       },
-  CONFIRMED: { dot: 'bg-primary-500',  container: 'border-primary-200/60  bg-primary-50/80  text-primary-700',  label: 'Confirmado'     },
-  COMPLETED: { dot: 'bg-success-500',  container: 'border-success-200/60  bg-success-50/80  text-success-700',  label: 'Concluído'      },
-  CANCELLED: { dot: 'bg-neutral-300',  container: 'border-neutral-200     bg-neutral-100/80 text-ink-muted',    label: 'Cancelado'      },
-  NO_SHOW:   { dot: 'bg-danger-400',   container: 'border-danger-200/60   bg-danger-50/80   text-danger-700',   label: 'Não compareceu' },
+const statusConfig: Record<BookingStatus, { dot: string; container: string }> = {
+  PENDING:   { dot: 'bg-warning-500',  container: 'border-warning-200/60  bg-warning-50/80  text-warning-700' },
+  CONFIRMED: { dot: 'bg-primary-500',  container: 'border-primary-200/60  bg-primary-50/80  text-primary-700' },
+  COMPLETED: { dot: 'bg-success-500',  container: 'border-success-200/60  bg-success-50/80  text-success-700' },
+  CANCELLED: { dot: 'bg-neutral-300',  container: 'border-neutral-200     bg-neutral-100/80 text-ink-muted' },
+  NO_SHOW:   { dot: 'bg-danger-400',   container: 'border-danger-200/60   bg-danger-50/80   text-danger-700' },
 }
 
 export function StatusBadge({ status }: { status: BookingStatus }) {
+  const { t } = useTranslation('common')
   const c = statusConfig[status]
   return (
     <span className={cn(
@@ -17,7 +19,7 @@ export function StatusBadge({ status }: { status: BookingStatus }) {
       c.container
     )}>
       <span className={cn('h-[5px] w-[5px] shrink-0 rounded-full', c.dot)} />
-      {c.label}
+      {t(`status.${status}`)}
     </span>
   )
 }

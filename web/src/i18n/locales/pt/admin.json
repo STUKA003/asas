@@ -169,7 +169,14 @@
     "confirmLabel": "Confirmar palavra-passe",
     "submitButton": "Guardar palavra-passe",
     "successTitle": "Palavra-passe actualizada",
-    "successMsg": "Já podes entrar com a tua nova palavra-passe."
+    "successMsg": "Já podes entrar com a tua nova palavra-passe.",
+    "errors": {
+      "passwordMin": "Mínimo 6 caracteres",
+      "confirmRequired": "Confirma a palavra-passe",
+      "passwordMismatch": "As palavras-passe têm de coincidir",
+      "missingToken": "O link de recuperação está incompleto.",
+      "updateFailed": "Não foi possível atualizar a palavra-passe."
+    }
   },
   "resendVerification": {
     "title": "Reenviar confirmação",
@@ -188,7 +195,8 @@
       "strong": "forte",
       "calm": "mais calma",
       "stable": "estável",
-      "todayIs": "Hoje a operação está {{signal}}."
+      "todayIs": "Hoje a operação está {{signal}}.",
+      "subtitle": "{{date}}. Usa este painel para perceber o ritmo da casa, onde estás a ganhar margem e onde convém agir cedo."
     },
     "stats": {
       "accumulated": "Receita acumulada",
@@ -505,7 +513,13 @@
     "removeConfirm": "Remover barbeiro?",
     "ofMax": "de {{max}}",
     "errors": {
-      "photoUpload": "Não foi possível carregar a foto"
+      "photoUpload": "Não foi possível carregar a foto",
+      "passwordMin": "Mínimo 6 caracteres",
+      "passwordMismatch": "As palavras-passe não coincidem",
+      "accessSave": "Erro ao guardar. Verifica se o servidor está atualizado.",
+      "IMAGE_READ_ERROR": "Não foi possível ler a imagem",
+      "IMAGE_PREPARE_ERROR": "Não foi possível preparar a imagem",
+      "IMAGE_PROCESS_ERROR": "Não foi possível processar a imagem"
     }
   },
   "services": {
@@ -534,7 +548,8 @@
       "price": "Preço",
       "duration": "Duração",
       "status": "Estado"
-    }
+    },
+    "placeholder": "Hidratação"
   },
   "products": {
     "title": "Produtos",
@@ -551,10 +566,11 @@
       "plan": "Plano",
       "price": "Preço",
       "status": "Estado"
-    }
+    },
+    "placeholder": "Plano Mensal"
   },
   "schedule": {
-    "title": "Horários",
+    "title": "Horários de funcionamento",
     "addSlot": "Adicionar horário",
     "days": {
       "0": "Domingo",
@@ -564,7 +580,14 @@
       "4": "Quinta",
       "5": "Sexta",
       "6": "Sábado"
-    }
+    },
+    "description": "Configure os dias e horários de abertura diretamente em cada dia.",
+    "configureFor": "Configurar horários para",
+    "barbersWithOwnHours": "Barbeiros com horário próprio (ignoram o padrão)",
+    "barbersWithOwnHoursHint": "Seleciona o barbeiro no selector acima para editar o horário dele. Ou clica em \"Herdar padrão\" para remover o horário próprio e usar o da barbearia.",
+    "editButton": "→ editar",
+    "newPeriod": "Novo período",
+    "until": "até"
   },
   "reports": {
     "title": "Relatórios",
@@ -812,6 +835,15 @@
       "plansVisibility": "Planos {{state}}",
       "productsVisibility": "Produtos {{state}}",
       "imageAlt": "Prévia {{index}}"
+    },
+    "instagramPlaceholder": "@minha_barbearia",
+    "errors": {
+      "imagesTooLargeBatch": "As imagens são demasiado pesadas para guardar de uma vez. Tente menos fotos de cada vez ou imagens mais leves.",
+      "saveGallery": "Não foi possível guardar a galeria",
+      "uploadLogo": "Não foi possível carregar o logo",
+      "uploadAccountPhoto": "Não foi possível carregar a foto da conta",
+      "uploadHeroImage": "Não foi possível carregar a imagem principal",
+      "uploadGallery": "Não foi possível carregar as imagens da galeria"
     }
   },
   "billing": {

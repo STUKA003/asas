@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -103,6 +104,7 @@ export function PhoneInput({
   name,
   className,
 }: PhoneInputProps) {
+  const { t } = useTranslation('common')
   const inputId = id ?? label?.toLowerCase().replace(/\s+/g, '-') ?? 'phone-input'
   const parsedValue = useMemo(() => parsePhoneValue(value), [value])
   const [countryCode, setCountryCode] = useState(parsedValue.countryCode)
@@ -134,7 +136,7 @@ export function PhoneInput({
             }}
             disabled={disabled}
             className={cn(controlClasses, 'appearance-none pr-10')}
-            aria-label={label ? `${label} país` : 'País'}
+            aria-label={label ? t('phone.countryFor', { label }) : t('phone.country')}
           >
             {PHONE_COUNTRIES.map((country) => (
               <option key={country.code} value={country.code}>

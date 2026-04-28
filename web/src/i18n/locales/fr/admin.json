@@ -167,7 +167,8 @@
       "strong": "fort",
       "calm": "plus silencieux",
       "stable": "écurie",
-      "todayIs": "Aujourd'hui, l'opération est {{signal}}."
+      "todayIs": "Aujourd'hui, l'opération est {{signal}}.",
+      "subtitle": "{{date}}. Utilise ce panneau pour comprendre le rythme du salon, où tu gagnes en marge et où il vaut mieux agir tôt."
     },
     "stats": {
       "accumulated": "Revenus accumulés",
@@ -453,7 +454,13 @@
     },
     "ofMax": "sur {{max}}",
     "errors": {
-      "photoUpload": "Impossible de téléverser la photo"
+      "photoUpload": "Impossible de téléverser la photo",
+      "passwordMin": "Minimum 6 characters",
+      "passwordMismatch": "Passwords do not match",
+      "accessSave": "Could not save. Check that the server is up to date.",
+      "IMAGE_READ_ERROR": "Could not read the image",
+      "IMAGE_PREPARE_ERROR": "Could not prepare the image",
+      "IMAGE_PROCESS_ERROR": "Could not process the image"
     },
     "subtitle": "{{active}} actif{{maxStr}} · {{total}} enregistré",
     "atLimit": "Vous avez atteint la limite de {{max}} barbier(s) actif(s) sur votre forfait.",
@@ -508,7 +515,8 @@
       "price": "Prix",
       "duration": "Durée",
       "status": "Statut"
-    }
+    },
+    "placeholder": "Hydratation"
   },
   "products": {
     "title": "Produits",
@@ -525,10 +533,11 @@
       "plan": "Forfait",
       "price": "Prix",
       "status": "Statut"
-    }
+    },
+    "placeholder": "Monthly Plan"
   },
   "schedule": {
-    "title": "Horaires",
+    "title": "Horaires d'ouverture",
     "days": {
       "0": "Dimanche",
       "1": "Lundi",
@@ -538,7 +547,14 @@
       "5": "Vendredi",
       "6": "Samedi"
     },
-    "addSlot": "Ajouter un emplacement"
+    "addSlot": "Ajouter un emplacement",
+    "description": "Configurez les jours et horaires d'ouverture directement sur chaque jour.",
+    "configureFor": "Configurer les horaires pour",
+    "barbersWithOwnHours": "Barbiers avec horaires propres (ignorent le défaut)",
+    "barbersWithOwnHoursHint": "Sélectionne le barbier dans le sélecteur ci-dessus pour modifier ses horaires. Ou clique sur \"Hériter du défaut\" pour supprimer ses horaires propres et utiliser ceux du salon.",
+    "editButton": "→ modifier",
+    "newPeriod": "Nouvelle période",
+    "until": "jusqu'à"
   },
   "reports": {
     "title": "Rapports",
@@ -786,7 +802,16 @@
       "imageAlt": "Aperçu {{index}}"
     },
     "save": "Enregistrer les modifications",
-    "saved": "Modifications enregistrées."
+    "saved": "Modifications enregistrées.",
+    "instagramPlaceholder": "@mon_salon",
+    "errors": {
+      "imagesTooLargeBatch": "The images are too large to save at once. Try fewer photos at a time or lighter images.",
+      "saveGallery": "Could not save the gallery",
+      "uploadLogo": "Could not upload the logo",
+      "uploadAccountPhoto": "Could not upload the account photo",
+      "uploadHeroImage": "Could not upload the main image",
+      "uploadGallery": "Could not upload the gallery images"
+    }
   },
   "billing": {
     "title": "Facturation",
@@ -897,7 +922,14 @@
     "confirmLabel": "Confirmez le mot de passe",
     "submitButton": "Enregistrer le mot de passe",
     "successTitle": "Mot de passe mis à jour",
-    "successMsg": "Vous pouvez maintenant vous connecter avec votre nouveau mot de passe."
+    "successMsg": "Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.",
+    "errors": {
+      "passwordMin": "Minimum 6 characters",
+      "confirmRequired": "Confirm the password",
+      "passwordMismatch": "Passwords must match",
+      "missingToken": "The recovery link is incomplete.",
+      "updateFailed": "Could not update the password."
+    }
   },
   "resendVerification": {
     "title": "Renvoyer la confirmation",

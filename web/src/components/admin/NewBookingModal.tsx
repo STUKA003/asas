@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { format } from 'date-fns'
 import { barbersApi, servicesApi, customersApi, bookingsApi, barbershopApi } from '@/lib/api'
@@ -22,6 +23,7 @@ interface Props {
 
 export function NewBookingModal({ open, onClose, initialDate, initialBarberId, initialTime }: Props) {
   const qc = useQueryClient()
+  const { t, i18n } = useTranslation(['admin', 'common'])
 
   const [barberId,  setBarberId]  = useState(initialBarberId ?? '')
   const [serviceId, setServiceId] = useState('')
@@ -99,7 +101,7 @@ export function NewBookingModal({ open, onClose, initialDate, initialBarberId, i
         typeof err === 'object' && err !== null && 'response' in err &&
         typeof (err as { response?: { data?: { error?: string } } }).response?.data?.error === 'string'
           ? (err as { response?: { data?: { error?: string } } }).response!.data!.error!
-          : err instanceof Error ? err.message : 'Erro ao criar agendamento'
+          : err instanceof Error ? err.message : t('bookings.newBooking.errors.create')
       setError(msg)
     },
   })
@@ -108,12 +110,12 @@ export function NewBookingModal({ open, onClose, initialDate, initialBarberId, i
     e.preventDefault()
     setError(null)
 
-    if (!barberId)  return setError('Selecione um barbeiro.')
-    if (!serviceId) return setError('Selecione um serviço.')
-    if (!date)      return setError('Selecione uma data.')
-    if (!time)      return setError('Selecione um horário.')
-    if (!trimmedPhone) return setError('Insira o telefone do cliente.')
-    if (isNewCustomer && !custName.trim()) return setError('Insira o nome do cliente.')
+    if (!barberId) return setError(t('bookings.newBooking.errors.selectBarber'))
+    if (!serviceId) return setError(t('bookings.newBooking.errors.selectService'))
+    if (!date) return setError(t('bookings.newBooking.errors.selectDate'))
+    if (!time) return setError(t('bookings.newBooking.errors.selectTime'))
+    if (!trimmedPhone) return setError(t('bookings.newBooking.errors.customerPhone'))
+    if (isNewCustomer && !custName.trim()) return setError(t('bookings.newBooking.errors.customerName'))
 
     /* Build startTime */
     const [h, m] = time.split(':').map(Number)
@@ -139,28 +141,28 @@ export function NewBookingModal({ open, onClose, initialDate, initialBarberId, i
   const isPending = createCustomer.isPending || createBooking.isPending
 
   const barberOptions = [
-    { value: '', label: 'Selecionar barbeiro' },
+    { value: '', label: t('bookings.newBooking.selectBarber') },
     ...barbers.map((b) => ({ value: b.id, label: b.name })),
   ]
   const serviceOptions = [
-    { value: '', label: 'Selecionar serviço' },
+    { value: '', label: t('bookings.newBooking.selectService') },
     ...services.map((s) => ({ value: s.id, label: `${s.name} • ${formatCurrency(s.price)} • ${formatDuration(s.duration)}` })),
   ]
 
   return (
-    <Modal open={open} onClose={onClose} title="Novo agendamento">
+    <Modal open={open} onClose={onClose} title={t('bookings.newBooking.title')}>
       <form onSubmit={handleSubmit} className="space-y-4">
 
         {/* Barber + Service */}
         <div className="grid sm:grid-cols-2 gap-3">
-          <Select label="Barbeiro"  options={barberOptions}  value={barberId}  onChange={(e) => setBarberId(e.target.value)}  />
-          <Select label="Serviço"   options={serviceOptions} value={serviceId} onChange={(e) => setServiceId(e.target.value)} />
+          <Select label={t('bookings.newBooking.barberLabel')} options={barberOptions} value={barberId} onChange={(e) => setBarberId(e.target.value)} />
+          <Select label={t('bookings.newBooking.serviceLabel')} options={serviceOptions} value={serviceId} onChange={(e) => setServiceId(e.target.value)} />
         </div>
 
         {/* Date + Time */}
         <div className="grid sm:grid-cols-2 gap-3">
           <div className="space-y-1.5">
-            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Data</label>
+            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">{t('bookings.newBooking.dateLabel')}</label>
             <input
               type="date"
               value={date}
@@ -169,7 +171,7 @@ export function NewBookingModal({ open, onClose, initialDate, initialBarberId, i
             />
           </div>
           <div className="space-y-1.5">
-            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Hora</label>
+            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">{t('bookings.newBooking.timeLabel')}</label>
             <input
               type="time"
               value={time}
@@ -182,7 +184,7 @@ export function NewBookingModal({ open, onClose, initialDate, initialBarberId, i
         {/* Customer */}
         <div className="space-y-2">
           <PhoneInput
-            label="Telefone do cliente"
+            label={t('bookings.newBooking.customerPhoneLabel')}
             placeholder="912 345 678"
             value={phone}
             onChange={setPhone}
@@ -193,12 +195,12 @@ export function NewBookingModal({ open, onClose, initialDate, initialBarberId, i
             <div className="px-3 py-2 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-sm text-green-700 dark:text-green-300 space-y-0.5">
               <div className="flex items-center gap-2">
                 <UserCheck size={15} />
-                <span>Cliente encontrado: <strong>{foundCustomer.name}</strong></span>
+                <span>{t('bookings.newBooking.customerFound', { name: foundCustomer.name })}</span>
               </div>
               {customerDetail?.plan && (
                 <p className="text-violet-700 dark:text-violet-400 font-medium pl-5">
-                  Plano: {customerDetail.plan.name}
-                  {discount > 0 && <span className="ml-1 text-xs">· {discount}% desconto em extras/produtos</span>}
+                  {t('bookings.newBooking.planLabel', { plan: customerDetail.plan.name })}
+                  {discount > 0 && <span className="ml-1 text-xs">· {t('bookings.newBooking.discountLabel', { discount })}</span>}
                 </p>
               )}
             </div>
@@ -209,10 +211,10 @@ export function NewBookingModal({ open, onClose, initialDate, initialBarberId, i
             <div className="space-y-2">
               <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 text-sm text-blue-700 dark:text-blue-300">
                 <UserPlus size={15} />
-                <span>Cliente novo — será criado automaticamente</span>
+                <span>{t('bookings.newBooking.newCustomer')}</span>
               </div>
               <Input
-                placeholder="Nome completo"
+                placeholder={t('bookings.newBooking.fullNamePlaceholder')}
                 value={custName}
                 onChange={(e) => setCustName(e.target.value)}
               />
@@ -222,12 +224,12 @@ export function NewBookingModal({ open, onClose, initialDate, initialBarberId, i
 
         {/* Notes */}
         <div className="space-y-1.5">
-          <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Observações (opcional)</label>
+          <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">{t('bookings.newBooking.notesLabel')}</label>
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             rows={2}
-            placeholder="Alguma nota sobre o atendimento..."
+            placeholder={t('bookings.newBooking.notesPlaceholder')}
             className="block w-full px-3 py-2 text-sm rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-accent-500 resize-none"
           />
         </div>
@@ -238,11 +240,11 @@ export function NewBookingModal({ open, onClose, initialDate, initialBarberId, i
             <div className="flex items-center gap-2">
               <p className="font-medium">{selectedService.name}</p>
               {serviceInPlan && (
-                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-violet-100 text-violet-700">incluído no plano</span>
+                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-violet-100 text-violet-700">{t('bookings.newBooking.includedInPlan')}</span>
               )}
             </div>
             <p className="text-zinc-400 text-xs">
-              {format(new Date(`${date}T${time}`), "dd/MM/yyyy 'às' HH:mm")} · {formatDuration(selectedService.duration)}
+              {new Intl.DateTimeFormat(i18n.language, { dateStyle: 'short', timeStyle: 'short' }).format(new Date(`${date}T${time}`))} · {formatDuration(selectedService.duration)}
             </p>
             <div className="flex items-center gap-2">
               <p className="text-accent-600 font-semibold">{formatCurrency(effectivePrice)}</p>
@@ -263,8 +265,8 @@ export function NewBookingModal({ open, onClose, initialDate, initialBarberId, i
         )}
 
         <div className="flex justify-end gap-2 pt-1">
-          <Button type="button" variant="outline" onClick={onClose}>Cancelar</Button>
-          <Button type="submit" loading={isPending}>Criar agendamento</Button>
+          <Button type="button" variant="outline" onClick={onClose}>{t('common:btn.cancel')}</Button>
+          <Button type="submit" loading={isPending}>{t('bookings.newBooking.createButton')}</Button>
         </div>
       </form>
     </Modal>

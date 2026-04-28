@@ -58,7 +58,7 @@ export default function Booking() {
       <main className="flex-1">
         <div className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6 sm:py-8">
 
-          {/* Cabeçalho da barbearia */}
+          {/* Tenant header */}
           <div className="mb-6 flex items-center gap-3">
             {barbershop?.logoUrl ? (
               <img src={barbershop.logoUrl} alt={barbershop.name} className="h-10 w-10 rounded-xl object-contain" />

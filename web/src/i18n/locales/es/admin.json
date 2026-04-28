@@ -167,7 +167,8 @@
       "strong": "fuerte",
       "calm": "más silencioso",
       "stable": "estable",
-      "todayIs": "Hoy la operación es {{signal}}."
+      "todayIs": "Hoy la operación es {{signal}}.",
+      "subtitle": "{{date}}. Usa este panel para entender el ritmo de la barbería, dónde estás ganando margen y dónde conviene actuar pronto."
     },
     "stats": {
       "accumulated": "Ingresos acumulados",
@@ -453,7 +454,13 @@
     },
     "ofMax": "de {{max}}",
     "errors": {
-      "photoUpload": "No se pudo cargar la foto"
+      "photoUpload": "No se pudo cargar la foto",
+      "passwordMin": "Minimum 6 characters",
+      "passwordMismatch": "Passwords do not match",
+      "accessSave": "Could not save. Check that the server is up to date.",
+      "IMAGE_READ_ERROR": "Could not read the image",
+      "IMAGE_PREPARE_ERROR": "Could not prepare the image",
+      "IMAGE_PROCESS_ERROR": "Could not process the image"
     },
     "subtitle": "{{active}} activo{{maxStr}} · {{total}} registrado",
     "atLimit": "Ha alcanzado el límite de {{max}} barberos activos en su plan.",
@@ -508,7 +515,8 @@
       "price": "Precio",
       "duration": "Duración",
       "status": "Estado"
-    }
+    },
+    "placeholder": "Hidratación"
   },
   "products": {
     "title": "Productos",
@@ -525,10 +533,11 @@
       "plan": "Abono",
       "price": "Precio",
       "status": "Estado"
-    }
+    },
+    "placeholder": "Monthly Plan"
   },
   "schedule": {
-    "title": "Horarios",
+    "title": "Horarios de apertura",
     "days": {
       "0": "Domingo",
       "1": "Lunes",
@@ -538,7 +547,14 @@
       "5": "Viernes",
       "6": "Sábado"
     },
-    "addSlot": "Agregar ranura"
+    "addSlot": "Agregar ranura",
+    "description": "Configura los días y horarios de apertura directamente en cada día.",
+    "configureFor": "Configurar horarios para",
+    "barbersWithOwnHours": "Barberos con horario propio (ignoran el predeterminado)",
+    "barbersWithOwnHoursHint": "Selecciona el barbero en el selector de arriba para editar su horario. O haz clic en \"Heredar predeterminado\" para eliminar su horario propio y usar el de la barbería.",
+    "editButton": "→ editar",
+    "newPeriod": "Nuevo período",
+    "until": "hasta"
   },
   "reports": {
     "title": "Informes",
@@ -786,7 +802,16 @@
       "imageAlt": "Vista previa {{index}}"
     },
     "save": "Guardar cambios",
-    "saved": "Cambios guardados."
+    "saved": "Cambios guardados.",
+    "instagramPlaceholder": "@mi_barberia",
+    "errors": {
+      "imagesTooLargeBatch": "The images are too large to save at once. Try fewer photos at a time or lighter images.",
+      "saveGallery": "Could not save the gallery",
+      "uploadLogo": "Could not upload the logo",
+      "uploadAccountPhoto": "Could not upload the account photo",
+      "uploadHeroImage": "Could not upload the main image",
+      "uploadGallery": "Could not upload the gallery images"
+    }
   },
   "billing": {
     "title": "Facturación",
@@ -897,7 +922,14 @@
     "confirmLabel": "Confirmar Contraseña",
     "submitButton": "guardar contraseña",
     "successTitle": "Contraseña actualizada",
-    "successMsg": "Ahora puedes iniciar sesión con tu nueva contraseña."
+    "successMsg": "Ahora puedes iniciar sesión con tu nueva contraseña.",
+    "errors": {
+      "passwordMin": "Minimum 6 characters",
+      "confirmRequired": "Confirm the password",
+      "passwordMismatch": "Passwords must match",
+      "missingToken": "The recovery link is incomplete.",
+      "updateFailed": "Could not update the password."
+    }
   },
   "resendVerification": {
     "title": "Reenviar confirmación",

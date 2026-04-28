@@ -10,10 +10,10 @@ const PLAN_COLORS: Record<string, { badge: string; bar: string }> = {
   BASIC: { badge: 'bg-blue-500/15  text-blue-300',  bar: 'bg-blue-400'  },
   PRO:   { badge: 'bg-amber-500/15 text-amber-300', bar: 'bg-amber-400' },
 }
-const PLAN_LABELS: Record<string, string> = { FREE: 'Grátis', BASIC: 'Básico', PRO: 'Pro' }
 
 export default function SuperAdminDashboard() {
   const { token } = useSuperAuthStore()
+  const { t } = useTranslation(['superadmin', 'common'])
 
   const { data } = useQuery({
     queryKey: ['superadmin', 'stats'],
@@ -32,18 +32,21 @@ export default function SuperAdminDashboard() {
   const adoptionRate    = total > 0 ? Math.round((paidShops / total) * 100) : 0
   const avgBookings     = total > 0 ? (totalBookings / total).toFixed(1) : '0'
 
+  const PLAN_LABELS: Record<string, string> = {
+    FREE: t('common:plan.FREE'), BASIC: t('common:plan.BASIC'), PRO: t('common:plan.PRO'),
+  }
+
   const stats = [
-    { label: 'Barbearias',      value: total,         sub: `${paidShops} em plano pago`,   icon: Building2,  accent: 'text-blue-300'    },
-    { label: 'Agendamentos',    value: totalBookings,  sub: `${thisMonth} este mês`,         icon: Calendar,   accent: 'text-emerald-300' },
-    { label: 'Clientes',        value: totalCustomers, sub: `${avgBookings} bookings / loja`, icon: Users,     accent: 'text-violet-300'  },
-    { label: 'Adoção paga',     value: `${adoptionRate}%`, sub: `${proShops} em Pro`,       icon: TrendingUp, accent: 'text-amber-300'   },
+    { label: t('barbershops.title'), value: total, sub: t('dashboard.stats.paidShops', { count: paidShops }), icon: Building2, accent: 'text-blue-300' },
+    { label: t('admin:layout.nav.bookings', { ns: 'admin' }), value: totalBookings, sub: t('dashboard.stats.thisMonth', { count: thisMonth }), icon: Calendar, accent: 'text-emerald-300' },
+    { label: t('admin:layout.nav.customers', { ns: 'admin' }), value: totalCustomers, sub: t('dashboard.stats.avgPerShop', { value: avgBookings }), icon: Users, accent: 'text-violet-300' },
+    { label: t('dashboard.stats.adoption'), value: `${adoptionRate}%`, sub: t('dashboard.stats.proShops', { count: proShops }), icon: TrendingUp, accent: 'text-amber-300' },
   ]
 
   return (
     <SuperAdminLayout>
       <div className="space-y-4">
 
-        {/* ── Stat cards ──────────────────────────────── */}
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {stats.map((s) => (
             <div key={s.label} className="rounded-2xl border border-white/[0.07] bg-white/[0.04] p-5">
@@ -57,14 +60,12 @@ export default function SuperAdminDashboard() {
           ))}
         </div>
 
-        {/* ── Bottom row ──────────────────────────────── */}
         <div className="grid gap-4 xl:grid-cols-[minmax(0,1.4fr)_minmax(0,0.6fr)]">
 
-          {/* Plan distribution */}
           <div className="rounded-2xl border border-white/[0.07] bg-white/[0.04] p-6">
             <div className="flex items-center justify-between mb-5">
-              <h2 className="text-[14px] font-semibold text-white">Distribuição de planos</h2>
-              <p className="text-[12px] text-white/30">{paidShops} pagos de {total}</p>
+              <h2 className="text-[14px] font-semibold text-white">{t('barbershops.title')} — {t('common:plan.FREE')} / {t('common:plan.BASIC')} / {t('common:plan.PRO')}</h2>
+              <p className="text-[12px] text-white/30">{paidShops} / {total}</p>
             </div>
             <div className="space-y-3">
               {data?.planCounts?.map((plan: { plan: string; count: number }) => {
@@ -77,15 +78,12 @@ export default function SuperAdminDashboard() {
                         <span className={`rounded-md px-2 py-0.5 text-[11px] font-semibold ${colors.badge}`}>
                           {PLAN_LABELS[plan.plan] ?? plan.plan}
                         </span>
-                        <span className="text-[12px] text-white/35">{plan.count} barbearia{plan.count !== 1 ? 's' : ''}</span>
+                        <span className="text-[12px] text-white/35">{plan.count}</span>
                       </div>
                       <span className="text-[12px] text-white/50">{Math.round(pct)}%</span>
                     </div>
                     <div className="h-1.5 overflow-hidden rounded-full bg-white/[0.07]">
-                      <div
-                        className={`h-full rounded-full transition-all duration-700 ${colors.bar}`}
-                        style={{ width: `${pct}%` }}
-                      />
+                      <div className={`h-full rounded-full transition-all duration-700 ${colors.bar}`} style={{ width: `${pct}%` }} />
                     </div>
                   </div>
                 )
@@ -93,15 +91,14 @@ export default function SuperAdminDashboard() {
             </div>
           </div>
 
-          {/* Quick metrics */}
           <div className="rounded-2xl border border-white/[0.07] bg-white/[0.04] p-6">
-            <h2 className="text-[14px] font-semibold text-white mb-5">Métricas rápidas</h2>
+            <h2 className="text-[14px] font-semibold text-white mb-5">{t('dashboard.metrics.title')}</h2>
             <div className="space-y-4">
               {[
-                { label: 'Bookings este mês',       value: thisMonth },
-                { label: 'Média bookings / barbearia', value: avgBookings },
-                { label: 'Barbearias em Pro',        value: proShops },
-                { label: 'Taxa de adoção paga',      value: `${adoptionRate}%` },
+                { label: t('dashboard.metrics.bookingsThisMonth'), value: thisMonth },
+                { label: t('dashboard.metrics.avgPerShop'), value: avgBookings },
+                { label: t('dashboard.metrics.proShops'), value: proShops },
+                { label: t('dashboard.metrics.paidAdoption'), value: `${adoptionRate}%` },
               ].map((m) => (
                 <div key={m.label} className="flex items-center justify-between">
                   <p className="text-[12.5px] text-white/40">{m.label}</p>

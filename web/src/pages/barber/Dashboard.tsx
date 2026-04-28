@@ -46,12 +46,12 @@ export default function BarberDashboard() {
     <BarberLayout>
       <div className="space-y-6">
         <PageHeader
-          title="Dashboard"
-          subtitle="Visão consolidada da agenda, receita e próximas marcações do teu dia."
+          title={t('dashboard.title')}
+          subtitle={t('dashboard.heroSubtitle')}
           actions={
             slug ? (
               <Link to={`/${slug}/barber/schedule`}>
-                <Button size="sm">Abrir agenda</Button>
+                <Button size="sm">{t('layout.topbar.openSchedule')}</Button>
               </Link>
             ) : null
           }
@@ -61,29 +61,29 @@ export default function BarberDashboard() {
           <div className="relative overflow-hidden rounded-2xl border border-neutral-200/70 bg-gradient-to-br from-white to-warning-50/50 px-6 py-6 shadow-medium sm:px-8 sm:py-7">
             <div className="absolute -right-16 top-0 h-48 w-48 rounded-full bg-warning-100/40 blur-3xl" />
             <div className="relative">
-              <p className="text-[10.5px] font-semibold uppercase tracking-[0.2em] text-ink-muted">Flow diário</p>
+              <p className="text-[10.5px] font-semibold uppercase tracking-[0.2em] text-ink-muted">{t('dashboard.dailyFlow')}</p>
               <h2 className="mt-2.5 text-[1.5rem] font-semibold tracking-[-0.03em] text-ink sm:text-[1.75rem]">
                 {format(new Date(), "EEEE, d 'de' MMMM", { locale: dateFnsLocale })}
               </h2>
               <p className="mt-2.5 max-w-2xl text-[13.5px] leading-6 text-ink-muted">
-                Abre o portal e percebe logo quantos atendimentos tens, a receita em curso e o que vem a seguir.
+                {t('dashboard.heroDescription')}
               </p>
 
               <div className="mt-6 grid gap-3 sm:grid-cols-3">
                 <div className="rounded-2xl border border-neutral-200/70 bg-white/80 p-4">
-                  <p className="text-[10.5px] font-semibold uppercase tracking-[0.16em] text-ink-muted">Hoje</p>
+                  <p className="text-[10.5px] font-semibold uppercase tracking-[0.16em] text-ink-muted">{t('dashboard.metrics.today')}</p>
                   <p className="mt-2 text-[1.6rem] font-semibold leading-none tracking-tight text-ink">{stats?.todayCount ?? 0}</p>
-                  <p className="mt-2.5 text-[12px] text-ink-muted">Marcações do dia</p>
+                  <p className="mt-2.5 text-[12px] text-ink-muted">{t('dashboard.metrics.dayBookings')}</p>
                 </div>
                 <div className="rounded-2xl border border-neutral-200/70 bg-white/80 p-4">
-                  <p className="text-[10.5px] font-semibold uppercase tracking-[0.16em] text-ink-muted">Receita hoje</p>
+                  <p className="text-[10.5px] font-semibold uppercase tracking-[0.16em] text-ink-muted">{t('dashboard.metrics.todayRevenue')}</p>
                   <p className="mt-2 text-[1.6rem] font-semibold leading-none tracking-tight text-ink">{formatCurrency(stats?.todayRevenue ?? 0)}</p>
-                  <p className="mt-2.5 text-[12px] text-ink-muted">Concluídos no dia</p>
+                  <p className="mt-2.5 text-[12px] text-ink-muted">{t('dashboard.metrics.completedToday')}</p>
                 </div>
                 <div className="rounded-2xl border border-neutral-200/70 bg-white/80 p-4">
-                  <p className="text-[10.5px] font-semibold uppercase tracking-[0.16em] text-ink-muted">Semana</p>
+                  <p className="text-[10.5px] font-semibold uppercase tracking-[0.16em] text-ink-muted">{t('dashboard.metrics.week')}</p>
                   <p className="mt-2 text-[1.6rem] font-semibold leading-none tracking-tight text-ink">{formatCurrency(stats?.weekRevenue ?? 0)}</p>
-                  <p className="mt-2.5 text-[12px] text-ink-muted">Receita acumulada</p>
+                  <p className="mt-2.5 text-[12px] text-ink-muted">{t('dashboard.metrics.accumulatedRevenue')}</p>
                 </div>
               </div>
             </div>
@@ -91,17 +91,17 @@ export default function BarberDashboard() {
 
           <Card>
             <CardContent className="pt-6">
-              <p className="eyebrow mb-4 text-ink-muted">Foco imediato</p>
+              <p className="eyebrow mb-4 text-ink-muted">{t('dashboard.focus.title')}</p>
               <div className="space-y-3">
                 <div className="rounded-2xl border border-neutral-200/70 bg-neutral-50 px-4 py-4">
-                  <p className="text-[13px] font-medium text-ink">Próximos atendimentos</p>
+                  <p className="text-[13px] font-medium text-ink">{t('dashboard.focus.nextServices')}</p>
                   <p className="mt-1.5 text-[2rem] font-semibold leading-none tracking-tight text-ink">{upcoming.length}</p>
-                  <p className="mt-2 text-[12.5px] text-ink-muted">Pendentes ou confirmados para hoje.</p>
+                  <p className="mt-2 text-[12.5px] text-ink-muted">{t('dashboard.focus.pendingOrConfirmed')}</p>
                 </div>
                 <div className="rounded-2xl border border-neutral-200/70 bg-neutral-50 px-4 py-4">
-                  <p className="text-[13px] font-medium text-ink">Receita do mês</p>
+                  <p className="text-[13px] font-medium text-ink">{t('dashboard.focus.monthRevenue')}</p>
                   <p className="mt-1.5 text-[1.25rem] font-semibold text-ink">{formatCurrency(stats?.monthRevenue ?? 0)}</p>
-                  <p className="mt-2 text-[12.5px] text-ink-muted">Leitura rápida de performance mensal.</p>
+                  <p className="mt-2 text-[12.5px] text-ink-muted">{t('dashboard.focus.monthPerformance')}</p>
                 </div>
               </div>
             </CardContent>
@@ -110,10 +110,10 @@ export default function BarberDashboard() {
 
         <section className="grid grid-cols-2 gap-4 lg:grid-cols-4">
           {[
-            { label: 'Hoje', value: stats?.todayCount ?? 0, sub: 'agendamentos', icon: Calendar, color: 'bg-blue-100 text-blue-600' },
-            { label: 'Receita hoje', value: formatCurrency(stats?.todayRevenue ?? 0), sub: 'concluídos', icon: TrendingUp, color: 'bg-emerald-100 text-emerald-600' },
-            { label: 'Esta semana', value: formatCurrency(stats?.weekRevenue ?? 0), sub: 'receita', icon: TrendingUp, color: 'bg-violet-100 text-violet-600' },
-            { label: 'Este mês', value: formatCurrency(stats?.monthRevenue ?? 0), sub: 'receita', icon: Scissors, color: 'bg-warning-100 text-warning-700' },
+            { label: t('dashboard.metrics.today'), value: stats?.todayCount ?? 0, sub: t('dashboard.metrics.bookings'), icon: Calendar, color: 'bg-blue-100 text-blue-600' },
+            { label: t('dashboard.metrics.todayRevenue'), value: formatCurrency(stats?.todayRevenue ?? 0), sub: t('dashboard.metrics.completed'), icon: TrendingUp, color: 'bg-emerald-100 text-emerald-600' },
+            { label: t('dashboard.metrics.thisWeek'), value: formatCurrency(stats?.weekRevenue ?? 0), sub: t('dashboard.metrics.revenue'), icon: TrendingUp, color: 'bg-violet-100 text-violet-600' },
+            { label: t('dashboard.metrics.thisMonth'), value: formatCurrency(stats?.monthRevenue ?? 0), sub: t('dashboard.metrics.revenue'), icon: Scissors, color: 'bg-warning-100 text-warning-700' },
           ].map((item) => (
             <div key={item.label} className="rounded-2xl border border-neutral-200/70 bg-white p-4 shadow-soft">
               <div className={`mb-3 flex h-9 w-9 items-center justify-center rounded-xl ${item.color}`}>
@@ -129,7 +129,7 @@ export default function BarberDashboard() {
         {stats?.perDay ? (
           <Card>
             <CardHeader>
-              <CardTitle>Esta semana</CardTitle>
+              <CardTitle>{t('dashboard.metrics.thisWeek')}</CardTitle>
             </CardHeader>
             <CardContent className="pt-0">
               <div className="flex h-24 items-end gap-2">
@@ -156,7 +156,7 @@ export default function BarberDashboard() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-3">
-            <CardTitle>Agenda de hoje</CardTitle>
+            <CardTitle>{t('dashboard.todaySchedule')}</CardTitle>
             <div className="flex items-center gap-1.5 rounded-lg bg-zinc-50 px-2.5 py-1 text-xs text-zinc-400">
               <Clock3 size={12} />
               {format(new Date(), 'HH:mm')}
@@ -168,7 +168,7 @@ export default function BarberDashboard() {
                 <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-zinc-100">
                   <Calendar size={18} className="text-zinc-400" />
                 </div>
-                <p className="text-sm text-zinc-400">Sem agendamentos pendentes para hoje.</p>
+                <p className="text-sm text-zinc-400">{t('dashboard.noPendingToday')}</p>
               </div>
             ) : (
               <div className="space-y-1">

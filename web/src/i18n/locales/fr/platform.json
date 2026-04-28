@@ -40,7 +40,8 @@
         "emailInvalid": "Email invalide",
         "passwordMin": "Minimum 6 caractères",
         "slugTaken": "Cette adresse est déjà utilisée. Choisissez-en une autre."
-      }
+      },
+      "slugPlaceholder": "mon-salon"
     },
     "success": {
       "title": "Confirmez votre email",
@@ -137,7 +138,24 @@
     },
     "testimonials": {
       "section": "Qui l'utilise déjà",
-      "title": "Ce que disent les salons de coiffure"
+      "title": "Ce que disent les salons de coiffure",
+      "items": {
+        "1": {
+          "name": "Ricardo Fernandes",
+          "role": "Studio RF · Lisbonne",
+          "text": "Avant, je gérais les réservations sur WhatsApp jusqu’à minuit. Maintenant, les clients réservent seuls quand ils veulent. Cela m’a complètement libéré."
+        },
+        "2": {
+          "name": "Diogo Almeida",
+          "role": "Barber House · Porto",
+          "text": "J’ai 3 barbiers et la gestion des horaires était chaotique. En 15 minutes de configuration, le problème a disparu."
+        },
+        "3": {
+          "name": "Carlos Mendes",
+          "role": "Fade Studio · Braga",
+          "text": "Les clients adorent pouvoir choisir leur barbier préféré. Les absences ont baissé et les commentaires Instagram ont augmenté."
+        }
+      }
     },
     "pricing": {
       "section": "Tarifs",
@@ -184,6 +202,16 @@
       "a3": "Oui, à tout moment et sans pénalité. Il n'y a pas de contrat annuel obligatoire. Si vous annulez, votre forfait continue jusqu'à la fin de la période payée.",
       "q4": "Que se passe-t-il lorsque j'atteins la limite du forfait gratuit ?",
       "a4": "Nous vous avertirons avant que vous atteigniez la limite. Une fois contactés, les clients ne peuvent pas effectuer de nouvelles réservations avant le mois prochain ou jusqu'à ce que vous effectuiez une mise à niveau : toutes les données sont conservées."
+    },
+    "mockup": {
+      "service": "Service",
+      "serviceName": "Coupe + Barbe",
+      "barber": "Barbier",
+      "tomorrow": "Demain, Ven 25 Avr",
+      "confirmBooking": "Confirmer la réservation",
+      "bookingConfirmed": "Réservation confirmée",
+      "bookingDate": "Ven 25 Avr · 11:00",
+      "shopLocation": "Taipas, Guimarães"
     }
   }
 }

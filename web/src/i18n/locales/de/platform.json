@@ -40,7 +40,8 @@
         "emailInvalid": "Ungültige E-Mail",
         "passwordMin": "Mindestens 6 Zeichen",
         "slugTaken": "Diese Adresse wird bereits verwendet. Wählen Sie eine andere."
-      }
+      },
+      "slugPlaceholder": "mein-friseursalon"
     },
     "success": {
       "title": "Bestätigen Sie Ihre E-Mail",
@@ -137,7 +138,24 @@
     },
     "testimonials": {
       "section": "Wer nutzt es bereits?",
-      "title": "Was Friseurläden sagen"
+      "title": "Was Friseurläden sagen",
+      "items": {
+        "1": {
+          "name": "Ricardo Fernandes",
+          "role": "Studio RF · Lissabon",
+          "text": "Früher habe ich Buchungen bis Mitternacht über WhatsApp bearbeitet. Jetzt buchen Kunden selbst, wann sie möchten. Das hat mich komplett entlastet."
+        },
+        "2": {
+          "name": "Diogo Almeida",
+          "role": "Barber House · Porto",
+          "text": "Ich habe 3 Barbiere und die Terminplanung war chaotisch. Nach 15 Minuten Einrichtung war das Problem verschwunden."
+        },
+        "3": {
+          "name": "Carlos Mendes",
+          "role": "Fade Studio · Braga",
+          "text": "Kunden lieben es, ihren Lieblingsbarbier wählen zu können. No-Shows gingen zurück und die Instagram-Kommentare nahmen zu."
+        }
+      }
     },
     "pricing": {
       "section": "Preise",
@@ -184,6 +202,16 @@
       "a3": "Ja, jederzeit und ohne Strafen. Es gibt keine verpflichtenden Jahresverträge. Wenn Sie kündigen, bleibt Ihr Plan bis zum Ende des bezahlten Zeitraums bestehen.",
       "q4": "Was passiert, wenn ich das Limit für den kostenlosen Plan erreiche?",
       "a4": "Wir warnen Sie, bevor Sie das Limit erreichen. Sobald dies erreicht ist, können Kunden erst im nächsten Monat oder bis zu Ihrem Upgrade neue Buchungen vornehmen – alle Daten bleiben erhalten."
+    },
+    "mockup": {
+      "service": "Dienstleistung",
+      "serviceName": "Haarschnitt + Bart",
+      "barber": "Barbier",
+      "tomorrow": "Morgen, Fr 25. Apr",
+      "confirmBooking": "Buchung bestätigen",
+      "bookingConfirmed": "Buchung bestätigt",
+      "bookingDate": "Fr 25. Apr · 11:00",
+      "shopLocation": "Taipas, Guimarães"
     }
   }
 }

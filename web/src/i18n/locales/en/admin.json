@@ -169,7 +169,14 @@
     "confirmLabel": "Confirm password",
     "submitButton": "Save password",
     "successTitle": "Password updated",
-    "successMsg": "You can now sign in with your new password."
+    "successMsg": "You can now sign in with your new password.",
+    "errors": {
+      "passwordMin": "Minimum 6 characters",
+      "confirmRequired": "Confirm the password",
+      "passwordMismatch": "Passwords must match",
+      "missingToken": "The recovery link is incomplete.",
+      "updateFailed": "Could not update the password."
+    }
   },
   "resendVerification": {
     "title": "Resend confirmation",
@@ -188,7 +195,8 @@
       "strong": "strong",
       "calm": "quieter",
       "stable": "stable",
-      "todayIs": "Today the operation is {{signal}}."
+      "todayIs": "Today the operation is {{signal}}.",
+      "subtitle": "{{date}}. Use this panel to understand the rhythm of the shop, where you are gaining margin and where it pays off to act early."
     },
     "stats": {
       "accumulated": "Accumulated revenue",
@@ -505,7 +513,13 @@
     "removeConfirm": "Remove barber?",
     "ofMax": "of {{max}}",
     "errors": {
-      "photoUpload": "Could not upload the photo"
+      "photoUpload": "Could not upload the photo",
+      "passwordMin": "Minimum 6 characters",
+      "passwordMismatch": "Passwords do not match",
+      "accessSave": "Could not save. Check that the server is up to date.",
+      "IMAGE_READ_ERROR": "Could not read the image",
+      "IMAGE_PREPARE_ERROR": "Could not prepare the image",
+      "IMAGE_PROCESS_ERROR": "Could not process the image"
     }
   },
   "services": {
@@ -534,7 +548,8 @@
       "price": "Price",
       "duration": "Duration",
       "status": "Status"
-    }
+    },
+    "placeholder": "Hydration"
   },
   "products": {
     "title": "Products",
@@ -551,10 +566,11 @@
       "plan": "Plan",
       "price": "Price",
       "status": "Status"
-    }
+    },
+    "placeholder": "Monthly Plan"
   },
   "schedule": {
-    "title": "Schedule",
+    "title": "Opening hours",
     "addSlot": "Add slot",
     "days": {
       "0": "Sunday",
@@ -564,7 +580,14 @@
       "4": "Thursday",
       "5": "Friday",
       "6": "Saturday"
-    }
+    },
+    "description": "Configure days and opening hours directly on each day.",
+    "configureFor": "Configure hours for",
+    "barbersWithOwnHours": "Barbers with their own hours (ignore default)",
+    "barbersWithOwnHoursHint": "Select the barber in the selector above to edit their hours. Or click \"Inherit default\" to remove their own hours and use the shop's.",
+    "editButton": "→ edit",
+    "newPeriod": "New period",
+    "until": "until"
   },
   "reports": {
     "title": "Reports",
@@ -812,6 +835,15 @@
       "plansVisibility": "Plans {{state}}",
       "productsVisibility": "Products {{state}}",
       "imageAlt": "Preview {{index}}"
+    },
+    "instagramPlaceholder": "@my_barbershop",
+    "errors": {
+      "imagesTooLargeBatch": "The images are too large to save at once. Try fewer photos at a time or lighter images.",
+      "saveGallery": "Could not save the gallery",
+      "uploadLogo": "Could not upload the logo",
+      "uploadAccountPhoto": "Could not upload the account photo",
+      "uploadHeroImage": "Could not upload the main image",
+      "uploadGallery": "Could not upload the gallery images"
     }
   },
   "billing": {

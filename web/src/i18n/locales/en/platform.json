@@ -1,6 +1,9 @@
 {
   "register": {
-    "brand": { "name": "Trimio Studio", "subtitle": "For professional barbershops" },
+    "brand": {
+      "name": "Trimio Studio",
+      "subtitle": "For professional barbershops"
+    },
     "hero": {
       "eyebrow": "Start today",
       "title": "Your business online in minutes.",
@@ -37,7 +40,8 @@
         "emailInvalid": "Invalid email",
         "passwordMin": "Minimum 6 characters",
         "slugTaken": "This address is already in use. Choose another."
-      }
+      },
+      "slugPlaceholder": "my-barbershop"
     },
     "success": {
       "title": "Confirm your email",
@@ -67,7 +71,11 @@
     "goToLogin": "Go to login"
   },
   "home": {
-    "nav": { "pricing": "Pricing", "login": "Sign in", "startFree": "Start for free" },
+    "nav": {
+      "pricing": "Pricing",
+      "login": "Sign in",
+      "startFree": "Start for free"
+    },
     "hero": {
       "pill": "Booking system for barbershops",
       "line1": "Customers book.",
@@ -117,7 +125,27 @@
       "b4Title": "Data that makes sense",
       "b4Desc": "Billing reports, customer history and cancellation rates — all in one panel."
     },
-    "testimonials": { "section": "Who's already using it", "title": "What barbershops say" },
+    "testimonials": {
+      "section": "Who's already using it",
+      "title": "What barbershops say",
+      "items": {
+        "1": {
+          "name": "Ricardo Fernandes",
+          "role": "Studio RF · Lisbon",
+          "text": "I used to handle bookings on WhatsApp until midnight. Now clients book by themselves whenever they want. It completely freed me up."
+        },
+        "2": {
+          "name": "Diogo Almeida",
+          "role": "Barber House · Porto",
+          "text": "I have 3 barbers and managing schedules was chaos. After 15 minutes of setup, the problem disappeared."
+        },
+        "3": {
+          "name": "Carlos Mendes",
+          "role": "Fade Studio · Braga",
+          "text": "Clients love being able to choose their favorite barber. No-shows dropped and Instagram comments increased."
+        }
+      }
+    },
     "pricing": {
       "section": "Pricing",
       "title": "Start free. Grow when you want.",
@@ -172,6 +200,18 @@
       "alreadyHaveAccount": "I already have an account",
       "note": "Free plan forever · 30 bookings/month included · No card"
     },
-    "footer": { "createAccount": "Create account" }
+    "footer": {
+      "createAccount": "Create account"
+    },
+    "mockup": {
+      "service": "Service",
+      "serviceName": "Haircut + Beard",
+      "barber": "Barber",
+      "tomorrow": "Tomorrow, Fri Apr 25",
+      "confirmBooking": "Confirm booking",
+      "bookingConfirmed": "Booking confirmed",
+      "bookingDate": "Fri Apr 25 · 11:00",
+      "shopLocation": "Taipas, Guimarães"
+    }
   }
 }

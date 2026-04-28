@@ -12,24 +12,31 @@ import { buildGoogleCalendarUrl, detectCalendarPlatform, downloadIcsFile } from 
 import { Button } from '@/components/ui/Button'
 import { Calendar, CheckCircle2, Clock, Download, ExternalLink, Scissors, User } from 'lucide-react'
 
-function getBookingErrorMessage(err: unknown) {
+function getBookingErrorMessage(err: unknown, fallback: string) {
   const apiMessage =
     typeof err === 'object' && err !== null && 'response' in err &&
     typeof (err as { response?: { data?: { error?: string } } }).response?.data?.error === 'string'
       ? (err as { response?: { data?: { error?: string } } }).response!.data!.error!
       : null
-  if (!apiMessage) return err instanceof Error ? err.message : 'Booking error'
+  if (!apiMessage) return err instanceof Error ? err.message : fallback
   return apiMessage
 }
 
-function buildCalendarEvent(item: BookingDraft, responsibleName: string, responsiblePhone: string | undefined, barbershopName: string, location: string) {
+function buildCalendarEvent(
+  item: BookingDraft,
+  responsibleName: string,
+  responsiblePhone: string | undefined,
+  barbershopName: string,
+  location: string,
+  labels: { with: string; bookingAt: string; customer: string; responsible: string; contact: string }
+) {
   return {
-    title: `${item.service.name} com ${item.barber.name}`,
+    title: `${item.service.name} ${labels.with} ${item.barber.name}`,
     description: [
-      `Reserva em ${barbershopName}.`,
-      `Cliente: ${item.attendeeName}.`,
-      item.attendeeName !== responsibleName ? `Responsável: ${responsibleName}.` : null,
-      responsiblePhone ? `Contacto: ${responsiblePhone}.` : null,
+      `${labels.bookingAt} ${barbershopName}.`,
+      `${labels.customer}: ${item.attendeeName}.`,
+      item.attendeeName !== responsibleName ? `${labels.responsible}: ${responsibleName}.` : null,
+      responsiblePhone ? `${labels.contact}: ${responsiblePhone}.` : null,
     ].filter(Boolean).join(' '),
     location,
     startTime: toWallClockDate(item.slot.startTime),
@@ -80,7 +87,14 @@ export function StepConfirmation() {
       customer?.name ?? draft.attendeeName,
       customer?.phone,
       barbershop?.name ?? 'Trimio',
-      barbershop?.address || barbershop?.name || 'Barbearia'
+      barbershop?.address || barbershop?.name || t('booking.steps.confirmation.defaultLocation'),
+      {
+        with: t('booking.steps.confirmation.calendar.with'),
+        bookingAt: t('booking.steps.confirmation.calendar.bookingAt'),
+        customer: t('booking.steps.confirmation.calendar.customer'),
+        responsible: t('booking.steps.confirmation.calendar.responsible'),
+        contact: t('booking.steps.confirmation.calendar.contact'),
+      }
     )
     if (calendarPlatform === 'ios') {
       downloadIcsFile(event, `booking-${draft.attendeeName.toLowerCase().replace(/\s+/g, '-')}.ics`)
@@ -118,7 +132,7 @@ export function StepConfirmation() {
       setCreatedBooking(data)
     },
     onError: (error: unknown) => {
-      setBookingError(getBookingErrorMessage(error))
+      setBookingError(getBookingErrorMessage(error, t('common:error.generic')))
     },
   })
 
@@ -161,7 +175,14 @@ export function StepConfirmation() {
                   customer?.name ?? draft.attendeeName,
                   customer?.phone,
                   barbershop?.name ?? 'Trimio',
-                  barbershop?.address || barbershop?.name || 'Barbearia'
+                  barbershop?.address || barbershop?.name || t('booking.steps.confirmation.defaultLocation'),
+                  {
+                    with: t('booking.steps.confirmation.calendar.with'),
+                    bookingAt: t('booking.steps.confirmation.calendar.bookingAt'),
+                    customer: t('booking.steps.confirmation.calendar.customer'),
+                    responsible: t('booking.steps.confirmation.calendar.responsible'),
+                    contact: t('booking.steps.confirmation.calendar.contact'),
+                  }
                 )
                 downloadIcsFile(event, `booking-${draft.attendeeName.toLowerCase().replace(/\s+/g, '-')}.ics`)
               }}
@@ -221,7 +242,7 @@ export function StepConfirmation() {
               <p className="mt-1 font-medium text-ink">{format(toWallClockDate(draft.slot.startTime), 'HH:mm')}</p>
             </div>
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">Total</p>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">{t('booking.summary.total')}</p>
               <p className="mt-1 font-medium text-ink">{formatCurrency(draft.totalPrice)}</p>
             </div>
           </div>

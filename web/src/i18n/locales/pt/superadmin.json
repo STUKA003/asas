@@ -88,6 +88,159 @@
   },
   "barbershops": {
     "title": "Barbearias",
-    "subtitle": "Gestão centralizada das contas, planos e estado das operações."
+    "subtitle": "Gestão centralizada das contas, planos e estado das operações.",
+    "plans": {
+      "FREE": "Grátis",
+      "BASIC": "Básico",
+      "PRO": "Pro"
+    },
+    "durations": {
+      "month1": "1 mês",
+      "months3": "3 meses",
+      "months6": "6 meses",
+      "year1": "1 ano"
+    },
+    "identity": {
+      "shopName": "Nome da barbearia",
+      "namePlaceholder": "Nome",
+      "siteSlug": "Slug do site",
+      "slugPlaceholder": "slug",
+      "generateFromName": "Gerar a partir do nome",
+      "saving": "A guardar…",
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "errorSave": "Erro ao guardar alterações"
+    },
+    "plan": {
+      "plan": "Plano",
+      "expiration": "Expiração",
+      "expiresOn": "Expira em {{date}}"
+    },
+    "suspend": {
+      "reason": "Motivo da suspensão (opcional)",
+      "reasonPlaceholder": "Ex: pagamento em atraso",
+      "suspending": "A suspender…",
+      "suspend": "Suspender",
+      "suspended": "Suspensa: {{reason}}",
+      "noReason": "sem motivo",
+      "reactivating": "…",
+      "reactivate": "Reativar",
+      "close": "Fechar"
+    },
+    "password": {
+      "noAdmin": "Esta barbearia não tem conta admin associada.",
+      "newPasswordFor": "Vais definir uma nova password para",
+      "newPassword": "Nova password",
+      "minChars": "Mínimo 6 caracteres",
+      "confirmPassword": "Confirmar password",
+      "repeatPassword": "Repete a password",
+      "saveNew": "Guardar nova password",
+      "errorMin": "A password tem de ter pelo menos 6 caracteres",
+      "errorMismatch": "As passwords não coincidem",
+      "errorUpdate": "Erro ao atualizar password"
+    },
+    "create": {
+      "title": "Nova barbearia",
+      "shopName": "Nome da barbearia",
+      "shopNamePlaceholder": "Barbearia do João",
+      "addressSlug": "Endereço (slug)",
+      "adminName": "Nome do admin",
+      "adminNamePlaceholder": "João Silva",
+      "adminEmail": "E-mail do admin",
+      "adminEmailPlaceholder": "joao@email.com",
+      "password": "Password",
+      "passwordPlaceholder": "Mínimo 6 caracteres",
+      "initialPlan": "Plano inicial",
+      "creating": "A criar…",
+      "createButton": "Criar barbearia",
+      "errorCreate": "Erro ao criar barbearia",
+      "errorSlugTaken": "Este endereço já está em uso."
+    },
+    "list": {
+      "title": "Barbearias",
+      "registered": "{{count}} registadas",
+      "newButton": "Nova barbearia",
+      "searchPlaceholder": "Pesquisar por nome, slug, email ou dono…",
+      "verification": "Verificação",
+      "accountHealth": "Saúde da conta",
+      "loading": "A carregar…",
+      "noneFound": "Nenhuma barbearia encontrada."
+    },
+    "verificationFilter": {
+      "all": "Todas",
+      "pending": "Pendentes",
+      "verified": "Verificadas"
+    },
+    "healthFilter": {
+      "all": "Todas",
+      "active": "Subscrição ativa",
+      "suspended": "Suspensas",
+      "unverified": "Email pendente",
+      "no-plan": "Sem plano"
+    },
+    "badges": {
+      "suspended": "Suspensa",
+      "expired": "Expirado",
+      "emailPending": "Email pendente"
+    },
+    "stats": {
+      "customers": "clientes",
+      "bookings": "agendamentos",
+      "barber_one": "barbeiro",
+      "barber_other": "barbeiros",
+      "expires": "Expira: {{date}}",
+      "lastLogin": "Último login: {{date}}"
+    },
+    "actions": {
+      "opening": "A abrir…",
+      "supportSession": "Sessão de suporte",
+      "resending": "A reenviar…",
+      "resendVerification": "Reenviar confirmação",
+      "confirming": "A confirmar…",
+      "markEmailVerified": "Marcar email verificado",
+      "editIdentity": "Editar nome / slug",
+      "changePlan": "Alterar plano",
+      "changePassword": "Trocar password",
+      "reactivate": "Reativar",
+      "suspend": "Suspender",
+      "sure": "Tens a certeza?",
+      "deleting": "A apagar…",
+      "delete": "Apagar",
+      "cancel": "Cancelar"
+    },
+    "detail": {
+      "adminAccount": "Conta admin",
+      "name": "Nome:",
+      "email": "Email:",
+      "state": "Estado:",
+      "verified": "Verificado",
+      "pending": "Pendente",
+      "createdAt": "Criada em:",
+      "noOwner": "Sem dono associado.",
+      "health": "Saúde da conta",
+      "subscriptionActive": "Subscrição ativa",
+      "noSubscription": "Sem subscrição",
+      "active": "Ativa",
+      "suspended": "Suspensa",
+      "emailVerified": "Email verificado",
+      "emailPending": "Email pendente",
+      "planLabel": "Plano {{plan}}",
+      "noPlan": "Sem plano",
+      "stripe": "Stripe:"
+    },
+    "security": {
+      "title": "Segurança",
+      "loginsOk": "Logins OK",
+      "failures": "Falhas",
+      "resets": "Resets",
+      "lastLogin": "Último login",
+      "lastFailure": "Última falha",
+      "lastReset": "Último reset",
+      "recentActivity": "Atividade recente",
+      "noActivity": "Sem atividade registada.",
+      "eventLoginSuccess": "Login com sucesso",
+      "eventLoginFailure": "Falha de login",
+      "eventPasswordReset": "Pedido de reset password"
+    }
   }
 }

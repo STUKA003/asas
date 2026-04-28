@@ -14,7 +14,7 @@ import { publicApi } from '@/lib/publicApi'
 import { formatDuration, getBookingClientName, toWallClockDate } from '@/lib/utils'
 import { useTenant } from '@/providers/TenantProvider'
 
-function getApiErrorMessage(error: unknown) {
+function getApiErrorMessage(error: unknown, fallback: string) {
   const apiMessage =
     typeof error === 'object' &&
     error !== null &&
@@ -23,7 +23,7 @@ function getApiErrorMessage(error: unknown) {
       ? (error as { response?: { data?: { error?: string } } }).response!.data!.error!
       : null
 
-  return apiMessage ?? (error instanceof Error ? error.message : 'Ocorreu um erro inesperado.')
+  return apiMessage ?? (error instanceof Error ? error.message : fallback)
 }
 
 export default function ManageBooking() {
@@ -65,7 +65,7 @@ export default function ManageBooking() {
     },
     onError: (error: unknown) => {
       setFeedback(null)
-      setErrorMessage(getApiErrorMessage(error))
+      setErrorMessage(getApiErrorMessage(error, t('common:error.generic')))
     },
   }
 
@@ -91,7 +91,7 @@ export default function ManageBooking() {
     mutationFn: (startTime: string) => publicApi(slug).rescheduleManagedBooking({ token, startTime }),
     ...baseMutationOptions,
     onSuccess: async () => {
-      setFeedback('Marcação remarcada com sucesso.')
+      setFeedback(t('manageBooking.actions.bookingRescheduled'))
       setSelectedSlot(null)
       await baseMutationOptions.onSuccess()
     },
@@ -112,7 +112,7 @@ export default function ManageBooking() {
     },
     onError: (error: unknown) => {
       setFeedback(null)
-      setErrorMessage(getApiErrorMessage(error))
+      setErrorMessage(getApiErrorMessage(error, t('common:error.generic')))
     },
   })
 
@@ -125,7 +125,7 @@ export default function ManageBooking() {
     },
     onError: (error: unknown) => {
       setFeedback(null)
-      setErrorMessage(getApiErrorMessage(error))
+      setErrorMessage(getApiErrorMessage(error, t('common:error.generic')))
     },
   })
 
@@ -160,7 +160,7 @@ export default function ManageBooking() {
                   {t('manageBooking.title')}
                 </h1>
                 <p className="mt-3 max-w-2xl text-sm leading-6 text-ink-muted">
-                  {t('manageBooking.subtitle', { shopName: barbershop?.name ?? 'barbearia' })}
+                  {t('manageBooking.subtitle', { shopName: barbershop?.name ?? t('privacy.shopFallback') })}
                 </p>
               </div>
               {booking ? <StatusBadge status={booking.status} /> : null}
@@ -172,7 +172,7 @@ export default function ManageBooking() {
               </div>
             ) : bookingQuery.isError ? (
               <div className="mt-8 rounded-2xl border border-danger-200 bg-danger-50 p-4 text-sm text-danger-700">
-                {getApiErrorMessage(bookingQuery.error)}
+              {getApiErrorMessage(bookingQuery.error, t('common:error.generic'))}
               </div>
             ) : booking ? (
               <div className="mt-8 space-y-6">
@@ -253,13 +253,12 @@ export default function ManageBooking() {
                   {booking.privacyConsentAt ? (
                     <div className="mt-4 rounded-xl border border-neutral-100 bg-neutral-50 px-4 py-3 text-xs text-ink-muted">
                       <p>
-                        <span className="font-medium text-ink">Consentimento dado</span> em{' '}
-                        {format(new Date(booking.privacyConsentAt), "d 'de' MMMM 'de' yyyy 'às' HH:mm", { locale: dateFnsLocale })}
-                        {booking.privacyConsentVersion ? ` · versão ${booking.privacyConsentVersion}` : null}
+                        <span className="font-medium text-ink">{t('manageBooking.privacy.consentGiven')}</span>{' '}
+                        {format(new Date(booking.privacyConsentAt), 'PPpp', { locale: dateFnsLocale })}
+                        {booking.privacyConsentVersion ? t('manageBooking.privacy.versionSuffix', { version: booking.privacyConsentVersion }) : null}
                       </p>
                       <p className="mt-0.5">
-                        Os dados identificativos são conservados por 3 anos a partir da última reserva.
-                        Podes pedir a anonimização a qualquer momento.
+                        {t('manageBooking.privacy.info')}
                       </p>
                     </div>
                   ) : null}
@@ -292,12 +291,12 @@ export default function ManageBooking() {
                     <div ref={eraseConfirmRef} className="mt-4 rounded-xl border border-danger-200 bg-danger-50 p-4">
                       <p className="text-sm font-semibold text-danger-800">{t('manageBooking.privacy.confirmAnonymize.title')}</p>
                       <p className="mt-1.5 text-xs leading-5 text-danger-700">
-                        Esta acção irá <strong>substituir os teus dados pessoais identificativos</strong> (nome, telefone, email, observações) por um identificador anónimo em toda a barbearia <strong>{barbershop?.name}</strong>.
+                        {t('manageBooking.privacy.confirmAnonymize.warning', { shopName: barbershop?.name })}
                       </p>
                       <ul className="mt-2 space-y-1 text-xs text-danger-700">
-                        <li>· O histórico operacional das reservas (datas, serviços, duração) é mantido de forma anónima.</li>
-                        <li>· Esta acção não pode ser revertida.</li>
-                        <li>· O link desta reserva deixará de funcionar após a anonimização.</li>
+                        <li>{t('manageBooking.privacy.confirmAnonymize.bullet1')}</li>
+                        <li>{t('manageBooking.privacy.confirmAnonymize.bullet2')}</li>
+                        <li>{t('manageBooking.privacy.confirmAnonymize.bullet3')}</li>
                       </ul>
                       <div className="mt-3 flex gap-2">
                         <Button
@@ -306,7 +305,7 @@ export default function ManageBooking() {
                           className="flex-1"
                           disabled={eraseDataMutation.isPending}
                         >
-                          Cancelar
+                          {t('common:btn.cancel')}
                         </Button>
                         <Button
                           onClick={() => eraseDataMutation.mutate()}
@@ -321,8 +320,8 @@ export default function ManageBooking() {
                   ) : null}
 
                   <p className="mt-3 text-[11px] text-ink-muted">
-                    Para exportar ou anonimizar dados noutras barbearias onde tenhas reservas, acede ao link de gestão dessas reservas.
-                    Para outros pedidos RGPD, contacta <a href="mailto:privacidade@trimio.pt" className="underline underline-offset-2">privacidade@trimio.pt</a>.
+                    {t('manageBooking.privacy.otherRequests')}{' '}
+                    <a href="mailto:privacidade@trimio.pt" className="underline underline-offset-2">privacidade@trimio.pt</a>.
                   </p>
                 </div>
 
@@ -341,9 +340,9 @@ export default function ManageBooking() {
                   <div className="rounded-2xl border border-neutral-200 bg-white p-5">
                     <div className="flex flex-wrap items-center justify-between gap-3">
                       <div>
-                        <p className="text-lg font-semibold text-ink">Remarcar</p>
+                        <p className="text-lg font-semibold text-ink">{t('manageBooking.reschedule.title')}</p>
                         <p className="mt-1 text-sm text-ink-muted">
-                          Escolhe outro dia e um horário livre para o mesmo serviço.
+                          {t('manageBooking.reschedule.subtitle')}
                         </p>
                       </div>
                       <div className="min-w-[14rem]">
@@ -366,7 +365,7 @@ export default function ManageBooking() {
                         <PageLoader />
                       ) : availabilityQuery.isError ? (
                         <div className="rounded-2xl border border-danger-200 bg-danger-50 p-4 text-sm text-danger-700">
-                          {getApiErrorMessage(availabilityQuery.error)}
+                          {getApiErrorMessage(availabilityQuery.error, t('common:error.generic'))}
                         </div>
                       ) : availabilityQuery.data?.slots.length ? (
                         <div className="grid gap-2 sm:grid-cols-3 lg:grid-cols-4">
@@ -390,7 +389,7 @@ export default function ManageBooking() {
                         </div>
                       ) : (
                         <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-4 text-sm text-ink-muted">
-                          Sem horários disponíveis para esse dia.
+                          {t('manageBooking.reschedule.noSlots')}
                         </div>
                       )}
                     </div>
@@ -402,7 +401,7 @@ export default function ManageBooking() {
                         loading={rescheduleMutation.isPending}
                       >
                         <RefreshCw size={16} />
-                        Confirmar nova hora
+                        {t('manageBooking.reschedule.confirmButton')}
                       </Button>
                     </div>
                   </div>

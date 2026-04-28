@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { WheelEvent as ReactWheelEvent } from 'react'
 import { format, isToday } from 'date-fns'
+import { useTranslation } from 'react-i18next'
 import { cn, formatCurrency, getBookingClientName, redirectVerticalWheelToParent, toWallClockDate } from '@/lib/utils'
 import type { Booking, Barber, BlockedTime } from '@/lib/types'
 
@@ -57,6 +58,7 @@ interface Props {
 }
 
 export function CalendarView({ date, bookings, barbers, blockedTimes = [], effectiveHours, slotGranularityMinutes = 15, onBookingClick, onSlotClick, onReschedule }: Props) {
+  const { t } = useTranslation('admin')
   const hours       = Array.from({ length: HOUR_END - HOUR_START }, (_, i) => HOUR_START + i)
   const totalHeight = (HOUR_END - HOUR_START) * HOUR_HEIGHT
   const [now, setNow] = useState(() => new Date())
@@ -498,7 +500,7 @@ export function CalendarView({ date, bookings, barbers, blockedTimes = [], effec
                       'transition-all duration-150'
                     )}
                     style={{ top: top + 1, height, touchAction: onReschedule ? 'none' : 'auto' }}
-                    title={`${getBookingClientName(bk)} · ${bk.services[0]?.service.name ?? 'Serviço'} · ${format(toWallClockDate(bk.startTime), 'HH:mm')}`}
+                    title={`${getBookingClientName(bk)} · ${bk.services[0]?.service.name ?? t('services.title')} · ${format(toWallClockDate(bk.startTime), 'HH:mm')}`}
                   >
                     <div className={cn('w-1 shrink-0 rounded-l-xl', s.bar)} />
                     <div className={cn('min-w-0 flex-1 px-2 py-1.5', s.bg, s.text)}>

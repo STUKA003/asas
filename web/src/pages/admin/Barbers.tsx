@@ -22,7 +22,7 @@ function readFileAsDataUrl(file: File) {
   return new Promise<string>((resolve, reject) => {
     const reader = new FileReader()
     reader.onload = () => resolve(String(reader.result ?? ''))
-    reader.onerror = () => reject(new Error('Nao foi possivel ler a imagem'))
+    reader.onerror = () => reject(new Error('IMAGE_READ_ERROR'))
     reader.readAsDataURL(file)
   })
 }
@@ -43,14 +43,14 @@ async function compressImage(file: File) {
       const ctx = canvas.getContext('2d')
 
       if (!ctx) {
-        reject(new Error('Nao foi possivel preparar a imagem'))
+        reject(new Error('IMAGE_PREPARE_ERROR'))
         return
       }
 
       ctx.drawImage(image, 0, 0, width, height)
       resolve(canvas.toDataURL('image/jpeg', 0.76))
     }
-    image.onerror = () => reject(new Error('Nao foi possivel processar a imagem'))
+    image.onerror = () => reject(new Error('IMAGE_PROCESS_ERROR'))
     image.src = source
   })
 }
@@ -64,14 +64,15 @@ const schema = z.object({
 })
 type FormData = z.infer<typeof schema>
 
-const passwordSchema = z.object({
-  password: z.string().min(6, 'Mínimo 6 caracteres'),
-  confirm:  z.string(),
-}).refine(d => d.password === d.confirm, { message: 'Passwords não coincidem', path: ['confirm'] })
-type PasswordFormData = z.infer<typeof passwordSchema>
+type PasswordFormData = { password: string; confirm: string }
 
 export default function Barbers() {
   const qc = useQueryClient()
+  const { t } = useTranslation(['admin', 'common'])
+  const passwordSchema = z.object({
+    password: z.string().min(6, t('barbers.errors.passwordMin')),
+    confirm:  z.string(),
+  }).refine(d => d.password === d.confirm, { message: t('barbers.errors.passwordMismatch'), path: ['confirm'] })
   const [modalOpen, setModalOpen]     = useState(false)
   const [accessModal, setAccessModal] = useState<Barber | null>(null)
   const [editing, setEditing]         = useState<Barber | null>(null)
@@ -105,7 +106,7 @@ export default function Barbers() {
 
   const onMutationError = (err: unknown) => {
     const msg = (err as { response?: { data?: { error?: string } } })?.response?.data?.error
-    setMutationError(msg ?? 'Ocorreu um erro.')
+    setMutationError(msg ?? t('common:error.generic'))
   }
 
   const create  = useMutation({ mutationFn: (d: FormData)  => barbersApi.create(d),              onSuccess: () => { invalidate(); closeModal() }, onError: onMutationError })
@@ -117,7 +118,7 @@ export default function Barbers() {
     onSuccess: () => { invalidate(); setAccessModal(null); setAccessError('') },
     onError: (err: unknown) => {
       const msg = (err as { response?: { data?: { error?: string } } })?.response?.data?.error
-      setAccessError(msg ?? 'Erro ao guardar. Verifica se o servidor está atualizado.')
+      setAccessError(msg ?? t('barbers.errors.accessSave'))
     },
   })
 
@@ -138,7 +139,7 @@ export default function Barbers() {
       const dataUrl = await compressImage(file)
       setValue('avatar', dataUrl, { shouldDirty: true })
     } catch (error) {
-      setAvatarError(error instanceof Error ? error.message : 'Nao foi possivel carregar a foto')
+      setAvatarError(error instanceof Error ? t(`barbers.errors.${error.message}`, { defaultValue: t('barbers.errors.photoUpload') }) : t('barbers.errors.photoUpload'))
     }
 
     event.target.value = ''
@@ -149,15 +150,19 @@ export default function Barbers() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold">Barbeiros</h1>
+            <h1 className="text-2xl font-bold">{t('barbers.title')}</h1>
             <p className="text-zinc-500 text-sm mt-1">
-              {activeBarbers} ativo{activeBarbers !== 1 ? 's' : ''}
-              {maxBarbers !== null && ` de ${maxBarbers}`}
-              {' · '}{data.length} cadastrado{data.length !== 1 ? 's' : ''}
+              {t('barbers.subtitle', {
+                active: activeBarbers,
+                s: activeBarbers !== 1 ? 's' : '',
+                maxStr: maxBarbers !== null ? ` ${t('barbers.ofMax', { max: maxBarbers })}` : '',
+                total: data.length,
+                s2: data.length !== 1 ? 's' : '',
+              })}
             </p>
           </div>
           <Button onClick={openCreate} disabled={atLimit} className="gap-2">
-            <Plus size={16} /> Novo barbeiro
+            <Plus size={16} /> {t('barbers.newButton')}
           </Button>
         </div>
 
@@ -165,10 +170,10 @@ export default function Barbers() {
           <div className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 text-sm text-amber-700 dark:text-amber-300">
             <AlertTriangle size={16} className="shrink-0" />
             <span className="flex-1">
-              Atingiste o limite de <strong>{maxBarbers} barbeiro{maxBarbers !== 1 ? 's' : ''} ativo{maxBarbers !== 1 ? 's' : ''}</strong> do teu plano.
+              {t('barbers.atLimit', { max: maxBarbers, s: maxBarbers !== 1 ? 's' : '' })}
             </span>
             <Link to="/admin/billing" className="shrink-0 font-semibold underline hover:no-underline">
-              Fazer upgrade
+              {t('barbers.doUpgrade')}
             </Link>
           </div>
         )}
@@ -181,7 +186,7 @@ export default function Barbers() {
               keyExtractor={(b) => b.id}
               columns={[
                 {
-                  key: 'name', label: 'Barbeiro',
+                  key: 'name', label: t('barbers.columns.barber'),
                   render: (b) => (
                     <div className="flex items-center gap-3">
                       <Avatar name={b.name} src={b.avatar} size="sm" />
@@ -192,29 +197,29 @@ export default function Barbers() {
                     </div>
                   ),
                 },
-                { key: 'phone', label: 'Telefone', render: (b) => b.phone ?? '-' },
+                { key: 'phone', label: t('barbers.columns.phone'), render: (b) => b.phone ?? '-' },
                 {
-                  key: 'active', label: 'Status',
+                  key: 'active', label: t('barbers.columns.status'),
                   render: (b) => b.active
-                    ? <Badge>Ativo</Badge>
-                    : <span className="text-xs text-zinc-400">Inativo</span>,
+                    ? <Badge>{t('barbers.active')}</Badge>
+                    : <span className="text-xs text-zinc-400">{t('barbers.inactive')}</span>,
                 },
                 {
-                  key: 'access', label: 'Acesso portal',
+                  key: 'access', label: t('barbers.columns.portalAccess'),
                   render: (b) => (b as Barber & { hasAccess?: boolean }).hasAccess
-                    ? <span className="inline-flex items-center gap-1 text-xs text-emerald-600 font-medium"><ShieldCheck size={12} /> Ativo</span>
-                    : <span className="inline-flex items-center gap-1 text-xs text-zinc-400"><ShieldOff size={12} /> Sem acesso</span>,
+                    ? <span className="inline-flex items-center gap-1 text-xs text-emerald-600 font-medium"><ShieldCheck size={12} /> {t('barbers.hasAccess')}</span>
+                    : <span className="inline-flex items-center gap-1 text-xs text-zinc-400"><ShieldOff size={12} /> {t('barbers.noAccess')}</span>,
                 },
               ]}
               actions={(b) => (
                 <div className="flex items-center gap-2 justify-end">
-                  <Button size="sm" variant="ghost" title="Gerir acesso ao portal"
+                  <Button size="sm" variant="ghost" title={t('barbers.accessModal.title')}
                     onClick={() => { setAccessModal(b); resetPw() }}>
                     <KeyRound size={14} />
                   </Button>
                   <Button size="sm" variant="ghost" onClick={() => openEdit(b)}><Pencil size={14} /></Button>
                   <Button size="sm" variant="ghost" className="text-red-500 hover:text-red-600"
-                    onClick={() => confirm('Remover barbeiro?') && remove.mutate(b.id)}>
+                    onClick={() => confirm(t('barbers.removeConfirm')) && remove.mutate(b.id)}>
                     <Trash2 size={14} />
                   </Button>
                 </div>
@@ -225,7 +230,7 @@ export default function Barbers() {
       </div>
 
       {/* Modal criar/editar barbeiro */}
-      <Modal open={modalOpen} onClose={closeModal} title={editing ? 'Editar barbeiro' : 'Novo barbeiro'}>
+      <Modal open={modalOpen} onClose={closeModal} title={editing ? t('barbers.modal.edit') : t('barbers.modal.create')}>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {mutationError && (
             <div className="flex items-start gap-2 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-300">
@@ -233,25 +238,25 @@ export default function Barbers() {
               <span>{mutationError}</span>
             </div>
           )}
-          <Input label="Nome" placeholder="Joao Silva" error={errors.name?.message} {...register('name')} />
-          <Input label="E-mail" type="email" placeholder="joao@example.com" error={errors.email?.message} {...register('email')} />
+          <Input label={t('barbers.modal.nameLabel')} placeholder={t('barbers.modal.namePlaceholder')} error={errors.name?.message} {...register('name')} />
+          <Input label={t('barbers.modal.emailLabel')} type="email" placeholder={t('barbers.modal.emailPlaceholder')} error={errors.email?.message} {...register('email')} />
           <input type="hidden" {...register('avatar')} />
           <div className="space-y-3">
             <div>
-              <p className="text-sm font-medium text-zinc-700 dark:text-zinc-200">Foto do barbeiro</p>
-              <p className="mt-1 text-xs text-zinc-500">Esta foto aparece no painel e na escolha de barbeiro no site de agenda.</p>
+              <p className="text-sm font-medium text-zinc-700 dark:text-zinc-200">{t('barbers.modal.photoLabel')}</p>
+              <p className="mt-1 text-xs text-zinc-500">{t('barbers.modal.photoDesc')}</p>
             </div>
             <div className="flex items-center gap-4 rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-4 dark:border-zinc-800 dark:bg-zinc-900">
-              <Avatar name={watch('name') || 'Barbeiro'} src={avatarValue || undefined} size="lg" />
+              <Avatar name={watch('name') || t('barbers.columns.barber')} src={avatarValue || undefined} size="lg" />
               <div className="flex flex-wrap gap-2">
                 <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100">
                   <ImagePlus size={15} />
-                  Carregar foto
+                  {t('barbers.modal.uploadPhoto')}
                   <input type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
                 </label>
                 {avatarValue && (
                   <Button type="button" variant="outline" onClick={() => setValue('avatar', '', { shouldDirty: true })}>
-                    Remover
+                    {t('barbers.modal.removePhoto')}
                   </Button>
                 )}
               </div>
@@ -263,8 +268,8 @@ export default function Barbers() {
             control={control}
             render={({ field }) => (
               <PhoneInput
-                label="Telefone"
-                placeholder="912 345 678"
+                label={t('barbers.modal.phoneLabel')}
+                placeholder={t('barbers.modal.phonePlaceholder')}
                 value={field.value}
                 onChange={field.onChange}
               />
@@ -273,33 +278,33 @@ export default function Barbers() {
           {editing && (
             <label className="flex items-center gap-2 text-sm cursor-pointer">
               <input type="checkbox" className="rounded accent-orange-500" {...register('active')} />
-              Barbeiro ativo
+              {t('barbers.modal.isActive')}
             </label>
           )}
           <div className="flex justify-end gap-3 pt-2">
-            <Button type="button" variant="outline" onClick={closeModal}>Cancelar</Button>
+            <Button type="button" variant="outline" onClick={closeModal}>{t('common:btn.cancel')}</Button>
             <Button type="submit" loading={create.isPending || update.isPending}>
-              {editing ? 'Salvar' : 'Criar'}
+              {editing ? t('barbers.modal.save') : t('barbers.modal.create')}
             </Button>
           </div>
         </form>
       </Modal>
 
       {/* Modal gerir acesso ao portal */}
-      <Modal open={!!accessModal} onClose={() => setAccessModal(null)} title="Acesso ao portal">
+      <Modal open={!!accessModal} onClose={() => setAccessModal(null)} title={t('barbers.accessModal.title')}>
         {accessModal && (
           <div className="space-y-5">
             <div className="flex items-center gap-3 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800">
               <Avatar name={accessModal.name} src={accessModal.avatar} size="sm" />
               <div>
                 <p className="font-medium text-sm">{accessModal.name}</p>
-                <p className="text-xs text-zinc-400">{accessModal.email ?? 'Sem e-mail definido'}</p>
+                <p className="text-xs text-zinc-400">{accessModal.email ?? t('barbers.accessModal.noEmail')}</p>
               </div>
             </div>
 
             {!accessModal.email && (
               <div className="rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 px-4 py-3 text-sm text-amber-700 dark:text-amber-300">
-                Este barbeiro não tem e-mail definido. Adiciona um e-mail antes de activar o acesso.
+                {t('barbers.accessModal.noEmailWarning')}
               </div>
             )}
 
@@ -312,23 +317,23 @@ export default function Barbers() {
 
             <form onSubmit={handlePw(onSetPass)} className="space-y-3">
               <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                Define uma password para o barbeiro aceder ao portal em{' '}
+                {t('barbers.accessModal.desc')}{' '}
                 <code className="text-xs bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded">
                   /barber/login
                 </code>
               </p>
               <Input
-                label="Nova password"
+                label={t('barbers.accessModal.newPasswordLabel')}
                 type="password"
-                placeholder="Mínimo 6 caracteres"
+                placeholder={t('barbers.accessModal.newPasswordPlaceholder')}
                 error={pwErrors.password?.message}
                 disabled={!accessModal.email}
                 {...regPw('password')}
               />
               <Input
-                label="Confirmar password"
+                label={t('barbers.accessModal.confirmPasswordLabel')}
                 type="password"
-                placeholder="Repetir password"
+                placeholder={t('barbers.accessModal.confirmPasswordPlaceholder')}
                 error={pwErrors.confirm?.message}
                 disabled={!accessModal.email}
                 {...regPw('confirm')}
@@ -341,10 +346,10 @@ export default function Barbers() {
                   loading={setPass.isPending}
                   onClick={onRevoke}
                 >
-                  <ShieldOff size={14} className="mr-1.5" /> Revogar acesso
+                  <ShieldOff size={14} className="mr-1.5" /> {t('barbers.accessModal.revokeButton')}
                 </Button>
                 <Button type="submit" loading={pwPending} disabled={!accessModal.email}>
-                  <ShieldCheck size={14} className="mr-1.5" /> Activar acesso
+                  <ShieldCheck size={14} className="mr-1.5" /> {t('barbers.accessModal.activateButton')}
                 </Button>
               </div>
             </form>

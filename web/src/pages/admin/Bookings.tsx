@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { format, addDays, subDays, isToday, startOfDay, endOfDay } from 'date-fns'
-import { pt } from 'date-fns/locale'
+import { getDateFnsLocale } from '@/i18n/dateFnsLocale'
 import { barbersApi, barbershopApi, blockedTimesApi, bookingsApi, extrasApi, productsApi, workingHoursApi } from '@/lib/api'
 import { AdminLayout } from '@/components/layout/AdminLayout'
 import { Card, CardContent } from '@/components/ui/Card'
@@ -18,15 +18,6 @@ import { formatCurrency, formatDuration, getBookingClientName, toWallClockDate }
 import { Eye, Trash2, ChevronLeft, ChevronRight, LayoutList, Calendar, Plus, Ban, Search, X } from 'lucide-react'
 import type { Barber, BlockedTime, Booking, BookingStatus, Extra, Product } from '@/lib/types'
 
-const STATUS_OPTIONS = [
-  { value: '', label: 'Todos os status' },
-  { value: 'PENDING',   label: 'Pendente' },
-  { value: 'CONFIRMED', label: 'Confirmado' },
-  { value: 'COMPLETED', label: 'Concluído' },
-  { value: 'CANCELLED', label: 'Cancelado' },
-  { value: 'NO_SHOW',   label: 'Não compareceu' },
-]
-
 function todayStr() {
   return format(new Date(), 'yyyy-MM-dd')
 }
@@ -40,6 +31,8 @@ function toIso(date: Date, time: string) {
 
 export default function Bookings() {
   const qc = useQueryClient()
+  const { t, i18n } = useTranslation(['admin', 'common'])
+  const dateFnsLocale = getDateFnsLocale(i18n.language)
   const [view, setView]               = useState<'list' | 'calendar'>('calendar')
   const [status, setStatus]           = useState('')
   const [date, setDate]               = useState(todayStr)
@@ -138,7 +131,7 @@ export default function Bookings() {
         typeof err === 'object' && err !== null && 'response' in err &&
         typeof (err as { response?: { data?: { error?: string } } }).response?.data?.error === 'string'
           ? (err as { response?: { data?: { error?: string } } }).response!.data!.error!
-          : err instanceof Error ? err.message : 'Não foi possível mover o agendamento'
+          : err instanceof Error ? err.message : t('bookings.errors.move')
       setRescheduleError(msg)
     },
   })
@@ -161,7 +154,7 @@ export default function Bookings() {
         typeof err === 'object' && err !== null && 'response' in err &&
         typeof (err as { response?: { data?: { error?: string } } }).response?.data?.error === 'string'
           ? (err as { response?: { data?: { error?: string } } }).response!.data!.error!
-          : err instanceof Error ? err.message : 'Não foi possível adicionar o item ao agendamento'
+          : err instanceof Error ? err.message : t('bookings.errors.addItem')
       setAddItemsError(message)
     },
   })
@@ -179,7 +172,7 @@ export default function Bookings() {
         typeof err === 'object' && err !== null && 'response' in err &&
         typeof (err as { response?: { data?: { error?: string } } }).response?.data?.error === 'string'
           ? (err as { response?: { data?: { error?: string } } }).response!.data!.error!
-          : err instanceof Error ? err.message : 'Não foi possível remover o item do agendamento'
+          : err instanceof Error ? err.message : t('bookings.errors.removeItem')
       setAddItemsError(message)
     },
   })
@@ -201,20 +194,20 @@ export default function Bookings() {
   })
 
   const extraOptions = [
-    { value: '', label: 'Selecionar extra' },
+    { value: '', label: t('bookings.detail.selectExtra') },
     ...extras.map((e) => ({ value: e.id, label: `${e.name} • ${formatCurrency(e.price)}` })),
   ]
   const productOptions = [
-    { value: '', label: 'Selecionar produto' },
+    { value: '', label: t('bookings.detail.selectProduct') },
     ...products.filter((p) => p.stock > 0)
-      .map((p) => ({ value: p.id, label: `${p.name} • ${formatCurrency(p.price)} • stock ${p.stock}` })),
+      .map((p) => ({ value: p.id, label: `${p.name} • ${formatCurrency(p.price)} • ${t('bookings.detail.stock', { count: p.stock })}` })),
   ]
   const barberOptions = [
-    { value: '', label: 'Todos os barbeiros' },
+    { value: '', label: t('bookings.allBarbers') },
     ...barbers.map((b) => ({ value: b.id, label: b.name })),
   ]
   const blockedBarberOptions = [
-    { value: '', label: 'Todos os barbeiros' },
+    { value: '', label: t('bookings.allBarbers') },
     ...barbers.map((b) => ({ value: b.id, label: b.name })),
   ]
 
@@ -235,26 +228,43 @@ export default function Bookings() {
     })
   }
 
+  const statusOptions = [
+    { value: '', label: t('bookings.status.all') },
+    { value: 'PENDING', label: t('bookings.status.pending') },
+    { value: 'CONFIRMED', label: t('bookings.status.confirmed') },
+    { value: 'COMPLETED', label: t('bookings.status.completed') },
+    { value: 'CANCELLED', label: t('bookings.status.cancelled') },
+    { value: 'NO_SHOW', label: t('bookings.status.noShow') },
+  ]
+
+  const legendItems = [
+    { label: t('bookings.legend.pending'), color: 'bg-amber-400' },
+    { label: t('bookings.legend.confirmed'), color: 'bg-blue-500' },
+    { label: t('bookings.legend.completed'), color: 'bg-green-500' },
+    { label: t('bookings.legend.cancelled'), color: 'bg-zinc-400' },
+    { label: t('bookings.legend.noShow'), color: 'bg-red-400' },
+  ]
+
   return (
     <AdminLayout>
       <div className="space-y-5">
         {/* ── Page header ── */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold">Agendamentos</h1>
+            <h1 className="text-2xl font-bold">{t('bookings.title')}</h1>
             <p className="text-zinc-500 text-sm mt-0.5 capitalize">
               {view === 'list'
-                ? `${data.length} resultado${data.length !== 1 ? 's' : ''}`
-                : format(calDate, "EEEE, d 'de' MMMM yyyy", { locale: pt })}
+                ? t('bookings.results', { count: data.length })
+                : format(calDate, 'PPPP', { locale: dateFnsLocale })}
             </p>
           </div>
 
           <div className="flex items-center gap-2">
             <Button onClick={() => setNewBooking({})} className="gap-1.5 flex-1 sm:flex-none justify-center">
-              <Plus size={15} /> <span>Novo</span>
+              <Plus size={15} /> <span>{t('bookings.newButton')}</span>
             </Button>
             <Button variant="outline" onClick={() => openBlockedModal()} className="gap-1.5 flex-1 sm:flex-none justify-center">
-              <Ban size={15} /> <span>Bloqueio</span>
+              <Ban size={15} /> <span>{t('bookings.blockButton')}</span>
             </Button>
 
             {/* View toggle */}
@@ -267,7 +277,7 @@ export default function Bookings() {
                     : 'text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300'
                 }`}
               >
-                <Calendar size={14} /> <span className="hidden sm:inline">Agenda</span>
+                <Calendar size={14} /> <span className="hidden sm:inline">{t('bookings.viewCalendar')}</span>
               </button>
               <button
                 onClick={() => setView('list')}
@@ -277,7 +287,7 @@ export default function Bookings() {
                     : 'text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300'
                 }`}
               >
-                <LayoutList size={14} /> <span className="hidden sm:inline">Lista</span>
+                <LayoutList size={14} /> <span className="hidden sm:inline">{t('bookings.viewList')}</span>
               </button>
             </div>
           </div>
@@ -297,7 +307,7 @@ export default function Bookings() {
 
               <div className="text-center">
                 <p className="font-semibold capitalize">
-                  {format(calDate, "EEEE, d 'de' MMMM", { locale: pt })}
+                  {format(calDate, 'PPPP', { locale: dateFnsLocale })}
                 </p>
                 <p className="text-xs text-zinc-400">{format(calDate, 'yyyy')}</p>
               </div>
@@ -305,7 +315,7 @@ export default function Bookings() {
               <div className="flex items-center gap-2">
                 {!isToday(calDate) && (
                   <Button size="sm" variant="outline" onClick={() => setCalDate(new Date())}>
-                    Hoje
+                    {t('bookings.today')}
                   </Button>
                 )}
                 <button
@@ -319,13 +329,7 @@ export default function Bookings() {
 
             {/* Legend */}
             <div className="flex flex-wrap gap-3 text-xs">
-              {[
-                { label: 'Pendente',        color: 'bg-amber-400' },
-                { label: 'Confirmado',      color: 'bg-blue-500'  },
-                { label: 'Concluído',       color: 'bg-green-500' },
-                { label: 'Cancelado',       color: 'bg-zinc-400'  },
-                { label: 'Não compareceu',  color: 'bg-red-400'   },
-              ].map(({ label, color }) => (
+              {legendItems.map(({ label, color }) => (
                 <span key={label} className="flex items-center gap-1.5 text-zinc-500">
                   <span className={`h-2.5 w-2.5 rounded-full ${color}`} />
                   {label}
@@ -341,7 +345,7 @@ export default function Bookings() {
             )}
 
             {calLoading ? (
-              <div className="flex items-center justify-center h-48 text-zinc-400 text-sm">A carregar…</div>
+              <div className="flex items-center justify-center h-48 text-zinc-400 text-sm">{t('bookings.loading')}</div>
             ) : (
               <CalendarView
                 date={calDate}
@@ -361,17 +365,17 @@ export default function Bookings() {
             <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-4 py-4 shadow-sm">
               <div className="flex items-center justify-between gap-3 mb-3">
                 <div>
-                  <p className="text-sm font-semibold">Horários bloqueados</p>
-                  <p className="text-xs text-zinc-400">Bloqueios pontuais para este dia — ausências, imprevistos ou almoços fora do horário habitual.</p>
+                  <p className="text-sm font-semibold">{t('bookings.blockedTimes.title')}</p>
+                  <p className="text-xs text-zinc-400">{t('bookings.blockedTimes.subtitle')}</p>
                 </div>
                 <Button size="sm" variant="outline" className="gap-1.5 shrink-0" onClick={() => openBlockedModal()}>
                   <Ban size={13} />
-                  Bloquear
+                  {t('bookings.blockedTimes.blockButton')}
                 </Button>
               </div>
 
               {blockedTimes.length === 0 ? (
-                <p className="py-3 text-xs text-zinc-400 text-center">Sem bloqueios para este dia.</p>
+                <p className="py-3 text-xs text-zinc-400 text-center">{t('bookings.blockedTimes.noBlocks')}</p>
               ) : (
                 <div className="space-y-2">
                   {blockedTimes.map((block) => (
@@ -381,7 +385,7 @@ export default function Bookings() {
                         <div className="min-w-0">
                           <p className="text-sm font-medium leading-tight">
                             {format(toWallClockDate(block.startTime), 'HH:mm')}–{format(toWallClockDate(block.endTime), 'HH:mm')}
-                            <span className="ml-2 text-xs font-normal text-zinc-400">{block.barber?.name ?? 'Todos'}</span>
+                            <span className="ml-2 text-xs font-normal text-zinc-400">{block.barber?.name ?? t('bookings.blockedTimes.everyone')}</span>
                           </p>
                           {block.reason && <p className="text-xs text-zinc-400 truncate">{block.reason}</p>}
                         </div>
@@ -390,7 +394,7 @@ export default function Bookings() {
                         className="shrink-0 text-zinc-400 hover:text-red-500 transition-colors"
                         disabled={removeBlockedTime.isPending}
                         onClick={() => removeBlockedTime.mutate(block.id)}
-                        aria-label="Remover bloqueio"
+                        aria-label={t('bookings.blockedTimes.removeBlock')}
                       >
                         <Trash2 size={14} />
                       </button>
@@ -412,7 +416,7 @@ export default function Bookings() {
                   type="text"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Pesquisar cliente, barbeiro ou serviço…"
+                  placeholder={t('bookings.searchPlaceholder')}
                   className="h-10 w-full pl-9 pr-3 text-sm rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-accent-500 placeholder-zinc-400"
                 />
               </div>
@@ -423,14 +427,14 @@ export default function Bookings() {
                 className="h-10 rounded-xl border border-zinc-200 bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-accent-500 dark:border-zinc-700 dark:bg-zinc-900 xl:shrink-0"
               />
               <Select className="w-full xl:w-52" options={barberOptions} value={barberId} onChange={(e) => setBarberId(e.target.value)} />
-              <Select className="w-full xl:w-52" options={STATUS_OPTIONS} value={status} onChange={(e) => setStatus(e.target.value)} />
+              <Select className="w-full xl:w-52" options={statusOptions} value={status} onChange={(e) => setStatus(e.target.value)} />
               {(query || date || barberId || status) && (
                 <Button
                   type="button" variant="outline"
                   className="gap-1.5 xl:shrink-0"
                   onClick={() => { setQuery(''); setDate(''); setBarberId(''); setStatus('') }}
                 >
-                  <X size={13} /> Limpar
+                  <X size={13} /> {t('common:btn.clear')}
                 </Button>
               )}
             </div>
@@ -444,7 +448,7 @@ export default function Bookings() {
                   onRowClick={setDetail}
                   columns={[
                     {
-                      key: 'startTime', label: 'Data / Hora',
+                      key: 'startTime', label: t('bookings.columns.dateTime'),
                       render: (b) => (
                         <div>
                           <p className="font-medium">{format(toWallClockDate(b.startTime), 'dd/MM/yyyy')}</p>
@@ -452,11 +456,11 @@ export default function Bookings() {
                         </div>
                       ),
                     },
-                    { key: 'customer', label: 'Cliente',  render: (b) => <span className="font-medium">{getBookingClientName(b)}</span> },
-                    { key: 'barber',   label: 'Barbeiro', render: (b) => b.barber.name },
-                    { key: 'service',  label: 'Serviço',  render: (b) => b.services[0]?.service.name ?? '—' },
-                    { key: 'status',   label: 'Status',   render: (b) => <StatusBadge status={b.status} /> },
-                    { key: 'total',    label: 'Total',    render: (b) => formatCurrency(b.totalPrice) },
+                    { key: 'customer', label: t('bookings.columns.customer'), render: (b) => <span className="font-medium">{getBookingClientName(b)}</span> },
+                    { key: 'barber', label: t('bookings.columns.barber'), render: (b) => b.barber.name },
+                    { key: 'service', label: t('bookings.columns.service'), render: (b) => b.services[0]?.service.name ?? '—' },
+                    { key: 'status', label: t('bookings.columns.status'), render: (b) => <StatusBadge status={b.status} /> },
+                    { key: 'total', label: t('bookings.columns.total'), render: (b) => formatCurrency(b.totalPrice) },
                   ]}
                   actions={(b) => (
                     <Button size="sm" variant="ghost" onClick={() => setDetail(b)}><Eye size={14} /></Button>
@@ -469,7 +473,7 @@ export default function Bookings() {
       </div>
 
       {/* ── Detail modal (shared between views) ── */}
-      <Modal open={!!detail} onClose={closeDetail} title="Detalhes do agendamento">
+      <Modal open={!!detail} onClose={closeDetail} title={t('bookings.detail.title')}>
         {detail && (() => {
           const bookingServices = detail.services ?? []
           const bookingExtras   = detail.extras   ?? []
@@ -480,35 +484,35 @@ export default function Bookings() {
             <div className="space-y-4">
               <div className="grid gap-3 text-sm sm:grid-cols-2">
                 <div className="bg-zinc-50 dark:bg-zinc-800/50 rounded-xl p-3">
-                  <p className="text-zinc-400 text-xs mb-1">Cliente</p>
+                  <p className="text-zinc-400 text-xs mb-1">{t('bookings.detail.customerLabel')}</p>
                   <p className="font-medium">{getBookingClientName(detail)}</p>
                   {detail.attendeeName && detail.attendeeName !== detail.customer.name ? (
-                    <p className="text-zinc-400 text-xs">Responsável: {detail.customer.name}</p>
+                    <p className="text-zinc-400 text-xs">{t('bookings.detail.responsible', { name: detail.customer.name })}</p>
                   ) : null}
                   {hasPlan ? (
                     <span className="inline-flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.5 rounded bg-violet-100 text-violet-700 mt-0.5">
-                      Plano: {detail.customer.plan!.name}
+                      {t('bookings.detail.planBadge')}: {detail.customer.plan!.name}
                     </span>
                   ) : (
                     <p className="text-zinc-400 text-xs">{detail.customer.phone}</p>
                   )}
                 </div>
                 <div className="bg-zinc-50 dark:bg-zinc-800/50 rounded-xl p-3">
-                  <p className="text-zinc-400 text-xs mb-1">Barbeiro</p>
+                  <p className="text-zinc-400 text-xs mb-1">{t('bookings.detail.barberLabel')}</p>
                   <p className="font-medium">{detail.barber.name}</p>
                 </div>
                 <div className="bg-zinc-50 dark:bg-zinc-800/50 rounded-xl p-3">
-                  <p className="text-zinc-400 text-xs mb-1">Data / Hora</p>
-                  <p className="font-medium">{format(toWallClockDate(detail.startTime), "dd 'de' MMM, HH:mm", { locale: pt })}</p>
+                  <p className="text-zinc-400 text-xs mb-1">{t('bookings.detail.dateTimeLabel')}</p>
+                  <p className="font-medium">{format(toWallClockDate(detail.startTime), 'PPp', { locale: dateFnsLocale })}</p>
                   <p className="text-zinc-400 text-xs">{formatDuration(detail.totalDuration)}</p>
                 </div>
                 <div className="bg-zinc-50 dark:bg-zinc-800/50 rounded-xl p-3">
                   <p className="text-zinc-400 text-xs mb-1">
-                    {hasPlan ? 'A pagar hoje' : 'Total'}
+                    {hasPlan ? t('bookings.detail.toPay') : t('bookings.detail.totalLabel')}
                   </p>
                   <p className="font-bold text-accent-600">{formatCurrency(detail.totalPrice)}</p>
                   {hasPlan && detail.totalPrice === 0 && (
-                    <p className="text-[10px] text-emerald-600 font-medium mt-0.5">Coberto pelo plano</p>
+                    <p className="text-[10px] text-emerald-600 font-medium mt-0.5">{t('bookings.detail.coveredByPlan')}</p>
                   )}
                 </div>
               </div>
@@ -519,7 +523,7 @@ export default function Bookings() {
                     <div className="flex items-center gap-2">
                       <span>{s.service.name}</span>
                       {hasPlan && s.price === 0 && (
-                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-violet-100 text-violet-700">plano</span>
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-violet-100 text-violet-700">{t('bookings.detail.planBadge')}</span>
                       )}
                     </div>
                     <span className={hasPlan && s.price === 0 ? 'text-zinc-400 line-through' : ''}>
@@ -562,7 +566,7 @@ export default function Bookings() {
               </div>
 
               <div className="space-y-3 border-t border-zinc-200 dark:border-zinc-700 pt-4">
-                <p className="text-xs text-zinc-500">Adicionar ao agendamento</p>
+                <p className="text-xs text-zinc-500">{t('bookings.detail.addToBooking')}</p>
                 <div className="grid sm:grid-cols-2 gap-3">
                   <Select options={extraOptions} value={selectedExtraId} onChange={(e) => setSelectedExtraId(e.target.value)} />
                   <Select options={productOptions} value={selectedProductId} onChange={(e) => setSelectedProductId(e.target.value)} />
@@ -584,13 +588,13 @@ export default function Bookings() {
                       ...(selectedProductId ? { productId: selectedProductId } : {}),
                     })}
                   >
-                    Adicionar extra/produto
+                    {t('bookings.detail.addButton')}
                   </Button>
                 </div>
               </div>
 
               <div>
-                <p className="text-xs text-zinc-500 mb-2">Alterar status</p>
+                <p className="text-xs text-zinc-500 mb-2">{t('bookings.detail.changeStatus')}</p>
                 <div className="flex flex-wrap gap-2">
                   {(['PENDING','CONFIRMED','COMPLETED','CANCELLED','NO_SHOW'] as BookingStatus[]).map((s) => (
                     <button
@@ -609,12 +613,12 @@ export default function Bookings() {
         })()}
       </Modal>
 
-      <Modal open={!!slotAction} onClose={() => setSlotAction(null)} title="O que quer fazer neste horário?" size="sm">
+      <Modal open={!!slotAction} onClose={() => setSlotAction(null)} title={t('bookings.slotModal.title')} size="sm">
         {slotAction ? (
           <div className="space-y-4">
             <div className="rounded-xl bg-zinc-50 p-4 text-sm dark:bg-zinc-800/50">
-              <p className="font-medium">{format(calDate, "dd 'de' MMMM yyyy", { locale: pt })}</p>
-              <p className="text-zinc-500 mt-1">{slotAction.time} · {barbers.find((barber) => barber.id === slotAction.barberId)?.name ?? 'Barbeiro'}</p>
+              <p className="font-medium">{format(calDate, 'PP', { locale: dateFnsLocale })}</p>
+              <p className="text-zinc-500 mt-1">{slotAction.time} · {barbers.find((barber) => barber.id === slotAction.barberId)?.name ?? t('bookings.columns.barber')}</p>
             </div>
             <div className="grid gap-3">
               <Button
@@ -625,7 +629,7 @@ export default function Bookings() {
                 className="gap-2"
               >
                 <Plus size={14} />
-                Criar agendamento
+                {t('bookings.slotModal.createBooking')}
               </Button>
               <Button
                 variant="outline"
@@ -636,25 +640,25 @@ export default function Bookings() {
                 className="gap-2"
               >
                 <Ban size={14} />
-                Bloquear horário
+                {t('bookings.slotModal.blockSlot')}
               </Button>
             </div>
           </div>
         ) : null}
       </Modal>
 
-      <Modal open={!!newBlocked} onClose={() => setNewBlocked(null)} title="Novo horário bloqueado">
+      <Modal open={!!newBlocked} onClose={() => setNewBlocked(null)} title={t('bookings.newBlockedModal.title')}>
         {newBlocked ? (
           <div className="space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
               <Input
-                label="Data"
+                label={t('bookings.newBlockedModal.dateLabel')}
                 type="date"
                 value={newBlocked.date}
                 onChange={(e) => setNewBlocked((current) => current ? { ...current, date: e.target.value } : current)}
               />
               <Select
-                label="Barbeiro"
+                label={t('bookings.newBlockedModal.barberLabel')}
                 options={blockedBarberOptions}
                 value={newBlocked.barberId ?? ''}
                 onChange={(e) => setNewBlocked((current) => current ? { ...current, barberId: e.target.value || undefined } : current)}
@@ -663,13 +667,13 @@ export default function Bookings() {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <Input
-                label="Início"
+                label={t('bookings.newBlockedModal.startLabel')}
                 type="time"
                 value={newBlocked.startTime}
                 onChange={(e) => setNewBlocked((current) => current ? { ...current, startTime: e.target.value } : current)}
               />
               <Input
-                label="Fim"
+                label={t('bookings.newBlockedModal.endLabel')}
                 type="time"
                 value={newBlocked.endTime}
                 onChange={(e) => setNewBlocked((current) => current ? { ...current, endTime: e.target.value } : current)}
@@ -677,14 +681,14 @@ export default function Bookings() {
             </div>
 
             <Input
-              label="Motivo"
-              placeholder="Ex.: almoço, urgência, saída externa"
+              label={t('bookings.newBlockedModal.reasonLabel')}
+              placeholder={t('bookings.newBlockedModal.reasonPlaceholder')}
               value={newBlocked.reason}
               onChange={(e) => setNewBlocked((current) => current ? { ...current, reason: e.target.value } : current)}
             />
 
             <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setNewBlocked(null)}>Cancelar</Button>
+              <Button variant="outline" onClick={() => setNewBlocked(null)}>{t('common:btn.cancel')}</Button>
               <Button
                 loading={createBlockedTime.isPending}
                 onClick={() => createBlockedTime.mutate({
@@ -694,7 +698,7 @@ export default function Bookings() {
                   endTime: toIso(new Date(newBlocked.date), newBlocked.endTime),
                 })}
               >
-                Guardar bloqueio
+                {t('bookings.newBlockedModal.saveButton')}
               </Button>
             </div>
           </div>
