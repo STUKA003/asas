@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { useTranslation } from 'react-i18next'
 import { useQuery } from '@tanstack/react-query'
 import { plansApi, servicesApi } from '@/lib/api'
 import { CrudPage } from '@/components/admin/CrudPage'

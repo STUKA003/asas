@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { format, endOfMonth, startOfMonth, startOfYear, subDays, subMonths } from 'date-fns'
-import { pt } from 'date-fns/locale'
+import { useTranslation } from 'react-i18next'
+import { getDateFnsLocale } from '@/i18n/dateFnsLocale'
 import {
   AlertTriangle,
   Award,
@@ -62,6 +63,8 @@ function formatMinutesToHours(value: number) {
 }
 
 export default function Reports() {
+  const { i18n } = useTranslation()
+  const dateFnsLocale = getDateFnsLocale(i18n.language)
   const [reportSection, setReportSection] = useState<'general' | 'plans'>('general')
   const [planPeriodIdx, setPlanPeriodIdx] = useState(0)
   const [filterMode, setFilterMode] = useState<'preset' | 'month'>('preset')
@@ -107,8 +110,8 @@ export default function Reports() {
 
   function handleExportPdf() {
     const sourcePeriod = reportSection === 'plans'
-      ? planReport ? `${format(new Date(planReport.period.from), "d MMM yyyy", { locale: pt })} - ${format(new Date(planReport.period.to), "d MMM yyyy", { locale: pt })}` : null
-      : data ? `${format(new Date(data.period.from), "d MMM yyyy", { locale: pt })} - ${format(new Date(data.period.to), "d MMM yyyy", { locale: pt })}` : null
+      ? planReport ? `${format(new Date(planReport.period.from), "d MMM yyyy", { locale: dateFnsLocale })} - ${format(new Date(planReport.period.to), "d MMM yyyy", { locale: dateFnsLocale })}` : null
+      : data ? `${format(new Date(data.period.from), "d MMM yyyy", { locale: dateFnsLocale })} - ${format(new Date(data.period.to), "d MMM yyyy", { locale: dateFnsLocale })}` : null
     const html = reportSection === 'plans'
       ? planReport && sourcePeriod ? buildPlanReportPdfHtml(planReport, sourcePeriod, barbershop) : null
       : data && sourcePeriod ? buildGeneralReportPdfHtml(data, sourcePeriod, barbershop) : null
@@ -266,7 +269,7 @@ export default function Reports() {
               </CardHeader>
               <CardContent className="space-y-5 pt-0">
                 <p className="text-sm text-zinc-500">
-                  {format(new Date(data.period.from), "d MMM", { locale: pt })} - {format(new Date(data.period.to), "d 'de' MMMM yyyy", { locale: pt })}
+                  {format(new Date(data.period.from), "d MMM", { locale: dateFnsLocale })} - {format(new Date(data.period.to), "d 'de' MMMM yyyy", { locale: dateFnsLocale })}
                 </p>
                 <div className="grid gap-4 md:grid-cols-4">
                   {[
@@ -641,7 +644,7 @@ export default function Reports() {
                   title="Clientes inativos"
                   items={data.customers.inactiveCustomers}
                   empty="Nenhum cliente inativo detetado."
-                  renderRight={(item) => item.lastBookingAt ? format(new Date(item.lastBookingAt), "d MMM yyyy", { locale: pt }) : '—'}
+                  renderRight={(item) => item.lastBookingAt ? format(new Date(item.lastBookingAt), "d MMM yyyy", { locale: dateFnsLocale }) : '—'}
                 />
 
                 <Card>

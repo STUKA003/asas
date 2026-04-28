@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { Plus, Trash2, AlertTriangle } from 'lucide-react'
 import { barbersApi, workingHoursApi } from '@/lib/api'
 import { AdminLayout } from '@/components/layout/AdminLayout'
@@ -19,7 +20,7 @@ interface WorkingHour {
   barberId?: string | null
 }
 
-const DAYS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
+// DAYS is now built dynamically from translations inside the component
 
 const TIMES = Array.from({ length: 31 }, (_, index) => {
   const totalMinutes = (7 * 60) + (index * 30)
@@ -34,14 +35,21 @@ function addHours(time: string, hoursToAdd: number) {
   return `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`
 }
 
-function buildDaySummary(dayHours: WorkingHour[]) {
-  if (dayHours.length === 0) return 'Fechado'
+function buildDaySummary(dayHours: WorkingHour[], closed: string) {
+  if (dayHours.length === 0) return closed
   return dayHours.map((h) => `${h.startTime}–${h.endTime}`).join('  ·  ')
 }
 
 export default function Schedule() {
   const qc = useQueryClient()
   const [barberId, setBarberId] = useState('')
+  const { t } = useTranslation(['admin', 'common'])
+
+  const DAYS = [
+    t('admin:schedule.days.0'), t('admin:schedule.days.1'), t('admin:schedule.days.2'),
+    t('admin:schedule.days.3'), t('admin:schedule.days.4'), t('admin:schedule.days.5'),
+    t('admin:schedule.days.6'),
+  ]
 
   const { data: barbers = [] } = useQuery({
     queryKey: ['barbers'],
@@ -105,7 +113,7 @@ export default function Schedule() {
   }, [barberId, hours, barbers])
 
   const barberOptions = [
-    { value: '', label: 'Barbearia (padrão)' },
+    { value: '', label: t('admin:layout.brand.defaultSubtitle') },
     ...barbers.map((barber) => ({ value: barber.id, label: barber.name })),
   ]
 
@@ -181,7 +189,7 @@ export default function Schedule() {
                         <div>
                           <p className={cn('text-sm font-medium', !active && 'text-zinc-400')}>{dayLabel}</p>
                           <p className={cn('text-xs', active ? 'text-zinc-500' : 'text-zinc-400')}>
-                            {buildDaySummary(dayHours)}
+                            {buildDaySummary(dayHours, t('common:status.inactive'))}
                           </p>
                         </div>
                       </div>
@@ -211,7 +219,7 @@ export default function Schedule() {
                           >
                             {dayHours.length > 1 && (
                               <p className="text-xs font-medium text-zinc-400 sm:w-20 shrink-0">
-                                {index === 0 ? 'Manhã' : index === 1 ? 'Tarde' : `Período ${index + 1}`}
+                                {index === 0 ? t('public:booking.steps.dateTime.morning') : index === 1 ? t('public:booking.steps.dateTime.afternoon') : `${index + 1}`}
                               </p>
                             )}
 
@@ -240,7 +248,7 @@ export default function Schedule() {
                                 onClick={() => removeMutation.mutate(hour.id)}
                               >
                                 <Trash2 size={14} />
-                                Remover
+                                {t('common:btn.remove')}
                               </Button>
                             </div>
                           </div>

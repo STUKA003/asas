@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { bookingsApi, barbersApi, customersApi } from '@/lib/api'
 import { AdminLayout } from '@/components/layout/AdminLayout'
 import { PageHeader } from '@/components/layout/PanelShell'

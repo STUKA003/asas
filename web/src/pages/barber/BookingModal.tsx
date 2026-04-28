@@ -1,4 +1,5 @@
 import { format } from 'date-fns'
+import { useTranslation } from 'react-i18next'
 import { pt } from 'date-fns/locale'
 import { Clock, Euro, Phone, Trash2 } from 'lucide-react'
 import type { Booking, BookingStatus, Extra, Product } from '@/lib/types'

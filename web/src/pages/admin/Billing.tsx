@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { format } from 'date-fns'
-import { pt } from 'date-fns/locale'
+import { useTranslation } from 'react-i18next'
+import { getDateFnsLocale } from '@/i18n/dateFnsLocale'
 import { Check, Zap, Crown, Sparkles, CalendarDays, Scissors, Star } from 'lucide-react'
 import { useSearchParams } from 'react-router-dom'
 import { AdminLayout } from '@/components/layout/AdminLayout'
@@ -108,6 +109,8 @@ function UsageBar({ used, max, label }: { used: number | null; max: number | nul
 }
 
 export default function Billing() {
+  const { i18n } = useTranslation()
+  const dateFnsLocale = getDateFnsLocale(i18n.language)
   const qc = useQueryClient()
   const [searchParams] = useSearchParams()
   const { data: barbershop } = useQuery({ queryKey: ['barbershop'], queryFn: barbershopApi.get })
@@ -178,7 +181,7 @@ export default function Billing() {
                     <CalendarDays size={14} className="text-zinc-400" />
                     <span className="text-zinc-500">Válido até</span>
                     <span className="font-semibold text-zinc-900 dark:text-zinc-100">
-                      {format(new Date(sub.endsAt), "d 'de' MMMM yyyy", { locale: pt })}
+                      {format(new Date(sub.endsAt), "d 'de' MMMM yyyy", { locale: dateFnsLocale })}
                     </span>
                   </div>
                 )}

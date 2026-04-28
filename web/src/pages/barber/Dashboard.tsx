@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { format } from 'date-fns'
-import { pt } from 'date-fns/locale'
+import { useTranslation } from 'react-i18next'
+import { getDateFnsLocale } from '@/i18n/dateFnsLocale'
 import { Calendar, Clock3, Scissors, TrendingUp } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { barberPortalApi } from '@/lib/api'
@@ -14,12 +15,17 @@ import { formatCurrency, getBookingClientName, toWallClockDate } from '@/lib/uti
 import { useBarberAuthStore } from '@/store/barberAuth'
 import type { Booking } from '@/lib/types'
 
-const DAY_LABELS = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom']
-
 export default function BarberDashboard() {
   const today = format(new Date(), 'yyyy-MM-dd')
   const barber = useBarberAuthStore((state) => state.barber)
   const slug = barber?.barbershop?.slug ?? ''
+  const { t, i18n } = useTranslation(['barber', 'admin', 'common'])
+  const dateFnsLocale = getDateFnsLocale(i18n.language)
+  const DAY_LABELS = [
+    t('admin:schedule.days.1'), t('admin:schedule.days.2'), t('admin:schedule.days.3'),
+    t('admin:schedule.days.4'), t('admin:schedule.days.5'), t('admin:schedule.days.6'),
+    t('admin:schedule.days.0'),
+  ]
 
   const { data: bookings = [], isLoading: l1 } = useQuery({
     queryKey: ['barber-portal', 'bookings', today],
@@ -57,7 +63,7 @@ export default function BarberDashboard() {
             <div className="relative">
               <p className="text-[10.5px] font-semibold uppercase tracking-[0.2em] text-ink-muted">Flow diário</p>
               <h2 className="mt-2.5 text-[1.5rem] font-semibold tracking-[-0.03em] text-ink sm:text-[1.75rem]">
-                {format(new Date(), "EEEE, d 'de' MMMM", { locale: pt })}
+                {format(new Date(), "EEEE, d 'de' MMMM", { locale: dateFnsLocale })}
               </h2>
               <p className="mt-2.5 max-w-2xl text-[13.5px] leading-6 text-ink-muted">
                 Abre o portal e percebe logo quantos atendimentos tens, a receita em curso e o que vem a seguir.

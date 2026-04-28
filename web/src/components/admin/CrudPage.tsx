@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { useForm, type DefaultValues, type FieldValues } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { ZodSchema } from 'zod'
@@ -41,6 +42,7 @@ export function CrudPage<T extends FieldValues, R>({
 }: CrudPageProps<T, R>) {
   const qc = useQueryClient()
   const { success, error: showError } = useToast()
+  const { t } = useTranslation('common')
   const [open, setOpen]             = useState(false)
   const [editing, setEditing]       = useState<R | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<R | null>(null)
@@ -98,7 +100,7 @@ export function CrudPage<T extends FieldValues, R>({
           actions={
             <Button onClick={openCreate} size="sm">
               <Plus size={14} />
-              Novo {singularTitle}
+              {t('btn.create')} {singularTitle}
             </Button>
           }
         />
@@ -126,7 +128,7 @@ export function CrudPage<T extends FieldValues, R>({
       </div>
 
       {/* ── Create / Edit modal ── */}
-      <Modal open={open} onClose={close} title={editing ? `Editar ${singularTitle}` : `Novo ${singularTitle}`}>
+      <Modal open={open} onClose={close} title={editing ? `${t('btn.edit')} ${singularTitle}` : `${t('btn.create')} ${singularTitle}`}>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {formFields(register as ReturnType<typeof useForm<T>>['register'], typedErrors, { watch, setValue, reset })}
           {submitError && (
@@ -136,9 +138,9 @@ export function CrudPage<T extends FieldValues, R>({
             </div>
           )}
           <div className="flex justify-end gap-2 border-t border-neutral-100 pt-4">
-            <Button type="button" variant="secondary" onClick={close}>Cancelar</Button>
+            <Button type="button" variant="secondary" onClick={close}>{t('btn.cancel')}</Button>
             <Button type="submit" loading={createMutation.isPending || updateMutation.isPending}>
-              {editing ? 'Guardar alterações' : `Criar ${singularTitle}`}
+              {editing ? t('btn.save') : `${t('btn.create')} ${singularTitle}`}
             </Button>
           </div>
         </form>
@@ -161,15 +163,9 @@ export function CrudPage<T extends FieldValues, R>({
             </div>
           </div>
           <div className="flex justify-end gap-2">
-            <Button variant="secondary" onClick={() => setDeleteTarget(null)}>
-              Cancelar
-            </Button>
-            <Button
-              variant="danger"
-              loading={removeMutation.isPending}
-              onClick={() => deleteTarget && removeMutation.mutate(getId(deleteTarget))}
-            >
-              Remover
+            <Button variant="secondary" onClick={() => setDeleteTarget(null)}>{t('btn.cancel')}</Button>
+            <Button variant="danger" loading={removeMutation.isPending} onClick={() => deleteTarget && removeMutation.mutate(getId(deleteTarget))}>
+              {t('btn.remove')}
             </Button>
           </div>
         </div>

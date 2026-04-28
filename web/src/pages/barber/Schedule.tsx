@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { format, addDays, startOfDay, isSameDay, isToday } from 'date-fns'
-import { pt } from 'date-fns/locale'
+import { useTranslation } from 'react-i18next'
+import { getDateFnsLocale } from '@/i18n/dateFnsLocale'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { barberPortalApi } from '@/lib/api'
 import { CalendarView } from '@/components/admin/CalendarView'
@@ -75,6 +76,8 @@ function getEffectivePortalPlan(barber: ReturnType<typeof useBarberAuthStore.get
 }
 
 export default function BarberSchedule() {
+  const { i18n } = useTranslation()
+  const dateFnsLocale = getDateFnsLocale(i18n.language)
   const qc = useQueryClient()
   const barber = useBarberAuthStore((state) => state.barber)
   const snapMinutes = barber?.barbershop?.slotGranularityMinutes ?? 15
@@ -148,7 +151,7 @@ export default function BarberSchedule() {
       invalidate()
       setFeedback({
         type: 'success',
-        message: `Agendamento movido para ${format(toWallClockDate(variables.startTime), "d MMM 'às' HH:mm", { locale: pt })}.`,
+        message: `Agendamento movido para ${format(toWallClockDate(variables.startTime), "d MMM 'às' HH:mm", { locale: dateFnsLocale })}.`,
       })
     },
     onError: (err: unknown) => {
@@ -252,8 +255,8 @@ export default function BarberSchedule() {
                   </div>
                   <span className="hidden text-sm font-semibold sm:block">
                     {viewDays === 1
-                      ? format(anchor, "d 'de' MMMM, yyyy", { locale: pt })
-                      : `${format(days[0], 'd MMM', { locale: pt })} - ${format(days[days.length - 1], "d MMM yyyy", { locale: pt })}`}
+                      ? format(anchor, "d 'de' MMMM, yyyy", { locale: dateFnsLocale })
+                      : `${format(days[0], 'd MMM', { locale: dateFnsLocale })} - ${format(days[days.length - 1], "d MMM yyyy", { locale: dateFnsLocale })}`}
                   </span>
                 </div>
 
@@ -310,7 +313,7 @@ export default function BarberSchedule() {
             return (
               <div key={d.toISOString()} className={`flex-1 border-l border-zinc-100 py-2 text-center ${current ? 'bg-primary-50' : ''}`}>
                 <p className={`text-[11px] font-semibold uppercase tracking-wide ${current ? 'text-primary-600' : 'text-zinc-400'}`}>
-                  {format(d, 'EEE', { locale: pt })}
+                  {format(d, 'EEE', { locale: dateFnsLocale })}
                 </p>
                 <p className={`text-xl font-bold leading-tight ${current ? 'text-primary-600' : 'text-zinc-800'}`}>
                   {format(d, 'd')}

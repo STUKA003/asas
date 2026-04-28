@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { format, addMonths, addYears, isPast } from 'date-fns'
 import { pt } from 'date-fns/locale'
+import { useTranslation } from 'react-i18next'
+import { getDateFnsLocale } from '@/i18n/dateFnsLocale'
 import {
   Search, Scissors, Calendar, Users, Ban, CheckCircle,
   ChevronDown, ChevronUp, Plus, Trash2, LogIn, AlertTriangle,
@@ -75,9 +77,9 @@ interface Barbershop {
 type VerificationFilter = 'all' | 'pending' | 'verified'
 type HealthFilter = 'all' | 'active' | 'suspended' | 'unverified' | 'no-plan'
 
-function formatSecurityDate(v?: string | null) {
-  if (!v) return 'Sem registo'
-  return format(new Date(v), 'd MMM yyyy, HH:mm', { locale: pt })
+function formatSecurityDate(v?: string | null, locale = pt) {
+  if (!v) return '—'
+  return format(new Date(v), 'd MMM yyyy, HH:mm', { locale })
 }
 
 const SECURITY_TONES = {
@@ -405,6 +407,8 @@ function CreateModal({ token, onClose }: { token: string; onClose: () => void })
 
 /* ── Main page ─────────────────────────────────────────────── */
 export default function SuperAdminBarbershops() {
+  const { i18n } = useTranslation()
+  const dateFnsLocale = getDateFnsLocale(i18n.language)
   const qc = useQueryClient()
   const { token }   = useSuperAuthStore()
   const { setAuth } = useAuthStore()
@@ -610,11 +614,11 @@ export default function SuperAdminBarbershops() {
                             <span className="flex items-center gap-1.5"><Scissors size={10} /> {b._count.barbers} barbeiro{b._count.barbers !== 1 ? 's' : ''}</span>
                             {b.subscriptionEndsAt && plan !== 'FREE' && (
                               <span className={expired ? 'text-orange-400' : ''}>
-                                Expira: {format(new Date(b.subscriptionEndsAt), 'd MMM yyyy', { locale: pt })}
+                                Expira: {format(new Date(b.subscriptionEndsAt), 'd MMM yyyy', { locale: dateFnsLocale })}
                               </span>
                             )}
                             {b.security.latestLoginAt && (
-                              <span>Último login: {format(new Date(b.security.latestLoginAt), 'd MMM, HH:mm', { locale: pt })}</span>
+                              <span>Último login: {format(new Date(b.security.latestLoginAt), 'd MMM, HH:mm', { locale: dateFnsLocale })}</span>
                             )}
                           </div>
                         </div>
@@ -695,7 +699,7 @@ export default function SuperAdminBarbershops() {
                                       ? <span className="text-emerald-300">Verificado</span>
                                       : <span className="text-amber-300">Pendente</span>}
                                   </p>
-                                  <p><span className="text-white/30">Criada em:</span> <span className="text-white/55">{format(new Date(b.owner.createdAt), "d 'de' MMM yyyy", { locale: pt })}</span></p>
+                                  <p><span className="text-white/30">Criada em:</span> <span className="text-white/55">{format(new Date(b.owner.createdAt), "d 'de' MMM yyyy", { locale: dateFnsLocale })}</span></p>
                                 </div>
                               ) : (
                                 <p className="text-[12.5px] text-white/30">Sem dono associado.</p>
@@ -761,7 +765,7 @@ export default function SuperAdminBarbershops() {
                                       </p>
                                     </div>
                                     <p className="shrink-0 text-[11px] text-white/25">
-                                      {format(new Date(ev.createdAt), 'd MMM, HH:mm', { locale: pt })}
+                                      {format(new Date(ev.createdAt), 'd MMM, HH:mm', { locale: dateFnsLocale })}
                                     </p>
                                   </div>
                                 ))}
