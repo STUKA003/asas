@@ -1,0 +1,40 @@
+{
+  "layout": {
+    "nav": { "platform": "Piattaforma", "dashboard": "Dashboard", "barbershops": "Saloni" },
+    "pageMeta": {
+      "dashboard": { "title": "Dashboard", "subtitle": "Lettura consolidata della salute commerciale e operativa della piattaforma." },
+      "barbershops": { "title": "Saloni", "subtitle": "Gestione centralizzata di account, piani e stato delle operazioni." }
+    },
+    "account": { "name": "Super Admin", "platform": "Trimio Platform", "logout": "Esci" },
+    "sidebar": { "scopeLabel": "Ambito", "scopeTitle": "Operazione centrale", "scopeDesc": "Visione trasversale su crescita, account e monetizzazione." },
+    "topbar": { "viewBarbershops": "Visualizza saloni" },
+    "pull": { "refreshing": "Aggiornamento...", "releaseToRefresh": "Rilascia per aggiornare", "pullToRefresh": "Trascina per aggiornare" },
+    "brand": { "name": "Trimio Command", "subtitle": "Controllo della piattaforma" }
+  },
+  "login": {
+    "brand": { "name": "Trimio Command", "subtitle": "Controllo della piattaforma" },
+    "panel": {
+      "eyebrow": "Platform control",
+      "title": "Visione globale su tutta l'operazione.",
+      "desc": "Gestione centralizzata di saloni, piani, fatturazione e salute della piattaforma — in un unico punto di controllo.",
+      "stat1Label": "Rete di saloni", "stat1Desc": "Visione centralizzata di tutti gli account attivi.",
+      "stat2Label": "Crescita e piani", "stat2Desc": "MRR, upgrade e ciclo di fatturazione per account.",
+      "stat3Label": "Controllo della piattaforma", "stat3Desc": "Sospensioni, stati e salute operativa globale.",
+      "footer": "© {{year}} Trimio · Accesso riservato"
+    },
+    "form": {
+      "title": "Accesso al Command",
+      "subtitle": "Area riservata — supervisione della piattaforma Trimio.",
+      "emailLabel": "Email",
+      "emailPlaceholder": "admin@trimio.app",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "••••••••",
+      "submitButton": "Accedi al Command",
+      "loading": "Accesso in corso…",
+      "footer": "Accesso riservato agli amministratori della piattaforma Trimio.",
+      "error": "Credenziali non valide."
+    }
+  },
+  "dashboard": { "title": "Dashboard", "subtitle": "Lettura consolidata della salute della piattaforma." },
+  "barbershops": { "title": "Saloni", "subtitle": "Gestione centralizzata di account e operazioni." }
+}

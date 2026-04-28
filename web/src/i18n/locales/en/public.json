@@ -1,0 +1,278 @@
+{
+  "header": {
+    "home": "Home",
+    "services": "Services",
+    "plans": "Plans",
+    "products": "Products",
+    "bookNow": "Book now"
+  },
+  "footer": {
+    "tagline": "Simple, fast and organised bookings.",
+    "nav": "Navigation",
+    "contact": "Contact",
+    "book": "Book",
+    "privacy": "Privacy",
+    "adminArea": "Admin area",
+    "allRightsReserved": "All rights reserved."
+  },
+  "booking": {
+    "title": "Online booking",
+    "stepLabels": {
+      "service": "Service",
+      "barber": "Barber",
+      "dateTime": "Date/Time",
+      "customer": "Details",
+      "confirmation": "Confirmation"
+    },
+    "progress": "Progress",
+    "stepOf": "Step {{current}} of {{total}}",
+    "summary": {
+      "title": "Booking summary",
+      "professional": "Professional",
+      "date": "Date",
+      "time": "Time",
+      "mainService": "Main service",
+      "plan": "Plan",
+      "added": "Added",
+      "total": "Estimated total"
+    },
+    "steps": {
+      "service": {
+        "title": "Choose a service"
+      },
+      "barber": {
+        "title": "Choose your barber",
+        "professional": "Professional"
+      },
+      "dateTime": {
+        "title": "Date and time",
+        "selectDate": "Select a date",
+        "availableSlots": "Available slots",
+        "noSlots": "No available slots on this day.",
+        "morning": "Morning",
+        "afternoon": "Afternoon",
+        "slotCount_one": "{{count}} slot",
+        "slotCount_other": "{{count}} slots",
+        "noSlotsInPeriod": "No slots in this period."
+      },
+      "extras": {
+        "title": "Extras",
+        "optional": " optional",
+        "includedInService": "included in service",
+        "noExtras": "No extras available."
+      },
+      "extrasProducts": {
+        "title": "Extras & Products",
+        "subtitle": "Add to your appointment (optional)",
+        "noItems": "No extras or products available.",
+        "extras": "Extras",
+        "products": "Products"
+      },
+      "products": {
+        "title": "Take home",
+        "subtitle": "Products to maintain your look (optional)",
+        "reviewOrder": "Review order"
+      },
+      "customer": {
+        "title": "Your details",
+        "name": "Your name",
+        "namePlaceholder": "John Smith",
+        "attendeeName": "Person being served",
+        "attendeeNamePlaceholder": "Mike Smith",
+        "phone": "Phone / WhatsApp",
+        "phonePlaceholder": "+44 7911 123456",
+        "email": "Email",
+        "emailPlaceholder": "john@example.com",
+        "notes": "Notes (optional)",
+        "planInfo": "Plan: {{name}}",
+        "responsible": "Responsible: {{name}}",
+        "allowedDays": "Allowed days: {{days}}",
+        "includedServices": "Included services: {{services}}",
+        "planDiscount": "🎁 {{discount}}% discount on extras, products and services outside the plan.",
+        "serviceNotInPlan": "⚠ \"{{service}}\" is not in the plan",
+        "errors": {
+          "emailRequired": "Email required",
+          "emailInvalid": "Invalid email",
+          "nameRequired": "Name required",
+          "phoneRequired": "Phone required",
+          "attendeeRequired": "Person being served name required"
+        },
+        "planActiveBlock": "This customer already has an active booking in the plan and can only book again after completing the current appointment.",
+        "planDayBlock": "This plan only allows bookings on: {{days}}."
+      },
+      "confirmation": {
+        "title": "Confirm booking",
+        "incomplete": "Complete the booking before confirming.",
+        "dataTitle": "Data that will be saved",
+        "dataName": "· Name: {{name}}",
+        "dataPhone": "· Phone: {{phone}}",
+        "dataEmail": "· Email: {{email}}",
+        "dataAttendee": "· Person being served: {{attendee}}",
+        "dataBookingInfo": "· Selected date, time, service and barber",
+        "dataUsage": "Used to manage the booking, send the management link and operational contact. You can export or delete your data at any time through the booking link. Retention: 3 years.",
+        "privacyLink": "Full Privacy Policy.",
+        "consentLabel": "I authorise the processing of my personal data for managing this booking, under the terms described above.",
+        "submitButton": "Confirm booking",
+        "success": {
+          "title": "Booking confirmed",
+          "message": "Booking for {{name}} created successfully.",
+          "addToCalendar": "Save to Calendar",
+          "addToGoogleCalendar": "Add to Google Calendar",
+          "downloadIcs": "Download .ics file",
+          "manageBooking": "Manage booking",
+          "backHome": "Back to home"
+        }
+      }
+    }
+  },
+  "home": {
+    "features": {
+      "title": "A stronger barbershop experience, from the very first booking.",
+      "section": "Why choose us",
+      "easyBooking": "Easy booking",
+      "easyBookingDesc": "Book in seconds, no calls or messages needed.",
+      "realTimeSlots": "Real-time availability",
+      "realTimeSlotsDesc": "See available slots at any minute.",
+      "bestPros": "Top professionals",
+      "bestProsDesc": "Experienced barbers dedicated to you.",
+      "guaranteedConfirmation": "Instant confirmation",
+      "guaranteedConfirmationDesc": "Receive immediate confirmation of your booking."
+    },
+    "howItWorks": {
+      "title": "Fast booking, premium feel.",
+      "subtitle": "In under 2 minutes everything is sorted.",
+      "section": "Simple flow",
+      "step1Title": "Choose a service",
+      "step1Desc": "Select from haircuts, beard trims, treatments and more.",
+      "step2Title": "Choose your barber",
+      "step2Desc": "See who's available and pick your favourite.",
+      "step3Title": "Choose date and time",
+      "step3Desc": "View free slots and reserve yours.",
+      "step4Title": "Confirmation",
+      "step4Desc": "Receive confirmation and show up on time."
+    },
+    "stats": {
+      "avgBooking": "Average booking",
+      "avgBookingVal": "< 2 min",
+      "confirmation": "Confirmation",
+      "confirmationVal": "Instant",
+      "availability": "Availability",
+      "availabilityVal": "Real time"
+    },
+    "gallery": {
+      "section": "Gallery",
+      "title": "The atmosphere and style of {{name}}",
+      "subtitle": "Each barbershop can showcase its space, cuts and visual identity."
+    },
+    "cta": {
+      "title": "Ready for a new look?",
+      "subtitle": "Book now and secure your slot at {{name}} without waiting or calling."
+    },
+    "social": {
+      "whatsapp": "WhatsApp",
+      "instagram": "Instagram"
+    },
+    "promo": {
+      "label": "This week's highlight",
+      "defaultTitle": "Special promotion",
+      "defaultText": "Take advantage of this barbershop's active campaign and book your slot.",
+      "whyBook": "Why book online",
+      "bullet1": "Avoid waiting and calls.",
+      "bullet2": "See the next available slot right away.",
+      "bullet3": "Secure your favourite professional."
+    }
+  },
+  "services": {
+    "eyebrow": "Catalogue",
+    "title": "Available services",
+    "subtitle": "Choose the ideal service — view prices, duration and book directly.",
+    "bookButton": "Book"
+  },
+  "products": {
+    "eyebrow": "Shop",
+    "title": "Products",
+    "subtitle": "Take professional care home — products used by our barbers.",
+    "unavailableTitle": "Products unavailable",
+    "unavailableMsg": "This barbershop has chosen not to show products on the public site at this time.",
+    "backHome": "Back to home",
+    "orderButton": "Order",
+    "lowStock": "Only {{count}} units left",
+    "outOfStock": "Out of stock"
+  },
+  "plans": {
+    "eyebrow": "Subscriptions",
+    "title": "Plans and subscriptions",
+    "subtitle": "Subscribe to a plan and save on every visit — included services, no surprises.",
+    "unavailableTitle": "Plans unavailable",
+    "unavailableMsg": "This barbershop has chosen not to show plans on the public site at this time.",
+    "popular": "Most popular",
+    "subscribeNow": "Subscribe now",
+    "paymentUnavailable": "Payment unavailable",
+    "days": "Days: {{days}}",
+    "services": "Services: {{services}}",
+    "oneActiveBooking": "1 active booking at a time",
+    "modal": {
+      "title": "Subscribe to plan",
+      "subtitle": "{{name}} · {{price}}",
+      "namePlaceholder": "Your name",
+      "phonePlaceholder": "+44 7911 123456",
+      "warning": "This plan can only be activated after payment confirmation or directly by the barbershop.",
+      "confirmButton": "Confirm subscription",
+      "successTitle": "Plan activated!",
+      "successMsg": "The request for {{name}} has been registered."
+    }
+  },
+  "manageBooking": {
+    "eyebrow": "Booking management",
+    "title": "Confirm, cancel or reschedule without calling.",
+    "subtitle": "Use this page to manage your booking at {{shopName}}.",
+    "missingToken": "Booking token missing. Open the full management link to continue.",
+    "details": {
+      "label": "Details",
+      "barber": "Barber:",
+      "customer": "Customer:",
+      "responsible": "Responsible:",
+      "contact": "Contact:"
+    },
+    "actions": {
+      "label": "Quick actions",
+      "copyLink": "Copy booking link",
+      "addPerson": "Add another person",
+      "confirmPresence": "Confirm attendance",
+      "cancelBooking": "Cancel booking",
+      "linkCopied": "Management link copied.",
+      "presenceConfirmed": "Attendance confirmed successfully.",
+      "bookingCancelled": "Booking cancelled successfully."
+    },
+    "privacy": {
+      "title": "Privacy & data",
+      "subtitle": "Your GDPR rights — access, portability and deletion",
+      "privacyPolicy": "Privacy Policy",
+      "consentGiven": "Consent given",
+      "info": "Identifying data is retained for 3 years from the last booking. You can request anonymisation at any time.",
+      "exportData": "Export my data",
+      "anonymizeData": "Anonymise my data",
+      "exportDone": "Your data export is complete.",
+      "confirmAnonymize": {
+        "title": "Confirm data anonymisation",
+        "warning": "This action will replace your identifying personal data (name, phone, email, notes) with an anonymous identifier across {{shopName}}.",
+        "bullet1": "· The operational history of bookings (dates, services, duration) is kept anonymously.",
+        "bullet2": "· This action cannot be reversed.",
+        "bullet3": "· The link to this booking will stop working after anonymisation.",
+        "confirmButton": "Confirm anonymisation"
+      }
+    },
+    "reschedule": {
+      "title": "Reschedule",
+      "subtitle": "Choose another day and a free slot for the same service.",
+      "noSlots": "No available slots for that day.",
+      "confirmButton": "Confirm new time",
+      "success": "Booking rescheduled successfully."
+    }
+  },
+  "privacy": {
+    "eyebrow": "Privacy",
+    "title": "Privacy Policy",
+    "versionDate": "Version {{version}} · Updated on {{date}}"
+  }
+}

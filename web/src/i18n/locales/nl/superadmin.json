@@ -1,0 +1,40 @@
+{
+  "layout": {
+    "nav": { "platform": "Platform", "dashboard": "Dashboard", "barbershops": "Kapperswinkels" },
+    "pageMeta": {
+      "dashboard": { "title": "Dashboard", "subtitle": "Geconsolideerde lezing van de commerciële en operationele gezondheid van het platform." },
+      "barbershops": { "title": "Kapperswinkels", "subtitle": "Gecentraliseerd beheer van accounts, plannen en operationele status." }
+    },
+    "account": { "name": "Super Admin", "platform": "Trimio Platform", "logout": "Afmelden" },
+    "sidebar": { "scopeLabel": "Bereik", "scopeTitle": "Centrale operatie", "scopeDesc": "Dwarsliggende blik op groei, accounts en monetisatie." },
+    "topbar": { "viewBarbershops": "Kapperswinkels bekijken" },
+    "pull": { "refreshing": "Vernieuwen...", "releaseToRefresh": "Loslaten om te vernieuwen", "pullToRefresh": "Trek om te vernieuwen" },
+    "brand": { "name": "Trimio Command", "subtitle": "Platformbeheer" }
+  },
+  "login": {
+    "brand": { "name": "Trimio Command", "subtitle": "Platformbeheer" },
+    "panel": {
+      "eyebrow": "Platform control",
+      "title": "Globaal overzicht van de gehele operatie.",
+      "desc": "Gecentraliseerd beheer van kapperswinkels, plannen, facturatie en platformgezondheid — vanuit één controlepunt.",
+      "stat1Label": "Netwerk kapperswinkels", "stat1Desc": "Gecentraliseerd overzicht van alle actieve accounts.",
+      "stat2Label": "Groei en plannen", "stat2Desc": "MRR, upgrades en facturatiecyclus per account.",
+      "stat3Label": "Platformbeheer", "stat3Desc": "Opschortingen, statussen en globale operationele gezondheid.",
+      "footer": "© {{year}} Trimio · Beperkte toegang"
+    },
+    "form": {
+      "title": "Toegang tot Command",
+      "subtitle": "Beperkt gebied — toezicht op het Trimio-platform.",
+      "emailLabel": "E-mail",
+      "emailPlaceholder": "admin@trimio.app",
+      "passwordLabel": "Wachtwoord",
+      "passwordPlaceholder": "••••••••",
+      "submitButton": "Inloggen op Command",
+      "loading": "Inloggen…",
+      "footer": "Toegang voorbehouden aan beheerders van het Trimio-platform.",
+      "error": "Ongeldige inloggegevens."
+    }
+  },
+  "dashboard": { "title": "Dashboard", "subtitle": "Geconsolideerde lezing van de platformgezondheid." },
+  "barbershops": { "title": "Kapperswinkels", "subtitle": "Gecentraliseerd beheer van accounts en operaties." }
+}

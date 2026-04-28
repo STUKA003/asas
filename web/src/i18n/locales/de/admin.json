@@ -1,0 +1,134 @@
+{
+  "layout": {
+    "nav": {
+      "operation": "Betrieb",
+      "catalog": "Katalog",
+      "management": "Verwaltung",
+      "dashboard": "Dashboard",
+      "bookings": "Buchungen",
+      "customers": "Kunden",
+      "barbers": "Barbiere",
+      "schedule": "Zeiten",
+      "services": "Leistungen",
+      "extras": "Extras",
+      "products": "Produkte",
+      "plans": "Abonnements",
+      "reports": "Berichte",
+      "brandSite": "Marke und Website",
+      "billing": "Abrechnung"
+    },
+    "pageMeta": {
+      "dashboard": { "title": "Dashboard", "subtitle": "Übersicht über Leistung, Zeitplan und betriebliche Signale." },
+      "bookings": { "title": "Buchungen", "subtitle": "Buchungen, Bestätigungen und Terminblockierungen verwalten." },
+      "customers": { "title": "Kunden", "subtitle": "Verlauf, aktive Pläne und Kontaktdaten einsehen." },
+      "barbers": { "title": "Barbiere", "subtitle": "Team, Zugänge und Verfügbarkeit verwalten." },
+      "services": { "title": "Leistungen", "subtitle": "Den Hauptkatalog des Barbershops organisiert halten." },
+      "extras": { "title": "Extras", "subtitle": "Upsells und Add-ons, die den Durchschnittsbon erhöhen." },
+      "products": { "title": "Produkte", "subtitle": "Inventar und Produktverkauf am Point of Service." },
+      "plans": { "title": "Abonnements", "subtitle": "Abonnements und wiederkehrende Vorteile konfigurieren." },
+      "schedule": { "title": "Zeiten", "subtitle": "Die Basisstruktur des Terminkalenders festlegen." },
+      "reports": { "title": "Berichte", "subtitle": "Geschäftliche und operative Auswertungen zur Entscheidungsunterstützung." },
+      "customization": { "title": "Marke und Website", "subtitle": "Digitale Präsenz, Farben und öffentliche Inhalte anpassen." },
+      "billing": { "title": "Abrechnung", "subtitle": "Aktuellen Plan, Upgrades und Abrechnungszyklus verfolgen." }
+    },
+    "notifications": {
+      "title": "Benachrichtigungen",
+      "newBadge": "{{count}} neue",
+      "markAllRead": "Alle als gelesen markieren",
+      "noRecent": "Keine aktuellen Benachrichtigungen."
+    },
+    "account": {
+      "planBadge": "Plan {{plan}}",
+      "billingLink": "Abonnement und Abrechnung",
+      "logout": "Abmelden"
+    },
+    "sidebar": {
+      "currentPlan": "Aktueller Plan",
+      "manageSubscription": "Abonnement verwalten"
+    },
+    "pull": {
+      "refreshing": "Aktualisierung...",
+      "releaseToRefresh": "Loslassen zum Aktualisieren",
+      "pullToRefresh": "Ziehen zum Aktualisieren"
+    },
+    "suspended": {
+      "title": "Konto gesperrt",
+      "defaultMessage": "Ihr Konto wurde gesperrt. Kontaktieren Sie den Support für weitere Informationen.",
+      "reason": "Grund: {{reason}}"
+    },
+    "expiredPlan": {
+      "message": "Ihr {{plan}}-Plan ist abgelaufen. Sie befinden sich jetzt auf dem Kostenlosen Plan mit eingeschränkten Funktionen.",
+      "renew": "Erneuern"
+    },
+    "topbar": { "renewPlan": "Plan erneuern", "viewBilling": "Abrechnung anzeigen" },
+    "brand": { "name": "Trimio Studio", "defaultSubtitle": "Barbershop-Panel" }
+  },
+  "push": {
+    "unavailable": "Push auf diesem Gerät nicht verfügbar",
+    "notConfigured": "Push nicht konfiguriert",
+    "blocked": "Push blockiert",
+    "active": "Push aktiv",
+    "enable": "Push aktivieren",
+    "blockedTooltip": "Benachrichtigungserlaubnis im Browser blockiert",
+    "enableTooltip": "Push-Benachrichtigungen aktivieren"
+  },
+  "login": {
+    "brand": { "name": "Trimio Studio", "subtitle": "Barbershop-Panel" },
+    "panel": {
+      "eyebrow": "Vollständige Verwaltung",
+      "title": "Volle Kontrolle über Ihren Barbershop.",
+      "desc": "Terminkalender, Kunden, Team, Abrechnung und Berichte — alles in einem Panel für professionellen Betrieb.",
+      "feature1Label": "Echtzeit-Terminkalender",
+      "feature1Desc": "Buchungen, Bestätigungen und Blockierungen in einem Bildschirm.",
+      "feature2Label": "Team und Kunden",
+      "feature2Desc": "Verwaltung von Barbieren, Plänen und vollständigem Verlauf.",
+      "feature3Label": "Berichte und Einnahmen",
+      "feature3Desc": "Betriebliche Auswertungen für schnellere Entscheidungen.",
+      "footer": "© {{year}} Trimio · Verwaltungsplattform für Barbershops"
+    },
+    "form": {
+      "title": "In Ihr Panel einloggen",
+      "subtitle": "Zugang zur Verwaltung Ihres Barbershops.",
+      "slugLabel": "Barbershop-Slug",
+      "slugPlaceholder": "mein-barbershop",
+      "emailLabel": "E-Mail",
+      "emailPlaceholder": "admin@email.com",
+      "passwordLabel": "Passwort",
+      "passwordPlaceholder": "••••••••",
+      "forgotPassword": "Passwort vergessen?",
+      "submitButton": "Im Panel einloggen",
+      "noAccount": "Noch kein Konto?",
+      "createFree": "Barbershop kostenlos erstellen",
+      "noVerification": "Bestätigungs-E-Mail nicht erhalten?",
+      "resendEmail": "E-Mail erneut senden",
+      "openInbox": "Posteingang öffnen",
+      "errors": {
+        "invalidCredentials": "Slug, E-Mail oder Passwort ungültig.",
+        "emailNotVerified": "Bitte bestätigen Sie Ihre E-Mail, bevor Sie sich einloggen."
+      }
+    }
+  },
+  "dashboard": { "title": "Dashboard", "subtitle": "Konsolidierter Tagesüberblick, monatliche Leistung und schnelle Aktionssignale.", "viewBookings": "Buchungen anzeigen", "occupancy": { "strong": "Starker Tag", "low": "Geringe Auslastung", "balanced": "Ausgeglichener Fluss" } },
+  "bookings": {
+    "title": "Buchungen",
+    "newButton": "Neu",
+    "blockButton": "Blockieren",
+    "viewCalendar": "Kalender",
+    "viewList": "Liste",
+    "today": "Heute",
+    "status": { "all": "Alle Status", "pending": "Ausstehend", "confirmed": "Bestätigt", "completed": "Abgeschlossen", "cancelled": "Storniert", "noShow": "Nicht erschienen" },
+    "searchPlaceholder": "Kunde, Barbier oder Leistung suchen…",
+    "allBarbers": "Alle Barbiere",
+    "detail": { "title": "Buchungsdetails", "addToBooking": "Zur Buchung hinzufügen", "selectExtra": "Extra auswählen", "selectProduct": "Produkt auswählen", "addButton": "Extra/Produkt hinzufügen", "changeStatus": "Status ändern" }
+  },
+  "customers": { "title": "Kunden", "exportCsv": "CSV exportieren", "importCsv": "CSV importieren", "totalCustomers": "Gesamte Kunden", "withActivePlan": "Mit aktivem Plan", "detail": { "title": "Kundendetails", "deleteButton": "Kunden löschen" } },
+  "barbers": { "title": "Barbiere", "newButton": "Neuer Barbier", "modal": { "create": "Neuer Barbier", "edit": "Barbier bearbeiten" } },
+  "services": { "title": "Leistungen" },
+  "extras": { "title": "Extras" },
+  "products": { "title": "Produkte" },
+  "plans": { "title": "Abonnements" },
+  "schedule": { "title": "Zeiten", "days": { "0": "Sonntag", "1": "Montag", "2": "Dienstag", "3": "Mittwoch", "4": "Donnerstag", "5": "Freitag", "6": "Samstag" } },
+  "reports": { "title": "Berichte" },
+  "customization": { "title": "Marke und Website" },
+  "billing": { "title": "Abrechnung" }
+}

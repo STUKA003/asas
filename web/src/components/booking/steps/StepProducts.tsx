@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { publicApi } from '@/lib/publicApi'
 import { useTenant } from '@/providers/TenantProvider'
 import { useBookingStore } from '@/store/booking'
@@ -12,6 +13,7 @@ import type { Product } from '@/lib/types'
 export function StepProducts() {
   const { slug } = useTenant()
   const { products: selected, toggleProduct, setStep } = useBookingStore()
+  const { t } = useTranslation(['public', 'common'])
   const confirmationStep = 6
 
   const { data: products, isLoading } = useQuery({
@@ -31,8 +33,8 @@ export function StepProducts() {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-xl font-bold">Leve para casa</h2>
-        <p className="text-zinc-500 text-sm mt-1">Produtos para manter o visual (opcional)</p>
+        <h2 className="text-xl font-bold">{t('booking.steps.products.title')}</h2>
+        <p className="text-zinc-500 text-sm mt-1">{t('booking.steps.products.subtitle')}</p>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2">
@@ -85,8 +87,8 @@ export function StepProducts() {
       </div>
 
       <div className="flex justify-between pt-2">
-        <Button variant="outline" onClick={() => setStep(4)}>Voltar</Button>
-        <Button onClick={() => setStep(6)}>Revisar pedido</Button>
+        <Button variant="outline" onClick={() => setStep(4)}>{t('common:btn.back')}</Button>
+        <Button onClick={() => setStep(6)}>{t('booking.steps.products.reviewOrder')}</Button>
       </div>
     </div>
   )

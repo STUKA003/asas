@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { CalendarDays, Menu, X } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/Button'
+import { LanguageSelector } from '@/components/ui/LanguageSelector'
 import { useTenant } from '@/providers/TenantProvider'
 import { cn } from '@/lib/utils'
 import clientsLogo from '@/assets/branding/clients-logo.png'
@@ -11,15 +13,16 @@ export function Header() {
   const [open, setOpen] = useState(false)
   const { pathname } = useLocation()
   const { slug, barbershop } = useTenant()
+  const { t } = useTranslation('public')
   useInstallBrand('clients')
 
   const base = `/${slug}`
   const isFree = barbershop?.plan === 'FREE'
   const links = [
-    { href: base,               label: 'Início'   },
-    { href: `${base}/services`, label: 'Serviços' },
-    ...(!isFree && barbershop?.showPlans    !== false ? [{ href: `${base}/plans`,    label: 'Planos'   }] : []),
-    ...(!isFree && barbershop?.showProducts !== false ? [{ href: `${base}/products`, label: 'Produtos' }] : []),
+    { href: base,               label: t('header.home')     },
+    { href: `${base}/services`, label: t('header.services') },
+    ...(!isFree && barbershop?.showPlans    !== false ? [{ href: `${base}/plans`,    label: t('header.plans')    }] : []),
+    ...(!isFree && barbershop?.showProducts !== false ? [{ href: `${base}/products`, label: t('header.products') }] : []),
   ]
 
   return (
@@ -69,10 +72,11 @@ export function Header() {
 
           {/* Actions */}
           <div className="flex items-center gap-2">
+            <LanguageSelector />
             <Link to={`${base}/booking`}>
               <Button size="sm" className="hidden sm:inline-flex">
                 <CalendarDays size={14} />
-                Agendar agora
+                {t('header.bookNow')}
               </Button>
             </Link>
             <button
@@ -110,7 +114,7 @@ export function Header() {
             <Link to={`${base}/booking`} onClick={() => setOpen(false)} className="mt-1.5">
               <Button size="sm" className="w-full">
                 <CalendarDays size={14} />
-                Agendar agora
+                {t('header.bookNow')}
               </Button>
             </Link>
           </nav>

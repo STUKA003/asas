@@ -1,0 +1,60 @@
+{
+  "btn": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "back": "Volver",
+    "next": "Siguiente",
+    "continue": "Continuar",
+    "logout": "Cerrar sesión",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "search": "Buscar",
+    "clear": "Limpiar",
+    "create": "Crear",
+    "close": "Cerrar",
+    "loading": "Cargando...",
+    "start": "Empezar",
+    "startFree": "Empezar gratis",
+    "enter": "Entrar",
+    "update": "Actualizar",
+    "remove": "Quitar",
+    "add": "Añadir",
+    "upgrade": "Actualizar plan",
+    "refresh": "Actualizar página",
+    "export": "Exportar",
+    "import": "Importar"
+  },
+  "status": {
+    "PENDING": "Pendiente",
+    "CONFIRMED": "Confirmado",
+    "COMPLETED": "Completado",
+    "CANCELLED": "Cancelado",
+    "NO_SHOW": "No presentado",
+    "active": "Activo",
+    "inactive": "Inactivo"
+  },
+  "plan": {
+    "FREE": "Gratis",
+    "BASIC": "Básico",
+    "PRO": "Pro"
+  },
+  "error": {
+    "generic": "Ocurrió un error. Inténtalo de nuevo.",
+    "required": "Campo obligatorio",
+    "invalidEmail": "Email inválido",
+    "invalidCredentials": "Credenciales inválidas",
+    "pageLoad": "Error al cargar la página",
+    "pageLoadDesc": "Ocurrió un error al cargar. Actualiza la página para volver a sincronizar la app."
+  },
+  "lang": {
+    "label": "Idioma",
+    "pt": "Português",
+    "en": "English",
+    "es": "Español",
+    "fr": "Français",
+    "de": "Deutsch",
+    "it": "Italiano",
+    "nl": "Nederlands"
+  }
+}

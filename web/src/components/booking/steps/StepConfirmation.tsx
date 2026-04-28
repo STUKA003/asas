@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { format } from 'date-fns'
-import { pt } from 'date-fns/locale'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { publicApi } from '@/lib/publicApi'
 import { useTenant } from '@/providers/TenantProvider'
 import { type BookingDraft, useBookingStore } from '@/store/booking'
@@ -13,26 +13,11 @@ import { Calendar, CheckCircle2, Clock, Download, ExternalLink, Scissors, User }
 
 function getBookingErrorMessage(err: unknown) {
   const apiMessage =
-    typeof err === 'object' &&
-    err !== null &&
-    'response' in err &&
+    typeof err === 'object' && err !== null && 'response' in err &&
     typeof (err as { response?: { data?: { error?: string } } }).response?.data?.error === 'string'
       ? (err as { response?: { data?: { error?: string } } }).response!.data!.error!
       : null
-
-  if (!apiMessage) {
-    return err instanceof Error ? err.message : 'Erro ao criar agendamento'
-  }
-
-  if (
-    apiMessage.includes('plano') ||
-    apiMessage.includes('marcacao ativa') ||
-    apiMessage.includes('nao permite marcacoes') ||
-    apiMessage.includes('nao esta incluido no plano')
-  ) {
-    return `Este agendamento não pode ser confirmado com o plano atual. ${apiMessage}`
-  }
-
+  if (!apiMessage) return err instanceof Error ? err.message : 'Booking error'
   return apiMessage
 }
 
@@ -57,6 +42,12 @@ export function StepConfirmation() {
   const [bookingError, setBookingError] = useState<string | null>(null)
   const [createdBooking, setCreatedBooking] = useState<(BookingDraft & { managementUrl: string | null }) | null>(null)
   const [privacyAccepted, setPrivacyAccepted] = useState(false)
+  const { t, i18n } = useTranslation(['public', 'common'])
+
+  const dateFnsLocale = (() => {
+    try { return require(`date-fns/locale/${i18n.language}`).default ?? require('date-fns/locale/pt').default }
+    catch { try { return require(`date-fns/locale/${i18n.language.split('-')[0]}`).default } catch { return require('date-fns/locale/pt').default } }
+  })()
 
   const { barber, customer, customerPlan, date, extras, products, service, slot } = store
 
@@ -74,17 +65,11 @@ export function StepConfirmation() {
     if (!service || !barber || !date || !slot || !customer?.attendeeName) return null
     return {
       attendeeName: customer.attendeeName,
-      barber,
-      date,
-      extras,
+      barber, date, extras,
       planDiscount: customerPlan ? discount : 0,
-      products,
-      service,
+      products, service,
       serviceCoveredByPlan: planServiceIds.has(service.id),
-      servicePrice,
-      slot,
-      totalDuration,
-      totalPrice,
+      servicePrice, slot, totalDuration, totalPrice,
     }
   }, [barber, customer?.attendeeName, customerPlan, date, discount, extras, planServiceIds, products, service, servicePrice, slot, totalDuration, totalPrice])
 
@@ -100,7 +85,7 @@ export function StepConfirmation() {
       barbershop?.address || barbershop?.name || 'Barbearia'
     )
     if (calendarPlatform === 'ios') {
-      downloadIcsFile(event, `reserva-${draft.attendeeName.toLowerCase().replace(/\s+/g, '-')}.ics`)
+      downloadIcsFile(event, `booking-${draft.attendeeName.toLowerCase().replace(/\s+/g, '-')}.ics`)
       return
     }
     window.open(buildGoogleCalendarUrl(event), '_blank', 'noopener,noreferrer')
@@ -108,7 +93,7 @@ export function StepConfirmation() {
 
   const createBookingMutation = useMutation({
     mutationFn: async () => {
-      if (!customer || !draft) throw new Error('Completa a reserva antes de confirmar.')
+      if (!customer || !draft) throw new Error(t('booking.steps.confirmation.incomplete'))
       const response = await publicApi(slug).createBooking({
         barberId: draft.barber.id,
         serviceIds: [draft.service.id],
@@ -146,18 +131,18 @@ export function StepConfirmation() {
           <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border border-primary-200 bg-primary-50">
             <CheckCircle2 size={40} className="text-primary-700" />
           </div>
-          <h2 className="mt-4 text-2xl font-bold">Reserva confirmada</h2>
+          <h2 className="mt-4 text-2xl font-bold">{t('booking.steps.confirmation.success.title')}</h2>
           <p className="mt-2 text-sm text-ink-muted">
             {createdBooking.attendeeName !== customer?.name
-              ? `Reserva para ${createdBooking.attendeeName} criada com sucesso.`
-              : `Reserva criada com sucesso para ${customer?.name}.`}
+              ? t('booking.steps.confirmation.success.message', { name: createdBooking.attendeeName })
+              : t('booking.steps.confirmation.success.message', { name: customer?.name })}
           </p>
         </div>
 
         <div className="rounded-3xl border border-neutral-200 bg-white p-5 shadow-soft">
           <div className="space-y-3 text-sm text-ink">
-            <p className="flex items-center gap-2"><Scissors size={15} className="text-primary-600" />{createdBooking.service.name} com {createdBooking.barber.name}</p>
-            <p className="flex items-center gap-2"><Calendar size={15} className="text-primary-600" />{format(new Date(createdBooking.date), "EEEE, d 'de' MMMM", { locale: pt })}</p>
+            <p className="flex items-center gap-2"><Scissors size={15} className="text-primary-600" />{createdBooking.service.name} · {createdBooking.barber.name}</p>
+            <p className="flex items-center gap-2"><Calendar size={15} className="text-primary-600" />{format(new Date(createdBooking.date), "EEEE, d 'de' MMMM", { locale: dateFnsLocale })}</p>
             <p className="flex items-center gap-2"><Clock size={15} className="text-primary-600" />{format(toWallClockDate(createdBooking.slot.startTime), 'HH:mm')} · {formatDuration(createdBooking.totalDuration)}</p>
             <p className="flex items-center gap-2"><User size={15} className="text-primary-600" />{createdBooking.attendeeName}</p>
           </div>
@@ -165,7 +150,9 @@ export function StepConfirmation() {
           <div className="mt-4 flex flex-col gap-2">
             <Button onClick={handleCalendarAction} className="w-full">
               {calendarPlatform === 'ios' ? <Download size={16} /> : <Calendar size={16} />}
-              {calendarPlatform === 'ios' ? 'Guardar no Calendário' : 'Adicionar ao Google Calendar'}
+              {calendarPlatform === 'ios'
+                ? t('booking.steps.confirmation.success.addToCalendar')
+                : t('booking.steps.confirmation.success.addToGoogleCalendar')}
             </Button>
             <button
               type="button"
@@ -178,23 +165,23 @@ export function StepConfirmation() {
                   barbershop?.name ?? 'Trimio',
                   barbershop?.address || barbershop?.name || 'Barbearia'
                 )
-                downloadIcsFile(event, `reserva-${draft.attendeeName.toLowerCase().replace(/\s+/g, '-')}.ics`)
+                downloadIcsFile(event, `booking-${draft.attendeeName.toLowerCase().replace(/\s+/g, '-')}.ics`)
               }}
               className="inline-flex items-center justify-center gap-2 text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-800"
             >
               <ExternalLink size={14} />
-              Descarregar ficheiro .ics
+              {t('booking.steps.confirmation.success.downloadIcs')}
             </button>
             {createdBooking.managementUrl ? (
               <Button onClick={() => { window.location.href = createdBooking.managementUrl! }} variant="secondary" className="w-full">
-                Gerir reserva
+                {t('booking.steps.confirmation.success.manageBooking')}
               </Button>
             ) : null}
           </div>
         </div>
 
         <Button onClick={() => { store.reset(); window.location.href = `/${slug}` }} className="w-full">
-          Voltar ao início
+          {t('booking.steps.confirmation.success.backHome')}
         </Button>
       </div>
     )
@@ -203,7 +190,7 @@ export function StepConfirmation() {
   return (
     <div className="space-y-5">
       <div>
-        <h2 className="text-xl font-bold">Confirmar reserva</h2>
+        <h2 className="text-xl font-bold">{t('booking.steps.confirmation.title')}</h2>
       </div>
 
       {customer ? (
@@ -223,16 +210,16 @@ export function StepConfirmation() {
           <div className="flex items-start gap-3">
             <div className="min-w-0">
               <p className="text-sm font-semibold text-ink">{draft.attendeeName}</p>
-              <p className="mt-1 text-xs text-ink-muted">{draft.service.name} com {draft.barber.name}</p>
+              <p className="mt-1 text-xs text-ink-muted">{draft.service.name} · {draft.barber.name}</p>
             </div>
           </div>
           <div className="grid gap-3 text-sm sm:grid-cols-3">
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">Data</p>
-              <p className="mt-1 font-medium text-ink">{format(new Date(draft.date), "d 'de' MMMM", { locale: pt })}</p>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">{t('booking.summary.date')}</p>
+              <p className="mt-1 font-medium text-ink">{format(new Date(draft.date), "d 'de' MMMM", { locale: dateFnsLocale })}</p>
             </div>
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">Hora</p>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">{t('booking.summary.time')}</p>
               <p className="mt-1 font-medium text-ink">{format(toWallClockDate(draft.slot.startTime), 'HH:mm')}</p>
             </div>
             <div>
@@ -240,18 +227,10 @@ export function StepConfirmation() {
               <p className="mt-1 font-medium text-ink">{formatCurrency(draft.totalPrice)}</p>
             </div>
           </div>
-          {(draft.extras.length > 0 || draft.products.length > 0) ? (
-            <p className="text-xs text-ink-muted">
-              {[
-                draft.extras.length > 0 ? `Extras: ${draft.extras.map((e) => e.name).join(', ')}` : null,
-                draft.products.length > 0 ? `Produtos: ${draft.products.map((p) => p.name).join(', ')}` : null,
-              ].filter(Boolean).join(' · ')}
-            </p>
-          ) : null}
         </div>
       ) : (
         <div className="rounded-2xl border border-dashed border-neutral-200 bg-neutral-50 px-4 py-8 text-center text-sm text-ink-muted">
-          Falta completar a reserva antes de confirmar.
+          {t('booking.steps.confirmation.incomplete')}
         </div>
       )}
 
@@ -261,27 +240,42 @@ export function StepConfirmation() {
         </div>
       ) : null}
 
-      <label className="flex items-start gap-3 rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-4 text-sm text-ink">
-        <input
-          type="checkbox"
-          checked={privacyAccepted}
-          onChange={(event) => setPrivacyAccepted(event.target.checked)}
-          className="mt-0.5 h-4 w-4 rounded border-neutral-300 text-primary-600 focus:ring-primary-500"
-        />
-        <span className="leading-6">
-          Li e aceito a utilização dos meus dados para gestão da reserva, contacto operacional e envio do link seguro de gestão.
-          {' '}
-          <Link to={`/${slug}/privacy`} className="font-medium text-primary-700 underline underline-offset-4">
-            Política de Privacidade
+      <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-4 text-sm">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">
+          {t('booking.steps.confirmation.dataTitle')}
+        </p>
+        <ul className="mt-2 space-y-1 text-ink-muted">
+          {customer?.name ? <li>{t('booking.steps.confirmation.dataName', { name: customer.name })}</li> : null}
+          {customer?.phone ? <li>{t('booking.steps.confirmation.dataPhone', { phone: customer.phone })}</li> : null}
+          {customer?.email ? <li>{t('booking.steps.confirmation.dataEmail', { email: customer.email })}</li> : null}
+          {draft?.attendeeName && draft.attendeeName !== customer?.name
+            ? <li>{t('booking.steps.confirmation.dataAttendee', { attendee: draft.attendeeName })}</li>
+            : null}
+          <li>{t('booking.steps.confirmation.dataBookingInfo')}</li>
+        </ul>
+        <p className="mt-2.5 text-[11px] text-ink-muted">
+          {t('booking.steps.confirmation.dataUsage')}{' '}
+          <Link to={`/${slug}/privacy`} className="font-medium text-primary-700 underline underline-offset-4" target="_blank">
+            {t('booking.steps.confirmation.privacyLink')}
           </Link>
-          .
-        </span>
-      </label>
+        </p>
+        <label className="mt-3 flex cursor-pointer items-start gap-3 border-t border-neutral-200 pt-3">
+          <input
+            type="checkbox"
+            checked={privacyAccepted}
+            onChange={(event) => setPrivacyAccepted(event.target.checked)}
+            className="mt-0.5 h-4 w-4 rounded border-neutral-300 text-primary-600 focus:ring-primary-500"
+          />
+          <span className="leading-5 text-ink">
+            {t('booking.steps.confirmation.consentLabel')}
+          </span>
+        </label>
+      </div>
 
       <div className="flex justify-between pt-2">
-        <Button variant="outline" onClick={() => store.setStep(5)}>Voltar</Button>
+        <Button variant="outline" onClick={() => store.setStep(5)}>{t('common:btn.back')}</Button>
         <Button loading={createBookingMutation.isPending} disabled={!draft || !privacyAccepted} onClick={() => createBookingMutation.mutate()}>
-          Confirmar reserva
+          {t('booking.steps.confirmation.submitButton')}
         </Button>
       </div>
     </div>

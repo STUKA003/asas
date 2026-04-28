@@ -1,0 +1,40 @@
+{
+  "layout": {
+    "nav": { "platform": "Plattform", "dashboard": "Dashboard", "barbershops": "Barbershops" },
+    "pageMeta": {
+      "dashboard": { "title": "Dashboard", "subtitle": "Konsolidierte Lektüre der kommerziellen und operativen Gesundheit der Plattform." },
+      "barbershops": { "title": "Barbershops", "subtitle": "Zentrale Verwaltung von Konten, Plänen und Betriebsstatus." }
+    },
+    "account": { "name": "Super Admin", "platform": "Trimio Platform", "logout": "Abmelden" },
+    "sidebar": { "scopeLabel": "Umfang", "scopeTitle": "Zentraler Betrieb", "scopeDesc": "Übergreifende Sicht auf Wachstum, Konten und Monetarisierung." },
+    "topbar": { "viewBarbershops": "Barbershops anzeigen" },
+    "pull": { "refreshing": "Aktualisierung...", "releaseToRefresh": "Loslassen zum Aktualisieren", "pullToRefresh": "Ziehen zum Aktualisieren" },
+    "brand": { "name": "Trimio Command", "subtitle": "Plattformkontrolle" }
+  },
+  "login": {
+    "brand": { "name": "Trimio Command", "subtitle": "Plattformkontrolle" },
+    "panel": {
+      "eyebrow": "Platform control",
+      "title": "Globale Sicht auf den gesamten Betrieb.",
+      "desc": "Zentrale Verwaltung von Barbershops, Plänen, Abrechnung und Plattformgesundheit — von einem einzigen Kontrollpunkt.",
+      "stat1Label": "Barbershop-Netzwerk", "stat1Desc": "Zentralisierte Sicht auf alle aktiven Konten.",
+      "stat2Label": "Wachstum und Pläne", "stat2Desc": "MRR, Upgrades und Abrechnungszyklus pro Konto.",
+      "stat3Label": "Plattformkontrolle", "stat3Desc": "Sperrungen, Status und globale operative Gesundheit.",
+      "footer": "© {{year}} Trimio · Eingeschränkter Zugang"
+    },
+    "form": {
+      "title": "Zugang zum Command",
+      "subtitle": "Eingeschränkter Bereich — Überwachung der Trimio-Plattform.",
+      "emailLabel": "E-Mail",
+      "emailPlaceholder": "admin@trimio.app",
+      "passwordLabel": "Passwort",
+      "passwordPlaceholder": "••••••••",
+      "submitButton": "Im Command einloggen",
+      "loading": "Einloggen…",
+      "footer": "Zugang vorbehalten für Administratoren der Trimio-Plattform.",
+      "error": "Ungültige Anmeldedaten."
+    }
+  },
+  "dashboard": { "title": "Dashboard", "subtitle": "Konsolidierte Lektüre der Plattformgesundheit." },
+  "barbershops": { "title": "Barbershops", "subtitle": "Zentrale Verwaltung von Konten und Betrieb." }
+}

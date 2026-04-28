@@ -1,0 +1,57 @@
+{
+  "layout": {
+    "nav": { "portal": "Portal", "dashboard": "Dashboard", "schedule": "Schedule" },
+    "pageMeta": {
+      "dashboard": { "title": "Dashboard", "subtitle": "Quick view of your day, schedule and revenue." },
+      "schedule": { "title": "Schedule", "subtitle": "Track your timetable and ongoing bookings." }
+    },
+    "notifications": { "title": "Notifications", "newBadge": "{{count}} new", "markAllRead": "Mark all as read", "noRecent": "No recent notifications." },
+    "account": { "logout": "Log out" },
+    "sidebar": {
+      "activeSession": "Active session",
+      "portalTitle": "Barber portal",
+      "portalDesc": "Quick access to schedule, statuses and service details."
+    },
+    "topbar": { "planLabel": "Plan", "openSchedule": "Open schedule" },
+    "pull": { "refreshing": "Refreshing...", "releaseToRefresh": "Release to refresh", "pullToRefresh": "Pull to refresh" },
+    "brand": { "name": "Trimio Flow", "defaultSubtitle": "Barber portal" }
+  },
+  "push": {
+    "unavailable": "Push unavailable on this device",
+    "notConfigured": "Push not configured",
+    "blocked": "Push blocked",
+    "active": "Push active",
+    "enable": "Enable push",
+    "blockedTooltip": "Notification permission blocked in browser",
+    "enableTooltip": "Enable push notifications"
+  },
+  "login": {
+    "brand": { "name": "Trimio Flow", "subtitle": "Barber portal" },
+    "panel": {
+      "eyebrow": "Individual operation",
+      "title": "Your schedule without breaking your rhythm.",
+      "desc": "Access designed for barbers to follow their timetable, clients and service statuses with less friction.",
+      "feature1Label": "Day schedule",
+      "feature1Desc": "Bookings, confirmations and reschedules in one direct screen.",
+      "feature2Label": "Client in context",
+      "feature2Desc": "Services, plan, extras and contact at the right moment.",
+      "feature3Label": "Noise-free operation",
+      "feature3Desc": "A light flow for those who are serving, not configuring.",
+      "footer": "© {{year}} Trimio · Barber operational portal"
+    },
+    "form": {
+      "title": "Sign in to your portal",
+      "subtitle": "Access to your daily schedule and operations.",
+      "slugLabel": "Barbershop slug",
+      "slugPlaceholder": "my-barbershop",
+      "emailLabel": "Email",
+      "emailPlaceholder": "barber@email.com",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "••••••••",
+      "submitButton": "Sign in to portal",
+      "errors": { "invalidCredentials": "Slug, email or password invalid." }
+    }
+  },
+  "dashboard": { "title": "Dashboard", "subtitle": "Quick view of your day, schedule and revenue." },
+  "schedule": { "title": "Schedule", "subtitle": "Track your timetable and ongoing bookings." }
+}

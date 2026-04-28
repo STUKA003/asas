@@ -3,31 +3,28 @@ import { useEffect, useRef, useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Bell, Calendar, CheckCircle, LayoutDashboard, LogOut, RefreshCw, Scissors, Sparkles, UserX, XCircle } from 'lucide-react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { barberAuthApi } from '@/lib/api'
 import { barberPortalApi } from '@/lib/api'
 import { useBarberAuthStore } from '@/store/barberAuth'
 import { Avatar } from '@/components/ui/Avatar'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
+import { LanguageSelector } from '@/components/ui/LanguageSelector'
 import { applyAccentColor } from '@/lib/theme'
 import { useInstallBrand } from '@/lib/installBrand'
 import { PanelShell, type PanelNavSection } from './PanelShell'
 import barberLogo from '@/assets/branding/barber-logo.png'
 import { cn } from '@/lib/utils'
 import { formatDistanceToNow } from 'date-fns'
-import { pt } from 'date-fns/locale'
 import { PushToggle } from './PushToggle'
-
-const PAGE_META: Record<string, { title: string; subtitle: string }> = {
-  dashboard: { title: 'Dashboard', subtitle: 'Visão rápida do teu dia, agenda e receita.' },
-  schedule: { title: 'Agenda', subtitle: 'Acompanha os teus horários e reservas em curso.' },
-}
 
 function BarberNotificationBell() {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
   const qc = useQueryClient()
+  const { t, i18n } = useTranslation('barber')
 
   const { data: countData } = useQuery({
     queryKey: ['barber-portal', 'notifications', 'unread'],
@@ -70,6 +67,11 @@ function BarberNotificationBell() {
     }
   })()
 
+  const dateFnsLocale = (() => {
+    try { return require(`date-fns/locale/${i18n.language}`).default ?? require('date-fns/locale/pt').default }
+    catch { try { return require(`date-fns/locale/${i18n.language.split('-')[0]}`).default } catch { return require('date-fns/locale/pt').default } }
+  })()
+
   const TYPE_CONFIG: Record<string, { icon: React.ElementType; iconClass: string; bg: string }> = {
     BOOKING_CREATED: { icon: Calendar, iconClass: 'text-primary-600', bg: 'bg-primary-50' },
     BOOKING_CONFIRMED: { icon: CheckCircle, iconClass: 'text-success-600', bg: 'bg-success-50' },
@@ -87,7 +89,7 @@ function BarberNotificationBell() {
         ref={buttonRef}
         onClick={handleToggle}
         className="relative inline-flex h-10 w-10 items-center justify-center rounded-xl border border-neutral-200 bg-white text-ink-soft shadow-soft transition hover:text-ink"
-        title="Notificações"
+        title={t('layout.notifications.title')}
       >
         <Bell size={17} />
         {unread > 0 ? (
@@ -105,8 +107,8 @@ function BarberNotificationBell() {
             >
               <div className="flex items-center justify-between border-b border-neutral-200 px-4 py-3">
                 <div className="flex items-center gap-2">
-                  <p className="text-sm font-semibold text-ink">Notificações</p>
-                  {unread > 0 ? <Badge>{unread} novas</Badge> : null}
+                  <p className="text-sm font-semibold text-ink">{t('layout.notifications.title')}</p>
+                  {unread > 0 ? <Badge>{t('layout.notifications.newBadge', { count: unread })}</Badge> : null}
                 </div>
                 {notifications.length > 0 ? (
                   <button
@@ -117,7 +119,7 @@ function BarberNotificationBell() {
                     }}
                     className="text-xs font-medium text-ink-muted transition hover:text-ink"
                   >
-                    Marcar tudo como lido
+                    {t('layout.notifications.markAllRead')}
                   </button>
                 ) : null}
               </div>
@@ -128,7 +130,7 @@ function BarberNotificationBell() {
                     <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-neutral-100 text-ink-muted">
                       <Bell size={18} />
                     </div>
-                    <p className="text-sm text-ink-muted">Sem notificações recentes.</p>
+                    <p className="text-sm text-ink-muted">{t('layout.notifications.noRecent')}</p>
                   </div>
                 ) : (
                   notifications.map((n: { id: string; type: string; message: string; read: boolean; createdAt: string }) => {
@@ -148,7 +150,7 @@ function BarberNotificationBell() {
                         <div className="min-w-0 flex-1">
                           <p className="text-sm leading-5 text-ink">{n.message}</p>
                           <p className="mt-1 text-[11px] text-ink-muted">
-                            {formatDistanceToNow(new Date(n.createdAt), { addSuffix: true, locale: pt })}
+                            {formatDistanceToNow(new Date(n.createdAt), { addSuffix: true, locale: dateFnsLocale })}
                           </p>
                         </div>
                       </div>
@@ -175,6 +177,7 @@ function BarberAccountMenu({
 }) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
+  const { t } = useTranslation('barber')
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -209,7 +212,7 @@ function BarberAccountMenu({
               className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-danger-600 transition hover:bg-danger-50"
             >
               <LogOut size={16} />
-              Sair
+              {t('layout.account.logout')}
             </button>
           </div>
         </div>
@@ -229,6 +232,7 @@ export function BarberLayout({ children }: BarberLayoutProps) {
   const { pathname } = useLocation()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
+  const { t } = useTranslation('barber')
   const slug = barber?.barbershop?.slug ?? barber?.barbershopId ?? ''
 
   const { data: meData } = useQuery({
@@ -265,21 +269,23 @@ export function BarberLayout({ children }: BarberLayoutProps) {
 
   const navSections: PanelNavSection[] = [
     {
-      label: 'Portal',
+      label: t('layout.nav.portal'),
       items: [
-        { href: `/${slug}/barber`, label: 'Dashboard', icon: LayoutDashboard, exact: true },
-        { href: `/${slug}/barber/schedule`, label: 'Agenda', icon: Calendar },
+        { href: `/${slug}/barber`, label: t('layout.nav.dashboard'), icon: LayoutDashboard, exact: true },
+        { href: `/${slug}/barber/schedule`, label: t('layout.nav.schedule'), icon: Calendar },
       ],
     },
   ]
 
-  const pageMeta = pathname.endsWith('/schedule') ? PAGE_META.schedule : PAGE_META.dashboard
+  const isSchedule = pathname.endsWith('/schedule')
+  const pageTitle = isSchedule ? t('layout.pageMeta.schedule.title') : t('layout.pageMeta.dashboard.title')
+  const pageSubtitle = isSchedule ? t('layout.pageMeta.schedule.subtitle') : t('layout.pageMeta.dashboard.subtitle')
 
   return (
     <PanelShell
       brand={{
-        name: 'Trimio Flow',
-        subtitle: barber?.barbershop?.name ?? 'Portal do barbeiro',
+        name: t('layout.brand.name'),
+        subtitle: barber?.barbershop?.name ?? t('layout.brand.defaultSubtitle'),
         icon: <Scissors size={18} />,
         logoSrc: barberLogo,
       }}
@@ -287,12 +293,14 @@ export function BarberLayout({ children }: BarberLayoutProps) {
       navSections={navSections}
       sidebarOpen={sidebarOpen}
       onSidebarOpen={setSidebarOpen}
-      topbarTitle={pageMeta.title}
-      topbarSubtitle={pageMeta.subtitle}
+      topbarTitle={pageTitle}
+      topbarSubtitle={pageSubtitle}
       topbarAction={
         <div className="hidden items-center gap-3 md:flex">
           <div className="rounded-xl border border-warning-100 bg-warning-50 px-3 py-2">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-warning-700">Plano</p>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-warning-700">
+              {t('layout.topbar.planLabel')}
+            </p>
             <p className="text-sm font-semibold text-ink">
               {barber?.barbershop?.subscriptionPlan ?? 'FREE'}
             </p>
@@ -300,7 +308,7 @@ export function BarberLayout({ children }: BarberLayoutProps) {
           {slug ? (
             <Link to={`/${slug}/barber/schedule`}>
               <Button size="sm">
-                Abrir agenda
+                {t('layout.topbar.openSchedule')}
               </Button>
             </Link>
           ) : null}
@@ -308,6 +316,7 @@ export function BarberLayout({ children }: BarberLayoutProps) {
       }
       topbarAside={
         <div className="flex items-center gap-3">
+          <LanguageSelector />
           <PushToggle variant="barber" />
           <BarberNotificationBell />
           <BarberAccountMenu
@@ -321,12 +330,19 @@ export function BarberLayout({ children }: BarberLayoutProps) {
         <div className="rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-3">
           <div className="flex items-center gap-2 text-primary-600">
             <Sparkles size={14} />
-            <p className="text-xs font-semibold uppercase tracking-[0.18em]">Sessão ativa</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em]">
+              {t('layout.sidebar.activeSession')}
+            </p>
           </div>
-          <p className="mt-2 text-sm font-semibold text-ink">Portal do barbeiro</p>
-          <p className="mt-1 text-xs text-ink-muted">Acesso rápido à agenda, estados e detalhe de atendimento.</p>
+          <p className="mt-2 text-sm font-semibold text-ink">{t('layout.sidebar.portalTitle')}</p>
+          <p className="mt-1 text-xs text-ink-muted">{t('layout.sidebar.portalDesc')}</p>
         </div>
       }
+      pullRefreshLabels={{
+        refreshing: t('layout.pull.refreshing'),
+        release: t('layout.pull.releaseToRefresh'),
+        pull: t('layout.pull.pullToRefresh'),
+      }}
       onPullRefresh={handleRefresh}
       isPullRefreshing={refreshing}
     >

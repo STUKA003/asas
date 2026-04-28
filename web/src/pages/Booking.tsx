@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Header } from '@/components/layout/Header'
 import { BookingStepper } from '@/components/booking/BookingStepper'
 import { BookingSummary } from '@/components/booking/BookingSummary'
@@ -13,11 +14,8 @@ import { useBookingStore } from '@/store/booking'
 import { useTenant } from '@/providers/TenantProvider'
 import { Scissors } from 'lucide-react'
 
-// Logic: 0=Serviço 1=Barbeiro 2=Data/Hora 3=Extras 4=Dados 5=Produtos 6=Confirmação
+// Logic: 0=Service 1=Barber 2=DateTime 3=Extras 4=Customer 5=Products 6=Confirmation
 const steps = [StepService, StepBarber, StepDateTime, StepExtras, StepCustomer, StepProducts, StepConfirmation]
-
-// Stepper shows only 5 — Extras(3) hides under Data/Hora, Produtos(5) hides under Dados
-const stepLabels = ['Serviço', 'Barbeiro', 'Data/Hora', 'Dados', 'Confirmação']
 
 function toDisplay(s: number) {
   if (s <= 2) return s
@@ -34,8 +32,17 @@ function toLogic(s: number) {
 export default function Booking() {
   const { step, setStep } = useBookingStore()
   const { barbershop } = useTenant()
+  const { t } = useTranslation('public')
   const safeStep = Math.min(step, steps.length - 1)
   const StepComponent = steps[safeStep]
+
+  const stepLabels = [
+    t('booking.stepLabels.service'),
+    t('booking.stepLabels.barber'),
+    t('booking.stepLabels.dateTime'),
+    t('booking.stepLabels.customer'),
+    t('booking.stepLabels.confirmation'),
+  ]
 
   useEffect(() => {
     if (step !== safeStep) setStep(safeStep)
@@ -62,7 +69,7 @@ export default function Booking() {
             )}
             <div>
               <p className="font-semibold text-zinc-900">{barbershop?.name ?? 'Trimio'}</p>
-              <p className="text-xs text-zinc-400">Agendamento online</p>
+              <p className="text-xs text-zinc-400">{t('booking.title')}</p>
             </div>
           </div>
 

@@ -1,0 +1,278 @@
+{
+  "header": {
+    "home": "Início",
+    "services": "Serviços",
+    "plans": "Planos",
+    "products": "Produtos",
+    "bookNow": "Agendar agora"
+  },
+  "footer": {
+    "tagline": "Reserva simples, rápida e organizada.",
+    "nav": "Navegação",
+    "contact": "Contacto",
+    "book": "Agendar",
+    "privacy": "Privacidade",
+    "adminArea": "Área admin",
+    "allRightsReserved": "Todos os direitos reservados."
+  },
+  "booking": {
+    "title": "Agendamento online",
+    "stepLabels": {
+      "service": "Serviço",
+      "barber": "Barbeiro",
+      "dateTime": "Data/Hora",
+      "customer": "Dados",
+      "confirmation": "Confirmação"
+    },
+    "progress": "Progresso",
+    "stepOf": "Passo {{current}} de {{total}}",
+    "summary": {
+      "title": "Resumo da reserva",
+      "professional": "Profissional",
+      "date": "Data",
+      "time": "Hora",
+      "mainService": "Serviço principal",
+      "plan": "Plano",
+      "added": "Adicionados",
+      "total": "Total estimado"
+    },
+    "steps": {
+      "service": {
+        "title": "Escolhe o serviço"
+      },
+      "barber": {
+        "title": "Escolhe o barbeiro",
+        "professional": "Profissional"
+      },
+      "dateTime": {
+        "title": "Data e horário",
+        "selectDate": "Selecione a data",
+        "availableSlots": "Horários disponíveis",
+        "noSlots": "Sem horários disponíveis neste dia.",
+        "morning": "Manhã",
+        "afternoon": "Tarde",
+        "slotCount_one": "{{count}} horário",
+        "slotCount_other": "{{count}} horários",
+        "noSlotsInPeriod": "Sem horários neste período."
+      },
+      "extras": {
+        "title": "Extras",
+        "optional": " opcional",
+        "includedInService": "incluído no serviço",
+        "noExtras": "Sem extras disponíveis."
+      },
+      "extrasProducts": {
+        "title": "Extras & Produtos",
+        "subtitle": "Adicione ao seu atendimento (opcional)",
+        "noItems": "Sem extras ou produtos disponíveis.",
+        "extras": "Extras",
+        "products": "Produtos"
+      },
+      "products": {
+        "title": "Leve para casa",
+        "subtitle": "Produtos para manter o visual (opcional)",
+        "reviewOrder": "Revisar pedido"
+      },
+      "customer": {
+        "title": "Os teus dados",
+        "name": "O teu nome",
+        "namePlaceholder": "João Silva",
+        "attendeeName": "Nome da pessoa atendida",
+        "attendeeNamePlaceholder": "Miguel Silva",
+        "phone": "Telefone / WhatsApp",
+        "phonePlaceholder": "912 345 678",
+        "email": "E-mail",
+        "emailPlaceholder": "joao@example.com",
+        "notes": "Observações (opcional)",
+        "planInfo": "Plano: {{name}}",
+        "responsible": "Responsável: {{name}}",
+        "allowedDays": "Dias permitidos: {{days}}",
+        "includedServices": "Serviços incluídos: {{services}}",
+        "planDiscount": "🎁 {{discount}}% de desconto em extras, produtos e serviços fora do plano.",
+        "serviceNotInPlan": "⚠ \"{{service}}\" não está no plano",
+        "errors": {
+          "emailRequired": "E-mail obrigatório",
+          "emailInvalid": "E-mail inválido",
+          "nameRequired": "Nome obrigatório",
+          "phoneRequired": "Telefone obrigatório",
+          "attendeeRequired": "Nome da pessoa atendida obrigatório"
+        },
+        "planActiveBlock": "Este cliente já tem uma marcação ativa no plano e só pode voltar a marcar depois de concluir o atendimento actual.",
+        "planDayBlock": "Este plano permite marcações apenas em: {{days}}."
+      },
+      "confirmation": {
+        "title": "Confirmar reserva",
+        "incomplete": "Completa a reserva antes de confirmar.",
+        "dataTitle": "Dados que vão ser guardados",
+        "dataName": "· Nome: {{name}}",
+        "dataPhone": "· Telefone: {{phone}}",
+        "dataEmail": "· Email: {{email}}",
+        "dataAttendee": "· Pessoa atendida: {{attendee}}",
+        "dataBookingInfo": "· Data, hora, serviço e barbeiro escolhidos",
+        "dataUsage": "Usados para gerir a reserva, enviar o link de gestão e contacto operacional. Podes exportar ou apagar os teus dados a qualquer momento através do link da reserva. Conservação: 3 anos.",
+        "privacyLink": "Política de Privacidade completa.",
+        "consentLabel": "Autorizo o tratamento dos meus dados pessoais para gestão desta reserva, nos termos descritos acima.",
+        "submitButton": "Confirmar reserva",
+        "success": {
+          "title": "Reserva confirmada",
+          "message": "Reserva para {{name}} criada com sucesso.",
+          "addToCalendar": "Guardar no Calendário",
+          "addToGoogleCalendar": "Adicionar ao Google Calendar",
+          "downloadIcs": "Descarregar ficheiro .ics",
+          "manageBooking": "Gerir reserva",
+          "backHome": "Voltar ao início"
+        }
+      }
+    }
+  },
+  "home": {
+    "features": {
+      "title": "Uma experiência de barbearia mais sólida, desde a primeira reserva.",
+      "section": "Porque escolher",
+      "easyBooking": "Agendamento fácil",
+      "easyBookingDesc": "Reserve em segundos, sem ligações ou mensagens.",
+      "realTimeSlots": "Horários em tempo real",
+      "realTimeSlotsDesc": "Veja os horários disponíveis ao minuto.",
+      "bestPros": "Melhores profissionais",
+      "bestProsDesc": "Barbeiros experientes e dedicados a si.",
+      "guaranteedConfirmation": "Confirmação garantida",
+      "guaranteedConfirmationDesc": "Receba confirmação imediata do agendamento."
+    },
+    "howItWorks": {
+      "title": "Reserva rápida, sensação premium.",
+      "subtitle": "Em menos de 2 minutos fechas tudo com clareza.",
+      "section": "Fluxo simples",
+      "step1Title": "Escolha o serviço",
+      "step1Desc": "Selecione entre corte, barba, tratamentos e mais.",
+      "step2Title": "Escolha o barbeiro",
+      "step2Desc": "Veja quem está disponível e escolha o seu preferido.",
+      "step3Title": "Escolha data e hora",
+      "step3Desc": "Veja os horários livres e reserve o seu.",
+      "step4Title": "Confirmação",
+      "step4Desc": "Receba a confirmação e apareça no horário."
+    },
+    "stats": {
+      "avgBooking": "Reserva média",
+      "avgBookingVal": "< 2 min",
+      "confirmation": "Confirmação",
+      "confirmationVal": "Instantânea",
+      "availability": "Disponibilidade",
+      "availabilityVal": "Tempo real"
+    },
+    "gallery": {
+      "section": "Galeria",
+      "title": "O ambiente e o estilo da {{name}}",
+      "subtitle": "Cada barbearia pode mostrar o seu espaço, os seus cortes e a sua identidade visual."
+    },
+    "cta": {
+      "title": "Pronto para um novo visual?",
+      "subtitle": "Agende agora e garanta o seu horário na {{name}} sem esperas nem chamadas."
+    },
+    "social": {
+      "whatsapp": "WhatsApp",
+      "instagram": "Instagram"
+    },
+    "promo": {
+      "label": "Destaque da semana",
+      "defaultTitle": "Promoção especial",
+      "defaultText": "Aproveite a campanha activa desta barbearia e reserve o seu horário.",
+      "whyBook": "Porque reservar online",
+      "bullet1": "Evita esperas e chamadas.",
+      "bullet2": "Vês logo a próxima vaga.",
+      "bullet3": "Garantes o teu profissional preferido."
+    }
+  },
+  "services": {
+    "eyebrow": "Catálogo",
+    "title": "Serviços disponíveis",
+    "subtitle": "Escolha o serviço ideal — veja preços, duração e agende directamente.",
+    "bookButton": "Agendar"
+  },
+  "products": {
+    "eyebrow": "Loja",
+    "title": "Produtos",
+    "subtitle": "Leve o cuidado profissional para casa — produtos utilizados pelos nossos barbeiros.",
+    "unavailableTitle": "Produtos indisponíveis",
+    "unavailableMsg": "Esta barbearia preferiu não mostrar produtos no site público neste momento.",
+    "backHome": "Voltar ao início",
+    "orderButton": "Encomendar",
+    "lowStock": "Restam {{count}} unidades",
+    "outOfStock": "Sem stock"
+  },
+  "plans": {
+    "eyebrow": "Assinaturas",
+    "title": "Planos e assinaturas",
+    "subtitle": "Assine um plano e poupe em cada visita — serviços incluídos, sem surpresas.",
+    "unavailableTitle": "Planos indisponíveis",
+    "unavailableMsg": "Esta barbearia preferiu não mostrar os planos no site público neste momento.",
+    "popular": "Mais popular",
+    "subscribeNow": "Assinar agora",
+    "paymentUnavailable": "Pagamento indisponível",
+    "days": "Dias: {{days}}",
+    "services": "Serviços: {{services}}",
+    "oneActiveBooking": "1 marcação activa por vez",
+    "modal": {
+      "title": "Assinar plano",
+      "subtitle": "{{name}} · {{price}}",
+      "namePlaceholder": "O teu nome",
+      "phonePlaceholder": "900 000 000",
+      "warning": "Este plano só pode ser activado após confirmação de pagamento ou directamente pela barbearia.",
+      "confirmButton": "Confirmar assinatura",
+      "successTitle": "Plano activado!",
+      "successMsg": "O pedido para {{name}} foi registado."
+    }
+  },
+  "manageBooking": {
+    "eyebrow": "Gestão da reserva",
+    "title": "Confirma, cancela ou remarca sem ligar.",
+    "subtitle": "Usa esta página para gerir a tua marcação na {{shopName}}.",
+    "missingToken": "Falta o token da reserva. Abre o link completo de gestão para continuar.",
+    "details": {
+      "label": "Detalhes",
+      "barber": "Barbeiro:",
+      "customer": "Cliente:",
+      "responsible": "Responsável:",
+      "contact": "Contacto:"
+    },
+    "actions": {
+      "label": "Acções rápidas",
+      "copyLink": "Copiar link desta reserva",
+      "addPerson": "Adicionar outra pessoa",
+      "confirmPresence": "Confirmar presença",
+      "cancelBooking": "Cancelar marcação",
+      "linkCopied": "Link de gestão copiado.",
+      "presenceConfirmed": "Presença confirmada com sucesso.",
+      "bookingCancelled": "Marcação cancelada com sucesso."
+    },
+    "privacy": {
+      "title": "Privacidade e dados",
+      "subtitle": "Os teus direitos RGPD — acesso, portabilidade e apagamento",
+      "privacyPolicy": "Política de Privacidade",
+      "consentGiven": "Consentimento dado",
+      "info": "Os dados identificativos são conservados por 3 anos a partir da última reserva. Podes pedir a anonimização a qualquer momento.",
+      "exportData": "Exportar os meus dados",
+      "anonymizeData": "Anonimizar os meus dados",
+      "exportDone": "Exportação dos teus dados concluída.",
+      "confirmAnonymize": {
+        "title": "Confirmar anonimização de dados",
+        "warning": "Esta acção irá substituir os teus dados pessoais identificativos (nome, telefone, email, observações) por um identificador anónimo em toda a barbearia {{shopName}}.",
+        "bullet1": "· O histórico operacional das reservas (datas, serviços, duração) é mantido de forma anónima.",
+        "bullet2": "· Esta acção não pode ser revertida.",
+        "bullet3": "· O link desta reserva deixará de funcionar após a anonimização.",
+        "confirmButton": "Confirmar anonimização"
+      }
+    },
+    "reschedule": {
+      "title": "Remarcar",
+      "subtitle": "Escolhe outro dia e um horário livre para o mesmo serviço.",
+      "noSlots": "Sem horários disponíveis para esse dia.",
+      "confirmButton": "Confirmar nova hora",
+      "success": "Marcação remarcada com sucesso."
+    }
+  },
+  "privacy": {
+    "eyebrow": "Privacidade",
+    "title": "Política de Privacidade",
+    "versionDate": "Versão {{version}} · Actualizada em {{date}}"
+  }
+}

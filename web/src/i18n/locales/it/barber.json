@@ -1,0 +1,45 @@
+{
+  "layout": {
+    "nav": { "portal": "Portale", "dashboard": "Dashboard", "schedule": "Agenda" },
+    "pageMeta": {
+      "dashboard": { "title": "Dashboard", "subtitle": "Vista rapida della tua giornata, agenda e fatturato." },
+      "schedule": { "title": "Agenda", "subtitle": "Segui i tuoi orari e le prenotazioni in corso." }
+    },
+    "notifications": { "title": "Notifiche", "newBadge": "{{count}} nuove", "markAllRead": "Segna tutto come letto", "noRecent": "Nessuna notifica recente." },
+    "account": { "logout": "Esci" },
+    "sidebar": { "activeSession": "Sessione attiva", "portalTitle": "Portale barbiere", "portalDesc": "Accesso rapido all'agenda, agli stati e ai dettagli del servizio." },
+    "topbar": { "planLabel": "Piano", "openSchedule": "Apri agenda" },
+    "pull": { "refreshing": "Aggiornamento...", "releaseToRefresh": "Rilascia per aggiornare", "pullToRefresh": "Trascina per aggiornare" },
+    "brand": { "name": "Trimio Flow", "defaultSubtitle": "Portale barbiere" }
+  },
+  "push": { "unavailable": "Push non disponibile", "notConfigured": "Push non configurato", "blocked": "Push bloccato", "active": "Push attivo", "enable": "Attiva push", "blockedTooltip": "Autorizzazione bloccata nel browser", "enableTooltip": "Attiva notifiche push" },
+  "login": {
+    "brand": { "name": "Trimio Flow", "subtitle": "Portale barbiere" },
+    "panel": {
+      "eyebrow": "Operazione individuale",
+      "title": "La tua agenda senza uscire dal ritmo della giornata.",
+      "desc": "Un accesso pensato per il barbiere che segue orari, clienti e stati con meno attrito.",
+      "feature1Label": "Agenda del giorno",
+      "feature1Desc": "Prenotazioni, conferme e spostamenti in una schermata diretta.",
+      "feature2Label": "Cliente in contesto",
+      "feature2Desc": "Servizi, piano, extra e contatto al momento giusto.",
+      "feature3Label": "Operazione senza rumore",
+      "feature3Desc": "Flusso leggero per chi sta servendo, non configurando.",
+      "footer": "© {{year}} Trimio · Portale operativo del barbiere"
+    },
+    "form": {
+      "title": "Accedi al tuo portale",
+      "subtitle": "Accesso all'agenda e all'operazione quotidiana del barbiere.",
+      "slugLabel": "Slug del salone",
+      "slugPlaceholder": "il-mio-salone",
+      "emailLabel": "Email",
+      "emailPlaceholder": "barbiere@email.com",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "••••••••",
+      "submitButton": "Accedi al portale",
+      "errors": { "invalidCredentials": "Slug, email o password non validi." }
+    }
+  },
+  "dashboard": { "title": "Dashboard", "subtitle": "Vista rapida della tua giornata, agenda e fatturato." },
+  "schedule": { "title": "Agenda", "subtitle": "Segui i tuoi orari e le prenotazioni in corso." }
+}

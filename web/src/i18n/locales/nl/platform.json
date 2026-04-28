@@ -1,0 +1,89 @@
+{
+  "register": {
+    "brand": { "name": "Trimio Studio", "subtitle": "Voor professionele kapperswinkels" },
+    "hero": {
+      "eyebrow": "Begin vandaag",
+      "title": "Uw bedrijf online in minuten.",
+      "desc": "Boekingspagina, beheerpaneel, klanten en rapporten — alles op één plek.",
+      "feature1": "Openbare boekingspagina",
+      "feature2": "Volledig beheerpaneel",
+      "feature3": "Kapper- en tijdschema-beheer",
+      "feature4": "Klanten en geschiedenis",
+      "feature5": "Gratis starten, geen kaart"
+    },
+    "freePlan": { "title": "Gratis plan inbegrepen", "desc": "Begin met 1 kapper en 30 boekingen per maand zonder kosten. Upgrade vanaf €19/maand wanneer u wilt groeien." },
+    "form": {
+      "shopNameLabel": "Naam van de kapperswinkel",
+      "shopNamePlaceholder": "Kapperswinkel Jan",
+      "slugLabel": "Adres van uw website",
+      "slugPrefix": "trimio.app/",
+      "ownerNameLabel": "Uw naam",
+      "ownerNamePlaceholder": "Jan de Vries",
+      "emailLabel": "E-mail",
+      "emailPlaceholder": "jan@email.nl",
+      "passwordLabel": "Wachtwoord",
+      "passwordPlaceholder": "Minimaal 6 tekens",
+      "submitButton": "Kapperswinkel gratis aanmaken",
+      "hasAccount": "Heeft u al een account?",
+      "login": "Inloggen",
+      "errors": {
+        "shopNameRequired": "Naam van de kapperswinkel verplicht",
+        "shopNameMin": "Minimaal 2 tekens",
+        "slugInvalid": "Alleen kleine letters, cijfers en koppeltekens",
+        "ownerNameRequired": "Uw naam is verplicht",
+        "emailInvalid": "Ongeldig e-mailadres",
+        "passwordMin": "Minimaal 6 tekens",
+        "slugTaken": "Dit adres is al in gebruik. Kies een ander."
+      }
+    },
+    "success": {
+      "title": "Bevestig uw e-mail",
+      "message": "We hebben een bevestigingslink gestuurd naar {{email}}. Bevestig voordat u het paneel opent.",
+      "stepsTitle": "Volgende stappen",
+      "step1": "1. Open uw inbox.",
+      "step2": "2. Zoek de Trimio-e-mail.",
+      "step3": "3. Klik op de bevestigingslink.",
+      "step4": "4. Log in met uw inloggegevens.",
+      "openInbox": "Inbox openen",
+      "resendEmail": "Bevestigingsmail opnieuw verzenden",
+      "goToLogin": "Naar aanmelden",
+      "createAnother": "Een ander account aanmaken"
+    }
+  },
+  "verifyEmail": {
+    "eyebrow": "Bevestiging",
+    "brand": "Trimio Studio",
+    "subtitle": "Admin-account activering.",
+    "title": "E-mail bevestigen",
+    "missingToken": "De bevestigingslink is onvolledig. Vraag een nieuwe bevestigingsmail aan.",
+    "loading": "We bevestigen uw e-mail…",
+    "success": "E-mail bevestigd. U kunt nu inloggen op het paneel.",
+    "error": "Kan deze e-mail niet bevestigen.",
+    "retry": "Opnieuw proberen",
+    "resendEmail": "E-mail opnieuw verzenden",
+    "goToLogin": "Naar aanmelden"
+  },
+  "home": {
+    "nav": { "pricing": "Prijzen", "login": "Inloggen", "startFree": "Gratis starten" },
+    "hero": {
+      "pill": "Boekingssysteem voor kapperswinkels",
+      "line1": "Klanten boeken.",
+      "line2": "U knipt haar.",
+      "desc": "Trimio geeft uw kapperswinkel een online boekingspagina. Geen WhatsApp, geen oproepen, geen papier.",
+      "cta": "Gratis starten",
+      "ctaNote": "Voor altijd gratis · Geen creditcard",
+      "stat1Value": "< 5 min", "stat1Label": "om alles in te stellen",
+      "stat2Value": "24 / 7", "stat2Label": "beschikbaar voor klanten",
+      "stat3Value": "€0", "stat3Label": "om te beginnen"
+    },
+    "finalCta": {
+      "title": "Uw kapperswinkel online",
+      "titleAccent": "in minder dan 5 minuten.",
+      "desc": "Sluit u aan bij de kapperswinkels die gestopt zijn met het beheren van boekingen via WhatsApp. Gratis starten, geen creditcard.",
+      "createAccount": "Gratis account aanmaken",
+      "alreadyHaveAccount": "Ik heb al een account",
+      "note": "Gratis plan voor altijd · 30 boekingen/maand inbegrepen · Geen kaart"
+    },
+    "footer": { "createAccount": "Account aanmaken" }
+  }
+}

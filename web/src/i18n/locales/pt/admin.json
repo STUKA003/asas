@@ -1,0 +1,500 @@
+{
+  "layout": {
+    "nav": {
+      "operation": "Operação",
+      "catalog": "Catálogo",
+      "management": "Gestão",
+      "dashboard": "Dashboard",
+      "bookings": "Agendamentos",
+      "customers": "Clientes",
+      "barbers": "Barbeiros",
+      "schedule": "Horários",
+      "services": "Serviços",
+      "extras": "Extras",
+      "products": "Produtos",
+      "plans": "Planos",
+      "reports": "Relatórios",
+      "brandSite": "Marca & Site",
+      "billing": "Faturação"
+    },
+    "pageMeta": {
+      "dashboard": { "title": "Dashboard", "subtitle": "Visão geral do desempenho, agenda e sinais operacionais." },
+      "bookings": { "title": "Agendamentos", "subtitle": "Controla reservas, confirmações e bloqueios da agenda." },
+      "customers": { "title": "Clientes", "subtitle": "Consulta histórico, planos ativos e dados de contacto." },
+      "barbers": { "title": "Barbeiros", "subtitle": "Gere equipa, acessos e disponibilidade." },
+      "services": { "title": "Serviços", "subtitle": "Mantém o catálogo principal da barbearia organizado." },
+      "extras": { "title": "Extras", "subtitle": "Upsells e complementos que aumentam o ticket médio." },
+      "products": { "title": "Produtos", "subtitle": "Inventário e venda de produtos no ponto de serviço." },
+      "plans": { "title": "Planos", "subtitle": "Configura subscrições e benefícios recorrentes." },
+      "schedule": { "title": "Horários", "subtitle": "Define a estrutura base de funcionamento da agenda." },
+      "reports": { "title": "Relatórios", "subtitle": "Leitura comercial e operacional para apoiar decisões." },
+      "customization": { "title": "Marca & Site", "subtitle": "Personaliza presença digital, cores e conteúdo público." },
+      "billing": { "title": "Faturação", "subtitle": "Acompanha plano actual, upgrades e ciclo de cobrança." }
+    },
+    "notifications": {
+      "title": "Notificações",
+      "newBadge": "{{count}} novas",
+      "markAllRead": "Marcar tudo como lido",
+      "noRecent": "Sem notificações recentes."
+    },
+    "account": {
+      "planBadge": "Plano {{plan}}",
+      "billingLink": "Assinatura e faturação",
+      "logout": "Sair"
+    },
+    "sidebar": {
+      "currentPlan": "Plano actual",
+      "manageSubscription": "Gerir assinatura"
+    },
+    "pull": {
+      "refreshing": "A actualizar...",
+      "releaseToRefresh": "Larga para actualizar",
+      "pullToRefresh": "Puxa para actualizar"
+    },
+    "suspended": {
+      "title": "Conta suspensa",
+      "defaultMessage": "A tua conta foi suspensa. Contacta o suporte para mais informações.",
+      "reason": "Motivo: {{reason}}"
+    },
+    "expiredPlan": {
+      "message": "O teu plano {{plan}} expirou. Estás agora no plano Grátis com funcionalidades limitadas.",
+      "renew": "Renovar"
+    },
+    "topbar": {
+      "renewPlan": "Renovar plano",
+      "viewBilling": "Ver faturação"
+    },
+    "brand": {
+      "name": "Trimio Studio",
+      "defaultSubtitle": "Painel da barbearia"
+    }
+  },
+  "push": {
+    "unavailable": "Push indisponível neste dispositivo",
+    "notConfigured": "Push não configurado",
+    "blocked": "Push bloqueado",
+    "active": "Push activo",
+    "enable": "Activar push",
+    "blockedTooltip": "Permissão de notificações bloqueada no browser",
+    "enableTooltip": "Activar notificações push"
+  },
+  "login": {
+    "brand": {
+      "name": "Trimio Studio",
+      "subtitle": "Painel da barbearia"
+    },
+    "panel": {
+      "eyebrow": "Gestão completa",
+      "title": "Controlo total da tua barbearia.",
+      "desc": "Agenda, clientes, equipa, faturação e relatórios — tudo num único painel desenhado para operar de forma profissional.",
+      "feature1Label": "Agenda em tempo real",
+      "feature1Desc": "Reservas, confirmações e bloqueios num único ecrã.",
+      "feature2Label": "Equipa e clientes",
+      "feature2Desc": "Gestão de barbeiros, planos e histórico completo.",
+      "feature3Label": "Relatórios e receita",
+      "feature3Desc": "Leituras operacionais para decisões mais rápidas.",
+      "footer": "© {{year}} Trimio · Plataforma de gestão para barbearias"
+    },
+    "form": {
+      "title": "Entra no teu painel",
+      "subtitle": "Acesso à gestão da tua barbearia.",
+      "slugLabel": "Slug da barbearia",
+      "slugPlaceholder": "minha-barbearia",
+      "emailLabel": "E-mail",
+      "emailPlaceholder": "admin@email.com",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "••••••••",
+      "forgotPassword": "Esqueceste a password?",
+      "submitButton": "Entrar no painel",
+      "noAccount": "Ainda não tens conta?",
+      "createFree": "Criar barbearia grátis",
+      "noVerification": "Não recebeste o email de confirmação?",
+      "resendEmail": "Reenviar email",
+      "openInbox": "Abrir caixa de email",
+      "errors": {
+        "invalidCredentials": "Slug, e-mail ou password inválidos.",
+        "emailNotVerified": "Confirma o teu email antes de entrar."
+      }
+    }
+  },
+  "forgotPassword": {
+    "title": "Recuperar password",
+    "subtitle": "Introduz o teu e-mail para receber o link de recuperação.",
+    "emailLabel": "E-mail",
+    "submitButton": "Enviar link",
+    "backToLogin": "Voltar ao login",
+    "successTitle": "Email enviado",
+    "successMsg": "Verifica a tua caixa de entrada e segue as instruções."
+  },
+  "resetPassword": {
+    "title": "Nova password",
+    "subtitle": "Define uma nova password para a tua conta.",
+    "newPasswordLabel": "Nova password",
+    "confirmLabel": "Confirmar password",
+    "submitButton": "Guardar password",
+    "successTitle": "Password actualizada",
+    "successMsg": "Já podes entrar com a tua nova password."
+  },
+  "resendVerification": {
+    "title": "Reenviar confirmação",
+    "subtitle": "Introduce o teu e-mail para receber um novo link de confirmação.",
+    "emailLabel": "E-mail",
+    "submitButton": "Reenviar email",
+    "successTitle": "Email enviado",
+    "successMsg": "Verifica a tua caixa de entrada."
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Visão consolidada do dia, desempenho mensal e sinais rápidos para actuação.",
+    "viewBookings": "Ver agendamentos",
+    "hero": {
+      "eyebrow": "Control center",
+      "strong": "forte",
+      "calm": "mais calma",
+      "stable": "estável",
+      "todayIs": "Hoje a operação está {{signal}}."
+    },
+    "stats": {
+      "accumulated": "Receita acumulada",
+      "todaySchedule": "Agenda de hoje",
+      "toConfirm": "{{count}} por confirmar",
+      "todayCustomers": "Clientes hoje",
+      "activeInMonth": "{{count}} ativos no mês · {{total}} na base"
+    },
+    "insights": {
+      "pulseTitle": "Pulse do dia",
+      "alertTitle": "Janela de atenção",
+      "strongDay": "Agenda quente. Mantém foco no tempo médio entre serviços.",
+      "lowDay": "Hoje está abaixo do ideal. Vale destacar slots livres nas redes.",
+      "balancedDay": "Operação equilibrada. Bom momento para encaixar extras e produtos.",
+      "noShowHigh": "No-show acima do saudável. Reforça lembretes e confirmação manual.",
+      "noShowOk": "Faltas controladas. Dá para operar com previsibilidade."
+    },
+    "focus": {
+      "title": "Foco imediato",
+      "toConfirmTitle": "Agenda por confirmar",
+      "toConfirmDesc": "Reservas pendentes ou confirmadas para hoje.",
+      "dayStateTitle": "Estado do dia",
+      "prioritizePunctuality": "Prioriza pontualidade e encaixes curtos.",
+      "promoteSlots": "Bom momento para divulgar horários livres.",
+      "stableFlow": "Fluxo estável e margem para extras."
+    },
+    "monthStats": {
+      "revenue": "Receita do mês",
+      "bookings": "Agendamentos ativos",
+      "avgTicket": "Ticket médio",
+      "noShowRate": "Taxa de no-show",
+      "revenueAbove": "{{pct}}% acima do mês passado",
+      "revenueBelow": "{{pct}}% abaixo do mês passado",
+      "bookingsChange": "{{pct}}% vs mês anterior",
+      "ticketChange": "{{pct}}% por visita",
+      "noShowNoChange": "Sem alteração face ao mês passado",
+      "noShowBetter": "{{pct}}% melhor que o mês passado",
+      "noShowWorse": "{{pct}}% pior que o mês passado",
+      "healthyBilling": "Ritmo saudável de faturação",
+      "reviewSchedules": "Vale rever horários e campanhas",
+      "bestDay": "Melhor dia: {{day}}",
+      "noHistory": "Sem histórico suficiente",
+      "goodValue": "Boa valorização por cliente",
+      "upsellMargin": "Há margem para upsell",
+      "noShowHealthy": "Nível saudável para operação",
+      "noShowAttention": "Atenção a confirmações e lembretes"
+    },
+    "chart": {
+      "eyebrow": "Momentum",
+      "title": "Tendência desta semana",
+      "subtitle": "Leitura rápida do fluxo de bookings no arranque da semana.",
+      "bestDay": "Melhor dia",
+      "noData": "Sem dados"
+    },
+    "today": {
+      "eyebrow": "Próximos",
+      "title": "Agenda de hoje",
+      "noPending": "Sem bookings pendentes para hoje.",
+      "cleanSchedule": "A agenda está limpa neste momento.",
+      "timeLabel": "hora"
+    },
+    "topBarbers": {
+      "eyebrow": "Performance",
+      "title": "Top barbeiros",
+      "noData": "Sem dados fechados este mês.",
+      "servicesCompleted": "{{count}} serviços concluídos no mês"
+    },
+    "topServices": {
+      "eyebrow": "Procura",
+      "title": "Serviços mais pedidos",
+      "noData": "Sem dados para mostrar este mês.",
+      "leader": "Serviço líder do mês",
+      "pullsOccupancy": "Continua a puxar ocupação"
+    },
+    "occupancy": {
+      "strong": "Dia forte",
+      "low": "Baixa ocupação",
+      "balanced": "Fluxo equilibrado"
+    }
+  },
+  "bookings": {
+    "title": "Agendamentos",
+    "newButton": "Novo",
+    "blockButton": "Bloqueio",
+    "viewCalendar": "Agenda",
+    "viewList": "Lista",
+    "today": "Hoje",
+    "status": {
+      "all": "Todos os status",
+      "pending": "Pendente",
+      "confirmed": "Confirmado",
+      "completed": "Concluído",
+      "cancelled": "Cancelado",
+      "noShow": "Não compareceu"
+    },
+    "searchPlaceholder": "Pesquisar cliente, barbeiro ou serviço…",
+    "allBarbers": "Todos os barbeiros",
+    "legend": {
+      "pending": "Pendente",
+      "confirmed": "Confirmado",
+      "completed": "Concluído",
+      "cancelled": "Cancelado",
+      "noShow": "Não compareceu"
+    },
+    "blockedTimes": {
+      "title": "Horários bloqueados",
+      "subtitle": "Bloqueios pontuais para este dia — ausências, imprevistos ou almoços fora do horário habitual.",
+      "blockButton": "Bloquear",
+      "noBlocks": "Sem bloqueios para este dia.",
+      "everyone": "Todos"
+    },
+    "columns": {
+      "dateTime": "Data / Hora",
+      "customer": "Cliente",
+      "barber": "Barbeiro",
+      "service": "Serviço",
+      "status": "Status",
+      "total": "Total"
+    },
+    "detail": {
+      "title": "Detalhes do agendamento",
+      "customerLabel": "Cliente",
+      "barberLabel": "Barbeiro",
+      "dateTimeLabel": "Data / Hora",
+      "totalLabel": "Total",
+      "toPay": "A pagar hoje",
+      "coveredByPlan": "Coberto pelo plano",
+      "responsible": "Responsável: {{name}}",
+      "addToBooking": "Adicionar ao agendamento",
+      "selectExtra": "Selecionar extra",
+      "selectProduct": "Selecionar produto",
+      "addButton": "Adicionar extra/produto",
+      "changeStatus": "Alterar status",
+      "planBadge": "plano"
+    },
+    "slotModal": {
+      "title": "O que quer fazer neste horário?",
+      "createBooking": "Criar agendamento",
+      "blockSlot": "Bloquear horário"
+    },
+    "newBlockedModal": {
+      "title": "Novo horário bloqueado",
+      "dateLabel": "Data",
+      "barberLabel": "Barbeiro",
+      "startLabel": "Início",
+      "endLabel": "Fim",
+      "reasonLabel": "Motivo",
+      "reasonPlaceholder": "Ex.: almoço, urgência, saída externa",
+      "saveButton": "Guardar bloqueio"
+    },
+    "loading": "A carregar…"
+  },
+  "customers": {
+    "title": "Clientes",
+    "exportCsv": "Exportar CSV",
+    "importCsv": "Importar CSV",
+    "importing": "A importar…",
+    "totalCustomers": "Total de clientes",
+    "withActivePlan": "Com plano activo",
+    "searchLabel": "Pesquisar",
+    "searchPlaceholder": "Nome, telefone ou e-mail",
+    "planLabel": "Plano",
+    "planStatus": "Estado do plano",
+    "allPlans": "Todos os planos",
+    "withPlan": "Com plano",
+    "withoutPlan": "Sem plano",
+    "withAndWithoutPlan": "Com e sem plano",
+    "csvFormat": "Formato CSV esperado: `name`, `phone`, `email`, `notes`. Se o telefone já existir, o cliente é actualizado; se não existir, é criado.",
+    "columns": {
+      "customer": "Cliente",
+      "phone": "Telefone",
+      "email": "E-mail",
+      "plan": "Plano",
+      "totalSpent": "Total gasto",
+      "lastVisit": "Última visita",
+      "reliability": "Fiabilidade"
+    },
+    "noContact": "Sem contacto principal",
+    "noPhone": "Sem telefone",
+    "reliability": {
+      "new": "Novo",
+      "trusted": "Fiável",
+      "attention": "Atenção",
+      "risk": "Risco"
+    },
+    "detail": {
+      "title": "Detalhe do cliente",
+      "loading": "A carregar...",
+      "customerLabel": "Cliente",
+      "totalSpent": "Total gasto",
+      "reliability": "Fiabilidade",
+      "lastVisit": "Última visita",
+      "completedVisits": "{{count}} visitas concluídas",
+      "activeBookings": "{{count}} agendamentos activos",
+      "noShowBookings": "{{ns}} no-show · {{cb}} canceladas",
+      "noVisit": "Sem visita concluída",
+      "historyTotal": "Histórico total",
+      "bookingsRegistered": "marcações registadas",
+      "noShow": "No-show",
+      "missedBookings": "faltas marcadas",
+      "cancelled": "Canceladas",
+      "cancelledBookings": "reservas anuladas",
+      "customerData": "Dados do cliente",
+      "editButton": "Editar",
+      "nameLabel": "Nome",
+      "phoneLabel": "Telefone",
+      "emailLabel": "E-mail",
+      "notesLabel": "Notas",
+      "saveButton": "Guardar",
+      "planLabel": "Plano",
+      "noPlan": "Sem plano",
+      "changeButton": "Alterar",
+      "noEmail": "Sem e-mail",
+      "recentBookings": "Últimos agendamentos",
+      "noBookings": "Sem histórico de agendamentos.",
+      "irreversible": "Tens a certeza? Esta acção é irreversível.",
+      "deleteButton": "Apagar cliente"
+    },
+    "importResult": "Importação concluída: {{created}} criados, {{updated}} actualizados, {{skipped}} ignorados.",
+    "emptyMessage": "Ainda não existem clientes registados."
+  },
+  "barbers": {
+    "title": "Barbeiros",
+    "subtitle": "{{active}} activo{{s}}{{maxStr}} · {{total}} cadastrado{{s2}}",
+    "newButton": "Novo barbeiro",
+    "atLimit": "Atingiste o limite de {{max}} barbeiro{{s}} activo{{s}} do teu plano.",
+    "doUpgrade": "Fazer upgrade",
+    "columns": {
+      "barber": "Barbeiro",
+      "phone": "Telefone",
+      "status": "Status",
+      "portalAccess": "Acesso portal"
+    },
+    "active": "Ativo",
+    "inactive": "Inativo",
+    "hasAccess": "Ativo",
+    "noAccess": "Sem acesso",
+    "modal": {
+      "create": "Novo barbeiro",
+      "edit": "Editar barbeiro",
+      "nameLabel": "Nome",
+      "namePlaceholder": "João Silva",
+      "emailLabel": "E-mail",
+      "emailPlaceholder": "joao@example.com",
+      "photoLabel": "Foto do barbeiro",
+      "photoDesc": "Esta foto aparece no painel e na escolha de barbeiro no site de agenda.",
+      "uploadPhoto": "Carregar foto",
+      "removePhoto": "Remover",
+      "phoneLabel": "Telefone",
+      "phonePlaceholder": "912 345 678",
+      "isActive": "Barbeiro activo",
+      "save": "Salvar",
+      "create": "Criar"
+    },
+    "accessModal": {
+      "title": "Acesso ao portal",
+      "noEmail": "Sem e-mail definido",
+      "noEmailWarning": "Este barbeiro não tem e-mail definido. Adiciona um e-mail antes de activar o acesso.",
+      "desc": "Define uma password para o barbeiro aceder ao portal em",
+      "newPasswordLabel": "Nova password",
+      "newPasswordPlaceholder": "Mínimo 6 caracteres",
+      "confirmPasswordLabel": "Confirmar password",
+      "confirmPasswordPlaceholder": "Repetir password",
+      "revokeButton": "Revogar acesso",
+      "activateButton": "Activar acesso"
+    },
+    "removeConfirm": "Remover barbeiro?"
+  },
+  "services": {
+    "title": "Serviços",
+    "columns": {
+      "service": "Serviço",
+      "price": "Preço",
+      "duration": "Duração",
+      "status": "Status"
+    },
+    "form": {
+      "nameLabel": "Nome",
+      "namePlaceholder": "Corte de cabelo",
+      "descLabel": "Descrição (opcional)",
+      "descPlaceholder": "Descrição do serviço",
+      "priceLabel": "Preço (€)",
+      "pricePlaceholder": "18.00",
+      "durationLabel": "Duração (min)",
+      "durationPlaceholder": "30"
+    }
+  },
+  "extras": {
+    "title": "Extras",
+    "columns": {
+      "extra": "Extra",
+      "price": "Preço",
+      "duration": "Duração",
+      "status": "Status"
+    }
+  },
+  "products": {
+    "title": "Produtos",
+    "columns": {
+      "product": "Produto",
+      "price": "Preço",
+      "stock": "Stock",
+      "status": "Status"
+    }
+  },
+  "plans": {
+    "title": "Planos",
+    "columns": {
+      "plan": "Plano",
+      "price": "Preço",
+      "status": "Status"
+    }
+  },
+  "schedule": {
+    "title": "Horários",
+    "addSlot": "Adicionar horário",
+    "days": {
+      "0": "Domingo",
+      "1": "Segunda",
+      "2": "Terça",
+      "3": "Quarta",
+      "4": "Quinta",
+      "5": "Sexta",
+      "6": "Sábado"
+    }
+  },
+  "reports": {
+    "title": "Relatórios",
+    "revenue": "Receita",
+    "bookings": "Agendamentos",
+    "customers": "Clientes",
+    "noData": "Sem dados para o período seleccionado."
+  },
+  "customization": {
+    "title": "Marca & Site",
+    "save": "Guardar alterações",
+    "saved": "Alterações guardadas."
+  },
+  "billing": {
+    "title": "Faturação",
+    "currentPlan": "Plano actual",
+    "upgrade": "Fazer upgrade",
+    "manage": "Gerir assinatura"
+  }
+}

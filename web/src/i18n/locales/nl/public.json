@@ -1,0 +1,270 @@
+{
+  "header": {
+    "home": "Home",
+    "services": "Diensten",
+    "plans": "Abonnementen",
+    "products": "Producten",
+    "bookNow": "Nu boeken"
+  },
+  "footer": {
+    "tagline": "Eenvoudige, snelle en georganiseerde boekingen.",
+    "nav": "Navigatie",
+    "contact": "Contact",
+    "book": "Boeken",
+    "privacy": "Privacy",
+    "adminArea": "Beheerdersgebied",
+    "allRightsReserved": "Alle rechten voorbehouden."
+  },
+  "booking": {
+    "title": "Online boeking",
+    "stepLabels": {
+      "service": "Dienst",
+      "barber": "Kapper",
+      "dateTime": "Datum/Tijd",
+      "customer": "Gegevens",
+      "confirmation": "Bevestiging"
+    },
+    "progress": "Voortgang",
+    "stepOf": "Stap {{current}} van {{total}}",
+    "summary": {
+      "title": "Boekingsoverzicht",
+      "professional": "Professional",
+      "date": "Datum",
+      "time": "Tijd",
+      "mainService": "Hoofddienst",
+      "plan": "Abonnement",
+      "added": "Toegevoegd",
+      "total": "Geschat totaal"
+    },
+    "steps": {
+      "service": { "title": "Kies een dienst" },
+      "barber": { "title": "Kies uw kapper", "professional": "Professional" },
+      "dateTime": {
+        "title": "Datum en tijd",
+        "selectDate": "Selecteer een datum",
+        "availableSlots": "Beschikbare tijdsloten",
+        "noSlots": "Geen beschikbare tijdsloten op deze dag.",
+        "morning": "Ochtend",
+        "afternoon": "Middag",
+        "slotCount_one": "{{count}} tijdslot",
+        "slotCount_other": "{{count}} tijdsloten",
+        "noSlotsInPeriod": "Geen tijdsloten in deze periode."
+      },
+      "extras": {
+        "title": "Extra's",
+        "optional": " optioneel",
+        "includedInService": "inbegrepen in de dienst",
+        "noExtras": "Geen extra's beschikbaar."
+      },
+      "extrasProducts": {
+        "title": "Extra's en producten",
+        "subtitle": "Toevoegen aan uw afspraak (optioneel)",
+        "noItems": "Geen extra's of producten beschikbaar.",
+        "extras": "Extra's",
+        "products": "Producten"
+      },
+      "products": {
+        "title": "Mee naar huis",
+        "subtitle": "Producten om uw look te onderhouden (optioneel)",
+        "reviewOrder": "Bestelling bekijken"
+      },
+      "customer": {
+        "title": "Uw gegevens",
+        "name": "Uw naam",
+        "namePlaceholder": "Jan de Vries",
+        "attendeeName": "Naam van de te bedienen persoon",
+        "attendeeNamePlaceholder": "Piet de Vries",
+        "phone": "Telefoon / WhatsApp",
+        "phonePlaceholder": "+31 6 00000000",
+        "email": "E-mail",
+        "emailPlaceholder": "jan@voorbeeld.nl",
+        "notes": "Opmerkingen (optioneel)",
+        "planInfo": "Abonnement: {{name}}",
+        "responsible": "Verantwoordelijke: {{name}}",
+        "allowedDays": "Toegestane dagen: {{days}}",
+        "includedServices": "Inbegrepen diensten: {{services}}",
+        "planDiscount": "🎁 {{discount}}% korting op extra's, producten en diensten buiten het abonnement.",
+        "serviceNotInPlan": "⚠ \"{{service}}\" is niet in het abonnement",
+        "errors": {
+          "emailRequired": "E-mail verplicht",
+          "emailInvalid": "Ongeldig e-mailadres",
+          "nameRequired": "Naam verplicht",
+          "phoneRequired": "Telefoon verplicht",
+          "attendeeRequired": "Naam van de te bedienen persoon verplicht"
+        },
+        "planActiveBlock": "Deze klant heeft al een actieve boeking in het abonnement en kan pas opnieuw boeken na afronding van de huidige afspraak.",
+        "planDayBlock": "Dit abonnement staat boekingen alleen toe op: {{days}}."
+      },
+      "confirmation": {
+        "title": "Boeking bevestigen",
+        "incomplete": "Voltooi de boeking voordat u bevestigt.",
+        "dataTitle": "Gegevens die worden opgeslagen",
+        "dataName": "· Naam: {{name}}",
+        "dataPhone": "· Telefoon: {{phone}}",
+        "dataEmail": "· E-mail: {{email}}",
+        "dataAttendee": "· Te bedienen persoon: {{attendee}}",
+        "dataBookingInfo": "· Geselecteerde datum, tijd, dienst en kapper",
+        "dataUsage": "Gebruikt voor het beheren van de boeking, het verzenden van de beheerlink en operationeel contact. U kunt uw gegevens op elk moment exporteren of verwijderen via de boekingslink. Bewaring: 3 jaar.",
+        "privacyLink": "Volledig privacybeleid.",
+        "consentLabel": "Ik stem in met de verwerking van mijn persoonlijke gegevens voor het beheren van deze boeking, onder de hierboven beschreven voorwaarden.",
+        "submitButton": "Boeking bevestigen",
+        "success": {
+          "title": "Boeking bevestigd",
+          "message": "Boeking voor {{name}} succesvol aangemaakt.",
+          "addToCalendar": "Opslaan in Agenda",
+          "addToGoogleCalendar": "Toevoegen aan Google Agenda",
+          "downloadIcs": ".ics-bestand downloaden",
+          "manageBooking": "Boeking beheren",
+          "backHome": "Terug naar home"
+        }
+      }
+    }
+  },
+  "home": {
+    "features": {
+      "title": "Een sterkere kapperswinkel-ervaring, vanaf de eerste boeking.",
+      "section": "Waarom voor ons kiezen",
+      "easyBooking": "Eenvoudig boeken",
+      "easyBookingDesc": "Boek in seconden, geen oproepen of berichten nodig.",
+      "realTimeSlots": "Realtime beschikbaarheid",
+      "realTimeSlotsDesc": "Bekijk beschikbare tijdsloten op de minuut.",
+      "bestPros": "Beste professionals",
+      "bestProsDesc": "Ervaren kappers die voor u klaarstaan.",
+      "guaranteedConfirmation": "Directe bevestiging",
+      "guaranteedConfirmationDesc": "Ontvang onmiddellijke bevestiging van uw boeking."
+    },
+    "howItWorks": {
+      "title": "Snelle boeking, premium gevoel.",
+      "subtitle": "In minder dan 2 minuten alles geregeld.",
+      "section": "Eenvoudig proces",
+      "step1Title": "Kies een dienst",
+      "step1Desc": "Selecteer uit knippen, baard, behandelingen en meer.",
+      "step2Title": "Kies uw kapper",
+      "step2Desc": "Bekijk wie beschikbaar is en kies uw favoriet.",
+      "step3Title": "Kies datum en tijd",
+      "step3Desc": "Bekijk vrije tijdsloten en reserveer het uwe.",
+      "step4Title": "Bevestiging",
+      "step4Desc": "Ontvang de bevestiging en verschijn op tijd."
+    },
+    "stats": {
+      "avgBooking": "Gemiddelde boeking",
+      "avgBookingVal": "< 2 min",
+      "confirmation": "Bevestiging",
+      "confirmationVal": "Onmiddellijk",
+      "availability": "Beschikbaarheid",
+      "availabilityVal": "Realtime"
+    },
+    "gallery": {
+      "section": "Galerij",
+      "title": "De sfeer en stijl van {{name}}",
+      "subtitle": "Elke kapperswinkel kan zijn ruimte, kapsels en visuele identiteit tonen."
+    },
+    "cta": {
+      "title": "Klaar voor een nieuwe look?",
+      "subtitle": "Boek nu en zeker uw plek bij {{name}} zonder wachten of bellen."
+    },
+    "social": { "whatsapp": "WhatsApp", "instagram": "Instagram" },
+    "promo": {
+      "label": "Uitgelicht deze week",
+      "defaultTitle": "Speciale aanbieding",
+      "defaultText": "Profiteer van de actieve campagne van deze kapperswinkel en boek uw afspraak.",
+      "whyBook": "Waarom online boeken",
+      "bullet1": "Vermijd wachten en bellen.",
+      "bullet2": "Zie direct het volgende beschikbare tijdslot.",
+      "bullet3": "Zeker uw favoriete professional."
+    }
+  },
+  "services": {
+    "eyebrow": "Catalogus",
+    "title": "Beschikbare diensten",
+    "subtitle": "Kies de ideale dienst — bekijk prijzen, duur en boek direct.",
+    "bookButton": "Boeken"
+  },
+  "products": {
+    "eyebrow": "Winkel",
+    "title": "Producten",
+    "subtitle": "Neem professionele verzorging mee naar huis — producten van onze kappers.",
+    "unavailableTitle": "Producten niet beschikbaar",
+    "unavailableMsg": "Deze kapperswinkel heeft ervoor gekozen momenteel geen producten op de openbare website te tonen.",
+    "backHome": "Terug naar home",
+    "orderButton": "Bestellen",
+    "lowStock": "Nog maar {{count}} eenheden",
+    "outOfStock": "Uitverkocht"
+  },
+  "plans": {
+    "eyebrow": "Abonnementen",
+    "title": "Abonnementen en lidmaatschappen",
+    "subtitle": "Neem een abonnement en bespaar bij elk bezoek — inbegrepen diensten, geen verrassingen.",
+    "unavailableTitle": "Abonnementen niet beschikbaar",
+    "unavailableMsg": "Deze kapperswinkel heeft ervoor gekozen momenteel geen abonnementen op de openbare website te tonen.",
+    "popular": "Meest populair",
+    "subscribeNow": "Nu abonneren",
+    "paymentUnavailable": "Betaling niet beschikbaar",
+    "days": "Dagen: {{days}}",
+    "services": "Diensten: {{services}}",
+    "oneActiveBooking": "1 actieve boeking tegelijk",
+    "modal": {
+      "title": "Abonneren op plan",
+      "subtitle": "{{name}} · {{price}}",
+      "namePlaceholder": "Uw naam",
+      "phonePlaceholder": "+31 6 00000000",
+      "warning": "Dit plan kan alleen worden geactiveerd na betalingsbevestiging of rechtstreeks door de kapperswinkel.",
+      "confirmButton": "Abonnement bevestigen",
+      "successTitle": "Plan geactiveerd!",
+      "successMsg": "Het verzoek voor {{name}} is geregistreerd."
+    }
+  },
+  "manageBooking": {
+    "eyebrow": "Boekingsbeheer",
+    "title": "Bevestig, annuleer of verzet zonder te bellen.",
+    "subtitle": "Gebruik deze pagina om uw boeking bij {{shopName}} te beheren.",
+    "missingToken": "Boekingstoken ontbreekt. Open de volledige beheerlink om door te gaan.",
+    "details": {
+      "label": "Details",
+      "barber": "Kapper:",
+      "customer": "Klant:",
+      "responsible": "Verantwoordelijke:",
+      "contact": "Contact:"
+    },
+    "actions": {
+      "label": "Snelle acties",
+      "copyLink": "Kopieer boekingslink",
+      "addPerson": "Andere persoon toevoegen",
+      "confirmPresence": "Aanwezigheid bevestigen",
+      "cancelBooking": "Boeking annuleren",
+      "linkCopied": "Beheerlink gekopieerd.",
+      "presenceConfirmed": "Aanwezigheid succesvol bevestigd.",
+      "bookingCancelled": "Boeking succesvol geannuleerd."
+    },
+    "privacy": {
+      "title": "Privacy en gegevens",
+      "subtitle": "Uw AVG-rechten — toegang, overdraagbaarheid en verwijdering",
+      "privacyPolicy": "Privacybeleid",
+      "consentGiven": "Toestemming gegeven",
+      "info": "Identificatiegegevens worden 3 jaar bewaard vanaf de laatste boeking. U kunt op elk moment anonimisering aanvragen.",
+      "exportData": "Mijn gegevens exporteren",
+      "anonymizeData": "Mijn gegevens anonimiseren",
+      "exportDone": "Uw gegevensexport is voltooid.",
+      "confirmAnonymize": {
+        "title": "Gegevensanonimisering bevestigen",
+        "warning": "Deze actie vervangt uw identificerende persoonsgegevens (naam, telefoon, e-mail, notities) door een anonieme identificator bij {{shopName}}.",
+        "bullet1": "· De operationele geschiedenis van boekingen (data, diensten, duur) wordt anoniem bewaard.",
+        "bullet2": "· Deze actie kan niet ongedaan worden gemaakt.",
+        "bullet3": "· De link naar deze boeking werkt niet meer na anonimisering.",
+        "confirmButton": "Anonimisering bevestigen"
+      }
+    },
+    "reschedule": {
+      "title": "Verzetten",
+      "subtitle": "Kies een andere dag en een vrij tijdslot voor dezelfde dienst.",
+      "noSlots": "Geen beschikbare tijdsloten op die dag.",
+      "confirmButton": "Nieuwe tijd bevestigen",
+      "success": "Boeking succesvol verzet."
+    }
+  },
+  "privacy": {
+    "eyebrow": "Privacy",
+    "title": "Privacybeleid",
+    "versionDate": "Versie {{version}} · Bijgewerkt op {{date}}"
+  }
+}

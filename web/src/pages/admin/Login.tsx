@@ -4,11 +4,13 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Link, useNavigate } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { authApi } from '@/lib/api'
 import { useAuthStore } from '@/store/auth'
 import { useInstallBrand } from '@/lib/installBrand'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
+import { LanguageSelector } from '@/components/ui/LanguageSelector'
 import { ArrowRight, Building2, Calendar, BarChart2, Users } from 'lucide-react'
 import { applyPlatformAccent } from '@/lib/theme'
 import { getInboxLink } from '@/lib/emailLinks'
@@ -21,17 +23,18 @@ const schema = z.object({
 })
 type FormData = z.infer<typeof schema>
 
-const FEATURES = [
-  { icon: Calendar, label: 'Agenda em tempo real', desc: 'Reservas, confirmações e bloqueios num único ecrã.' },
-  { icon: Users,    label: 'Equipa e clientes',    desc: 'Gestão de barbeiros, planos e histórico completo.' },
-  { icon: BarChart2, label: 'Relatórios e receita', desc: 'Leituras operacionais para decisões mais rápidas.' },
-]
-
 export default function Login() {
   const navigate = useNavigate()
   const { setAuth } = useAuthStore()
   const [submitError, setSubmitError]     = useState('')
   const [unverifiedEmail, setUnverifiedEmail] = useState('')
+  const { t } = useTranslation('admin')
+
+  const FEATURES = [
+    { icon: Calendar, label: t('login.panel.feature1Label'), desc: t('login.panel.feature1Desc') },
+    { icon: Users,    label: t('login.panel.feature2Label'), desc: t('login.panel.feature2Desc') },
+    { icon: BarChart2, label: t('login.panel.feature3Label'), desc: t('login.panel.feature3Desc') },
+  ]
 
   const { register, handleSubmit, formState: { errors }, setError, getValues } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -57,9 +60,9 @@ export default function Login() {
       setUnverifiedEmail('')
       setSubmitError(
         message === 'Invalid credentials'
-          ? 'Slug, e-mail ou password inválidos.'
+          ? t('login.form.errors.invalidCredentials')
           : message === 'Email not verified'
-            ? 'Confirma o teu email antes de entrar.'
+            ? t('login.form.errors.emailNotVerified')
             : message
       )
       if (message === 'Email not verified') setUnverifiedEmail(getValues('email'))
@@ -91,21 +94,21 @@ export default function Login() {
         <div className="relative flex items-center gap-3">
           <img src={adminLogo} alt="Trimio Studio" className="h-10 w-10 rounded-xl object-contain" />
           <div>
-            <p className="text-[13px] font-semibold tracking-tight text-white">Trimio Studio</p>
-            <p className="text-[11px] text-white/35">Painel da barbearia</p>
+            <p className="text-[13px] font-semibold tracking-tight text-white">{t('login.brand.name')}</p>
+            <p className="text-[11px] text-white/35">{t('login.brand.subtitle')}</p>
           </div>
         </div>
 
         {/* Middle — headline + features */}
         <div className="relative">
           <p className="mb-5 text-[10.5px] font-semibold uppercase tracking-[0.2em] text-white/30">
-            Gestão completa
+            {t('login.panel.eyebrow')}
           </p>
           <h1 className="max-w-xs text-[2.6rem] font-semibold leading-[1.08] tracking-[-0.04em] text-white">
-            Controlo total da tua barbearia.
+            {t('login.panel.title')}
           </h1>
           <p className="mt-5 max-w-sm text-[14px] leading-7 text-white/50">
-            Agenda, clientes, equipa, faturação e relatórios — tudo num único painel desenhado para operar de forma profissional.
+            {t('login.panel.desc')}
           </p>
 
           <div className="mt-10 space-y-3">
@@ -145,10 +148,10 @@ export default function Login() {
           <div className="mb-8">
             <Building2 size={28} className="mb-4 text-primary-600" />
             <h2 className="text-[1.65rem] font-semibold tracking-[-0.03em] text-ink">
-              Entra no teu painel
+              {t('login.form.title')}
             </h2>
             <p className="mt-1.5 text-[13.5px] leading-6 text-ink-muted">
-              Acesso à gestão da tua barbearia.
+              {t('login.form.subtitle')}
             </p>
           </div>
 
@@ -158,23 +161,23 @@ export default function Login() {
             className="space-y-4"
           >
             <Input
-              label="Slug da barbearia"
-              placeholder="minha-barbearia"
+              label={t('login.form.slugLabel')}
+              placeholder={t('login.form.slugPlaceholder')}
               autoComplete="organization"
               error={errors.slug?.message}
               {...register('slug')}
             />
             <Input
-              label="E-mail"
+              label={t('login.form.emailLabel')}
               type="email"
-              placeholder="admin@email.com"
+              placeholder={t('login.form.emailPlaceholder')}
               autoComplete="email"
               error={errors.email?.message}
               {...register('email')}
             />
             <div className="space-y-1">
               <Input
-                label="Password"
+                label={t('login.form.passwordLabel')}
                 type="password"
                 placeholder="••••••••"
                 autoComplete="current-password"
@@ -186,7 +189,7 @@ export default function Login() {
                   to="/admin/forgot-password"
                   className="text-[12px] font-medium text-ink-muted transition-colors hover:text-ink"
                 >
-                  Esqueceste a password?
+                  {t('login.form.forgotPassword')}
                 </Link>
               </div>
             </div>
@@ -206,23 +209,26 @@ export default function Login() {
             )}
 
             <Button type="submit" loading={isPending} size="lg" className="mt-1 w-full">
-              Entrar no painel
+              {t('login.form.submitButton')}
               <ArrowRight size={15} />
             </Button>
           </form>
 
           {/* Footer links */}
           <div className="mt-8 space-y-2.5 border-t border-neutral-100 pt-6">
+            <div className="flex items-center justify-between">
+              <p className="text-center text-[12.5px] text-ink-muted">
+                {t('login.form.noAccount')}{' '}
+                <Link to="/register" className="font-semibold text-primary-600 transition-colors hover:text-primary-700">
+                  {t('login.form.createFree')}
+                </Link>
+              </p>
+              <LanguageSelector compact />
+            </div>
             <p className="text-center text-[12.5px] text-ink-muted">
-              Ainda não tens conta?{' '}
-              <Link to="/register" className="font-semibold text-primary-600 transition-colors hover:text-primary-700">
-                Criar barbearia grátis
-              </Link>
-            </p>
-            <p className="text-center text-[12.5px] text-ink-muted">
-              Não recebeste o email de confirmação?{' '}
+              {t('login.form.noVerification')}{' '}
               <Link to="/admin/resend-verification" className="font-semibold text-primary-600 transition-colors hover:text-primary-700">
-                Reenviar email
+                {t('login.form.resendEmail')}
               </Link>
             </p>
           </div>

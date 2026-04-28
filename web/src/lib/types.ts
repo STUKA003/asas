@@ -80,6 +80,8 @@ export interface ManagedBooking extends Booking {
   canConfirm: boolean
   canCancel: boolean
   canReschedule: boolean
+  privacyConsentAt?: string | null
+  privacyConsentVersion?: string | null
 }
 export interface CustomerBookingSummary extends Booking {
   customer: Pick<Customer, 'id' | 'name' | 'phone' | 'email'> & { plan?: { id: string; name: string } | null }

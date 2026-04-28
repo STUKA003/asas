@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { publicApi } from '@/lib/publicApi'
 import { useTenant } from '@/providers/TenantProvider'
 import { formatCurrency, formatDuration } from '@/lib/utils'
@@ -12,6 +13,7 @@ import type { Service } from '@/lib/types'
 
 export default function Services() {
   const { slug, barbershop } = useTenant()
+  const { t } = useTranslation('public')
 
   const { data: services, isLoading } = useQuery({
     queryKey: ['public', slug, 'services'],
@@ -27,12 +29,12 @@ export default function Services() {
         {/* ── Page header ──────────────────────────────────── */}
         <div className="border-b border-neutral-100 bg-white px-4 py-12 sm:px-6 sm:py-16">
           <div className="mx-auto max-w-6xl">
-            <p className="eyebrow mb-3 tenant-ink">Catálogo</p>
+            <p className="eyebrow mb-3 tenant-ink">{t('services.eyebrow')}</p>
             <h1 className="text-[2rem] font-semibold tracking-[-0.03em] text-ink sm:text-[2.4rem]">
-              Serviços disponíveis
+              {t('services.title')}
             </h1>
             <p className="mt-2 text-[14px] leading-6 text-ink-muted">
-              Escolha o serviço ideal — veja preços, duração e agende diretamente.
+              {t('services.subtitle')}
             </p>
           </div>
         </div>
@@ -71,7 +73,7 @@ export default function Services() {
                     </div>
                     <Link to={`/${slug}/booking`}>
                       <Button size="sm" variant="secondary" className="gap-1.5">
-                        Agendar <ArrowRight size={13} />
+                        {t('services.bookButton')} <ArrowRight size={13} />
                       </Button>
                     </Link>
                   </div>

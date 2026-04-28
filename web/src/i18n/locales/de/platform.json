@@ -1,0 +1,89 @@
+{
+  "register": {
+    "brand": { "name": "Trimio Studio", "subtitle": "Für professionelle Barbershops" },
+    "hero": {
+      "eyebrow": "Heute starten",
+      "title": "Ihr Unternehmen in wenigen Minuten online.",
+      "desc": "Buchungsseite, Verwaltungspanel, Kunden und Berichte — alles an einem Ort.",
+      "feature1": "Öffentliche Buchungsseite",
+      "feature2": "Vollständiges Verwaltungspanel",
+      "feature3": "Barbier- und Zeitplanverwaltung",
+      "feature4": "Kunden und Verlauf",
+      "feature5": "Kostenlos starten, keine Karte"
+    },
+    "freePlan": { "title": "Kostenloser Plan enthalten", "desc": "Starten Sie mit 1 Barbier und 30 Buchungen pro Monat ohne Kosten. Upgrade ab 19€/Monat, wenn Sie wachsen möchten." },
+    "form": {
+      "shopNameLabel": "Name des Barbershops",
+      "shopNamePlaceholder": "Hans' Barbershop",
+      "slugLabel": "Adresse Ihrer Website",
+      "slugPrefix": "trimio.app/",
+      "ownerNameLabel": "Ihr Name",
+      "ownerNamePlaceholder": "Hans Müller",
+      "emailLabel": "E-Mail",
+      "emailPlaceholder": "hans@email.de",
+      "passwordLabel": "Passwort",
+      "passwordPlaceholder": "Mindestens 6 Zeichen",
+      "submitButton": "Barbershop kostenlos erstellen",
+      "hasAccount": "Haben Sie bereits ein Konto?",
+      "login": "Anmelden",
+      "errors": {
+        "shopNameRequired": "Name des Barbershops erforderlich",
+        "shopNameMin": "Mindestens 2 Zeichen",
+        "slugInvalid": "Nur Kleinbuchstaben, Zahlen und Bindestriche",
+        "ownerNameRequired": "Ihr Name ist erforderlich",
+        "emailInvalid": "Ungültige E-Mail",
+        "passwordMin": "Mindestens 6 Zeichen",
+        "slugTaken": "Diese Adresse wird bereits verwendet. Wählen Sie eine andere."
+      }
+    },
+    "success": {
+      "title": "Bestätigen Sie Ihre E-Mail",
+      "message": "Wir haben einen Bestätigungslink an {{email}} gesendet. Bestätigen Sie, bevor Sie auf das Panel zugreifen.",
+      "stepsTitle": "Nächste Schritte",
+      "step1": "1. Öffnen Sie Ihren Posteingang.",
+      "step2": "2. Suchen Sie die Trimio-E-Mail.",
+      "step3": "3. Klicken Sie auf den Bestätigungslink.",
+      "step4": "4. Melden Sie sich mit Ihren Anmeldedaten an.",
+      "openInbox": "Posteingang öffnen",
+      "resendEmail": "Bestätigungs-E-Mail erneut senden",
+      "goToLogin": "Zur Anmeldung gehen",
+      "createAnother": "Weiteres Konto erstellen"
+    }
+  },
+  "verifyEmail": {
+    "eyebrow": "Bestätigung",
+    "brand": "Trimio Studio",
+    "subtitle": "Admin-Konto-Aktivierung.",
+    "title": "E-Mail bestätigen",
+    "missingToken": "Der Bestätigungslink ist unvollständig. Fordern Sie eine neue Bestätigungs-E-Mail an.",
+    "loading": "Wir bestätigen Ihre E-Mail…",
+    "success": "E-Mail bestätigt. Sie können sich jetzt im Panel anmelden.",
+    "error": "Diese E-Mail konnte nicht bestätigt werden.",
+    "retry": "Erneut versuchen",
+    "resendEmail": "E-Mail erneut senden",
+    "goToLogin": "Zur Anmeldung gehen"
+  },
+  "home": {
+    "nav": { "pricing": "Preise", "login": "Anmelden", "startFree": "Kostenlos starten" },
+    "hero": {
+      "pill": "Buchungssystem für Barbershops",
+      "line1": "Kunden buchen.",
+      "line2": "Sie schneiden Haare.",
+      "desc": "Trimio gibt Ihrem Barbershop eine Online-Buchungsseite. Kein WhatsApp, keine Anrufe, kein Papier.",
+      "cta": "Kostenlos starten",
+      "ctaNote": "Für immer kostenlos · Keine Kreditkarte",
+      "stat1Value": "< 5 Min.", "stat1Label": "um alles einzurichten",
+      "stat2Value": "24 / 7", "stat2Label": "für Kunden verfügbar",
+      "stat3Value": "0€", "stat3Label": "um zu beginnen"
+    },
+    "finalCta": {
+      "title": "Ihr Barbershop online",
+      "titleAccent": "in weniger als 5 Minuten.",
+      "desc": "Schließen Sie sich den Barbershops an, die aufgehört haben, Buchungen über WhatsApp zu verwalten. Kostenlos starten, keine Kreditkarte.",
+      "createAccount": "Kostenloses Konto erstellen",
+      "alreadyHaveAccount": "Ich habe bereits ein Konto",
+      "note": "Kostenloser Plan für immer · 30 Buchungen/Monat inklusive · Keine Karte"
+    },
+    "footer": { "createAccount": "Konto erstellen" }
+  }
+}

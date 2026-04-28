@@ -27,12 +27,13 @@ import {
   Zap,
 } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
-import { pt } from 'date-fns/locale'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/store/auth'
 import { Avatar } from '@/components/ui/Avatar'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
+import { LanguageSelector } from '@/components/ui/LanguageSelector'
 import { PanelShell, type PanelNavSection } from './PanelShell'
 import { applyAccentColor } from '@/lib/theme'
 import { useInstallBrand } from '@/lib/installBrand'
@@ -44,64 +45,12 @@ type PlanTier = 'FREE' | 'BASIC' | 'PRO'
 
 const PLAN_ORDER: Record<PlanTier, number> = { FREE: 0, BASIC: 1, PRO: 2 }
 
-const NAV_SECTIONS: PanelNavSection[] = [
-  {
-    label: 'Operação',
-    items: [
-      { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
-      { href: '/admin/bookings', label: 'Agendamentos', icon: Calendar },
-      { href: '/admin/customers', label: 'Clientes', icon: Users },
-      { href: '/admin/barbers', label: 'Barbeiros', icon: Users },
-      { href: '/admin/schedule', label: 'Horários', icon: Clock },
-    ],
-  },
-  {
-    label: 'Catálogo',
-    items: [
-      { href: '/admin/services', label: 'Serviços', icon: Scissors },
-      { href: '/admin/extras', label: 'Extras', icon: Sparkles },
-      { href: '/admin/products', label: 'Produtos', icon: Package },
-      { href: '/admin/plans', label: 'Planos', icon: CreditCard },
-    ],
-  },
-  {
-    label: 'Gestão',
-    items: [
-      { href: '/admin/reports', label: 'Relatórios', icon: BarChart2 },
-      { href: '/admin/customization', label: 'Marca & Site', icon: Palette },
-      { href: '/admin/billing', label: 'Faturação', icon: Zap },
-    ],
-  },
-]
-
-const PAGE_META: Record<string, { title: string; subtitle: string }> = {
-  '/admin': { title: 'Dashboard', subtitle: 'Visão geral do desempenho, agenda e sinais operacionais.' },
-  '/admin/bookings': { title: 'Agendamentos', subtitle: 'Controla reservas, confirmações e bloqueios da agenda.' },
-  '/admin/customers': { title: 'Clientes', subtitle: 'Consulta histórico, planos ativos e dados de contacto.' },
-  '/admin/barbers': { title: 'Barbeiros', subtitle: 'Gere equipa, acessos e disponibilidade.' },
-  '/admin/services': { title: 'Serviços', subtitle: 'Mantém o catálogo principal da barbearia organizado.' },
-  '/admin/extras': { title: 'Extras', subtitle: 'Upsells e complementos que aumentam o ticket médio.' },
-  '/admin/products': { title: 'Produtos', subtitle: 'Inventário e venda de produtos no ponto de serviço.' },
-  '/admin/plans': { title: 'Planos', subtitle: 'Configura subscrições e benefícios recorrentes.' },
-  '/admin/schedule': { title: 'Horários', subtitle: 'Define a estrutura base de funcionamento da agenda.' },
-  '/admin/reports': { title: 'Relatórios', subtitle: 'Leitura comercial e operacional para apoiar decisões.' },
-  '/admin/customization': { title: 'Marca & Site', subtitle: 'Personaliza presença digital, cores e conteúdo público.' },
-  '/admin/billing': { title: 'Faturação', subtitle: 'Acompanha plano atual, upgrades e ciclo de cobrança.' },
-}
-
-function resolvePageMeta(pathname: string) {
-  if (PAGE_META[pathname]) return PAGE_META[pathname]
-  const matched = Object.entries(PAGE_META)
-    .filter(([path]) => path !== '/admin' && pathname.startsWith(path))
-    .sort((a, b) => b[0].length - a[0].length)[0]
-  return matched?.[1] ?? PAGE_META['/admin']
-}
-
 function NotificationBell() {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
   const qc = useQueryClient()
+  const { t } = useTranslation('admin')
 
   const { data: countData } = useQuery({
     queryKey: ['notifications', 'unread'],
@@ -156,13 +105,22 @@ function NotificationBell() {
     BOOKING_CUSTOMER_RESCHEDULED: { icon: RefreshCw, iconClass: 'text-primary-600', bg: 'bg-primary-50' },
   }
 
+  const { i18n } = useTranslation()
+  const dateFnsLocale = (() => {
+    try {
+      return require(`date-fns/locale/${i18n.language}`).default ?? require('date-fns/locale/pt').default
+    } catch {
+      try { return require(`date-fns/locale/${i18n.language.split('-')[0]}`).default } catch { return require('date-fns/locale/pt').default }
+    }
+  })()
+
   return (
     <div ref={ref} className="relative">
       <button
         ref={buttonRef}
         onClick={handleToggle}
         className="relative inline-flex h-10 w-10 items-center justify-center rounded-xl border border-neutral-200 bg-white text-ink-soft shadow-soft transition hover:text-ink"
-        title="Notificações"
+        title={t('layout.notifications.title')}
       >
         <Bell size={17} />
         {unread > 0 ? (
@@ -180,8 +138,8 @@ function NotificationBell() {
             >
               <div className="flex items-center justify-between border-b border-neutral-200 px-4 py-3">
                 <div className="flex items-center gap-2">
-                  <p className="text-sm font-semibold text-ink">Notificações</p>
-                  {unread > 0 ? <Badge>{unread} novas</Badge> : null}
+                  <p className="text-sm font-semibold text-ink">{t('layout.notifications.title')}</p>
+                  {unread > 0 ? <Badge>{t('layout.notifications.newBadge', { count: unread })}</Badge> : null}
                 </div>
                 {notifications.length > 0 ? (
                   <button
@@ -192,7 +150,7 @@ function NotificationBell() {
                     }}
                     className="text-xs font-medium text-ink-muted transition hover:text-ink"
                   >
-                    Marcar tudo como lido
+                    {t('layout.notifications.markAllRead')}
                   </button>
                 ) : null}
               </div>
@@ -203,7 +161,7 @@ function NotificationBell() {
                     <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-neutral-100 text-ink-muted">
                       <Bell size={18} />
                     </div>
-                    <p className="text-sm text-ink-muted">Sem notificações recentes.</p>
+                    <p className="text-sm text-ink-muted">{t('layout.notifications.noRecent')}</p>
                   </div>
                 ) : (
                   notifications.map((n: { id: string; type: string; message: string; read: boolean; createdAt: string }) => {
@@ -223,7 +181,7 @@ function NotificationBell() {
                         <div className="min-w-0 flex-1">
                           <p className="text-sm leading-5 text-ink">{n.message}</p>
                           <p className="mt-1 text-[11px] text-ink-muted">
-                            {formatDistanceToNow(new Date(n.createdAt), { addSuffix: true, locale: pt })}
+                            {formatDistanceToNow(new Date(n.createdAt), { addSuffix: true, locale: dateFnsLocale })}
                           </p>
                         </div>
                       </div>
@@ -254,6 +212,7 @@ function AdminAccountMenu({
 }) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
+  const { t } = useTranslation(['admin', 'common'])
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -262,6 +221,12 @@ function AdminAccountMenu({
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
+
+  const planLabel = currentPlan === 'FREE'
+    ? t('common:plan.FREE')
+    : currentPlan === 'BASIC'
+      ? t('common:plan.BASIC')
+      : t('common:plan.PRO')
 
   return (
     <div ref={ref} className="relative">
@@ -282,7 +247,7 @@ function AdminAccountMenu({
             <p className="text-sm font-semibold text-ink">{userName}</p>
             <p className="mt-1 text-xs text-ink-muted">{userEmail}</p>
             <div className="mt-3">
-              <Badge>Plano {currentPlan === 'FREE' ? 'Grátis' : currentPlan === 'BASIC' ? 'Básico' : 'Pro'}</Badge>
+              <Badge>{t('admin:layout.account.planBadge', { plan: planLabel })}</Badge>
             </div>
           </div>
           <div className="p-2">
@@ -292,14 +257,14 @@ function AdminAccountMenu({
               className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-ink-soft transition hover:bg-neutral-100 hover:text-ink"
             >
               <Zap size={16} />
-              Assinatura e faturação
+              {t('admin:layout.account.billingLink')}
             </Link>
             <button
               onClick={onLogout}
               className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-danger-600 transition hover:bg-danger-50"
             >
               <LogOut size={16} />
-              Sair
+              {t('admin:layout.account.logout')}
             </button>
           </div>
         </div>
@@ -315,6 +280,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate()
   const qc = useQueryClient()
   const { user, logout } = useAuthStore()
+  const { t } = useTranslation(['admin', 'common'])
   const { data: barbershop } = useQuery({
     queryKey: ['barbershop'],
     queryFn: barbershopApi.get,
@@ -341,7 +307,63 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
   }
 
   const currentPlan = (barbershop?.subscription?.plan ?? 'FREE') as PlanTier
-  const pageMeta = resolvePageMeta(pathname)
+
+  const NAV_SECTIONS: PanelNavSection[] = [
+    {
+      label: t('admin:layout.nav.operation'),
+      items: [
+        { href: '/admin', label: t('admin:layout.nav.dashboard'), icon: LayoutDashboard, exact: true },
+        { href: '/admin/bookings', label: t('admin:layout.nav.bookings'), icon: Calendar },
+        { href: '/admin/customers', label: t('admin:layout.nav.customers'), icon: Users },
+        { href: '/admin/barbers', label: t('admin:layout.nav.barbers'), icon: Users },
+        { href: '/admin/schedule', label: t('admin:layout.nav.schedule'), icon: Clock },
+      ],
+    },
+    {
+      label: t('admin:layout.nav.catalog'),
+      items: [
+        { href: '/admin/services', label: t('admin:layout.nav.services'), icon: Scissors },
+        { href: '/admin/extras', label: t('admin:layout.nav.extras'), icon: Sparkles },
+        { href: '/admin/products', label: t('admin:layout.nav.products'), icon: Package },
+        { href: '/admin/plans', label: t('admin:layout.nav.plans'), icon: CreditCard },
+      ],
+    },
+    {
+      label: t('admin:layout.nav.management'),
+      items: [
+        { href: '/admin/reports', label: t('admin:layout.nav.reports'), icon: BarChart2 },
+        { href: '/admin/customization', label: t('admin:layout.nav.brandSite'), icon: Palette },
+        { href: '/admin/billing', label: t('admin:layout.nav.billing'), icon: Zap },
+      ],
+    },
+  ]
+
+  const PAGE_META_KEYS: Record<string, { titleKey: string; subtitleKey: string }> = {
+    '/admin': { titleKey: 'admin:layout.pageMeta.dashboard.title', subtitleKey: 'admin:layout.pageMeta.dashboard.subtitle' },
+    '/admin/bookings': { titleKey: 'admin:layout.pageMeta.bookings.title', subtitleKey: 'admin:layout.pageMeta.bookings.subtitle' },
+    '/admin/customers': { titleKey: 'admin:layout.pageMeta.customers.title', subtitleKey: 'admin:layout.pageMeta.customers.subtitle' },
+    '/admin/barbers': { titleKey: 'admin:layout.pageMeta.barbers.title', subtitleKey: 'admin:layout.pageMeta.barbers.subtitle' },
+    '/admin/services': { titleKey: 'admin:layout.pageMeta.services.title', subtitleKey: 'admin:layout.pageMeta.services.subtitle' },
+    '/admin/extras': { titleKey: 'admin:layout.pageMeta.extras.title', subtitleKey: 'admin:layout.pageMeta.extras.subtitle' },
+    '/admin/products': { titleKey: 'admin:layout.pageMeta.products.title', subtitleKey: 'admin:layout.pageMeta.products.subtitle' },
+    '/admin/plans': { titleKey: 'admin:layout.pageMeta.plans.title', subtitleKey: 'admin:layout.pageMeta.plans.subtitle' },
+    '/admin/schedule': { titleKey: 'admin:layout.pageMeta.schedule.title', subtitleKey: 'admin:layout.pageMeta.schedule.subtitle' },
+    '/admin/reports': { titleKey: 'admin:layout.pageMeta.reports.title', subtitleKey: 'admin:layout.pageMeta.reports.subtitle' },
+    '/admin/customization': { titleKey: 'admin:layout.pageMeta.customization.title', subtitleKey: 'admin:layout.pageMeta.customization.subtitle' },
+    '/admin/billing': { titleKey: 'admin:layout.pageMeta.billing.title', subtitleKey: 'admin:layout.pageMeta.billing.subtitle' },
+  }
+
+  function resolvePageMeta(path: string) {
+    if (PAGE_META_KEYS[path]) return PAGE_META_KEYS[path]
+    const matched = Object.entries(PAGE_META_KEYS)
+      .filter(([p]) => p !== '/admin' && path.startsWith(p))
+      .sort((a, b) => b[0].length - a[0].length)[0]
+    return matched?.[1] ?? PAGE_META_KEYS['/admin']
+  }
+
+  const metaKeys = resolvePageMeta(pathname)
+  const pageTitle = t(metaKeys.titleKey)
+  const pageSubtitle = t(metaKeys.subtitleKey)
 
   const navSections = NAV_SECTIONS.map((section) => ({
     ...section,
@@ -357,6 +379,12 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
     }),
   }))
 
+  const planLabel = currentPlan === 'FREE'
+    ? t('common:plan.FREE')
+    : currentPlan === 'BASIC'
+      ? t('common:plan.BASIC')
+      : t('common:plan.PRO')
+
   if (barbershop?.suspended) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-neutral-50 px-6">
@@ -364,14 +392,14 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl bg-danger-50 text-danger-600">
             <Ban size={28} />
           </div>
-          <h1 className="mt-5 text-xl font-semibold text-ink">Conta suspensa</h1>
+          <h1 className="mt-5 text-xl font-semibold text-ink">{t('admin:layout.suspended.title')}</h1>
           <p className="mt-2 text-sm leading-6 text-ink-muted">
             {barbershop.suspendedReason
-              ? `Motivo: ${barbershop.suspendedReason}`
-              : 'A tua conta foi suspensa. Contacta o suporte para mais informações.'}
+              ? t('admin:layout.suspended.reason', { reason: barbershop.suspendedReason })
+              : t('admin:layout.suspended.defaultMessage')}
           </p>
           <Button onClick={handleLogout} variant="secondary" className="mt-6">
-            Sair
+            {t('admin:layout.account.logout')}
           </Button>
         </div>
       </div>
@@ -381,8 +409,8 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
     <PanelShell
       brand={{
-        name: 'Trimio Studio',
-        subtitle: barbershop?.name ?? 'Painel da barbearia',
+        name: t('admin:layout.brand.name'),
+        subtitle: barbershop?.name ?? t('admin:layout.brand.defaultSubtitle'),
         icon: <Building2 size={18} />,
         logoSrc: adminLogo,
       }}
@@ -390,19 +418,22 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
       navSections={navSections}
       sidebarOpen={sidebarOpen}
       onSidebarOpen={setSidebarOpen}
-      topbarTitle={pageMeta.title}
-      topbarSubtitle={pageMeta.subtitle}
+      topbarTitle={pageTitle}
+      topbarSubtitle={pageSubtitle}
       topbarAction={
         pathname !== '/admin/billing' ? (
           <Link to="/admin/billing" className="hidden md:block">
             <Button size="sm" variant={barbershop?.subscription?.expired ? 'danger' : 'secondary'}>
-              {barbershop?.subscription?.expired ? 'Renovar plano' : 'Ver faturação'}
+              {barbershop?.subscription?.expired
+                ? t('admin:layout.topbar.renewPlan')
+                : t('admin:layout.topbar.viewBilling')}
             </Button>
           </Link>
         ) : null
       }
       topbarAside={
         <>
+          <LanguageSelector />
           <PushToggle variant="admin" />
           <NotificationBell />
           <AdminAccountMenu
@@ -416,15 +447,20 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
       }
       sidebarFooter={
         <div className="rounded-xl border border-primary-100 bg-primary-50 px-3 py-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary-700">Plano atual</p>
-          <p className="mt-1 text-sm font-semibold text-ink">
-            {currentPlan === 'FREE' ? 'Grátis' : currentPlan === 'BASIC' ? 'Básico' : 'Pro'}
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary-700">
+            {t('admin:layout.sidebar.currentPlan')}
           </p>
+          <p className="mt-1 text-sm font-semibold text-ink">{planLabel}</p>
           <Link to="/admin/billing" className="mt-3 inline-flex text-sm font-medium text-primary-700 hover:text-primary-800">
-            Gerir assinatura
+            {t('admin:layout.sidebar.manageSubscription')}
           </Link>
         </div>
       }
+      pullRefreshLabels={{
+        refreshing: t('admin:layout.pull.refreshing'),
+        release: t('admin:layout.pull.releaseToRefresh'),
+        pull: t('admin:layout.pull.pullToRefresh'),
+      }}
       onPullRefresh={handleRefresh}
       isPullRefreshing={refreshing}
     >
@@ -432,10 +468,10 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
         <div className="mb-6 flex items-start gap-3 rounded-2xl border border-warning-100 bg-warning-50 px-4 py-4 text-sm text-warning-700">
           <AlertTriangle size={18} className="mt-0.5 shrink-0" />
           <div className="min-w-0 flex-1">
-            O teu plano <strong>{barbershop.subscription.paidPlan}</strong> expirou. Estás agora no plano Grátis com funcionalidades limitadas.
+            {t('admin:layout.expiredPlan.message', { plan: barbershop.subscription.paidPlan })}
           </div>
           <Link to="/admin/billing" className="shrink-0 font-semibold hover:underline">
-            Renovar
+            {t('admin:layout.expiredPlan.renew')}
           </Link>
         </div>
       ) : null}

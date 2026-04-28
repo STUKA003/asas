@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { useBookingStore } from '@/store/booking'
 import { useTenant } from '@/providers/TenantProvider'
 import { formatCurrency, formatDuration, toWallClockDate } from '@/lib/utils'
@@ -7,6 +8,8 @@ import { Avatar } from '@/components/ui/Avatar'
 export function BookingSummary() {
   const { service, extras, products, customerPlan, barber, date, slot } = useBookingStore()
   const { barbershop } = useTenant()
+  const { t, i18n } = useTranslation('public')
+
   if (!service) return null
 
   const planServiceIds = new Set(customerPlan?.allowedServices.map((s) => s.id) ?? [])
@@ -23,15 +26,16 @@ export function BookingSummary() {
     productPrices.reduce((s, p) => s + p.effectivePrice, 0)
 
   const duration = service.duration + extras.reduce((s, e) => s + (e.fitsInService ? 0 : e.duration), 0)
+  const langLocale = i18n.language || 'pt'
   const lines = [
-    date ? { icon: CalendarDays, label: 'Data', value: new Date(date).toLocaleDateString('pt-PT', { day: '2-digit', month: 'long' }) } : null,
-    slot ? { icon: Clock, label: 'Hora', value: toWallClockDate(slot.startTime).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' }) } : null,
+    date ? { icon: CalendarDays, label: t('booking.summary.date'), value: new Date(date).toLocaleDateString(langLocale, { day: '2-digit', month: 'long' }) } : null,
+    slot ? { icon: Clock, label: t('booking.summary.time'), value: toWallClockDate(slot.startTime).toLocaleTimeString(langLocale, { hour: '2-digit', minute: '2-digit' }) } : null,
   ].filter(Boolean) as Array<{ icon: typeof User; label: string; value: string }>
 
   return (
     <div className="rounded-3xl border border-neutral-200 bg-white p-5 text-sm shadow-medium">
       <div>
-        <p className="eyebrow">Resumo da reserva</p>
+        <p className="eyebrow">{t('booking.summary.title')}</p>
       </div>
 
       {lines.length > 0 && (
@@ -40,7 +44,7 @@ export function BookingSummary() {
             <div className="mb-1 flex items-center gap-3 rounded-2xl border border-neutral-200 bg-white px-3 py-3 shadow-soft">
               <Avatar name={barber.name} src={barber.avatar} size="md" />
               <div className="min-w-0">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink-muted">Profissional</p>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink-muted">{t('booking.summary.professional')}</p>
                 <p className="truncate text-sm font-medium text-ink">{barber.name}</p>
               </div>
             </div>
@@ -62,13 +66,13 @@ export function BookingSummary() {
       <div className="mt-5 rounded-2xl border border-neutral-200 bg-white p-4 shadow-soft">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink-muted">Serviço principal</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink-muted">{t('booking.summary.mainService')}</p>
             <p className="mt-1 text-base font-semibold text-ink">{service.name}</p>
           </div>
           <div className="flex items-center gap-1.5">
             {planServiceIds.has(service.id) && (
               <span className="tenant-chip inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-bold uppercase tracking-[0.12em]">
-                <BadgeCheck size={10} /> Plano
+                <BadgeCheck size={10} /> {t('booking.summary.plan')}
               </span>
             )}
             <span className={planServiceIds.has(service.id) ? 'line-through text-zinc-400' : ''}>
@@ -85,7 +89,7 @@ export function BookingSummary() {
 
       {(extraPrices.length > 0 || productPrices.length > 0) && (
         <div className="mt-4 space-y-2 rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink-muted">Adicionados</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink-muted">{t('booking.summary.added')}</p>
           {extraPrices.map((e) => (
             <div key={e.id} className="flex items-center justify-between text-ink-soft">
               <span>+ {e.name}</span>
@@ -110,7 +114,7 @@ export function BookingSummary() {
       <div className="mt-4 rounded-[1.5rem] bg-ink px-4 py-4 text-white">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/50">Total estimado</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/50">{t('booking.summary.total')}</p>
             <p className="mt-1 text-2xl font-semibold tracking-tight">{formatCurrency(total)}</p>
           </div>
           <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10">

@@ -1,4 +1,5 @@
 import { Check } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 
 export function BookingStepper({
@@ -10,13 +11,14 @@ export function BookingStepper({
   steps: string[]
   onStepClick?: (i: number) => void
 }) {
+  const { t } = useTranslation('public')
   return (
     <div className="w-full">
       <div className="hidden rounded-3xl border border-neutral-200 bg-white p-5 shadow-medium sm:block">
         <div className="mb-4 flex items-center justify-between">
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-ink-muted">Progresso</p>
-            <p className="mt-1 text-sm font-medium text-ink">Passo {current + 1} de {steps.length}</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-ink-muted">{t('booking.progress')}</p>
+            <p className="mt-1 text-sm font-medium text-ink">{t('booking.stepOf', { current: current + 1, total: steps.length })}</p>
           </div>
           <div className="h-2 w-32 overflow-hidden rounded-full bg-neutral-100">
             <div
@@ -70,7 +72,7 @@ export function BookingStepper({
           {current + 1}
         </div>
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink-muted">Passo {current + 1} de {steps.length}</p>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink-muted">{t('booking.stepOf', { current: current + 1, total: steps.length })}</p>
           <p className="text-sm font-semibold text-ink">{steps[current]}</p>
         </div>
         <div className="flex-1 ml-2 flex items-center gap-1">

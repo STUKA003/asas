@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { publicApi } from '@/lib/publicApi'
 import { useTenant } from '@/providers/TenantProvider'
 import { useBookingStore } from '@/store/booking'
@@ -12,6 +13,7 @@ import type { Extra } from '@/lib/types'
 export function StepExtras() {
   const { slug } = useTenant()
   const { extras: selected, toggleExtra, setStep } = useBookingStore()
+  const { t } = useTranslation(['public', 'common'])
 
   const { data: extras, isLoading } = useQuery({
     queryKey: ['public', slug, 'extras'],
@@ -19,7 +21,6 @@ export function StepExtras() {
     enabled:  !!slug,
   })
 
-  // Salta automaticamente se não há extras disponíveis
   useEffect(() => {
     if (!isLoading && extras && (extras as Extra[]).length === 0) {
       setStep(4)
@@ -31,7 +32,10 @@ export function StepExtras() {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-xl font-bold">Extras <span className="text-sm font-normal text-zinc-400">opcional</span></h2>
+        <h2 className="text-xl font-bold">
+          {t('booking.steps.extras.title')}
+          <span className="text-sm font-normal text-zinc-400">{t('booking.steps.extras.optional')}</span>
+        </h2>
       </div>
 
       <div className="space-y-2">
@@ -59,7 +63,7 @@ export function StepExtras() {
                   )}
                   {e.fitsInService && (
                     <span className="flex items-center gap-1 text-xs text-emerald-600 font-medium">
-                      <Clock size={11} /> incluído no serviço
+                      <Clock size={11} /> {t('booking.steps.extras.includedInService')}
                     </span>
                   )}
                 </div>
@@ -79,13 +83,13 @@ export function StepExtras() {
           )
         })}
         {!(extras as Extra[] | undefined)?.length && (
-          <p className="text-sm text-zinc-400 py-8 text-center">Sem extras disponíveis.</p>
+          <p className="text-sm text-zinc-400 py-8 text-center">{t('booking.steps.extras.noExtras')}</p>
         )}
       </div>
 
       <div className="flex justify-between pt-2">
-        <Button variant="outline" onClick={() => setStep(2)}>Voltar</Button>
-        <Button onClick={() => setStep(4)}>Próximo</Button>
+        <Button variant="outline" onClick={() => setStep(2)}>{t('common:btn.back')}</Button>
+        <Button onClick={() => setStep(4)}>{t('common:btn.next')}</Button>
       </div>
     </div>
   )

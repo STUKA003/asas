@@ -1,0 +1,45 @@
+{
+  "layout": {
+    "nav": { "portal": "Portaal", "dashboard": "Dashboard", "schedule": "Agenda" },
+    "pageMeta": {
+      "dashboard": { "title": "Dashboard", "subtitle": "Snel overzicht van uw dag, agenda en inkomsten." },
+      "schedule": { "title": "Agenda", "subtitle": "Volg uw tijdschema en lopende boekingen." }
+    },
+    "notifications": { "title": "Meldingen", "newBadge": "{{count}} nieuwe", "markAllRead": "Alles als gelezen markeren", "noRecent": "Geen recente meldingen." },
+    "account": { "logout": "Afmelden" },
+    "sidebar": { "activeSession": "Actieve sessie", "portalTitle": "Kappersportaal", "portalDesc": "Snelle toegang tot agenda, statussen en servicedetails." },
+    "topbar": { "planLabel": "Plan", "openSchedule": "Agenda openen" },
+    "pull": { "refreshing": "Vernieuwen...", "releaseToRefresh": "Loslaten om te vernieuwen", "pullToRefresh": "Trek om te vernieuwen" },
+    "brand": { "name": "Trimio Flow", "defaultSubtitle": "Kappersportaal" }
+  },
+  "push": { "unavailable": "Push niet beschikbaar", "notConfigured": "Push niet geconfigureerd", "blocked": "Push geblokkeerd", "active": "Push actief", "enable": "Push inschakelen", "blockedTooltip": "Machtiging geblokkeerd in browser", "enableTooltip": "Pushmeldingen inschakelen" },
+  "login": {
+    "brand": { "name": "Trimio Flow", "subtitle": "Kappersportaal" },
+    "panel": {
+      "eyebrow": "Individuele operatie",
+      "title": "Uw agenda zonder het dagritme te onderbreken.",
+      "desc": "Toegang ontworpen voor kappers om tijdschema's, klanten en statussen met minder wrijving te volgen.",
+      "feature1Label": "Dagagenda",
+      "feature1Desc": "Boekingen, bevestigingen en verzettingen op één direct scherm.",
+      "feature2Label": "Klant in context",
+      "feature2Desc": "Diensten, plan, extra's en contact op het juiste moment.",
+      "feature3Label": "Ruis-vrije operatie",
+      "feature3Desc": "Lichte stroom voor wie bedient, niet configureert.",
+      "footer": "© {{year}} Trimio · Operationeel kappersportaal"
+    },
+    "form": {
+      "title": "Inloggen op uw portaal",
+      "subtitle": "Toegang tot de dagelijkse agenda en operatie van de kapper.",
+      "slugLabel": "Kapperswinkel-slug",
+      "slugPlaceholder": "mijn-kapper",
+      "emailLabel": "E-mail",
+      "emailPlaceholder": "kapper@email.com",
+      "passwordLabel": "Wachtwoord",
+      "passwordPlaceholder": "••••••••",
+      "submitButton": "Inloggen op portaal",
+      "errors": { "invalidCredentials": "Slug, e-mail of wachtwoord ongeldig." }
+    }
+  },
+  "dashboard": { "title": "Dashboard", "subtitle": "Snel overzicht van uw dag, agenda en inkomsten." },
+  "schedule": { "title": "Agenda", "subtitle": "Volg uw tijdschema en lopende boekingen." }
+}

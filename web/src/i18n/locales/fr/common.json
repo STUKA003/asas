@@ -1,0 +1,60 @@
+{
+  "btn": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "back": "Retour",
+    "next": "Suivant",
+    "continue": "Continuer",
+    "logout": "Se déconnecter",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "search": "Rechercher",
+    "clear": "Effacer",
+    "create": "Créer",
+    "close": "Fermer",
+    "loading": "Chargement...",
+    "start": "Commencer",
+    "startFree": "Commencer gratuitement",
+    "enter": "Se connecter",
+    "update": "Mettre à jour",
+    "remove": "Retirer",
+    "add": "Ajouter",
+    "upgrade": "Mettre à niveau",
+    "refresh": "Actualiser la page",
+    "export": "Exporter",
+    "import": "Importer"
+  },
+  "status": {
+    "PENDING": "En attente",
+    "CONFIRMED": "Confirmé",
+    "COMPLETED": "Terminé",
+    "CANCELLED": "Annulé",
+    "NO_SHOW": "Absent",
+    "active": "Actif",
+    "inactive": "Inactif"
+  },
+  "plan": {
+    "FREE": "Gratuit",
+    "BASIC": "Basique",
+    "PRO": "Pro"
+  },
+  "error": {
+    "generic": "Une erreur s'est produite. Réessayez.",
+    "required": "Champ obligatoire",
+    "invalidEmail": "Email invalide",
+    "invalidCredentials": "Identifiants invalides",
+    "pageLoad": "Échec du chargement de la page",
+    "pageLoadDesc": "Une erreur s'est produite lors du chargement. Actualisez la page pour resynchroniser l'application."
+  },
+  "lang": {
+    "label": "Langue",
+    "pt": "Português",
+    "en": "English",
+    "es": "Español",
+    "fr": "Français",
+    "de": "Deutsch",
+    "it": "Italiano",
+    "nl": "Nederlands"
+  }
+}

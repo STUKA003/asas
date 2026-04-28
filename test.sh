@@ -8,8 +8,8 @@
 #   ./test.sh --full
 
 SLUG_FILTER=""
-DEEP_BROWSER=1
-LOAD_TEST=1
+DEEP_BROWSER=0
+LOAD_TEST=0
 for arg in "$@"; do
   case "$arg" in
     --deep-browser) DEEP_BROWSER=1 ;;
@@ -35,43 +35,87 @@ EOF
   esac
 done
 SSH_KEY="${HOME}/Desktop/trimio_vps_ed25519"
-SSH=(ssh -i "$SSH_KEY" -o StrictHostKeyChecking=no ubuntu@51.91.158.175)
 
-VPS_DATA=$("${SSH[@]}" "
+_VPS_COLLECT_CMD="
   echo '=JWT='
   grep '^JWT_SECRET=' /var/www/trimio/.env | cut -d= -f2- | tr -d '\"'
+  echo '=SUPERADMIN_EMAIL='
+  grep '^SUPERADMIN_EMAIL=' /var/www/trimio/.env | cut -d= -f2- | tr -d '\"'
+  echo '=SUPERADMIN_PASSWORD='
+  grep '^SUPERADMIN_PASSWORD=' /var/www/trimio/.env | cut -d= -f2- | tr -d '\"'
   echo '=SLUGS='
   sudo -u postgres psql -d trimio -t -c \"SELECT slug FROM \\\"Barbershop\\\" WHERE suspended=false ORDER BY name;\" 2>/dev/null | tr -d ' ' | grep -v '^\$'
   echo '=USERS='
   sudo -u postgres psql -d trimio -t -c \"SELECT u.id, u.\\\"barbershopId\\\", b.slug, u.email FROM \\\"User\\\" u JOIN \\\"Barbershop\\\" b ON b.id=u.\\\"barbershopId\\\" WHERE b.suspended=false ORDER BY b.name;\" 2>/dev/null | grep -v '^\$'
-" 2>/dev/null)
+  echo '=SMTP_HOST='
+  grep '^SMTP_HOST=' /var/www/trimio/.env | cut -d= -f2- | tr -d '\"'
+  echo '=SMTP_PORT='
+  grep '^SMTP_PORT=' /var/www/trimio/.env | cut -d= -f2- | tr -d '\"'
+  echo '=NODE_ENV='
+  grep '^NODE_ENV=' /var/www/trimio/.env | cut -d= -f2- | tr -d '\"'
+  echo '=SENTRY_DSN='
+  grep '^SENTRY_DSN=' /var/www/trimio/.env | cut -d= -f2- | tr -d '\"'
+"
 
-VPS_DATA="$VPS_DATA" python3 -u - "$SLUG_FILTER" "$DEEP_BROWSER" "$LOAD_TEST" <<'PYEOF'
-import sys, json, hmac, hashlib, base64, time, subprocess, re, os
+# Detect if running directly on the VPS
+if [ -f "/var/www/trimio/.env" ]; then
+  ON_VPS=1
+  VPS_DATA=$(bash -c "$_VPS_COLLECT_CMD" 2>/dev/null)
+else
+  ON_VPS=0
+  SSH=(ssh -i "$SSH_KEY" -o StrictHostKeyChecking=no ubuntu@51.91.158.175)
+  VPS_DATA=$("${SSH[@]}" "$_VPS_COLLECT_CMD" 2>/dev/null)
+fi
+
+VPS_DATA="$VPS_DATA" ON_VPS="$ON_VPS" python3 -u - "$SLUG_FILTER" "$DEEP_BROWSER" "$LOAD_TEST" <<'PYEOF'
+import sys, json, hmac, hashlib, base64, time, subprocess, re, os, struct
 from urllib.request import urlopen, Request
 from urllib.error import HTTPError
 import ssl, socket
 from datetime import date, datetime, timedelta, UTC
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-BASE = "https://trimio.pt"
-API  = f"{BASE}/api"
-UA   = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"
+BASE     = "https://trimio.pt"
+API      = f"{BASE}/api"
+VPS_IP   = "51.91.158.175"
+ON_VPS   = __import__('os').environ.get('ON_VPS', '0') == '1'
+LOCAL_API = "http://localhost:3000/api"
+UA       = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"
 
 raw         = __import__('os').environ.get('VPS_DATA', '')
 slug_filter = sys.argv[1].strip()
 DEEP_BROWSER = sys.argv[2] == '1'
 LOAD_TEST = sys.argv[3] == '1'
 
-jwt_secret = ""; all_slugs = []; users = []
+jwt_secret = ""
+superadmin_email = ""
+superadmin_password = ""
+smtp_host = ""
+smtp_port = ""
+node_env = ""
+sentry_dsn = ""
+all_slugs = []
+users = []
 section_name = None
 for line in raw.split('\n'):
     line = line.strip()
     if line == '=JWT=':    section_name = 'jwt'
+    elif line == '=SUPERADMIN_EMAIL=': section_name = 'superadmin_email'
+    elif line == '=SUPERADMIN_PASSWORD=': section_name = 'superadmin_password'
     elif line == '=SLUGS=': section_name = 'slugs'
     elif line == '=USERS=': section_name = 'users'
+    elif line == '=SMTP_HOST=': section_name = 'smtp_host'
+    elif line == '=SMTP_PORT=': section_name = 'smtp_port'
+    elif line == '=NODE_ENV=': section_name = 'node_env'
+    elif line == '=SENTRY_DSN=': section_name = 'sentry_dsn'
     elif not line: continue
     elif section_name == 'jwt':   jwt_secret = line
+    elif section_name == 'superadmin_email': superadmin_email = line
+    elif section_name == 'superadmin_password': superadmin_password = line
+    elif section_name == 'smtp_host': smtp_host = line
+    elif section_name == 'smtp_port': smtp_port = line
+    elif section_name == 'node_env': node_env = line
+    elif section_name == 'sentry_dsn': sentry_dsn = line
     elif section_name == 'slugs': all_slugs.append(line)
     elif section_name == 'users':
         p = [x.strip() for x in line.split('|')]
@@ -152,6 +196,13 @@ def api(path, method="GET", body=None, token=None):
 
 def pub(path):
     s,b,ms = http(f"{API}/public{path}")
+    try: return s, json.loads(b), ms
+    except: return s, None, ms
+
+def superapi(path, method="GET", body=None, token=None):
+    h = {"Authorization":f"Bearer {token}"} if token else {}
+    base = LOCAL_API if ON_VPS else API
+    s,b,ms = http(f"{base}/superadmin{path}", method, body, headers=h)
     try: return s, json.loads(b), ms
     except: return s, None, ms
 
@@ -753,6 +804,36 @@ def test_barbershop(slug):
     else:
         note("Isolamento não testado — apenas 1 barbearia")
 
+    # ── 18. IDOR — acesso a recursos de outra barbearia ─────────────
+    sec("18 · IDOR — acesso a recursos de outra barbearia")
+    if token and len(users) >= 2:
+        other_user = next((u for u in users if u['slug'] != slug), None)
+        if other_user:
+            other_token = make_jwt(other_user['id'], other_user['barbershopId'])
+            s_other_bk, other_bookings, _ = api("/bookings", token=other_token)
+            if isinstance(other_bookings, list) and other_bookings:
+                other_bid = other_bookings[0].get('id')
+                if other_bid:
+                    s_idor, d_idor, _ = api(f"/bookings/{other_bid}", token=token)
+                    if s_idor == 200 and isinstance(d_idor, dict):
+                        fail(f"IDOR: booking da barbearia '{other_user['slug']}' acessível com token de '{slug}'!")
+                    elif s_idor in (403, 404):
+                        ok(f"IDOR bookings: acesso cruzado → {s_idor} (isolamento OK)")
+                    else:
+                        note(f"IDOR test booking → {s_idor}")
+            s_idor_cust, d_idor_cust, _ = api("/customers", token=other_token)
+            s_mine, d_mine, _ = api("/customers", token=token)
+            if isinstance(d_idor_cust, list) and isinstance(d_mine, list):
+                shared = set(c.get('id') for c in d_idor_cust) & set(c.get('id') for c in d_mine)
+                if shared:
+                    fail(f"IDOR: {len(shared)} cliente(s) partilhados entre barbearias — dados cruzados!")
+                else:
+                    ok("IDOR clientes: sem dados partilhados entre barbearias")
+        else:
+            note("IDOR não testado — sem segundo utilizador de barbearia diferente")
+    else:
+        note("IDOR não testado — apenas 1 barbearia ou sem token")
+
 
 # ════════════════════════════════════════════════════════════════════════
 print(f"\n{B}{'═'*50}{X}")
@@ -843,6 +924,117 @@ if len(users)>=2:
     else:
         fail("Possível problema de isolamento entre barbearias!")
 
+sec("Superadmin autenticado")
+super_token = None
+first_shop = None
+if not superadmin_email or not superadmin_password:
+    warn("SUPERADMIN_EMAIL/SUPERADMIN_PASSWORD não encontrados — auditoria autenticada do superadmin ignorada")
+else:
+    s, data, _ = superapi("/auth/login", "POST", {
+        "email": superadmin_email,
+        "password": superadmin_password,
+    })
+    if s == 200 and isinstance(data, dict) and data.get("token"):
+        super_token = data["token"]
+        ok("Superadmin login real → 200")
+    else:
+        fail(f"Superadmin login real falhou → {s}")
+
+if super_token:
+    s, stats_data, ms = superapi("/stats", token=super_token)
+    if s == 200 and isinstance(stats_data, dict):
+        ok(f"Superadmin stats → 200 · {ms}ms")
+        for field in ["totalBarbershops", "totalBookings", "totalCustomers", "bookingsThisMonth"]:
+            if isinstance(stats_data.get(field), int) and stats_data.get(field) >= 0:
+                ok(f"stats.{field} → {stats_data.get(field)}")
+            else:
+                fail(f"stats.{field} inválido", str(stats_data.get(field)))
+        if isinstance(stats_data.get("planCounts"), list):
+            ok(f"stats.planCounts → {len(stats_data['planCounts'])} entrada(s)")
+        else:
+            fail("stats.planCounts inválido")
+    else:
+        fail(f"Superadmin stats falhou → {s}")
+
+    s, shops, ms = superapi("/barbershops", token=super_token)
+    if s == 200 and isinstance(shops, list):
+        ok(f"Superadmin listagem → 200 · {ms}ms")
+        if shops:
+            first_shop = shops[0]
+            ok(f"Superadmin listagem retornou {len(shops)} barbearia(s)")
+            for field in ["id", "name", "slug", "subscriptionPlan", "health", "security", "_count"]:
+                if field in first_shop:
+                    ok(f"barbershop.{field} presente")
+                else:
+                    fail(f"barbershop.{field} em falta")
+        else:
+            fail("Superadmin listagem sem barbearias")
+    else:
+        fail(f"Superadmin listagem falhou → {s}")
+
+if super_token and first_shop:
+    sample_slug = first_shop.get("slug", "")
+    sample_id = first_shop.get("id", "")
+
+    s, filtered, _ = superapi(f"/barbershops?q={sample_slug}", token=super_token)
+    if s == 200 and isinstance(filtered, list):
+        if any(shop.get("id") == sample_id for shop in filtered):
+            ok("Superadmin filtro por slug encontra a barbearia")
+        else:
+            fail("Superadmin filtro por slug não encontrou a barbearia esperada")
+    else:
+        fail(f"Superadmin filtro por slug falhou → {s}")
+
+    s, verified, _ = superapi("/barbershops?verification=verified", token=super_token)
+    if s == 200 and isinstance(verified, list):
+        ok("Superadmin filtro verification=verified → 200")
+    else:
+        fail(f"Superadmin filtro verification=verified falhou → {s}")
+
+    s, active, _ = superapi("/barbershops?health=active", token=super_token)
+    if s == 200 and isinstance(active, list):
+        ok("Superadmin filtro health=active → 200")
+    else:
+        fail(f"Superadmin filtro health=active falhou → {s}")
+
+    s, detail, ms = superapi(f"/barbershops/{sample_id}", token=super_token)
+    if s == 200 and isinstance(detail, dict):
+        ok(f"Superadmin detalhe → 200 · {ms}ms")
+        if detail.get("id") == sample_id and detail.get("slug") == sample_slug:
+            ok("Superadmin detalhe consistente com a listagem")
+        else:
+            fail("Superadmin detalhe inconsistente com a listagem")
+        if isinstance(detail.get("limits"), dict):
+            ok("Superadmin detalhe inclui limits")
+        else:
+            fail("Superadmin detalhe sem limits")
+    else:
+        fail(f"Superadmin detalhe falhou → {s}")
+
+    s, support, ms = superapi(f"/barbershops/{sample_id}/support-session", "POST", {}, token=super_token)
+    if s == 200 and isinstance(support, dict) and support.get("token"):
+        ok(f"Superadmin support-session → 200 · {ms}ms")
+        support_token = support["token"]
+        support_user = support.get("user") if isinstance(support.get("user"), dict) else None
+        if support_user and support_user.get("role") == "SUPPORT":
+            ok("Support session devolve role SUPPORT no payload")
+        else:
+            fail("Support session não devolveu role SUPPORT no payload")
+
+        s2, support_me, _ = api("/auth/me", token=support_token)
+        if s2 == 200 and isinstance(support_me, dict) and support_me.get("barbershopId") == support_user.get("barbershopId"):
+            ok("Support session autentica no painel admin da barbearia correta")
+        else:
+            fail(f"Support session não autenticou em /auth/me → {s2}")
+
+        s3, _, _ = superapi("/stats", token=support_token)
+        if s3 == 403:
+            ok("Support token não consegue aceder a rotas de superadmin")
+        else:
+            fail(f"Support token nas rotas de superadmin → {s3} (esperado 403)")
+    else:
+        fail(f"Superadmin support-session falhou → {s}")
+
 sec("SSL & Segurança")
 try:
     conn=ssl.create_default_context().wrap_socket(
@@ -865,14 +1057,37 @@ try:
     for h,expected in [("x-frame-options","SAMEORIGIN"),("x-content-type-options","nosniff")]:
         if h in hdrs: ok(f"Header '{h}' → {hdrs[h]}")
         else: warn(f"Header '{h}' em falta")
+    hsts = hdrs.get('strict-transport-security','')
+    if hsts: ok(f"HSTS → {hsts}")
+    else: warn("HSTS (strict-transport-security) em falta")
+    rp = hdrs.get('referrer-policy','')
+    if rp: ok(f"Referrer-Policy → {rp}")
+    else: warn("Referrer-Policy em falta")
+    csp = hdrs.get('content-security-policy','')
+    if csp: ok(f"CSP presente ({len(csp)} chars)")
+    else: note("Content-Security-Policy não definido")
+    pp = hdrs.get('permissions-policy','')
+    if pp: ok(f"Permissions-Policy → {pp[:80]}")
+    else: note("Permissions-Policy não definido")
 except Exception as e: warn(f"Headers: {e}")
 
 sec("Entrega & Cache")
+# Detect current bundle name dynamically
+_bundle_url = None
+try:
+    _, _html, _ = http(f"{BASE}/")
+    _html_str = _html.decode('utf-8','replace') if isinstance(_html, bytes) else _html
+    _bm = re.search(r'/assets/(index-[^"\']+\.js)', _html_str)
+    if _bm: _bundle_url = f"{BASE}/assets/{_bm.group(1)}"
+except Exception: pass
+
 for label, url in [
-    ("App bundle", f"{BASE}/assets/index-xkeEDyRy.js"),
+    ("App bundle", _bundle_url or f"{BASE}/assets/index.js"),
     ("Service worker", f"{BASE}/push-sw.js"),
     ("Manifest clients", f"{BASE}/install-manifest.webmanifest?surface=clients&slug=stukabarber"),
 ]:
+    if not url:
+        warn(f"{label} — URL não detectado"); continue
     try:
         req = Request(url, headers={"User-Agent": UA}, method="HEAD")
         with urlopen(req, context=ctx, timeout=8) as r:
@@ -880,9 +1095,11 @@ for label, url in [
             cache = hdrs.get('cache-control', '')
             cf = hdrs.get('cf-cache-status', '')
             ctype = hdrs.get('content-type', '')
+            enc = hdrs.get('content-encoding', '')
         chk_optional(f"{label} content-type", ctype)
         chk_optional(f"{label} cache-control", cache)
         chk_optional(f"{label} cf-cache-status", cf)
+        if enc: ok(f"{label} compressão → {enc}")
         if label == "App bundle" and 'max-age' not in cache:
             warn("App bundle sem cache-control explícito")
         if label == "Service worker" and 'max-age' not in cache:
@@ -890,7 +1107,97 @@ for label, url in [
     except Exception as e:
         warn(f"{label}: {e}")
 
-SSH_CMD = ["ssh", "-i", os.path.expanduser('~/Desktop/trimio_vps_ed25519'), "-o", "StrictHostKeyChecking=no", "ubuntu@51.91.158.175"]
+sec("Compressão")
+for label, url, accept in [
+    ("HTML (home)", f"{BASE}/", "text/html"),
+    ("API pública", f"{API}/public/{SLUGS[0] if SLUGS else 'stukabarber'}", "application/json"),
+]:
+    try:
+        req = Request(url, headers={"User-Agent": UA, "Accept-Encoding": "gzip, br"})
+        with urlopen(req, context=ctx, timeout=8) as r:
+            hdrs = {k.lower(): v for k, v in r.getheaders()}
+            enc = hdrs.get('content-encoding','')
+            ctype = hdrs.get('content-type','')
+        if enc in ('gzip','br','zstd'): ok(f"{label} → {enc}")
+        elif enc: ok(f"{label} → {enc}")
+        else: warn(f"{label} sem compressão (content-encoding ausente)")
+    except Exception as e: warn(f"Compressão {label}: {e}")
+
+sec("SEO")
+try:
+    _, home_html, _ = http(f"{BASE}/")
+    home_str = home_html.decode('utf-8','replace') if isinstance(home_html, bytes) else home_html
+    robots_txt_s, robots_body, _ = http(f"{BASE}/robots.txt")
+    if robots_txt_s == 200:
+        robots_str = robots_body.decode('utf-8','replace') if isinstance(robots_body, bytes) else robots_body
+        ok(f"robots.txt → 200 · {len(robots_str)} chars")
+        if 'Disallow: /' in robots_str and 'Allow' not in robots_str:
+            warn("robots.txt bloqueia tudo — verificar se é intencional")
+        elif 'User-agent' in robots_str: ok("robots.txt tem User-agent definido")
+    else: warn(f"robots.txt → {robots_txt_s}")
+    sitemap_s, _, _ = http(f"{BASE}/sitemap.xml")
+    if sitemap_s == 200: ok("sitemap.xml → 200")
+    else: note(f"sitemap.xml → {sitemap_s} (não existe)")
+    og_image = re.search(r'og:image[^>]+content="([^"]+)"', home_str, re.I)
+    if og_image: ok(f"og:image → {og_image.group(1)[:80]}")
+    else: warn("og:image não definido na home (importante para partilha social)")
+except Exception as e: warn(f"SEO: {e}")
+
+sec("Favicon & Branding")
+def png_dimensions(data):
+    if len(data) < 24: return None, None
+    try:
+        w = struct.unpack('>I', data[16:20])[0]
+        h = struct.unpack('>I', data[20:24])[0]
+        return w, h
+    except Exception: return None, None
+
+for surface, expected_icon, expected_touch in [
+    ("platform",   "platform-logo",   "platform-logo"),
+    ("admin",      "admin-logo",       "admin-logo"),
+    ("barber",     "barber-logo",      "barber-logo"),
+    ("clients",    "clients-logo",     "clients-logo"),
+    ("superadmin", "superadmin-logo",  "superadmin-logo"),
+]:
+    for variant, exp_dim, max_kb, kind in [
+        (f"{expected_icon}-favicon.png",  64,  10, "favicon"),
+        (f"{expected_touch}-touch.png",  180,  30, "touch"),
+    ]:
+        url = f"{BASE}/branding/{variant}"
+        st, body, ms = http(url)
+        if st != 200:
+            fail(f"Branding {variant} → {st}"); continue
+        size_kb = len(body) / 1024
+        w, h = png_dimensions(body)
+        if w == exp_dim and h == exp_dim:
+            ok(f"{variant} → {w}×{h} · {size_kb:.1f}KB · {ms}ms")
+        elif w and h:
+            fail(f"{variant} → {w}×{h} (esperado {exp_dim}×{exp_dim})")
+        else:
+            warn(f"{variant} → dimensões não lidas · {size_kb:.1f}KB")
+        if size_kb > max_kb:
+            warn(f"{variant} → {size_kb:.1f}KB (acima de {max_kb}KB)")
+
+# Check HTML favicon references
+try:
+    _, idx_html, _ = http(f"{BASE}/")
+    idx_str = idx_html.decode('utf-8','replace') if isinstance(idx_html, bytes) else idx_html
+    icon_href = re.search(r'<link[^>]+rel="icon"[^>]+href="([^"]+)"', idx_str, re.I)
+    touch_href = re.search(r'<link[^>]+rel="apple-touch-icon"[^>]+href="([^"]+)"', idx_str, re.I)
+    if icon_href:
+        h = icon_href.group(1)
+        if '-favicon.png' in h: ok(f"HTML favicon href → {h}")
+        else: warn(f"HTML favicon href usa ficheiro não optimizado → {h}")
+    else: warn("HTML sem <link rel='icon'>")
+    if touch_href:
+        h = touch_href.group(1)
+        if '-touch.png' in h: ok(f"HTML apple-touch-icon href → {h}")
+        else: warn(f"HTML apple-touch-icon usa ficheiro não optimizado → {h}")
+    else: warn("HTML sem <link rel='apple-touch-icon'>")
+except Exception as e: warn(f"HTML favicon check: {e}")
+
+ON_VPS = os.path.exists('/var/www/trimio/.env')
+SSH_CMD = ["bash", "-c"] if ON_VPS else ["ssh", "-i", os.path.expanduser('~/Desktop/trimio_vps_ed25519'), "-o", "StrictHostKeyChecking=no", "ubuntu@51.91.158.175"]
 
 sec("Servidor (PM2 + recursos + logs)")
 try:
@@ -934,7 +1241,122 @@ for p in d:
       sudo -u postgres psql -d trimio -At -c "SELECT current_setting('max_connections'), pg_database_size(current_database()), (SELECT count(*) FROM pg_stat_activity), (SELECT count(*) FROM pg_stat_activity WHERE state <> 'idle'), (SELECT COALESCE(sum(n_live_tup),0) FROM pg_stat_user_tables), (SELECT COALESCE(sum(n_dead_tup),0) FROM pg_stat_user_tables);" 2>/dev/null
       echo '=DBTOP='
       sudo -u postgres psql -d trimio -At -F '|' -c "SELECT relname, n_live_tup, n_dead_tup FROM pg_stat_user_tables ORDER BY n_dead_tup DESC NULLS LAST LIMIT 5;" 2>/dev/null
-    """], capture_output=True,text=True,timeout=25)
+      echo '=NODE='
+      node --version 2>/dev/null; npm --version 2>/dev/null
+      echo '=PM2CFG='
+      pm2 jlist 2>/dev/null | python3 -c "
+import sys,json
+d=json.load(sys.stdin)
+for p in d:
+  mem=p['pm2_env'].get('max_memory_restart','none')
+  print(p['name'], mem)
+" 2>/dev/null
+      echo '=FAIL2BAN='
+      sudo fail2ban-client status sshd 2>/dev/null | grep -E 'Total banned|Currently banned' || echo 'n/a'
+      echo '=UFW='
+      sudo ufw status 2>/dev/null | head -8
+      echo '=UPDATES='
+      apt-get -s upgrade 2>/dev/null | grep -c '^Inst' || echo 0
+      echo '=FD='
+      cat /proc/sys/fs/file-nr 2>/dev/null
+      echo '=TCP='
+      ss -s 2>/dev/null | grep -E 'TCP|estab|closed|time-wait' | head -5
+      echo '=CRON='
+      crontab -l 2>/dev/null | grep -v '^#' | grep -v '^$' | head -10
+      ls /etc/cron.d/ 2>/dev/null | tr '\n' ' '
+      echo ''
+      echo '=LASTLOG='
+      last -5 -w 2>/dev/null | head -6
+      echo '=NGINXW='
+      grep -rE 'worker_connections|worker_processes' /etc/nginx/nginx.conf 2>/dev/null | tr -s ' '
+      echo '=DBCACHE='
+      sudo -u postgres psql -d trimio -At -c "SELECT ROUND(sum(heap_blks_hit)*100.0/NULLIF(sum(heap_blks_hit)+sum(heap_blks_read),0),1) FROM pg_statio_user_tables;" 2>/dev/null
+      echo '=DBIDX='
+      sudo -u postgres psql -d trimio -At -F'|' -c "SELECT relname,idx_scan,seq_scan FROM pg_stat_user_tables WHERE seq_scan+idx_scan>0 ORDER BY seq_scan DESC LIMIT 6;" 2>/dev/null
+      echo '=DBLOCKS='
+      sudo -u postgres psql -d trimio -At -c "SELECT count(*) FROM pg_locks WHERE NOT granted;" 2>/dev/null
+      echo '=DBVAC='
+      sudo -u postgres psql -d trimio -At -F'|' -c "SELECT relname,last_autovacuum::date,last_autoanalyze::date FROM pg_stat_user_tables WHERE n_live_tup>50 ORDER BY last_autovacuum NULLS FIRST LIMIT 6;" 2>/dev/null
+      echo '=DBLONGQ='
+      sudo -u postgres psql -d trimio -At -F'|' -c "SELECT pid,EXTRACT(EPOCH FROM now()-query_start)::int,LEFT(query,80) FROM pg_stat_activity WHERE state='active' AND now()-query_start>interval '3 seconds' AND query NOT LIKE '%pg_stat%';" 2>/dev/null
+      echo '=DBINDEXLIST='
+      sudo -u postgres psql -d trimio -At -F'|' -c "SELECT tablename,indexname FROM pg_indexes WHERE schemaname='public' ORDER BY tablename,indexname;" 2>/dev/null
+      echo '=ENVCHECK='
+      grep -cE 'SECRET|KEY|PASSWORD|TOKEN' /var/www/trimio/.env 2>/dev/null || echo 0
+      echo '=SSHKEYS='
+      wc -l ~/.ssh/authorized_keys 2>/dev/null || echo '0 n/a'
+      echo '=KERNEL='
+      uname -r
+      cat /etc/os-release 2>/dev/null | grep -E '^(PRETTY_NAME|VERSION_ID|VERSION_CODENAME)=' | tr -d '"'
+      echo '=DMESG='
+      sudo dmesg --time-format reltime 2>/dev/null | grep -iE 'oom|killed|out of memory|hardware error|mce|edac|i/o error' | tail -10
+      echo '=SYSCTL='
+      sysctl vm.overcommit_memory net.core.somaxconn net.ipv4.tcp_tw_reuse net.ipv4.ip_local_port_range 2>/dev/null
+      echo '=NTP='
+      timedatectl show 2>/dev/null | grep -E '(NTPSynchronized|TimeUSec|NTPService|Timezone)'
+      echo '=SSHCFG='
+      sudo grep -E '^(PasswordAuthentication|PermitRootLogin|Port|PubkeyAuthentication|X11Forwarding|MaxAuthTries|AllowUsers|AllowGroups)' /etc/ssh/sshd_config 2>/dev/null | tr -s ' '
+      echo '=SSHKEYS_DETAIL='
+      awk '{print $1, length($2)}' ~/.ssh/authorized_keys 2>/dev/null | head -10
+      echo '=PASSWD_USERS='
+      awk -F: '$3>=1000 && $1!="nobody" {print $1,$3,$7}' /etc/passwd 2>/dev/null
+      echo '=ENV_PERMS='
+      stat -c '%a %n' /var/www/trimio/.env 2>/dev/null
+      echo '=AUTHLOG='
+      sudo grep -cE 'Failed password|Invalid user|authentication failure' /var/log/auth.log 2>/dev/null || echo 0
+      sudo grep 'Failed password' /var/log/auth.log 2>/dev/null | awk '{print $(NF-3)}' | sort | uniq -c | sort -rn | head -5
+      echo '=SUID='
+      timeout 10 find / -xdev -perm /4000 -type f 2>/dev/null | grep -vE '^/(usr/bin/(sudo|su|passwd|chsh|chfn|newgrp|gpasswd|pkexec|mount|umount|ntfs-3g|fusermount3)|usr/sbin/(pam_timestamp_check|unix_chkpwd)|usr/lib/(openssh/ssh-keysign|polkit-1/polkit-agent-helper-1|dbus-1\.0/dbus-daemon-launch-helper|x86_64-linux-gnu/utempter/utempter|eject/dmcrypt-get-device)|bin/(su|mount|umount)|snap/)' | head -10
+      echo '=SUDOERS='
+      sudo grep -rE 'NOPASSWD' /etc/sudoers /etc/sudoers.d/ 2>/dev/null | grep -v '^#' | head -10
+      echo '=PGVER='
+      sudo -u postgres psql -At -c "SELECT version();" 2>/dev/null | head -1
+      echo '=PGHBA='
+      sudo cat /etc/postgresql/*/main/pg_hba.conf 2>/dev/null | grep -vE '^[[:space:]]*(#|$)' | head -20
+      echo '=PGIDLE='
+      sudo -u postgres psql -d trimio -At -F'|' -c "SELECT pid, usename, LEFT(query,60), EXTRACT(EPOCH FROM (now()-query_start))::int FROM pg_stat_activity WHERE state='idle in transaction' AND query_start IS NOT NULL ORDER BY query_start LIMIT 10;" 2>/dev/null
+      echo '=PGSEQ='
+      sudo -u postgres psql -d trimio -At -F'|' -c "SELECT schemaname, sequencename, last_value, max_value, ROUND(last_value::numeric/NULLIF(max_value,0)*100,1) AS pct FROM pg_sequences WHERE max_value < 2147483648 ORDER BY pct DESC NULLS LAST LIMIT 10;" 2>/dev/null
+      echo '=PGBACKUP='
+      find /var/backups /root /home/ubuntu -name '*.sql' -o -name '*.dump' -o -name '*.sql.gz' 2>/dev/null | xargs ls -lt 2>/dev/null | head -5
+      echo '=PGBOUNCER='
+      which pgbouncer 2>/dev/null && pgbouncer --version 2>/dev/null || echo 'not_installed'
+      echo '=PGBGWRITER='
+      sudo -u postgres psql -d trimio -At -F'|' -c "SELECT checkpoints_timed, checkpoints_req, checkpoint_write_time::int/1000, buffers_checkpoint, buffers_clean, maxwritten_clean FROM pg_stat_bgwriter;" 2>/dev/null
+      echo '=PGBLOAT='
+      sudo -u postgres psql -d trimio -At -F'|' -c "SELECT relname, pg_size_pretty(pg_total_relation_size(oid)) as total, pg_size_pretty(pg_relation_size(oid)) as table_size, ROUND((pg_total_relation_size(oid) - pg_relation_size(oid))::numeric / NULLIF(pg_total_relation_size(oid),0) * 100, 1) AS index_pct FROM pg_class WHERE relkind='r' AND relname NOT LIKE 'pg_%' ORDER BY pg_total_relation_size(oid) DESC LIMIT 8;" 2>/dev/null
+      echo '=PGREPSLOT='
+      sudo -u postgres psql -d trimio -At -F'|' -c "SELECT slot_name, plugin, active, pg_size_pretty(pg_wal_lsn_diff(pg_current_wal_lsn(), restart_lsn)) AS wal_behind FROM pg_replication_slots;" 2>/dev/null
+      echo '=NGINXCFG='
+      sudo grep -rE 'client_max_body_size|proxy_read_timeout|keepalive_timeout|worker_rlimit_nofile|gzip[^_]|limit_req_zone|real_ip_header|set_real_ip_from' /etc/nginx/nginx.conf /etc/nginx/sites-enabled/ /etc/nginx/conf.d/ 2>/dev/null | grep -v '^Binary' | tr -s ' ' | head -30
+      echo '=NGINXERR='
+      sudo tail -50 /var/log/nginx/error.log 2>/dev/null | grep -vE 'No such file|favicon|sw[.]js' | tail -10
+      echo '=DISKIO='
+      iostat -x 1 1 2>/dev/null | awk '/^sd|^vd|^nvme/{print $1,$2,$3,$16}' | head -5
+      echo '=VARLOG='
+      du -sh /var/log 2>/dev/null | awk '{print $1}'
+      echo '=LOGROTATE='
+      ls /etc/logrotate.d/ 2>/dev/null | grep -i pm2 | head -3
+      echo '=TMP='
+      du -sh /tmp /var/tmp 2>/dev/null
+      echo '=INODESX='
+      df -i 2>/dev/null | awk 'NR>1{print $1,$5,$6}' | grep -vE '^tmpfs|^udev'
+      echo '=BOOT='
+      df -h /boot 2>/dev/null | awk 'NR==2{print $5,$4}'
+      echo '=BACKUPS='
+      find /etc/cron.d/ /var/spool/cron/crontabs/ /root /home/ubuntu -name '*.sh' 2>/dev/null | xargs grep -lE 'pg_dump|backup|rsync' 2>/dev/null | head -5
+      find /var/backups /root /home/ubuntu /tmp -name '*.sql' -o -name '*.dump' -o -name '*.sql.gz' 2>/dev/null | head -5
+      echo '=BACKUPSPACE='
+      df -h /var/backups 2>/dev/null | awk 'NR==2{print $4,$5}'
+      echo '=SERVICES='
+      systemctl list-units --type=service --state=active --no-legend --plain 2>/dev/null | awk '{print $1}' | grep -vE '^(ssh|nginx|postgresql|pm2|cron|rsyslog|systemd|network|ufw|fail2ban|dbus|polkit|accounts|apt|unattended|cloud|snapd|multipathd|blk|lvm|apparmor|plymouth|console|getty|serial|acpid|thermald|irq|udisk|upower|wpa|avahi|bluetooth|cups|ModemManager)' | grep '[.]service$' | head -10
+      echo '=MONITORING='
+      grep -iE 'SENTRY_DSN|DATADOG|NEW_RELIC|PROMETHEUS|GRAFANA|LOGTAIL|LOGFLARE|BETTERSTACK' /var/www/trimio/.env 2>/dev/null | cut -d= -f1 | tr '\n' ' '
+      echo ''
+      echo '=PROMETHEUSP='
+      ss -ltnp 2>/dev/null | grep -E ':9090|:9100|:3001|:9091' | head -5
+      echo '=END='
+    """], capture_output=True,text=True,timeout=90)
     out=r.stdout
 
     # PM2
@@ -1029,7 +1451,7 @@ for p in d:
         ok(f"Ligações PostgreSQL {total_conn} total / {active_conn} ativas")
         ok(f"Dead tuples totais reportados: {dead_tup}")
 
-    db_top_lines = [l.strip() for l in section_between(out, '=DBTOP=', None).split('\n') if l.strip()]
+    db_top_lines = [l.strip() for l in section_between(out, '=DBTOP=', '=NODE=').split('\n') if l.strip()]
     if db_top_lines:
         noisy = []
         for line in db_top_lines:
@@ -1044,7 +1466,815 @@ for p in d:
                 warn(f"Tabela com dead tuples: {relname} live={live} dead={dead}")
         else:
             note("Sem tabelas com dead tuples relevantes")
+    # Node & PM2 config
+    node_text = section_between(out, '=NODE=', '=PM2CFG=').strip()
+    if node_text:
+        lines_n = [l.strip() for l in node_text.split('\n') if l.strip()]
+        if lines_n: ok(f"Node.js {lines_n[0]}" + (f" · npm {lines_n[1]}" if len(lines_n)>1 else ""))
+
+    pm2cfg_text = section_between(out, '=PM2CFG=', '=FAIL2BAN=')
+    for line in pm2cfg_text.split('\n'):
+        p = line.strip().split()
+        if len(p) >= 2:
+            name, mem = p[0], p[1]
+            if mem == 'none': warn(f"PM2 '{name}' sem max_memory_restart — pode crescer sem limite")
+            else: ok(f"PM2 '{name}' max_memory_restart → {mem}")
+
+    # Fail2ban
+    f2b = section_between(out, '=FAIL2BAN=', '=UFW=').strip()
+    if 'n/a' in f2b or not f2b: note("fail2ban sshd não disponível")
+    else:
+        for line in f2b.split('\n'):
+            line = line.strip()
+            if line: ok(f"fail2ban: {line}")
+
+    # UFW
+    ufw = section_between(out, '=UFW=', '=UPDATES=').strip()
+    if ufw:
+        first = ufw.split('\n')[0].strip()
+        if 'active' in first.lower(): ok(f"UFW → {first}")
+        elif 'inactive' in first.lower(): warn(f"UFW inativo — firewall desligada!")
+        else: note(f"UFW: {first}")
+
+    # Security updates
+    updates_text = section_between(out, '=UPDATES=', '=FD=').strip()
+    if updates_text.isdigit():
+        n = int(updates_text)
+        if n == 0: ok("Sem atualizações de segurança pendentes")
+        elif n < 10: warn(f"{n} atualizações pendentes")
+        else: fail(f"{n} atualizações pendentes — sistema desatualizado!")
+
+    # Open file descriptors
+    fd_text = section_between(out, '=FD=', '=TCP=').strip()
+    if fd_text:
+        parts = fd_text.split()
+        if len(parts) >= 3:
+            used, _, limit = parts[:3]
+            pct = int(used)*100//max(int(limit),1)
+            ok(f"File descriptors {used}/{limit} ({pct}%)") if pct < 70 else warn(f"File descriptors {pct}% usados!")
+
+    # TCP states
+    tcp_text = section_between(out, '=TCP=', '=CRON=').strip()
+    if tcp_text:
+        for line in tcp_text.split('\n'):
+            if line.strip(): note(f"TCP: {line.strip()}")
+
+    # Cron jobs
+    cron_text = section_between(out, '=CRON=', '=LASTLOG=').strip()
+    if cron_text: note(f"Cron: {cron_text[:120]}")
+    else: note("Sem cron jobs de utilizador")
+
+    # Last logins
+    lastlog_text = section_between(out, '=LASTLOG=', '=NGINXW=').strip()
+    if lastlog_text:
+        lines_ll = [l for l in lastlog_text.split('\n') if l.strip() and 'wtmp' not in l]
+        for l in lines_ll[:3]: note(f"Login: {l.strip()[:80]}")
+
+    # Nginx worker config
+    nginxw_text = section_between(out, '=NGINXW=', '=DBCACHE=').strip()
+    if nginxw_text:
+        for line in nginxw_text.split('\n'):
+            if line.strip(): ok(f"Nginx config: {line.strip()}")
+
+    # DB cache hit ratio
+    dbcache_text = section_between(out, '=DBCACHE=', '=DBIDX=').strip()
+    if dbcache_text:
+        try:
+            ratio = float(dbcache_text)
+            if ratio >= 95: ok(f"DB cache hit ratio {ratio}% (excelente)")
+            elif ratio >= 80: warn(f"DB cache hit ratio {ratio}% (abaixo do ideal >95%)")
+            else: fail(f"DB cache hit ratio {ratio}% (baixo — considerar aumentar shared_buffers)")
+        except: note(f"DB cache: {dbcache_text}")
+
+    # Build index existence map from real pg_indexes
+    _idx_list_text = section_between(out, '=DBINDEXLIST=', '=END=')
+    _tables_with_indexes = set()
+    for line in _idx_list_text.split('\n'):
+        parts = line.strip().split('|')
+        if len(parts) == 2 and parts[0]:
+            _tables_with_indexes.add(parts[0])
+
+    # DB index usage (stats are cumulative — cross-ref with actual index existence)
+    dbidx_text = section_between(out, '=DBIDX=', '=DBLOCKS=')
+    for line in dbidx_text.split('\n'):
+        parts = line.strip().split('|')
+        if len(parts) == 3 and parts[1].isdigit() and parts[2].isdigit():
+            relname, idx, seq = parts
+            idx, seq = int(idx), int(seq)
+            total = idx + seq
+            if total > 0:
+                seq_pct = seq*100//total
+                has_index = relname in _tables_with_indexes
+                if seq_pct > 80 and total > 500 and not has_index:
+                    warn(f"Tabela '{relname}' {seq_pct}% seq_scan ({seq} seq / {idx} idx) — falta índice?")
+                elif seq_pct > 80 and total > 500 and has_index:
+                    note(f"Tabela '{relname}' {seq_pct}% seq_scan histórico (índice já existe, stats ainda a normalizar)")
+                else:
+                    note(f"Índices '{relname}' idx={idx} seq={seq}")
+
+    # DB locks
+    dblocks_text = section_between(out, '=DBLOCKS=', '=DBVAC=').strip()
+    if dblocks_text.isdigit():
+        n = int(dblocks_text)
+        ok("Sem locks bloqueados") if n == 0 else warn(f"{n} lock(s) bloqueado(s) na DB!")
+
+    # Autovacuum status
+    dbvac_text = section_between(out, '=DBVAC=', '=DBLONGQ=')
+    vac_lines = [l.strip() for l in dbvac_text.split('\n') if l.strip()]
+    never_vacuumed = [l.split('|')[0] for l in vac_lines if '|' in l and l.split('|')[1] == 'None']
+    if never_vacuumed: warn(f"Tabelas sem autovacuum: {', '.join(never_vacuumed[:5])}")
+    elif vac_lines: ok(f"Autovacuum registado em {len(vac_lines)} tabela(s)")
+
+    # Long running queries
+    dblongq_text = section_between(out, '=DBLONGQ=', '=DBINDEXLIST=')
+    lq_lines = [l.strip() for l in dblongq_text.split('\n') if l.strip() and '|' in l]
+    if lq_lines:
+        for line in lq_lines:
+            p = line.split('|')
+            if len(p) >= 3: fail(f"Query lenta (pid={p[0]} · {p[1]}s): {p[2][:60]}")
+    else: ok("Sem queries lentas (>3s)")
+
+    # Env file sanity
+    envcheck_text = section_between(out, '=ENVCHECK=', '=SSHKEYS=').strip()
+    if envcheck_text.isdigit() and int(envcheck_text) > 0:
+        ok(f".env tem {envcheck_text} variáveis sensíveis definidas")
+    else: warn(".env parece vazio ou inexistente")
+
+    # SSH authorized keys
+    sshkeys_text = section_between(out, '=SSHKEYS=', '=KERNEL=').strip()
+    if sshkeys_text:
+        parts = sshkeys_text.split()
+        count = parts[0] if parts else '?'
+        ok(f"SSH authorized_keys → {count} chave(s)")
+
+    # ── OS / Kernel ──────────────────────────────────────────────────
+    sec("OS / Kernel / NTP")
+    kernel_text = section_between(out, '=KERNEL=', '=DMESG=').strip()
+    if kernel_text:
+        lines_k = [l for l in kernel_text.split('\n') if l.strip()]
+        if lines_k: ok(f"Kernel {lines_k[0]}")
+        for l in lines_k[1:]:
+            if 'PRETTY_NAME' in l: ok(f"OS: {l.split('=',1)[-1].strip()}")
+            elif 'VERSION_ID' in l:
+                vid = l.split('=',1)[-1].strip()
+                eol_map = {'18.04': 2023, '20.04': 2025, '22.04': 2027, '24.04': 2029}
+                eol = eol_map.get(vid)
+                if eol and eol <= 2025: warn(f"Ubuntu {vid} — EOL {eol} (considerar upgrade urgente)")
+                elif eol and eol <= 2026: warn(f"Ubuntu {vid} — EOL {eol} (monitorar)")
+                elif eol: ok(f"Ubuntu {vid} — suportado até {eol}")
+
+    dmesg_text = section_between(out, '=DMESG=', '=SYSCTL=').strip()
+    if not dmesg_text:
+        ok("dmesg limpo — sem OOM kills ou erros de hardware")
+    else:
+        for l in dmesg_text.split('\n'):
+            if l.strip():
+                if any(x in l.lower() for x in ['oom', 'killed', 'out of memory']):
+                    fail(f"OOM killer activo: {l.strip()[:100]}")
+                elif any(x in l.lower() for x in ['hardware error', 'mce', 'edac']):
+                    warn(f"Erro hardware: {l.strip()[:100]}")
+                else:
+                    note(f"dmesg: {l.strip()[:100]}")
+
+    sysctl_text = section_between(out, '=SYSCTL=', '=NTP=').strip()
+    for line in sysctl_text.split('\n'):
+        if '=' in line:
+            key, val = line.split('=', 1)
+            key, val = key.strip(), val.strip()
+            if key == 'vm.overcommit_memory':
+                ok(f"sysctl {key}={val}")
+            elif key == 'net.core.somaxconn':
+                try:
+                    ok(f"sysctl {key}={val}") if int(val) >= 1024 else warn(f"sysctl {key}={val} (baixo — recomendado ≥1024)")
+                except ValueError: note(f"sysctl {key}={val}")
+            elif key == 'net.ipv4.tcp_tw_reuse':
+                ok(f"sysctl {key}={val}")
+
+    ntp_text = section_between(out, '=NTP=', '=SSHCFG=').strip()
+    ntp_synced = None
+    for line in ntp_text.split('\n'):
+        if 'NTPSynchronized' in line:
+            ntp_synced = line.split('=')[-1].strip()
+            ok("NTP sincronizado") if ntp_synced == 'yes' else fail("NTP NÃO sincronizado — relógio pode estar errado!")
+        elif 'Timezone' in line:
+            ok(f"Timezone: {line.split('=')[-1].strip()}")
+    if ntp_synced is None:
+        note("Estado NTP não disponível")
+
+    # ── Segurança SSH & Sistema ──────────────────────────────────────
+    sec("Segurança SSH & Sistema")
+    sshcfg = section_between(out, '=SSHCFG=', '=SSHKEYS_DETAIL=').strip()
+    sshcfg_map = {}
+    for line in sshcfg.split('\n'):
+        if line.strip() and not line.startswith('#'):
+            parts = line.split(None, 1)
+            if len(parts) == 2: sshcfg_map[parts[0]] = parts[1].strip()
+
+    pw_auth = sshcfg_map.get('PasswordAuthentication', 'yes')
+    ok("PasswordAuthentication desativado") if pw_auth.lower() == 'no' else fail(f"PasswordAuthentication={pw_auth} — brute-force por password possível!")
+
+    root_login = sshcfg_map.get('PermitRootLogin', 'yes')
+    ok(f"PermitRootLogin={root_login}") if root_login.lower() in ('no', 'prohibit-password') else warn(f"PermitRootLogin={root_login} — considerar 'no' ou 'prohibit-password'")
+
+    port_ssh = sshcfg_map.get('Port', '22')
+    ok(f"SSH porta {port_ssh} (não-padrão)") if port_ssh != '22' else note("SSH na porta 22 padrão (considera mudar)")
+
+    max_tries = sshcfg_map.get('MaxAuthTries', '6')
+    try:
+        ok(f"MaxAuthTries={max_tries}") if int(max_tries) <= 4 else warn(f"MaxAuthTries={max_tries} (recomendado ≤4)")
+    except ValueError: note(f"MaxAuthTries={max_tries}")
+
+    x11 = sshcfg_map.get('X11Forwarding', 'yes')
+    ok("X11Forwarding desativado") if x11.lower() == 'no' else warn("X11Forwarding activo (desnecessário em servidor)")
+
+    sshkeys_detail = section_between(out, '=SSHKEYS_DETAIL=', '=PASSWD_USERS=').strip()
+    for line in sshkeys_detail.split('\n'):
+        if line.strip():
+            parts = line.split()
+            if len(parts) >= 2:
+                key_type, key_len = parts[0], parts[1]
+                if key_type == 'ssh-rsa':
+                    warn(f"Chave RSA presente — preferir ed25519")
+                elif 'ed25519' in key_type:
+                    ok(f"Chave ed25519 presente (óptimo)")
+                elif 'ecdsa' in key_type:
+                    ok(f"Chave ECDSA presente")
+                else:
+                    note(f"Chave tipo {key_type}")
+
+    passwd_users = section_between(out, '=PASSWD_USERS=', '=ENV_PERMS=').strip()
+    expected_users = {'ubuntu', 'postgres', 'www-data', 'nobody', 'systemd-network',
+                      'systemd-resolve', 'messagebus', 'syslog', '_apt', 'landscape',
+                      'pollinate', 'uuidd', 'sshd', 'systemd-timesync', 'lxd', 'fwupd-refresh'}
+    for line in passwd_users.split('\n'):
+        if line.strip():
+            parts = line.split()
+            if len(parts) >= 2:
+                uname, uid = parts[0], parts[1]
+                try:
+                    if uname not in expected_users and int(uid) >= 1000:
+                        warn(f"Utilizador inesperado: {uname} (UID {uid}) — verificar se é legítimo")
+                except ValueError: pass
+
+    env_perms = section_between(out, '=ENV_PERMS=', '=AUTHLOG=').strip()
+    if env_perms:
+        perms_parts = env_perms.split()
+        if perms_parts:
+            perms = perms_parts[0]
+            if perms == '600': ok(".env permissões 600 (correto)")
+            elif perms in ('640', '660'): warn(f".env permissões {perms} — deve ser 600")
+            else: fail(f".env permissões {perms} — qualquer utilizador pode ler segredos!")
+    else:
+        warn(".env não encontrado ou sem permissões legíveis")
+
+    authlog_text = section_between(out, '=AUTHLOG=', '=SUID=').strip()
+    authlog_lines = [l for l in authlog_text.split('\n') if l.strip()]
+    if authlog_lines:
+        try:
+            total_fails = int(authlog_lines[0])
+            if total_fails > 1000: warn(f"auth.log: {total_fails} falhas de autenticação — brute-force em curso?")
+            elif total_fails > 100: note(f"auth.log: {total_fails} falhas de autenticação")
+            else: ok(f"auth.log: {total_fails} falhas (nível normal)")
+        except ValueError: pass
+        for line in authlog_lines[1:]:
+            parts = line.strip().split()
+            if len(parts) >= 2:
+                try:
+                    count_bf = int(parts[0])
+                    ip_bf = parts[1]
+                    if count_bf > 50: warn(f"IP atacante recorrente: {ip_bf} ({count_bf} tentativas)")
+                except (ValueError, IndexError): pass
+
+    suid_text = section_between(out, '=SUID=', '=SUDOERS=').strip()
+    if not suid_text:
+        ok("Sem ficheiros SUID inesperados")
+    else:
+        for f in suid_text.split('\n'):
+            if f.strip():
+                fail(f"SUID inesperado: {f.strip()}")
+
+    sudoers_text = section_between(out, '=SUDOERS=', '=PGVER=').strip()
+    for line in sudoers_text.split('\n'):
+        if 'NOPASSWD' in line and line.strip() and not line.strip().startswith('#'):
+            if 'ubuntu' in line.lower():
+                note(f"sudoers NOPASSWD ubuntu (esperado): {line.strip()[:80]}")
+            else:
+                warn(f"sudoers NOPASSWD inesperado: {line.strip()[:80]}")
+
+    # ── PostgreSQL profundo ──────────────────────────────────────────
+    sec("PostgreSQL — auditoria profunda")
+    pgver_text = section_between(out, '=PGVER=', '=PGHBA=').strip()
+    if pgver_text:
+        ok(f"PostgreSQL: {pgver_text[:80]}")
+        m_pgver = re.search(r'PostgreSQL (\d+)', pgver_text)
+        if m_pgver:
+            major_pg = int(m_pgver.group(1))
+            eol_pg = {13: 2025, 14: 2026, 15: 2027, 16: 2028, 17: 2029}
+            eol_pg_yr = eol_pg.get(major_pg)
+            if eol_pg_yr and eol_pg_yr <= 2025: warn(f"PostgreSQL {major_pg} — EOL {eol_pg_yr} (upgrade urgente!)")
+            elif eol_pg_yr and eol_pg_yr <= 2026: warn(f"PostgreSQL {major_pg} — EOL {eol_pg_yr} (monitorar)")
+            elif eol_pg_yr: ok(f"PostgreSQL {major_pg} — suportado até {eol_pg_yr}")
+
+    pghba_text = section_between(out, '=PGHBA=', '=PGIDLE=').strip()
+    for line in pghba_text.split('\n'):
+        line = line.strip()
+        if not line or line.startswith('#'): continue
+        parts_hba = line.split()
+        if len(parts_hba) >= 4:
+            conn_type_hba = parts_hba[0]
+            method_hba = parts_hba[-1]
+            if method_hba == 'trust' and conn_type_hba != 'local':
+                fail(f"pg_hba.conf: {conn_type_hba} → TRUST sem password!")
+            elif '0.0.0.0/0' in line and conn_type_hba == 'host':
+                warn(f"pg_hba.conf: aceita ligações de qualquer IP → {line[:80]}")
+            else:
+                note(f"pg_hba: {line[:80]}")
+
+    pgidle_text = section_between(out, '=PGIDLE=', '=PGSEQ=').strip()
+    idle_lines_pg = [l for l in pgidle_text.split('\n') if l.strip() and '|' in l]
+    if not idle_lines_pg:
+        ok("Sem sessões idle in transaction")
+    else:
+        for line in idle_lines_pg:
+            parts_idle = line.split('|')
+            if len(parts_idle) >= 4:
+                pid_idle, user_idle, query_idle, secs_idle = parts_idle[:4]
+                warn(f"Idle in transaction: pid={pid_idle.strip()} há {secs_idle.strip()}s — '{query_idle.strip()[:50]}'")
+
+    pgseq_text = section_between(out, '=PGSEQ=', '=PGBACKUP=').strip()
+    for line in pgseq_text.split('\n'):
+        if line.strip() and '|' in line:
+            parts_seq = line.split('|')
+            if len(parts_seq) >= 5:
+                schema_seq, seqname_seq, last_val_seq, max_val_seq, pct_seq = parts_seq[:5]
+                try:
+                    pct_f = float(pct_seq.strip())
+                    if pct_f > 80:
+                        fail(f"Sequence {seqname_seq.strip()}: {pct_f}% usado — overflow próximo! Migrar para bigint.")
+                    elif pct_f > 50:
+                        warn(f"Sequence {seqname_seq.strip()}: {pct_f}% usado — monitorar")
+                    else:
+                        ok(f"Sequence {seqname_seq.strip()}: {pct_f}%")
+                except ValueError: pass
+
+    pgbackup_text = section_between(out, '=PGBACKUP=', '=PGBOUNCER=').strip()
+    backup_found = False
+    for line in pgbackup_text.split('\n'):
+        if line.strip() and any(x in line for x in ['.sql', '.dump', '.gz']):
+            ok(f"Backup encontrado: {line.strip()[:100]}")
+            backup_found = True
+            break
+    if not backup_found:
+        fail("Sem ficheiros .sql/.dump encontrados — sem backup verificável!")
+
+    pgbouncer_text = section_between(out, '=PGBOUNCER=', '=PGBGWRITER=').strip()
+    if 'not_installed' in pgbouncer_text or not pgbouncer_text.strip():
+        note("PgBouncer não instalado (connection pooling apenas via app)")
+    else:
+        ok(f"PgBouncer: {pgbouncer_text.split(chr(10))[0]}")
+
+    pgbgw_text = section_between(out, '=PGBGWRITER=', '=PGBLOAT=').strip()
+    if pgbgw_text and '|' in pgbgw_text:
+        parts_bgw = pgbgw_text.split('|')
+        if len(parts_bgw) >= 6:
+            chk_timed_bgw, chk_req_bgw = parts_bgw[0].strip(), parts_bgw[1].strip()
+            maxwritten_bgw = parts_bgw[5].strip()
+            try:
+                total_bgw = int(chk_timed_bgw) + int(chk_req_bgw)
+                req_ratio_bgw = int(chk_req_bgw) * 100 // max(total_bgw, 1)
+                if req_ratio_bgw > 20:
+                    warn(f"Checkpoints: {req_ratio_bgw}% forçados (chk_req={chk_req_bgw}) — aumentar checkpoint_completion_target")
+                else:
+                    ok(f"Checkpoints: {chk_timed_bgw} timed + {chk_req_bgw} req ({req_ratio_bgw}% forçados)")
+                if int(maxwritten_bgw) > 100:
+                    warn(f"maxwritten_clean={maxwritten_bgw} — bgwriter não consegue limpar rápido")
+            except ValueError: note(f"bgwriter: {pgbgw_text}")
+
+    pgbloat_text = section_between(out, '=PGBLOAT=', '=PGREPSLOT=').strip()
+    for line in pgbloat_text.split('\n'):
+        if line.strip() and '|' in line:
+            parts_bloat = line.split('|')
+            if len(parts_bloat) >= 2:
+                note(f"Tabela {parts_bloat[0].strip()}: {parts_bloat[1].strip()} total")
+
+    pgrepslot_text = section_between(out, '=PGREPSLOT=', '=NGINXCFG=').strip()
+    repslot_lines_pg = [l for l in pgrepslot_text.split('\n') if l.strip() and '|' in l]
+    if not repslot_lines_pg:
+        ok("Sem replication slots activos")
+    else:
+        for line in repslot_lines_pg:
+            parts_slot = line.split('|')
+            if len(parts_slot) >= 4:
+                slot_name_pg, plugin_pg, active_pg, wal_behind_pg = parts_slot[:4]
+                if active_pg.strip() == 'f':
+                    fail(f"Replication slot '{slot_name_pg.strip()}' INACTIVO — WAL a acumular: {wal_behind_pg.strip()}!")
+                else:
+                    ok(f"Replication slot '{slot_name_pg.strip()}' activo · lag: {wal_behind_pg.strip()}")
+
+    # ── Nginx — configuração real ────────────────────────────────────
+    sec("Nginx — configuração real")
+    nginxcfg_text = section_between(out, '=NGINXCFG=', '=NGINXERR=').strip()
+    found_rate_limit = 'limit_req_zone' in nginxcfg_text
+    found_real_ip = 'real_ip_header' in nginxcfg_text or 'set_real_ip_from' in nginxcfg_text
+    found_gzip = False
+    for line in nginxcfg_text.split('\n'):
+        line_s = line.strip()
+        if not line_s: continue
+        if 'client_max_body_size' in line_s:
+            val_nb = line_s.split()[-1].rstrip(';')
+            ok(f"nginx client_max_body_size={val_nb}")
+        elif 'proxy_read_timeout' in line_s:
+            val_rt = line_s.split()[-1].rstrip(';')
+            try:
+                secs_rt = int(val_rt.rstrip('s'))
+                ok(f"nginx proxy_read_timeout={val_rt}") if secs_rt >= 30 else warn(f"nginx proxy_read_timeout={val_rt} baixo")
+            except ValueError: note(f"nginx proxy_read_timeout={val_rt}")
+        elif 'keepalive_timeout' in line_s:
+            ok(f"nginx keepalive_timeout={line_s.split()[-1].rstrip(';')}")
+        elif line_s.strip().startswith('gzip ') and not found_gzip:
+            val_gz = line_s.split()[-1].rstrip(';')
+            found_gzip = True
+            ok("nginx gzip on") if val_gz == 'on' else warn("nginx gzip off — ativar compressão!")
+        elif 'limit_req_zone' in line_s:
+            ok(f"nginx rate limit: {line_s[:80]}")
+        elif 'real_ip_header' in line_s:
+            ok(f"nginx real_ip_header={line_s.split()[-1].rstrip(';')} (Cloudflare)")
+
+    if not found_rate_limit: warn("nginx sem limit_req_zone — sem rate limiting configurado!")
+    if not found_real_ip: warn("nginx sem real_ip_header/set_real_ip_from — IPs de Cloudflare não passados ao Node.js!")
+    if not found_gzip: note("nginx gzip não detectado na config (pode estar em conf.d/)")
+
+    nginxerr_text = section_between(out, '=NGINXERR=', '=DISKIO=').strip()
+    err_lines_ng = [l for l in nginxerr_text.split('\n') if l.strip()]
+    if not err_lines_ng:
+        ok("nginx error.log limpo")
+    else:
+        crit_ng = [l for l in err_lines_ng if any(x in l.lower() for x in ['crit', 'emerg', 'alert'])]
+        for l in crit_ng[:3]: fail(f"nginx error: {l.strip()[:100]}")
+        if not crit_ng: note(f"nginx error.log: {len(err_lines_ng)} entrada(s) (sem críticos)")
+
+    # ── Disco & I/O ──────────────────────────────────────────────────
+    sec("Disco & I/O")
+    diskio_text = section_between(out, '=DISKIO=', '=VARLOG=').strip()
+    if diskio_text:
+        for line in diskio_text.split('\n'):
+            if line.strip():
+                parts_io = line.split()
+                if len(parts_io) >= 4:
+                    dev_io, reads_io, writes_io, await_io = parts_io[0], parts_io[1], parts_io[2], parts_io[3]
+                    try:
+                        ok(f"I/O {dev_io}: await {await_io}ms") if float(await_io) <= 20 else warn(f"I/O await alto: {dev_io} → {await_io}ms (disco lento?)")
+                    except ValueError: note(f"I/O {dev_io}")
+    else:
+        note("iostat não disponível")
+
+    varlog_text = section_between(out, '=VARLOG=', '=LOGROTATE=').strip()
+    if varlog_text:
+        if varlog_text.endswith('G') or varlog_text.endswith('T'):
+            warn(f"/var/log ocupa {varlog_text} — verificar rotação de logs!")
+        else:
+            ok(f"/var/log ocupa {varlog_text}")
+
+    logrotate_text = section_between(out, '=LOGROTATE=', '=TMP=').strip()
+    if logrotate_text:
+        ok(f"logrotate PM2: {logrotate_text}")
+    else:
+        warn("Sem logrotate configurado para PM2 — logs podem crescer indefinidamente!")
+
+    tmp_text = section_between(out, '=TMP=', '=INODESX=').strip()
+    for line in tmp_text.split('\n'):
+        if line.strip():
+            parts_tmp = line.split()
+            if len(parts_tmp) >= 2:
+                size_tmp, path_tmp = parts_tmp[0], parts_tmp[1]
+                if size_tmp.endswith('G'): warn(f"{path_tmp} ocupa {size_tmp} — limpar?")
+                else: ok(f"{path_tmp} ocupa {size_tmp}")
+
+    inodesx_text = section_between(out, '=INODESX=', '=BOOT=').strip()
+    for line in inodesx_text.split('\n'):
+        if line.strip():
+            parts_in = line.split()
+            if len(parts_in) >= 3:
+                dev_in, pct_in, mount_in = parts_in[:3]
+                try:
+                    pct_in_n = int(pct_in.rstrip('%'))
+                    if pct_in_n > 85: fail(f"Inodes {mount_in} ({dev_in}): {pct_in} usados!")
+                    elif pct_in_n > 70: warn(f"Inodes {mount_in}: {pct_in}")
+                    else: ok(f"Inodes {mount_in}: {pct_in}")
+                except ValueError: pass
+
+    boot_text = section_between(out, '=BOOT=', '=BACKUPS=').strip()
+    if boot_text:
+        parts_boot = boot_text.split()
+        if len(parts_boot) >= 2:
+            pct_boot, free_boot = parts_boot[0], parts_boot[1]
+            try:
+                pct_boot_n = int(pct_boot.rstrip('%'))
+                ok(f"/boot {pct_boot} usado · {free_boot} livre") if pct_boot_n <= 80 else warn(f"/boot {pct_boot} usado · {free_boot} livre — limpar kernels antigos!")
+            except ValueError: note(f"/boot {boot_text}")
+
+    # ── Backups ──────────────────────────────────────────────────────
+    sec("Backups")
+    backups_text = section_between(out, '=BACKUPS=', '=BACKUPSPACE=').strip()
+    backup_lines_b = [l for l in backups_text.split('\n') if l.strip()]
+    backup_scripts_b = [l for l in backup_lines_b if l.endswith('.sh')]
+    backup_files_b = [l for l in backup_lines_b if any(x in l for x in ['.sql', '.dump', '.gz'])]
+    if backup_scripts_b:
+        for s_bs in backup_scripts_b: ok(f"Script de backup encontrado: {s_bs.strip()}")
+    else:
+        warn("Nenhum script com pg_dump encontrado em cron/root/ubuntu!")
+    if backup_files_b:
+        ok(f"Backup mais recente: {backup_files_b[0].strip()[:100]}")
+    else:
+        fail("Nenhum ficheiro .sql/.dump encontrado — estratégia de backup não verificável!")
+
+    backupspace_text = section_between(out, '=BACKUPSPACE=', '=SERVICES=').strip()
+    if backupspace_text:
+        parts_bsp = backupspace_text.split()
+        if len(parts_bsp) >= 2:
+            free_bsp, pct_bsp = parts_bsp[0], parts_bsp[1]
+            try:
+                pct_bsp_n = int(pct_bsp.rstrip('%'))
+                ok(f"/var/backups {pct_bsp} usado · {free_bsp} livre") if pct_bsp_n < 85 else warn(f"/var/backups {pct_bsp} cheio!")
+            except ValueError: note(f"backupspace: {backupspace_text}")
+
+    # ── Serviços & Monitoring ─────────────────────────────────────────
+    sec("Serviços & Monitoring")
+    services_text_m = section_between(out, '=SERVICES=', '=MONITORING=').strip()
+    known_unnecessary_svcs = ['avahi-daemon', 'bluetooth', 'cups', 'ModemManager', 'lxd']
+    for line in services_text_m.split('\n'):
+        svc_m = line.strip()
+        if svc_m:
+            if any(u in svc_m for u in known_unnecessary_svcs):
+                warn(f"Serviço desnecessário activo: {svc_m}")
+
+    monitoring_text = section_between(out, '=MONITORING=', '=PROMETHEUSP=').strip()
+    has_resend = bool(section_between(out, '=SMTP_HOST=', '=NODE_ENV=').strip() or
+                      any('RESEND_API_KEY' in line for line in out.split('\n')))
+    if monitoring_text.strip():
+        for tool_m in monitoring_text.split():
+            ok(f"Monitoring configurado: {tool_m}")
+    elif has_resend:
+        note("Monitoring externo não configurado — email transaccional activo via Resend")
+    else:
+        warn("Nenhum serviço de monitoring/alerting detectado (Sentry, Datadog, etc.)")
+
+    prometheus_text = section_between(out, '=PROMETHEUSP=', '=END=').strip()
+    if prometheus_text:
+        ok(f"Endpoint metrics detectado: {prometheus_text[:80]}")
+    else:
+        note("Sem endpoint Prometheus/metrics exposto")
+
 except Exception as e: warn(f"Dados do servidor: {e}")
+
+sec("App Logs — PM2 amplos")
+try:
+    r_pm2logs = subprocess.run(SSH_CMD + ["""
+      echo '=PM2LOGS='
+      pm2 logs trimio-api --lines 100 --nostream 2>/dev/null | grep -iE 'unhandledRejection|UnhandledPromise|smtp|SMTP|Error.*smtp|nodemailer|ECONNREFUSED|ENOTFOUND|Cannot find module|Error: listen' | tail -15
+      echo '=PM2SIZES='
+      ls -lh /home/ubuntu/.pm2/logs/ 2>/dev/null
+      echo '=PM2LOGEND='
+    """], capture_output=True, text=True, timeout=20)
+    out_pm2l = r_pm2logs.stdout
+
+    pm2logs_text = section_between(out_pm2l, '=PM2LOGS=', '=PM2SIZES=').strip()
+    if pm2logs_text:
+        for line in pm2logs_text.split('\n'):
+            if line.strip():
+                if any(x in line for x in ['unhandledRejection', 'UnhandledPromise']):
+                    warn(f"PM2: unhandledRejection → {line.strip()[:100]}")
+                elif any(x in line.lower() for x in ['smtp', 'nodemailer', 'econnrefused', 'enotfound']):
+                    warn(f"PM2: erro rede/SMTP → {line.strip()[:100]}")
+                elif 'Cannot find module' in line:
+                    fail(f"PM2: módulo em falta → {line.strip()[:100]}")
+                else:
+                    note(f"PM2 log: {line.strip()[:100]}")
+    else:
+        ok("PM2 logs sem erros críticos (unhandledRejection, SMTP, startup)")
+
+    pm2sizes_text = section_between(out_pm2l, '=PM2SIZES=', '=PM2LOGEND=').strip()
+    for line in pm2sizes_text.split('\n'):
+        if line.strip() and '.log' in line:
+            parts_pl = line.split()
+            if len(parts_pl) >= 5:
+                size_pl = parts_pl[4]
+                fname_pl = parts_pl[-1]
+                if size_pl.endswith('G') or (size_pl.endswith('M') and float(size_pl[:-1]) > 100):
+                    warn(f"Log grande: {fname_pl} — {size_pl} (configurar logrotate!)")
+                else:
+                    note(f"Log {fname_pl}: {size_pl}")
+except Exception as e: warn(f"PM2 logs check: {e}")
+
+sec("Email & SMTP & NODE_ENV")
+if smtp_host:
+    port_smtp = int(smtp_port) if smtp_port.isdigit() else 587
+    try:
+        s_smtp = socket.create_connection((smtp_host, port_smtp), timeout=8)
+        s_smtp.close()
+        ok(f"SMTP {smtp_host}:{port_smtp} — ligação OK")
+    except ConnectionRefusedError:
+        fail(f"SMTP {smtp_host}:{port_smtp} — ligação recusada!")
+    except OSError as e_smtp:
+        warn(f"SMTP {smtp_host}:{port_smtp} — {e_smtp}")
+    try:
+        s_smtp465 = socket.create_connection((smtp_host, 465), timeout=5)
+        s_smtp465.close()
+        ok(f"SMTP {smtp_host}:465 (TLS) — acessível")
+    except Exception:
+        note(f"SMTP {smtp_host}:465 não acessível (normal se usar 587)")
+else:
+    warn("SMTP_HOST não encontrado no .env — email pode não estar configurado")
+
+if node_env:
+    ok(f"NODE_ENV={node_env}") if node_env == 'production' else fail(f"NODE_ENV={node_env} (deve ser 'production'!)")
+else:
+    warn("NODE_ENV não definido no .env")
+
+if sentry_dsn:
+    ok("SENTRY_DSN configurado — error tracking activo")
+else:
+    note("SENTRY_DSN não configurado (sem error tracking automático)")
+
+sec("Cloudflare / CDN")
+try:
+    req_cf = Request(f"{BASE}/", headers={"User-Agent": UA})
+    with urlopen(req_cf, context=ctx, timeout=8) as r_cf:
+        hdrs_cf = {k.lower(): v for k, v in r_cf.getheaders()}
+    cf_ray = hdrs_cf.get('cf-ray', '')
+    if cf_ray:
+        ok(f"CF-RAY presente → {cf_ray} (Cloudflare proxy activo)")
+    else:
+        warn("CF-RAY ausente — tráfego pode não passar pelo Cloudflare!")
+    server_cf = hdrs_cf.get('server', '')
+    if 'cloudflare' in server_cf.lower(): ok(f"Server header: {server_cf}")
+    else: note(f"Server header: {server_cf}")
+
+    slug_cf = SLUGS[0] if SLUGS else 'stukabarber'
+    for label_cf, url_cf in [
+        ("API pública", f"{API}/public/{slug_cf}"),
+        ("API serviços", f"{API}/public/{slug_cf}/services"),
+        ("Página HTML", f"{BASE}/{slug_cf}"),
+    ]:
+        try:
+            req_cf2 = Request(url_cf, headers={"User-Agent": UA}, method="HEAD")
+            with urlopen(req_cf2, context=ctx, timeout=8) as r_cf2:
+                hdrs_cf2 = {k.lower(): v for k, v in r_cf2.getheaders()}
+            cf_cache_s = hdrs_cf2.get('cf-cache-status', 'absent')
+            age_cf = hdrs_cf2.get('age', '')
+            if cf_cache_s == 'HIT':
+                ok(f"CF-Cache {label_cf}: HIT" + (f" · age {age_cf}s" if age_cf else ""))
+            elif cf_cache_s in ('MISS', 'DYNAMIC', 'BYPASS'):
+                note(f"CF-Cache {label_cf}: {cf_cache_s}")
+            elif cf_cache_s == 'absent':
+                note(f"CF-Cache {label_cf}: header ausente")
+            else:
+                ok(f"CF-Cache {label_cf}: {cf_cache_s}")
+        except Exception as e_cf2: note(f"CF cache {label_cf}: {e_cf2}")
+except Exception as e_cf: warn(f"Cloudflare check: {e_cf}")
+
+sec("Cookies & Headers de browser")
+try:
+    req_ck = Request(f"{BASE}/", headers={"User-Agent": UA})
+    with urlopen(req_ck, context=ctx, timeout=8) as r_ck:
+        all_hdrs_ck = r_ck.getheaders()
+    set_cookies_ck = [v for k, v in all_hdrs_ck if k.lower() == 'set-cookie']
+    if set_cookies_ck:
+        for cookie_ck in set_cookies_ck:
+            cookie_lower_ck = cookie_ck.lower()
+            name_ck = cookie_ck.split('=')[0]
+            flags_ck = []
+            if 'httponly' in cookie_lower_ck: flags_ck.append('HttpOnly')
+            if 'secure' in cookie_lower_ck: flags_ck.append('Secure')
+            sm_ck = re.search(r'samesite=(\w+)', cookie_lower_ck)
+            if sm_ck: flags_ck.append(f"SameSite={sm_ck.group(1).capitalize()}")
+            if 'httponly' not in cookie_lower_ck:
+                fail(f"Cookie '{name_ck}' sem HttpOnly — XSS pode roubar sessão!")
+            elif 'secure' not in cookie_lower_ck:
+                warn(f"Cookie '{name_ck}' sem Secure flag")
+            else:
+                ok(f"Cookie '{name_ck}': {', '.join(flags_ck)}")
+    else:
+        note("Sem cookies na home (normal para SPA com JWT)")
+
+    s_csrf, _, _ = http(f"{API}/auth/login", "POST",
+                         json.dumps({"email": "test@test.com", "password": "test", "slug": "stukabarber"}),
+                         headers={"Origin": "https://evil.com", "Referer": "https://evil.com/"})
+    if s_csrf not in (200,):
+        ok(f"CSRF/CORS: POST de origem suspeita → {s_csrf} (bloqueado)")
+    else:
+        warn("POST de origem evil.com retornou 200 — verificar CSRF protection")
+except Exception as e_ck: warn(f"Cookie check: {e_ck}")
+
+sec("DNS — SPF / DKIM / DMARC / MX")
+DOMAIN_DNS = "trimio.pt"
+def dig(qtype, name):
+    try:
+        r_dig = subprocess.run(["dig", "+short", qtype, name, "@1.1.1.1"],
+                               capture_output=True, text=True, timeout=10)
+        return r_dig.stdout.strip()
+    except Exception:
+        return ""
+
+mx_dns = dig("MX", DOMAIN_DNS)
+if mx_dns: ok(f"MX records: {mx_dns[:120]}")
+else: warn(f"Sem MX records para {DOMAIN_DNS}")
+
+txt_dns = dig("TXT", DOMAIN_DNS)
+spf_lines_dns = [l for l in txt_dns.split('\n') if 'v=spf1' in l.lower()]
+if spf_lines_dns:
+    spf_rec = spf_lines_dns[0]
+    ok(f"SPF: {spf_rec[:100]}")
+    if '+all' in spf_rec: fail("SPF usa +all — qualquer servidor pode enviar email!")
+    elif '-all' in spf_rec: ok("SPF usa -all (hardfail)")
+    elif '~all' in spf_rec: note("SPF usa ~all (softfail) — considerar -all")
+else:
+    fail(f"Sem registo SPF para {DOMAIN_DNS} — email pode ser forjado!")
+
+dmarc_dns = dig("TXT", f"_dmarc.{DOMAIN_DNS}")
+if dmarc_dns and 'v=DMARC1' in dmarc_dns:
+    ok(f"DMARC: {dmarc_dns[:100]}")
+    if 'p=none' in dmarc_dns: warn("DMARC p=none — apenas monitoring, sem enforcement!")
+    elif 'p=quarantine' in dmarc_dns: ok("DMARC p=quarantine")
+    elif 'p=reject' in dmarc_dns: ok("DMARC p=reject (máxima protecção)")
+else:
+    fail(f"Sem DMARC para {DOMAIN_DNS} — emails falsos não são bloqueados!")
+
+dkim_found_dns = False
+for selector_dns in ['default', 'google', 'mail', 'resend', 'mailgun', 'sendgrid', 'dkim']:
+    dkim_dns = dig("TXT", f"{selector_dns}._domainkey.{DOMAIN_DNS}")
+    if dkim_dns and 'p=' in dkim_dns:
+        ok(f"DKIM selector '{selector_dns}' encontrado")
+        dkim_found_dns = True
+        break
+if not dkim_found_dns:
+    note("DKIM não encontrado nos seletores comuns — verificar com fornecedor de email")
+
+vps_ip_dns = "51.91.158.175"
+domain_ip_dns = dig("A", DOMAIN_DNS)
+if vps_ip_dns in domain_ip_dns:
+    fail(f"IP real do VPS ({vps_ip_dns}) exposto no DNS — Cloudflare proxy inativo?")
+elif domain_ip_dns:
+    ok(f"DNS aponta para {domain_ip_dns} (IP directo do VPS mascarado — Cloudflare proxy activo)")
+else:
+    warn(f"Não foi possível resolver {DOMAIN_DNS}")
+
+sec("TLS — cipher suites & portas sensíveis")
+try:
+    for tls_label, tls_attr in [("TLS 1.0", "TLSv1"), ("TLS 1.1", "TLSv1_1")]:
+        try:
+            tls_ver_attr = getattr(ssl.TLSVersion, tls_attr, None)
+            if tls_ver_attr is None:
+                note(f"{tls_label}: TLSVersion enum não suportado nesta versão Python")
+                continue
+            ctx_old = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+            ctx_old.maximum_version = tls_ver_attr
+            ctx_old.minimum_version = tls_ver_attr
+            ctx_old.check_hostname = False
+            ctx_old.verify_mode = ssl.CERT_NONE
+            with socket.create_connection(("trimio.pt", 443), timeout=5) as sock_tls:
+                try:
+                    with ctx_old.wrap_socket(sock_tls, server_hostname="trimio.pt"):
+                        fail(f"{tls_label} ACEITE — deve estar desativado!")
+                except ssl.SSLError:
+                    ok(f"{tls_label} rejeitado (correto)")
+        except Exception as e_tls:
+            ok(f"{tls_label} rejeitado ({type(e_tls).__name__})")
+
+    ctx_check_tls = ssl.create_default_context()
+    with socket.create_connection(("trimio.pt", 443), timeout=8) as sock_check:
+        with ctx_check_tls.wrap_socket(sock_check, server_hostname="trimio.pt") as ssock_check:
+            tls_ver_neg = ssock_check.version()
+            cipher_neg = ssock_check.cipher()
+            ok(f"TLS negociado: {tls_ver_neg}")
+            if cipher_neg:
+                cipher_name_neg = cipher_neg[0]
+                if any(x in cipher_name_neg for x in ['RC4', 'DES', 'NULL', 'EXPORT']):
+                    fail(f"Cipher fraco: {cipher_name_neg}")
+                else:
+                    ok(f"Cipher: {cipher_name_neg}")
+except AttributeError:
+    note("Teste TLS 1.0/1.1: Python sem suporte TLSVersion enum")
+except Exception as e_tls_main: warn(f"TLS check: {e_tls_main}")
+
+sensitive_ports_check = {
+    5432: "PostgreSQL",
+    6379: "Redis",
+    27017: "MongoDB",
+    11211: "Memcached",
+    9200: "Elasticsearch",
+    2375: "Docker daemon (HTTP)",
+    8080: "HTTP alternativo",
+}
+for port_sp, label_sp in sensitive_ports_check.items():
+    try:
+        s_sp = socket.create_connection((VPS_IP, port_sp), timeout=3)
+        s_sp.close()
+        fail(f"Porta {port_sp} ({label_sp}) ABERTA publicamente!")
+    except (ConnectionRefusedError, OSError):
+        ok(f"Porta {port_sp} ({label_sp}) fechada publicamente")
+    except Exception as e_sp:
+        note(f"Porta {port_sp} ({label_sp}): {e_sp}")
 
 sec("Nginx — erros recentes (últimas 300 requests)")
 try:
@@ -1066,18 +2296,123 @@ try:
             else:                      warn(f"{cnt}× {path} → {code}")
 except Exception as e: warn(f"Nginx logs: {e}")
 
-sec("Base de dados")
+sec("API Edge Cases & Segurança")
+# Payload demasiado grande → 413
 try:
-    r=subprocess.run(SSH_CMD+[
-        "sudo -u postgres psql -d trimio -t -c "
-        "'SELECT count(*) FROM pg_stat_activity;' 2>/dev/null | tr -d ' '"],
-        capture_output=True,text=True,timeout=10)
-    conns=r.stdout.strip()
-    if conns.isdigit():
-        ok(f"PostgreSQL acessível · {conns} conexões ativas")
-        int(conns)>50 and warn(f"{conns} conexões — pode haver leak")
-    else: fail("PostgreSQL não responde")
-except Exception as e: warn(f"DB: {e}")
+    big = json.dumps({"name": "x" * 2_000_000})
+    s,_,_ = http(f"{API}/auth/register", "POST", big)
+    ok(f"Payload 2MB → {s} (413 esperado)") if s == 413 else warn(f"Payload 2MB → {s} (esperado 413 — client_max_body_size?)")
+except Exception as e: warn(f"Payload test: {e}")
+
+# JSON malformado → 400
+s,_,_ = http(f"{API}/auth/login", "POST", b"not json{{{{")
+ok(f"JSON malformado → {s}") if s in (400,422) else warn(f"JSON malformado → {s} (esperado 400)")
+
+# SQL injection no slug → não deve 500
+s,_,_ = pub("/'; DROP TABLE \"Barbershop\";--/")
+ok(f"SQL injection no slug → {s} (não 500)") if s != 500 else fail("SQL injection retornou 500!")
+
+# Slug com XSS → não deve reflectir
+s,b,_ = pub("/<script>alert(1)</script>")
+body_str = b.decode('utf-8','replace') if isinstance(b, bytes) else (b or '')
+ok("XSS em slug não refletido") if '<script>alert' not in body_str else fail("XSS refletido na resposta!")
+
+# CORS — API deve ter headers em rotas públicas
+try:
+    req = Request(f"{API}/public/{SLUGS[0] if SLUGS else 'stukabarber'}", headers={"Origin": "https://evil.com", "User-Agent": UA})
+    with urlopen(req, context=ctx, timeout=8) as r:
+        cors_hdrs = {k.lower(): v for k, v in r.getheaders()}
+    acao = cors_hdrs.get('access-control-allow-origin','')
+    if acao == '*': note(f"CORS public API → * (público, esperado)")
+    elif acao: ok(f"CORS public API → {acao}")
+    else: note("CORS header ausente em rota pública")
+except Exception as e: note(f"CORS check: {e}")
+
+# Endpoint inexistente → 404 não 500
+s,_,_ = api("/rota-que-nao-existe-xyz")
+ok(f"Rota inexistente → {s}") if s == 404 else warn(f"Rota inexistente → {s} (esperado 404)")
+
+sec("API Security — aprofundada")
+# JWT algorithm confusion — alg:none
+if users and jwt_secret:
+    user_sec = users[0]
+    h_none = b64u(json.dumps({"alg": "none", "typ": "JWT"}))
+    p_none = b64u(json.dumps({
+        "userId": user_sec['id'],
+        "barbershopId": user_sec['barbershopId'],
+        "role": "ADMIN",
+        "iat": int(time.time()),
+        "exp": int(time.time()) + 7200
+    }))
+    token_none = f"{h_none}.{p_none}."
+    s_none, _, _ = api("/barbershop", token=token_none)
+    ok("JWT alg:none rejeitado → 401") if s_none == 401 else fail(f"JWT alg:none ACEITE → {s_none} (vulnerabilidade crítica!)")
+
+    # Paginação sem limite
+    valid_token_sec = make_jwt(user_sec['id'], user_sec['barbershopId'])
+    s_limit, data_limit, _ = api("/bookings?limit=99999&page=0", token=valid_token_sec)
+    if isinstance(data_limit, list) and len(data_limit) > 500:
+        warn(f"Paginação sem limite: /bookings?limit=99999 retornou {len(data_limit)} registos!")
+    elif s_limit == 200:
+        ok(f"Paginação /bookings?limit=99999 → aceite (sem dados excessivos)")
+    else:
+        ok(f"Paginação extrema → {s_limit}")
+
+    # Mass assignment — PUT /barbershop com campos sensíveis
+    t_ma = make_jwt(user_sec['id'], user_sec['barbershopId'])
+    s_ma, d_ma, _ = api("/barbershop", "PUT", {
+        "subscriptionPlan": "ENTERPRISE",
+        "subscriptionExpiry": "2099-12-31",
+        "suspended": False,
+        "_isAdmin": True,
+    }, token=t_ma)
+    if s_ma == 200 and isinstance(d_ma, dict):
+        if d_ma.get("subscriptionPlan") == "ENTERPRISE":
+            fail("Mass assignment: subscriptionPlan alterado via PUT /barbershop — vulnerabilidade crítica!")
+        else:
+            ok("Mass assignment: campos sensíveis ignorados (subscriptionPlan não alterado)")
+    elif s_ma in (400, 422, 403):
+        ok(f"Mass assignment rejeitado → {s_ma}")
+    else:
+        note(f"Mass assignment PUT → {s_ma}")
+else:
+    note("API security deep: JWT/users não disponíveis — ignorado")
+
+# Token de reset de password inválido não deve 200
+fake_reset_token_sec = "eyJhbGciOiJIUzI1NiJ9.fake.fake"
+s_reuse, _, _ = api("/auth/reset-password", "POST", {
+    "token": fake_reset_token_sec,
+    "password": "NovaPassword123!"
+})
+ok(f"Token de reset inválido → {s_reuse}") if s_reuse in (400, 404, 401) else warn(f"Reset com token falso → {s_reuse}")
+
+# Enumeration — IDs são UUIDs?
+if users:
+    user_id_check = users[0]['id']
+    uuid_pat  = re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$', re.I)
+    cuid_pat  = re.compile(r'^c[a-z0-9]{20,}$')
+    cuid2_pat = re.compile(r'^[a-z0-9]{20,}$')
+    if uuid_pat.match(user_id_check):
+        ok("IDs usam UUID — dificulta enumeration/IDOR")
+    elif cuid_pat.match(user_id_check) or cuid2_pat.match(user_id_check):
+        ok(f"IDs usam CUID (opaco, não sequencial) — OK")
+    else:
+        warn(f"ID parece sequencial ('{user_id_check[:20]}') — facilita enumeration")
+
+# HTTP method override
+s_meth, _, _ = http(f"{API}/auth/me", "POST",
+                     headers={"X-HTTP-Method-Override": "GET", "X-Method-Override": "GET"})
+note(f"HTTP method override (POST + X-HTTP-Method-Override:GET) → {s_meth}")
+
+# Host header injection
+try:
+    s_host, b_host, _ = http(f"{BASE}/", headers={"Host": "evil.com"})
+    body_host = b_host.decode('utf-8', 'replace') if isinstance(b_host, bytes) else (b_host or '')
+    if 'evil.com' in body_host:
+        fail("Host header injection — 'evil.com' refletido na resposta!")
+    else:
+        ok(f"Host header injection não refletido → {s_host}")
+except Exception as e_host: note(f"Host injection check: {e_host}")
 
 # ════════════════════════════════════════════════════════════════════════
 sec("Resumo por severidade")

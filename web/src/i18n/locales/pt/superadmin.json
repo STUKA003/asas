@@ -1,0 +1,79 @@
+{
+  "layout": {
+    "nav": {
+      "platform": "Plataforma",
+      "dashboard": "Dashboard",
+      "barbershops": "Barbearias"
+    },
+    "pageMeta": {
+      "dashboard": {
+        "title": "Dashboard",
+        "subtitle": "Leitura consolidada da saúde comercial e operacional da plataforma."
+      },
+      "barbershops": {
+        "title": "Barbearias",
+        "subtitle": "Gestão centralizada das contas, planos e estado das operações."
+      }
+    },
+    "account": {
+      "name": "Super Admin",
+      "platform": "Trimio Platform",
+      "logout": "Sair"
+    },
+    "sidebar": {
+      "scopeLabel": "Escopo",
+      "scopeTitle": "Operação central",
+      "scopeDesc": "Visão transversal sobre crescimento, contas e monetização."
+    },
+    "topbar": {
+      "viewBarbershops": "Ver barbearias"
+    },
+    "pull": {
+      "refreshing": "A actualizar...",
+      "releaseToRefresh": "Larga para actualizar",
+      "pullToRefresh": "Puxa para actualizar"
+    },
+    "brand": {
+      "name": "Trimio Command",
+      "subtitle": "Controlo da plataforma"
+    }
+  },
+  "login": {
+    "brand": {
+      "name": "Trimio Command",
+      "subtitle": "Controlo da plataforma"
+    },
+    "panel": {
+      "eyebrow": "Platform control",
+      "title": "Visão global sobre toda a operação.",
+      "desc": "Gestão centralizada de barbearias, planos, faturação e saúde da plataforma — num único ponto de comando.",
+      "stat1Label": "Rede de barbearias",
+      "stat1Desc": "Visão centralizada de todas as contas activas.",
+      "stat2Label": "Crescimento e planos",
+      "stat2Desc": "MRR, upgrades e ciclo de faturação por conta.",
+      "stat3Label": "Controlo da plataforma",
+      "stat3Desc": "Suspensões, estados e saúde operacional global.",
+      "footer": "© {{year}} Trimio · Acesso restrito"
+    },
+    "form": {
+      "title": "Acesso ao Command",
+      "subtitle": "Área restrita — supervisão da plataforma Trimio.",
+      "emailLabel": "E-mail",
+      "emailPlaceholder": "admin@trimio.app",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "••••••••",
+      "submitButton": "Entrar no Command",
+      "loading": "A entrar…",
+      "footer": "Acesso reservado a administradores da plataforma Trimio.",
+      "error": "Credenciais inválidas."
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Leitura consolidada da saúde comercial e operacional da plataforma."
+  },
+  "barbershops": {
+    "title": "Barbearias",
+    "subtitle": "Gestão centralizada das contas, planos e estado das operações."
+  }
+}

@@ -37,6 +37,11 @@ interface PanelShellProps {
   theme?: 'light' | 'dark'
   onPullRefresh?: () => Promise<void> | void
   isPullRefreshing?: boolean
+  pullRefreshLabels?: {
+    refreshing: string
+    release: string
+    pull: string
+  }
 }
 
 export function PageHeader({
@@ -78,6 +83,7 @@ export function PanelShell({
   theme = 'light',
   onPullRefresh,
   isPullRefreshing = false,
+  pullRefreshLabels,
 }: PanelShellProps) {
   const mainRef = useRef<HTMLElement>(null)
   const touchStartY = useRef<number | null>(null)
@@ -367,7 +373,12 @@ export function PanelShell({
                   size={14}
                   className={cn(isPullRefreshing && 'animate-spin', refreshReady && !isPullRefreshing && 'text-primary-600')}
                 />
-                <span>{isPullRefreshing ? 'A atualizar...' : refreshReady ? 'Larga para atualizar' : 'Puxa para atualizar'}</span>
+                <span>{isPullRefreshing
+                  ? (pullRefreshLabels?.refreshing ?? 'A atualizar...')
+                  : refreshReady
+                    ? (pullRefreshLabels?.release ?? 'Larga para atualizar')
+                    : (pullRefreshLabels?.pull ?? 'Puxa para atualizar')
+                }</span>
               </div>
             </div>
           ) : null}

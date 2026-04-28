@@ -1,0 +1,270 @@
+{
+  "header": {
+    "home": "Startseite",
+    "services": "Leistungen",
+    "plans": "Abonnements",
+    "products": "Produkte",
+    "bookNow": "Jetzt buchen"
+  },
+  "footer": {
+    "tagline": "Einfache, schnelle und organisierte Buchungen.",
+    "nav": "Navigation",
+    "contact": "Kontakt",
+    "book": "Buchen",
+    "privacy": "Datenschutz",
+    "adminArea": "Admin-Bereich",
+    "allRightsReserved": "Alle Rechte vorbehalten."
+  },
+  "booking": {
+    "title": "Online-Buchung",
+    "stepLabels": {
+      "service": "Leistung",
+      "barber": "Barbier",
+      "dateTime": "Datum/Uhrzeit",
+      "customer": "Daten",
+      "confirmation": "Bestätigung"
+    },
+    "progress": "Fortschritt",
+    "stepOf": "Schritt {{current}} von {{total}}",
+    "summary": {
+      "title": "Buchungsübersicht",
+      "professional": "Fachmann",
+      "date": "Datum",
+      "time": "Uhrzeit",
+      "mainService": "Hauptleistung",
+      "plan": "Abonnement",
+      "added": "Hinzugefügt",
+      "total": "Geschätzter Gesamtbetrag"
+    },
+    "steps": {
+      "service": { "title": "Leistung auswählen" },
+      "barber": { "title": "Barbier auswählen", "professional": "Fachmann" },
+      "dateTime": {
+        "title": "Datum und Uhrzeit",
+        "selectDate": "Datum auswählen",
+        "availableSlots": "Verfügbare Termine",
+        "noSlots": "An diesem Tag keine Termine verfügbar.",
+        "morning": "Morgen",
+        "afternoon": "Nachmittag",
+        "slotCount_one": "{{count}} Termin",
+        "slotCount_other": "{{count}} Termine",
+        "noSlotsInPeriod": "Keine Termine in diesem Zeitraum."
+      },
+      "extras": {
+        "title": "Extras",
+        "optional": " optional",
+        "includedInService": "in der Leistung enthalten",
+        "noExtras": "Keine Extras verfügbar."
+      },
+      "extrasProducts": {
+        "title": "Extras & Produkte",
+        "subtitle": "Zum Termin hinzufügen (optional)",
+        "noItems": "Keine Extras oder Produkte verfügbar.",
+        "extras": "Extras",
+        "products": "Produkte"
+      },
+      "products": {
+        "title": "Mit nach Hause nehmen",
+        "subtitle": "Produkte zur Pflege Ihres Looks (optional)",
+        "reviewOrder": "Bestellung prüfen"
+      },
+      "customer": {
+        "title": "Ihre Daten",
+        "name": "Ihr Name",
+        "namePlaceholder": "Hans Müller",
+        "attendeeName": "Name der zu bedienenden Person",
+        "attendeeNamePlaceholder": "Klaus Müller",
+        "phone": "Telefon / WhatsApp",
+        "phonePlaceholder": "+49 151 00000000",
+        "email": "E-Mail",
+        "emailPlaceholder": "hans@beispiel.de",
+        "notes": "Anmerkungen (optional)",
+        "planInfo": "Abonnement: {{name}}",
+        "responsible": "Verantwortlich: {{name}}",
+        "allowedDays": "Erlaubte Tage: {{days}}",
+        "includedServices": "Enthaltene Leistungen: {{services}}",
+        "planDiscount": "🎁 {{discount}}% Rabatt auf Extras, Produkte und Leistungen außerhalb des Abonnements.",
+        "serviceNotInPlan": "⚠ \"{{service}}\" ist nicht im Abonnement enthalten",
+        "errors": {
+          "emailRequired": "E-Mail erforderlich",
+          "emailInvalid": "Ungültige E-Mail",
+          "nameRequired": "Name erforderlich",
+          "phoneRequired": "Telefon erforderlich",
+          "attendeeRequired": "Name der zu bedienenden Person erforderlich"
+        },
+        "planActiveBlock": "Dieser Kunde hat bereits eine aktive Buchung im Abonnement und kann erst nach Abschluss des aktuellen Termins erneut buchen.",
+        "planDayBlock": "Dieses Abonnement erlaubt Buchungen nur an: {{days}}."
+      },
+      "confirmation": {
+        "title": "Buchung bestätigen",
+        "incomplete": "Buchung vor der Bestätigung vervollständigen.",
+        "dataTitle": "Daten, die gespeichert werden",
+        "dataName": "· Name: {{name}}",
+        "dataPhone": "· Telefon: {{phone}}",
+        "dataEmail": "· E-Mail: {{email}}",
+        "dataAttendee": "· Zu bedienende Person: {{attendee}}",
+        "dataBookingInfo": "· Ausgewähltes Datum, Uhrzeit, Leistung und Barbier",
+        "dataUsage": "Verwendet zur Verwaltung der Buchung, zum Senden des Verwaltungslinks und zum operativen Kontakt. Sie können Ihre Daten jederzeit über den Buchungslink exportieren oder löschen. Aufbewahrung: 3 Jahre.",
+        "privacyLink": "Vollständige Datenschutzrichtlinie.",
+        "consentLabel": "Ich stimme der Verarbeitung meiner personenbezogenen Daten zur Verwaltung dieser Buchung zu den oben beschriebenen Bedingungen zu.",
+        "submitButton": "Buchung bestätigen",
+        "success": {
+          "title": "Buchung bestätigt",
+          "message": "Buchung für {{name}} erfolgreich erstellt.",
+          "addToCalendar": "Im Kalender speichern",
+          "addToGoogleCalendar": "Zu Google Kalender hinzufügen",
+          "downloadIcs": ".ics-Datei herunterladen",
+          "manageBooking": "Buchung verwalten",
+          "backHome": "Zurück zur Startseite"
+        }
+      }
+    }
+  },
+  "home": {
+    "features": {
+      "title": "Ein stärkeres Barbershop-Erlebnis, von der ersten Buchung an.",
+      "section": "Warum uns wählen",
+      "easyBooking": "Einfache Buchung",
+      "easyBookingDesc": "In Sekunden buchen, keine Anrufe oder Nachrichten nötig.",
+      "realTimeSlots": "Echtzeit-Verfügbarkeit",
+      "realTimeSlotsDesc": "Verfügbare Termine auf die Minute genau sehen.",
+      "bestPros": "Beste Fachleute",
+      "bestProsDesc": "Erfahrene und engagierte Barbiere.",
+      "guaranteedConfirmation": "Sofortige Bestätigung",
+      "guaranteedConfirmationDesc": "Sofortige Bestätigung Ihrer Buchung erhalten."
+    },
+    "howItWorks": {
+      "title": "Schnelle Buchung, Premium-Gefühl.",
+      "subtitle": "In weniger als 2 Minuten alles erledigt.",
+      "section": "Einfacher Ablauf",
+      "step1Title": "Leistung auswählen",
+      "step1Desc": "Aus Haarschnitt, Bart, Behandlungen und mehr wählen.",
+      "step2Title": "Barbier auswählen",
+      "step2Desc": "Sehen wer verfügbar ist und Ihren Liebling wählen.",
+      "step3Title": "Datum und Uhrzeit wählen",
+      "step3Desc": "Freie Termine ansehen und Ihren reservieren.",
+      "step4Title": "Bestätigung",
+      "step4Desc": "Bestätigung erhalten und pünktlich erscheinen."
+    },
+    "stats": {
+      "avgBooking": "Durchschnittliche Buchung",
+      "avgBookingVal": "< 2 Min.",
+      "confirmation": "Bestätigung",
+      "confirmationVal": "Sofort",
+      "availability": "Verfügbarkeit",
+      "availabilityVal": "Echtzeit"
+    },
+    "gallery": {
+      "section": "Galerie",
+      "title": "Atmosphäre und Stil von {{name}}",
+      "subtitle": "Jeder Barbershop kann seinen Raum, seine Schnitte und seine visuelle Identität zeigen."
+    },
+    "cta": {
+      "title": "Bereit für einen neuen Look?",
+      "subtitle": "Buchen Sie jetzt und sichern Sie Ihren Termin bei {{name}} ohne Wartezeit oder Anruf."
+    },
+    "social": { "whatsapp": "WhatsApp", "instagram": "Instagram" },
+    "promo": {
+      "label": "Highlight der Woche",
+      "defaultTitle": "Sonderangebot",
+      "defaultText": "Profitieren Sie von der aktuellen Kampagne dieses Barbershops und buchen Sie Ihren Termin.",
+      "whyBook": "Warum online buchen",
+      "bullet1": "Wartezeit und Anrufe vermeiden.",
+      "bullet2": "Den nächsten freien Termin sofort sehen.",
+      "bullet3": "Ihren Lieblingsprofi sichern."
+    }
+  },
+  "services": {
+    "eyebrow": "Katalog",
+    "title": "Verfügbare Leistungen",
+    "subtitle": "Wählen Sie die ideale Leistung — Preise, Dauer ansehen und direkt buchen.",
+    "bookButton": "Buchen"
+  },
+  "products": {
+    "eyebrow": "Shop",
+    "title": "Produkte",
+    "subtitle": "Nehmen Sie professionelle Pflege mit nach Hause — Produkte unserer Barbiere.",
+    "unavailableTitle": "Produkte nicht verfügbar",
+    "unavailableMsg": "Dieser Barbershop hat sich entschieden, derzeit keine Produkte auf der öffentlichen Website anzuzeigen.",
+    "backHome": "Zurück zur Startseite",
+    "orderButton": "Bestellen",
+    "lowStock": "Nur noch {{count}} Einheiten",
+    "outOfStock": "Nicht vorrätig"
+  },
+  "plans": {
+    "eyebrow": "Abonnements",
+    "title": "Abonnements und Mitgliedschaften",
+    "subtitle": "Abonnieren Sie einen Plan und sparen Sie bei jedem Besuch — enthaltene Leistungen, keine Überraschungen.",
+    "unavailableTitle": "Abonnements nicht verfügbar",
+    "unavailableMsg": "Dieser Barbershop hat sich entschieden, derzeit keine Abonnements auf der öffentlichen Website anzuzeigen.",
+    "popular": "Am beliebtesten",
+    "subscribeNow": "Jetzt abonnieren",
+    "paymentUnavailable": "Zahlung nicht verfügbar",
+    "days": "Tage: {{days}}",
+    "services": "Leistungen: {{services}}",
+    "oneActiveBooking": "1 aktive Buchung gleichzeitig",
+    "modal": {
+      "title": "Plan abonnieren",
+      "subtitle": "{{name}} · {{price}}",
+      "namePlaceholder": "Ihr Name",
+      "phonePlaceholder": "+49 151 00000000",
+      "warning": "Dieser Plan kann erst nach Zahlungsbestätigung oder direkt durch den Barbershop aktiviert werden.",
+      "confirmButton": "Abonnement bestätigen",
+      "successTitle": "Plan aktiviert!",
+      "successMsg": "Die Anfrage für {{name}} wurde registriert."
+    }
+  },
+  "manageBooking": {
+    "eyebrow": "Buchungsverwaltung",
+    "title": "Bestätigen, stornieren oder umbuchen — ohne anzurufen.",
+    "subtitle": "Verwenden Sie diese Seite, um Ihre Buchung bei {{shopName}} zu verwalten.",
+    "missingToken": "Buchungstoken fehlt. Öffnen Sie den vollständigen Verwaltungslink, um fortzufahren.",
+    "details": {
+      "label": "Details",
+      "barber": "Barbier:",
+      "customer": "Kunde:",
+      "responsible": "Verantwortlich:",
+      "contact": "Kontakt:"
+    },
+    "actions": {
+      "label": "Schnellaktionen",
+      "copyLink": "Buchungslink kopieren",
+      "addPerson": "Weitere Person hinzufügen",
+      "confirmPresence": "Anwesenheit bestätigen",
+      "cancelBooking": "Buchung stornieren",
+      "linkCopied": "Verwaltungslink kopiert.",
+      "presenceConfirmed": "Anwesenheit erfolgreich bestätigt.",
+      "bookingCancelled": "Buchung erfolgreich storniert."
+    },
+    "privacy": {
+      "title": "Datenschutz und Daten",
+      "subtitle": "Ihre DSGVO-Rechte — Zugang, Portabilität und Löschung",
+      "privacyPolicy": "Datenschutzrichtlinie",
+      "consentGiven": "Einwilligung erteilt",
+      "info": "Identifikationsdaten werden 3 Jahre ab der letzten Buchung aufbewahrt. Sie können jederzeit eine Anonymisierung beantragen.",
+      "exportData": "Meine Daten exportieren",
+      "anonymizeData": "Meine Daten anonymisieren",
+      "exportDone": "Datenexport abgeschlossen.",
+      "confirmAnonymize": {
+        "title": "Datenanonymisierung bestätigen",
+        "warning": "Diese Aktion ersetzt Ihre identifizierenden personenbezogenen Daten (Name, Telefon, E-Mail, Notizen) durch eine anonyme Kennung bei {{shopName}}.",
+        "bullet1": "· Die Betriebshistorie der Buchungen (Daten, Leistungen, Dauer) wird anonym aufbewahrt.",
+        "bullet2": "· Diese Aktion kann nicht rückgängig gemacht werden.",
+        "bullet3": "· Der Link zu dieser Buchung funktioniert nach der Anonymisierung nicht mehr.",
+        "confirmButton": "Anonymisierung bestätigen"
+      }
+    },
+    "reschedule": {
+      "title": "Umbuchen",
+      "subtitle": "Wählen Sie einen anderen Tag und einen freien Termin für dieselbe Leistung.",
+      "noSlots": "Keine verfügbaren Termine an diesem Tag.",
+      "confirmButton": "Neue Zeit bestätigen",
+      "success": "Buchung erfolgreich umgebucht."
+    }
+  },
+  "privacy": {
+    "eyebrow": "Datenschutz",
+    "title": "Datenschutzrichtlinie",
+    "versionDate": "Version {{version}} · Aktualisiert am {{date}}"
+  }
+}

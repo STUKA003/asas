@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { BellOff, BellRing, ShieldAlert } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { barberPortalApi, pushApi } from '@/lib/api'
 import { getExistingPushSubscription, pushSupported, subscribeBrowserPush, unsubscribeBrowserPush } from '@/lib/push'
 import { cn } from '@/lib/utils'
@@ -19,12 +20,14 @@ export function PushToggle({ variant }: { variant: PushVariant }) {
   )
   const [active, setActive] = useState(false)
   const [loading, setLoading] = useState(false)
+  const ns = variant === 'admin' ? 'admin' : 'barber'
+  const { t } = useTranslation(ns)
 
   if (!supported) {
     return (
       <div className="inline-flex items-center gap-2 rounded-xl border border-neutral-200 bg-white px-3 py-2 text-xs text-ink-muted">
         <ShieldAlert size={14} />
-        Push indisponível neste dispositivo
+        {t('push.unavailable')}
       </div>
     )
   }
@@ -100,7 +103,7 @@ export function PushToggle({ variant }: { variant: PushVariant }) {
     return (
       <div className="inline-flex items-center gap-2 rounded-xl border border-neutral-200 bg-white px-3 py-2 text-xs text-ink-muted">
         <ShieldAlert size={14} />
-        Push não configurado
+        {t('push.notConfigured')}
       </div>
     )
   }
@@ -117,22 +120,22 @@ export function PushToggle({ variant }: { variant: PushVariant }) {
           : 'border-neutral-200 bg-white text-ink-soft hover:border-neutral-300 hover:text-ink',
         permission === 'denied' && 'cursor-not-allowed border-danger-200 bg-danger-50 text-danger-700 opacity-80'
       )}
-      title={permission === 'denied' ? 'Permissão de notificações bloqueada no browser' : 'Ativar notificações push'}
+      title={permission === 'denied' ? t('push.blockedTooltip') : t('push.enableTooltip')}
     >
       {permission === 'denied' ? (
         <>
           <BellOff size={15} />
-          Push bloqueado
+          {t('push.blocked')}
         </>
       ) : active ? (
         <>
           <BellRing size={15} />
-          Push ativo
+          {t('push.active')}
         </>
       ) : (
         <>
           <BellRing size={15} />
-          Ativar push
+          {t('push.enable')}
         </>
       )}
     </button>

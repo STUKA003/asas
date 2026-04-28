@@ -1,0 +1,47 @@
+{
+  "layout": {
+    "nav": { "platform": "Platform", "dashboard": "Dashboard", "barbershops": "Barbershops" },
+    "pageMeta": {
+      "dashboard": { "title": "Dashboard", "subtitle": "Consolidated read of the platform's commercial and operational health." },
+      "barbershops": { "title": "Barbershops", "subtitle": "Centralised management of accounts, plans and operational status." }
+    },
+    "account": { "name": "Super Admin", "platform": "Trimio Platform", "logout": "Log out" },
+    "sidebar": {
+      "scopeLabel": "Scope",
+      "scopeTitle": "Central operations",
+      "scopeDesc": "Cross-cutting view of growth, accounts and monetisation."
+    },
+    "topbar": { "viewBarbershops": "View barbershops" },
+    "pull": { "refreshing": "Refreshing...", "releaseToRefresh": "Release to refresh", "pullToRefresh": "Pull to refresh" },
+    "brand": { "name": "Trimio Command", "subtitle": "Platform control" }
+  },
+  "login": {
+    "brand": { "name": "Trimio Command", "subtitle": "Platform control" },
+    "panel": {
+      "eyebrow": "Platform control",
+      "title": "Global view of the entire operation.",
+      "desc": "Centralised management of barbershops, plans, billing and platform health — from a single command point.",
+      "stat1Label": "Barbershop network",
+      "stat1Desc": "Centralised view of all active accounts.",
+      "stat2Label": "Growth & plans",
+      "stat2Desc": "MRR, upgrades and billing cycle per account.",
+      "stat3Label": "Platform control",
+      "stat3Desc": "Suspensions, statuses and global operational health.",
+      "footer": "© {{year}} Trimio · Restricted access"
+    },
+    "form": {
+      "title": "Access to Command",
+      "subtitle": "Restricted area — Trimio platform supervision.",
+      "emailLabel": "Email",
+      "emailPlaceholder": "admin@trimio.app",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "••••••••",
+      "submitButton": "Sign in to Command",
+      "loading": "Signing in…",
+      "footer": "Access reserved for Trimio platform administrators.",
+      "error": "Invalid credentials."
+    }
+  },
+  "dashboard": { "title": "Dashboard", "subtitle": "Consolidated read of the platform's commercial and operational health." },
+  "barbershops": { "title": "Barbershops", "subtitle": "Centralised management of accounts, plans and operational status." }
+}

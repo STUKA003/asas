@@ -1,0 +1,89 @@
+{
+  "layout": {
+    "nav": {
+      "portal": "Portal",
+      "dashboard": "Dashboard",
+      "schedule": "Agenda"
+    },
+    "pageMeta": {
+      "dashboard": { "title": "Dashboard", "subtitle": "Visão rápida do teu dia, agenda e receita." },
+      "schedule": { "title": "Agenda", "subtitle": "Acompanha os teus horários e reservas em curso." }
+    },
+    "notifications": {
+      "title": "Notificações",
+      "newBadge": "{{count}} novas",
+      "markAllRead": "Marcar tudo como lido",
+      "noRecent": "Sem notificações recentes."
+    },
+    "account": {
+      "logout": "Sair"
+    },
+    "sidebar": {
+      "activeSession": "Sessão activa",
+      "portalTitle": "Portal do barbeiro",
+      "portalDesc": "Acesso rápido à agenda, estados e detalhe de atendimento."
+    },
+    "topbar": {
+      "planLabel": "Plano",
+      "openSchedule": "Abrir agenda"
+    },
+    "pull": {
+      "refreshing": "A actualizar...",
+      "releaseToRefresh": "Larga para actualizar",
+      "pullToRefresh": "Puxa para actualizar"
+    },
+    "brand": {
+      "name": "Trimio Flow",
+      "defaultSubtitle": "Portal do barbeiro"
+    }
+  },
+  "push": {
+    "unavailable": "Push indisponível neste dispositivo",
+    "notConfigured": "Push não configurado",
+    "blocked": "Push bloqueado",
+    "active": "Push activo",
+    "enable": "Activar push",
+    "blockedTooltip": "Permissão de notificações bloqueada no browser",
+    "enableTooltip": "Activar notificações push"
+  },
+  "login": {
+    "brand": {
+      "name": "Trimio Flow",
+      "subtitle": "Portal do barbeiro"
+    },
+    "panel": {
+      "eyebrow": "Operação individual",
+      "title": "A tua agenda sem sair do ritmo do dia.",
+      "desc": "Um acesso desenhado para o barbeiro acompanhar horários, clientes e estados dos atendimentos com menos atrito.",
+      "feature1Label": "Agenda do dia",
+      "feature1Desc": "Marcações, confirmações e remarcações num ecrã directo.",
+      "feature2Label": "Cliente em contexto",
+      "feature2Desc": "Serviços, plano, extras e contacto no momento certo.",
+      "feature3Label": "Operação sem ruído",
+      "feature3Desc": "Fluxo leve para quem está a atender, não a configurar.",
+      "footer": "© {{year}} Trimio · Portal operacional do barbeiro"
+    },
+    "form": {
+      "title": "Entra no teu portal",
+      "subtitle": "Acesso à agenda e operação diária do barbeiro.",
+      "slugLabel": "Slug da barbearia",
+      "slugPlaceholder": "minha-barbearia",
+      "emailLabel": "E-mail",
+      "emailPlaceholder": "barbeiro@email.com",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "••••••••",
+      "submitButton": "Entrar no portal",
+      "errors": {
+        "invalidCredentials": "Slug, e-mail ou password inválidos."
+      }
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Visão rápida do teu dia, agenda e receita."
+  },
+  "schedule": {
+    "title": "Agenda",
+    "subtitle": "Acompanha os teus horários e reservas em curso."
+  }
+}

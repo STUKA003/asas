@@ -1,0 +1,45 @@
+{
+  "layout": {
+    "nav": { "portal": "Portal", "dashboard": "Dashboard", "schedule": "Horarios" },
+    "pageMeta": {
+      "dashboard": { "title": "Dashboard", "subtitle": "Vista rápida de tu día, agenda e ingresos." },
+      "schedule": { "title": "Horarios", "subtitle": "Sigue tus horarios y reservas en curso." }
+    },
+    "notifications": { "title": "Notificaciones", "newBadge": "{{count}} nuevas", "markAllRead": "Marcar todo como leído", "noRecent": "Sin notificaciones recientes." },
+    "account": { "logout": "Cerrar sesión" },
+    "sidebar": { "activeSession": "Sesión activa", "portalTitle": "Portal del barbero", "portalDesc": "Acceso rápido a la agenda, estados y detalles del servicio." },
+    "topbar": { "planLabel": "Plan", "openSchedule": "Abrir agenda" },
+    "pull": { "refreshing": "Actualizando...", "releaseToRefresh": "Suelta para actualizar", "pullToRefresh": "Tira para actualizar" },
+    "brand": { "name": "Trimio Flow", "defaultSubtitle": "Portal del barbero" }
+  },
+  "push": { "unavailable": "Push no disponible", "notConfigured": "Push no configurado", "blocked": "Push bloqueado", "active": "Push activo", "enable": "Activar push", "blockedTooltip": "Permiso bloqueado en el navegador", "enableTooltip": "Activar notificaciones push" },
+  "login": {
+    "brand": { "name": "Trimio Flow", "subtitle": "Portal del barbero" },
+    "panel": {
+      "eyebrow": "Operación individual",
+      "title": "Tu agenda sin salir del ritmo del día.",
+      "desc": "Un acceso diseñado para que el barbero siga horarios, clientes y estados con menos fricción.",
+      "feature1Label": "Agenda del día",
+      "feature1Desc": "Reservas, confirmaciones y cambios en una pantalla directa.",
+      "feature2Label": "Cliente en contexto",
+      "feature2Desc": "Servicios, plan, extras y contacto en el momento adecuado.",
+      "feature3Label": "Operación sin ruido",
+      "feature3Desc": "Flujo ligero para quien está atendiendo, no configurando.",
+      "footer": "© {{year}} Trimio · Portal operacional del barbero"
+    },
+    "form": {
+      "title": "Entra a tu portal",
+      "subtitle": "Acceso a la agenda y operación diaria del barbero.",
+      "slugLabel": "Slug de la barbería",
+      "slugPlaceholder": "mi-barberia",
+      "emailLabel": "Email",
+      "emailPlaceholder": "barbero@email.com",
+      "passwordLabel": "Contraseña",
+      "passwordPlaceholder": "••••••••",
+      "submitButton": "Entrar al portal",
+      "errors": { "invalidCredentials": "Slug, email o contraseña inválidos." }
+    }
+  },
+  "dashboard": { "title": "Dashboard", "subtitle": "Vista rápida de tu día, agenda e ingresos." },
+  "schedule": { "title": "Horarios", "subtitle": "Sigue tus horarios y reservas en curso." }
+}

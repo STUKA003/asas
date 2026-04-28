@@ -1,8 +1,8 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useRef } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { format } from 'date-fns'
-import { pt } from 'date-fns/locale'
-import { Calendar, CheckCircle2, Clock3, Copy, Download, Plus, RefreshCw, Scissors, ShieldAlert, XCircle } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import { Calendar, CheckCircle2, Clock3, Copy, Download, Plus, RefreshCw, Scissors, Shield, ShieldAlert, XCircle } from 'lucide-react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
@@ -29,11 +29,19 @@ export default function ManageBooking() {
   const { slug, barbershop, loading } = useTenant()
   const [params] = useSearchParams()
   const queryClient = useQueryClient()
+  const { t, i18n } = useTranslation('public')
   const token = params.get('token') ?? ''
   const [selectedDate, setSelectedDate] = useState('')
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null)
   const [feedback, setFeedback] = useState<string | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [showEraseConfirm, setShowEraseConfirm] = useState(false)
+  const eraseConfirmRef = useRef<HTMLDivElement>(null)
+
+  const dateFnsLocale = (() => {
+    try { return require(`date-fns/locale/${i18n.language}`).default ?? require('date-fns/locale/pt').default }
+    catch { try { return require(`date-fns/locale/${i18n.language.split('-')[0]}`).default } catch { return require('date-fns/locale/pt').default } }
+  })()
 
   const bookingQuery = useQuery({
     queryKey: ['public-booking-manage', slug, token],
@@ -67,7 +75,7 @@ export default function ManageBooking() {
     mutationFn: () => publicApi(slug).confirmManagedBooking({ token }),
     ...baseMutationOptions,
     onSuccess: async () => {
-      setFeedback('Presença confirmada com sucesso.')
+      setFeedback(t('manageBooking.actions.presenceConfirmed'))
       await baseMutationOptions.onSuccess()
     },
   })
@@ -76,7 +84,7 @@ export default function ManageBooking() {
     mutationFn: () => publicApi(slug).cancelManagedBooking({ token }),
     ...baseMutationOptions,
     onSuccess: async () => {
-      setFeedback('Marcação cancelada com sucesso.')
+      setFeedback(t('manageBooking.actions.bookingCancelled'))
       await baseMutationOptions.onSuccess()
     },
   })
@@ -101,7 +109,7 @@ export default function ManageBooking() {
       anchor.download = `dados-reserva-${booking?.id ?? 'trimio'}.json`
       anchor.click()
       window.URL.revokeObjectURL(url)
-      setFeedback('Exportação dos teus dados concluída.')
+      setFeedback(t('manageBooking.privacy.exportDone'))
       setErrorMessage(null)
     },
     onError: (error: unknown) => {
@@ -133,7 +141,7 @@ export default function ManageBooking() {
   async function copyManageLink() {
     if (!booking?.management.managementUrl) return
     await navigator.clipboard.writeText(booking.management.managementUrl)
-    setFeedback('Link de gestão copiado.')
+    setFeedback(t('manageBooking.actions.linkCopied'))
     setErrorMessage(null)
   }
 
@@ -149,12 +157,12 @@ export default function ManageBooking() {
           <div className="rounded-[2rem] border border-white/70 bg-white p-6 shadow-soft sm:p-8">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
-                <p className="eyebrow">Gestão da reserva</p>
+                <p className="eyebrow">{t('manageBooking.eyebrow')}</p>
                 <h1 className="mt-3 text-3xl font-semibold tracking-[-0.03em] text-ink">
-                  Confirma, cancela ou remarca sem ligar.
+                  {t('manageBooking.title')}
                 </h1>
                 <p className="mt-3 max-w-2xl text-sm leading-6 text-ink-muted">
-                  Usa esta página para gerir a tua marcação na {barbershop?.name ?? 'barbearia'}.
+                  {t('manageBooking.subtitle', { shopName: barbershop?.name ?? 'barbearia' })}
                 </p>
               </div>
               {booking ? <StatusBadge status={booking.status} /> : null}
@@ -162,7 +170,7 @@ export default function ManageBooking() {
 
             {!token ? (
               <div className="mt-8 rounded-2xl border border-danger-200 bg-danger-50 p-4 text-sm text-danger-700">
-                Falta o token da reserva. Abre o link completo de gestão para continuar.
+                {t('manageBooking.missingToken')}
               </div>
             ) : bookingQuery.isError ? (
               <div className="mt-8 rounded-2xl border border-danger-200 bg-danger-50 p-4 text-sm text-danger-700">
@@ -172,22 +180,22 @@ export default function ManageBooking() {
               <div className="mt-8 space-y-6">
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-5">
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink-muted">Detalhes</p>
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink-muted">{t('manageBooking.details.label')}</p>
                     <div className="mt-4 space-y-3 text-sm text-ink">
                       <p className="flex items-center gap-2"><Scissors size={15} className="text-primary-600" /> {serviceNames}</p>
-                      <p className="flex items-center gap-2"><Calendar size={15} className="text-primary-600" /> {format(toWallClockDate(booking.startTime), "EEEE, d 'de' MMMM", { locale: pt })}</p>
+                      <p className="flex items-center gap-2"><Calendar size={15} className="text-primary-600" /> {format(toWallClockDate(booking.startTime), "EEEE, d 'de' MMMM", { locale: dateFnsLocale })}</p>
                       <p className="flex items-center gap-2"><Clock3 size={15} className="text-primary-600" /> {format(toWallClockDate(booking.startTime), 'HH:mm')} · {formatDuration(booking.totalDuration)}</p>
-                      <p><span className="text-ink-muted">Barbeiro:</span> {booking.barber.name}</p>
-                      <p><span className="text-ink-muted">Cliente:</span> {getBookingClientName(booking)}</p>
+                      <p><span className="text-ink-muted">{t('manageBooking.details.barber')}</span> {booking.barber.name}</p>
+                      <p><span className="text-ink-muted">{t('manageBooking.details.customer')}</span> {getBookingClientName(booking)}</p>
                       {booking.attendeeName && booking.attendeeName !== booking.customer.name ? (
-                        <p><span className="text-ink-muted">Responsável:</span> {booking.customer.name}</p>
+                        <p><span className="text-ink-muted">{t('manageBooking.details.responsible')}</span> {booking.customer.name}</p>
                       ) : null}
-                      {booking.customer.phone ? <p><span className="text-ink-muted">Contacto:</span> {booking.customer.phone}</p> : null}
+                      {booking.customer.phone ? <p><span className="text-ink-muted">{t('manageBooking.details.contact')}</span> {booking.customer.phone}</p> : null}
                     </div>
                   </div>
 
                   <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-5">
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink-muted">Ações rápidas</p>
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink-muted">{t('manageBooking.actions.label')}</p>
                     <div className="mt-4 grid gap-3">
                       <Button
                         variant="secondary"
@@ -195,7 +203,7 @@ export default function ManageBooking() {
                         className="w-full"
                       >
                         <Copy size={16} />
-                        Copiar link desta reserva
+                        {t('manageBooking.actions.copyLink')}
                       </Button>
                       <Button
                         variant="secondary"
@@ -203,7 +211,7 @@ export default function ManageBooking() {
                         className="w-full"
                       >
                         <Plus size={16} />
-                        Adicionar outra pessoa
+                        {t('manageBooking.actions.addPerson')}
                       </Button>
                       <Button
                         onClick={() => confirmMutation.mutate()}
@@ -212,7 +220,7 @@ export default function ManageBooking() {
                         loading={confirmMutation.isPending}
                       >
                         <CheckCircle2 size={16} />
-                        Confirmar presença
+                        {t('manageBooking.actions.confirmPresence')}
                       </Button>
                       <Button
                         variant="outline"
@@ -222,7 +230,7 @@ export default function ManageBooking() {
                         loading={cancelMutation.isPending}
                       >
                         <XCircle size={16} />
-                        Cancelar marcação
+                        {t('manageBooking.actions.cancelBooking')}
                       </Button>
                     </div>
                   </div>
@@ -230,16 +238,34 @@ export default function ManageBooking() {
 
                 <div className="rounded-2xl border border-neutral-200 bg-white p-5">
                   <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div>
-                      <p className="text-lg font-semibold text-ink">Privacidade e dados</p>
-                      <p className="mt-1 text-sm text-ink-muted">
-                        Podes exportar os teus dados ou pedir a anonimização dos dados pessoais associados a esta reserva.
-                      </p>
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary-50">
+                        <Shield size={16} className="text-primary-700" />
+                      </div>
+                      <div>
+                        <p className="text-base font-semibold text-ink">{t('manageBooking.privacy.title')}</p>
+                        <p className="text-xs text-ink-muted">{t('manageBooking.privacy.subtitle')}</p>
+                      </div>
                     </div>
-                    <Link to={`/${slug}/privacy`} className="text-sm font-medium text-primary-700 underline underline-offset-4">
-                      Política de Privacidade
+                    <Link to={`/${slug}/privacy`} target="_blank" className="text-xs font-medium text-primary-700 underline underline-offset-4">
+                      {t('manageBooking.privacy.privacyPolicy')}
                     </Link>
                   </div>
+
+                  {booking.privacyConsentAt ? (
+                    <div className="mt-4 rounded-xl border border-neutral-100 bg-neutral-50 px-4 py-3 text-xs text-ink-muted">
+                      <p>
+                        <span className="font-medium text-ink">Consentimento dado</span> em{' '}
+                        {format(new Date(booking.privacyConsentAt), "d 'de' MMMM 'de' yyyy 'às' HH:mm", { locale: dateFnsLocale })}
+                        {booking.privacyConsentVersion ? ` · versão ${booking.privacyConsentVersion}` : null}
+                      </p>
+                      <p className="mt-0.5">
+                        Os dados identificativos são conservados por 3 anos a partir da última reserva.
+                        Podes pedir a anonimização a qualquer momento.
+                      </p>
+                    </div>
+                  ) : null}
+
                   <div className="mt-4 grid gap-3 md:grid-cols-2">
                     <Button
                       variant="secondary"
@@ -248,21 +274,58 @@ export default function ManageBooking() {
                       loading={exportDataMutation.isPending}
                     >
                       <Download size={16} />
-                      Exportar os meus dados
+                      {t('manageBooking.privacy.exportData')}
                     </Button>
                     <Button
                       variant="outline"
                       onClick={() => {
-                        if (!window.confirm('Isto vai anonimizar os teus dados pessoais nesta barbearia. Queres continuar?')) return
-                        eraseDataMutation.mutate()
+                        setShowEraseConfirm(true)
+                        setTimeout(() => eraseConfirmRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50)
                       }}
                       className="w-full"
-                      loading={eraseDataMutation.isPending}
+                      disabled={eraseDataMutation.isSuccess}
                     >
                       <ShieldAlert size={16} />
-                      Anonimizar os meus dados
+                      {t('manageBooking.privacy.anonymizeData')}
                     </Button>
                   </div>
+
+                  {showEraseConfirm && !eraseDataMutation.isSuccess ? (
+                    <div ref={eraseConfirmRef} className="mt-4 rounded-xl border border-danger-200 bg-danger-50 p-4">
+                      <p className="text-sm font-semibold text-danger-800">{t('manageBooking.privacy.confirmAnonymize.title')}</p>
+                      <p className="mt-1.5 text-xs leading-5 text-danger-700">
+                        Esta acção irá <strong>substituir os teus dados pessoais identificativos</strong> (nome, telefone, email, observações) por um identificador anónimo em toda a barbearia <strong>{barbershop?.name}</strong>.
+                      </p>
+                      <ul className="mt-2 space-y-1 text-xs text-danger-700">
+                        <li>· O histórico operacional das reservas (datas, serviços, duração) é mantido de forma anónima.</li>
+                        <li>· Esta acção não pode ser revertida.</li>
+                        <li>· O link desta reserva deixará de funcionar após a anonimização.</li>
+                      </ul>
+                      <div className="mt-3 flex gap-2">
+                        <Button
+                          variant="outline"
+                          onClick={() => setShowEraseConfirm(false)}
+                          className="flex-1"
+                          disabled={eraseDataMutation.isPending}
+                        >
+                          Cancelar
+                        </Button>
+                        <Button
+                          onClick={() => eraseDataMutation.mutate()}
+                          loading={eraseDataMutation.isPending}
+                          className="flex-1 bg-danger-600 hover:bg-danger-700 focus:ring-danger-200"
+                        >
+                          <ShieldAlert size={15} />
+                          {t('manageBooking.privacy.confirmAnonymize.confirmButton')}
+                        </Button>
+                      </div>
+                    </div>
+                  ) : null}
+
+                  <p className="mt-3 text-[11px] text-ink-muted">
+                    Para exportar ou anonimizar dados noutras barbearias onde tenhas reservas, acede ao link de gestão dessas reservas.
+                    Para outros pedidos RGPD, contacta <a href="mailto:privacidade@trimio.pt" className="underline underline-offset-2">privacidade@trimio.pt</a>.
+                  </p>
                 </div>
 
                 {feedback ? (

@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { useTranslation, Trans } from 'react-i18next'
 import { publicApi } from '@/lib/publicApi'
 import { useTenant } from '@/providers/TenantProvider'
 import { useBookingStore } from '@/store/booking'
@@ -11,6 +12,7 @@ import type { Service } from '@/lib/types'
 export function StepService() {
   const { slug } = useTenant()
   const { service: selected, setService, setStep } = useBookingStore()
+  const { t } = useTranslation(['public', 'common'])
 
   const { data: services, isLoading } = useQuery({
     queryKey: ['public', slug, 'services'],
@@ -23,7 +25,7 @@ export function StepService() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-bold">Escolhe o serviço</h2>
+        <h2 className="text-xl font-bold">{t('booking.steps.service.title')}</h2>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
@@ -68,7 +70,7 @@ export function StepService() {
 
       <div className="flex justify-end">
         <Button disabled={!selected} onClick={() => setStep(1)}>
-          Continuar
+          {t('common:btn.continue')}
           <ArrowRight size={15} />
         </Button>
       </div>

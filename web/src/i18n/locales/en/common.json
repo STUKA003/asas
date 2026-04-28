@@ -1,0 +1,60 @@
+{
+  "btn": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next",
+    "continue": "Continue",
+    "logout": "Log out",
+    "edit": "Edit",
+    "delete": "Delete",
+    "search": "Search",
+    "clear": "Clear",
+    "create": "Create",
+    "close": "Close",
+    "loading": "Loading...",
+    "start": "Start",
+    "startFree": "Start for free",
+    "enter": "Sign in",
+    "update": "Update",
+    "remove": "Remove",
+    "add": "Add",
+    "upgrade": "Upgrade",
+    "refresh": "Refresh page",
+    "export": "Export",
+    "import": "Import"
+  },
+  "status": {
+    "PENDING": "Pending",
+    "CONFIRMED": "Confirmed",
+    "COMPLETED": "Completed",
+    "CANCELLED": "Cancelled",
+    "NO_SHOW": "No show",
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "plan": {
+    "FREE": "Free",
+    "BASIC": "Basic",
+    "PRO": "Pro"
+  },
+  "error": {
+    "generic": "An error occurred. Please try again.",
+    "required": "Required field",
+    "invalidEmail": "Invalid email",
+    "invalidCredentials": "Invalid credentials",
+    "pageLoad": "Failed to load page",
+    "pageLoadDesc": "An error occurred while loading. Refresh the page to resync the app."
+  },
+  "lang": {
+    "label": "Language",
+    "pt": "Português",
+    "en": "English",
+    "es": "Español",
+    "fr": "Français",
+    "de": "Deutsch",
+    "it": "Italiano",
+    "nl": "Nederlands"
+  }
+}

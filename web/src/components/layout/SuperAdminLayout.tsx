@@ -2,31 +2,19 @@ import { useRef, useState, useEffect } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { Building2, LayoutDashboard, LogOut, Shield } from 'lucide-react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { useSuperAuthStore } from '@/store/superauth'
 import { Avatar } from '@/components/ui/Avatar'
 import { Button } from '@/components/ui/Button'
+import { LanguageSelector } from '@/components/ui/LanguageSelector'
 import { PanelShell, type PanelNavSection } from './PanelShell'
 import { useInstallBrand } from '@/lib/installBrand'
 import superadminLogo from '@/assets/branding/superadmin-logo.png'
 
-const PAGE_META: Record<string, { title: string; subtitle: string }> = {
-  '/superadmin': {
-    title: 'Dashboard',
-    subtitle: 'Leitura consolidada da saúde comercial e operacional da plataforma.',
-  },
-  '/superadmin/barbershops': {
-    title: 'Barbearias',
-    subtitle: 'Gestão centralizada das contas, planos e estado das operações.',
-  },
-}
-
-function SuperAccountMenu({
-  onLogout,
-}: {
-  onLogout: () => void
-}) {
+function SuperAccountMenu({ onLogout }: { onLogout: () => void }) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
+  const { t } = useTranslation('superadmin')
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -42,18 +30,18 @@ function SuperAccountMenu({
         onClick={() => setOpen((prev) => !prev)}
         className="inline-flex items-center gap-3 rounded-xl border border-neutral-200 bg-white px-3 py-2 shadow-soft transition hover:border-neutral-300"
       >
-        <Avatar name="Super Admin" size="sm" />
+        <Avatar name={t('layout.account.name')} size="sm" />
         <div className="hidden text-left sm:block">
-          <p className="text-sm font-medium text-ink">Super Admin</p>
-          <p className="text-xs text-ink-muted">Trimio Platform</p>
+          <p className="text-sm font-medium text-ink">{t('layout.account.name')}</p>
+          <p className="text-xs text-ink-muted">{t('layout.account.platform')}</p>
         </div>
       </button>
 
       {open ? (
         <div className="absolute right-0 top-[calc(100%+0.5rem)] w-64 overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-strong">
           <div className="border-b border-neutral-200 px-4 py-4">
-            <p className="text-sm font-semibold text-ink">Super Admin</p>
-            <p className="mt-1 text-xs text-ink-muted">Trimio Platform</p>
+            <p className="text-sm font-semibold text-ink">{t('layout.account.name')}</p>
+            <p className="mt-1 text-xs text-ink-muted">{t('layout.account.platform')}</p>
           </div>
           <div className="p-2">
             <button
@@ -61,7 +49,7 @@ function SuperAccountMenu({
               className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-danger-600 transition hover:bg-danger-50"
             >
               <LogOut size={16} />
-              Sair
+              {t('layout.account.logout')}
             </button>
           </div>
         </div>
@@ -77,6 +65,7 @@ export function SuperAdminLayout({ children }: { children: React.ReactNode }) {
   const { logout } = useSuperAuthStore()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
+  const { t } = useTranslation('superadmin')
 
   useInstallBrand('superadmin')
 
@@ -91,21 +80,23 @@ export function SuperAdminLayout({ children }: { children: React.ReactNode }) {
 
   const navSections: PanelNavSection[] = [
     {
-      label: 'Plataforma',
+      label: t('layout.nav.platform'),
       items: [
-        { href: '/superadmin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
-        { href: '/superadmin/barbershops', label: 'Barbearias', icon: Building2 },
+        { href: '/superadmin', label: t('layout.nav.dashboard'), icon: LayoutDashboard, exact: true },
+        { href: '/superadmin/barbershops', label: t('layout.nav.barbershops'), icon: Building2 },
       ],
     },
   ]
 
-  const pageMeta = PAGE_META[pathname] ?? PAGE_META['/superadmin']
+  const metaKey = pathname === '/superadmin/barbershops' ? 'barbershops' : 'dashboard'
+  const pageTitle = t(`layout.pageMeta.${metaKey}.title`)
+  const pageSubtitle = t(`layout.pageMeta.${metaKey}.subtitle`)
 
   return (
     <PanelShell
       brand={{
-        name: 'Trimio Command',
-        subtitle: 'Controlo da plataforma',
+        name: t('layout.brand.name'),
+        subtitle: t('layout.brand.subtitle'),
         icon: <Shield size={18} />,
         logoSrc: superadminLogo,
       }}
@@ -113,24 +104,36 @@ export function SuperAdminLayout({ children }: { children: React.ReactNode }) {
       navSections={navSections}
       sidebarOpen={sidebarOpen}
       onSidebarOpen={setSidebarOpen}
-      topbarTitle={pageMeta.title}
-      topbarSubtitle={pageMeta.subtitle}
+      topbarTitle={pageTitle}
+      topbarSubtitle={pageSubtitle}
       topbarAction={
         pathname !== '/superadmin/barbershops' ? (
           <Link to="/superadmin/barbershops" className="hidden md:block">
-            <Button size="sm" variant="secondary">Ver barbearias</Button>
+            <Button size="sm" variant="secondary">{t('layout.topbar.viewBarbershops')}</Button>
           </Link>
         ) : null
       }
-      topbarAside={<SuperAccountMenu onLogout={() => { logout(); navigate('/superadmin/login') }} />}
+      topbarAside={
+        <>
+          <LanguageSelector variant="dark" />
+          <SuperAccountMenu onLogout={() => { logout(); navigate('/superadmin/login') }} />
+        </>
+      }
       sidebarFooter={
         <div className="rounded-xl border border-white/10 bg-white/5 px-3 py-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">Escopo</p>
-          <p className="mt-1 text-sm font-semibold text-white">Operação central</p>
-          <p className="mt-1 text-xs text-zinc-400">Visão transversal sobre crescimento, contas e monetização.</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">
+            {t('layout.sidebar.scopeLabel')}
+          </p>
+          <p className="mt-1 text-sm font-semibold text-white">{t('layout.sidebar.scopeTitle')}</p>
+          <p className="mt-1 text-xs text-zinc-400">{t('layout.sidebar.scopeDesc')}</p>
         </div>
       }
       theme="dark"
+      pullRefreshLabels={{
+        refreshing: t('layout.pull.refreshing'),
+        release: t('layout.pull.releaseToRefresh'),
+        pull: t('layout.pull.pullToRefresh'),
+      }}
       onPullRefresh={handleRefresh}
       isPullRefreshing={refreshing}
     >

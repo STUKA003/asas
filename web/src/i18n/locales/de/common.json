@@ -1,0 +1,60 @@
+{
+  "btn": {
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "confirm": "Bestätigen",
+    "back": "Zurück",
+    "next": "Weiter",
+    "continue": "Fortfahren",
+    "logout": "Abmelden",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "search": "Suchen",
+    "clear": "Löschen",
+    "create": "Erstellen",
+    "close": "Schließen",
+    "loading": "Wird geladen...",
+    "start": "Starten",
+    "startFree": "Kostenlos starten",
+    "enter": "Anmelden",
+    "update": "Aktualisieren",
+    "remove": "Entfernen",
+    "add": "Hinzufügen",
+    "upgrade": "Upgrade",
+    "refresh": "Seite aktualisieren",
+    "export": "Exportieren",
+    "import": "Importieren"
+  },
+  "status": {
+    "PENDING": "Ausstehend",
+    "CONFIRMED": "Bestätigt",
+    "COMPLETED": "Abgeschlossen",
+    "CANCELLED": "Storniert",
+    "NO_SHOW": "Nicht erschienen",
+    "active": "Aktiv",
+    "inactive": "Inaktiv"
+  },
+  "plan": {
+    "FREE": "Kostenlos",
+    "BASIC": "Basic",
+    "PRO": "Pro"
+  },
+  "error": {
+    "generic": "Ein Fehler ist aufgetreten. Bitte versuche es erneut.",
+    "required": "Pflichtfeld",
+    "invalidEmail": "Ungültige E-Mail",
+    "invalidCredentials": "Ungültige Anmeldedaten",
+    "pageLoad": "Seite konnte nicht geladen werden",
+    "pageLoadDesc": "Beim Laden ist ein Fehler aufgetreten. Aktualisiere die Seite, um die App zu synchronisieren."
+  },
+  "lang": {
+    "label": "Sprache",
+    "pt": "Português",
+    "en": "English",
+    "es": "Español",
+    "fr": "Français",
+    "de": "Deutsch",
+    "it": "Italiano",
+    "nl": "Nederlands"
+  }
+}

@@ -1,0 +1,156 @@
+{
+  "layout": {
+    "nav": {
+      "operation": "Operación",
+      "catalog": "Catálogo",
+      "management": "Gestión",
+      "dashboard": "Dashboard",
+      "bookings": "Reservas",
+      "customers": "Clientes",
+      "barbers": "Barberos",
+      "schedule": "Horarios",
+      "services": "Servicios",
+      "extras": "Extras",
+      "products": "Productos",
+      "plans": "Planes",
+      "reports": "Informes",
+      "brandSite": "Marca y Sitio",
+      "billing": "Facturación"
+    },
+    "pageMeta": {
+      "dashboard": { "title": "Dashboard", "subtitle": "Visión general del rendimiento, agenda y señales operacionales." },
+      "bookings": { "title": "Reservas", "subtitle": "Controla reservas, confirmaciones y bloqueos de agenda." },
+      "customers": { "title": "Clientes", "subtitle": "Consulta historial, planes activos y datos de contacto." },
+      "barbers": { "title": "Barberos", "subtitle": "Gestiona equipo, accesos y disponibilidad." },
+      "services": { "title": "Servicios", "subtitle": "Mantén el catálogo principal de la barbería organizado." },
+      "extras": { "title": "Extras", "subtitle": "Upsells y complementos que aumentan el ticket medio." },
+      "products": { "title": "Productos", "subtitle": "Inventario y venta de productos en el punto de servicio." },
+      "plans": { "title": "Planes", "subtitle": "Configura suscripciones y beneficios recurrentes." },
+      "schedule": { "title": "Horarios", "subtitle": "Define la estructura base de funcionamiento de la agenda." },
+      "reports": { "title": "Informes", "subtitle": "Lectura comercial y operacional para apoyar decisiones." },
+      "customization": { "title": "Marca y Sitio", "subtitle": "Personaliza la presencia digital, colores y contenido público." },
+      "billing": { "title": "Facturación", "subtitle": "Sigue tu plan actual, actualizaciones y ciclo de facturación." }
+    },
+    "notifications": {
+      "title": "Notificaciones",
+      "newBadge": "{{count}} nuevas",
+      "markAllRead": "Marcar todo como leído",
+      "noRecent": "Sin notificaciones recientes."
+    },
+    "account": {
+      "planBadge": "Plan {{plan}}",
+      "billingLink": "Suscripción y facturación",
+      "logout": "Cerrar sesión"
+    },
+    "sidebar": {
+      "currentPlan": "Plan actual",
+      "manageSubscription": "Gestionar suscripción"
+    },
+    "pull": {
+      "refreshing": "Actualizando...",
+      "releaseToRefresh": "Suelta para actualizar",
+      "pullToRefresh": "Tira para actualizar"
+    },
+    "suspended": {
+      "title": "Cuenta suspendida",
+      "defaultMessage": "Tu cuenta ha sido suspendida. Contacta con el soporte para más información.",
+      "reason": "Motivo: {{reason}}"
+    },
+    "expiredPlan": {
+      "message": "Tu plan {{plan}} ha caducado. Ahora estás en el plan Gratis con funcionalidades limitadas.",
+      "renew": "Renovar"
+    },
+    "topbar": {
+      "renewPlan": "Renovar plan",
+      "viewBilling": "Ver facturación"
+    },
+    "brand": {
+      "name": "Trimio Studio",
+      "defaultSubtitle": "Panel de barbería"
+    }
+  },
+  "push": {
+    "unavailable": "Push no disponible en este dispositivo",
+    "notConfigured": "Push no configurado",
+    "blocked": "Push bloqueado",
+    "active": "Push activo",
+    "enable": "Activar push",
+    "blockedTooltip": "Permiso de notificaciones bloqueado en el navegador",
+    "enableTooltip": "Activar notificaciones push"
+  },
+  "login": {
+    "brand": { "name": "Trimio Studio", "subtitle": "Panel de barbería" },
+    "panel": {
+      "eyebrow": "Gestión completa",
+      "title": "Control total de tu barbería.",
+      "desc": "Agenda, clientes, equipo, facturación e informes — todo en un único panel diseñado para operar profesionalmente.",
+      "feature1Label": "Agenda en tiempo real",
+      "feature1Desc": "Reservas, confirmaciones y bloqueos en una sola pantalla.",
+      "feature2Label": "Equipo y clientes",
+      "feature2Desc": "Gestión de barberos, planes e historial completo.",
+      "feature3Label": "Informes y facturación",
+      "feature3Desc": "Lecturas operacionales para decisiones más rápidas.",
+      "footer": "© {{year}} Trimio · Plataforma de gestión para barberías"
+    },
+    "form": {
+      "title": "Entra en tu panel",
+      "subtitle": "Acceso a la gestión de tu barbería.",
+      "slugLabel": "Slug de la barbería",
+      "slugPlaceholder": "mi-barberia",
+      "emailLabel": "Email",
+      "emailPlaceholder": "admin@email.com",
+      "passwordLabel": "Contraseña",
+      "passwordPlaceholder": "••••••••",
+      "forgotPassword": "¿Olvidaste la contraseña?",
+      "submitButton": "Entrar al panel",
+      "noAccount": "¿Aún no tienes cuenta?",
+      "createFree": "Crear barbería gratis",
+      "noVerification": "¿No recibiste el email de confirmación?",
+      "resendEmail": "Reenviar email",
+      "openInbox": "Abrir bandeja de entrada",
+      "errors": {
+        "invalidCredentials": "Slug, email o contraseña inválidos.",
+        "emailNotVerified": "Confirma tu email antes de entrar."
+      }
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Vista consolidada del día, rendimiento mensual y señales rápidas.",
+    "viewBookings": "Ver reservas",
+    "occupancy": { "strong": "Día fuerte", "low": "Baja ocupación", "balanced": "Flujo equilibrado" }
+  },
+  "bookings": {
+    "title": "Reservas",
+    "newButton": "Nuevo",
+    "blockButton": "Bloqueo",
+    "viewCalendar": "Agenda",
+    "viewList": "Lista",
+    "today": "Hoy",
+    "status": { "all": "Todos los estados", "pending": "Pendiente", "confirmed": "Confirmado", "completed": "Completado", "cancelled": "Cancelado", "noShow": "No presentado" },
+    "searchPlaceholder": "Buscar cliente, barbero o servicio…",
+    "allBarbers": "Todos los barberos",
+    "detail": { "title": "Detalles de la reserva", "addToBooking": "Añadir a la reserva", "selectExtra": "Seleccionar extra", "selectProduct": "Seleccionar producto", "addButton": "Añadir extra/producto", "changeStatus": "Cambiar estado" }
+  },
+  "customers": {
+    "title": "Clientes",
+    "exportCsv": "Exportar CSV",
+    "importCsv": "Importar CSV",
+    "totalCustomers": "Total de clientes",
+    "withActivePlan": "Con plan activo",
+    "detail": { "title": "Detalle del cliente", "deleteButton": "Eliminar cliente" }
+  },
+  "barbers": {
+    "title": "Barberos",
+    "newButton": "Nuevo barbero",
+    "modal": { "create": "Nuevo barbero", "edit": "Editar barbero" }
+  },
+  "services": { "title": "Servicios" },
+  "extras": { "title": "Extras" },
+  "products": { "title": "Productos" },
+  "plans": { "title": "Planes" },
+  "schedule": { "title": "Horarios", "days": { "0": "Domingo", "1": "Lunes", "2": "Martes", "3": "Miércoles", "4": "Jueves", "5": "Viernes", "6": "Sábado" } },
+  "reports": { "title": "Informes" },
+  "customization": { "title": "Marca y Sitio" },
+  "billing": { "title": "Facturación" }
+}

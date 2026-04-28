@@ -3,34 +3,37 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useNavigate, useParams } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { ArrowRight, Calendar, Clock3, Scissors, UserRound } from 'lucide-react'
 import { barberAuthApi } from '@/lib/api'
 import { useBarberAuthStore } from '@/store/barberAuth'
 import { useInstallBrand } from '@/lib/installBrand'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
+import { LanguageSelector } from '@/components/ui/LanguageSelector'
 import { applyPlatformAccent } from '@/lib/theme'
 import barberLogo from '@/assets/branding/barber-logo.png'
 
 const schema = z.object({
-  slug: z.string().min(1, 'Slug da barbearia obrigatório'),
-  email: z.string().email('E-mail inválido'),
-  password: z.string().min(1, 'Password obrigatória'),
+  slug: z.string().min(1),
+  email: z.string().email(),
+  password: z.string().min(1),
 })
 
 type FormData = z.infer<typeof schema>
-
-const FEATURES = [
-  { icon: Calendar, label: 'Agenda do dia', desc: 'Marcações, confirmações e remarcações num ecrã direto.' },
-  { icon: UserRound, label: 'Cliente em contexto', desc: 'Serviços, plano, extras e contacto no momento certo.' },
-  { icon: Clock3, label: 'Operação sem ruído', desc: 'Fluxo leve para quem está a atender, não a configurar.' },
-]
 
 export default function BarberLogin() {
   const { slug: slugParam } = useParams<{ slug: string }>()
   const navigate = useNavigate()
   const { setAuth } = useBarberAuthStore()
   const [submitError, setSubmitError] = useState('')
+  const { t } = useTranslation('barber')
+
+  const FEATURES = [
+    { icon: Calendar, label: t('login.panel.feature1Label'), desc: t('login.panel.feature1Desc') },
+    { icon: UserRound, label: t('login.panel.feature2Label'), desc: t('login.panel.feature2Desc') },
+    { icon: Clock3, label: t('login.panel.feature3Label'), desc: t('login.panel.feature3Desc') },
+  ]
 
   const {
     register,
@@ -62,7 +65,7 @@ export default function BarberLogin() {
           ? (error as { response?: { data?: { error?: string } } }).response!.data!.error!
           : 'Credenciais inválidas'
 
-      setSubmitError(message === 'Invalid credentials' ? 'Slug, e-mail ou password inválidos.' : message)
+      setSubmitError(message === 'Invalid credentials' ? t('login.form.errors.invalidCredentials') : message)
     }
   }
 
@@ -84,20 +87,20 @@ export default function BarberLogin() {
         <div className="relative flex items-center gap-3">
           <img src={barberLogo} alt="Trimio Flow" className="h-10 w-10 rounded-xl object-contain" />
           <div>
-            <p className="text-[13px] font-semibold tracking-tight text-white">Trimio Flow</p>
-            <p className="text-[11px] text-white/35">Portal do barbeiro</p>
+            <p className="text-[13px] font-semibold tracking-tight text-white">{t('login.brand.name')}</p>
+            <p className="text-[11px] text-white/35">{t('login.brand.subtitle')}</p>
           </div>
         </div>
 
         <div className="relative">
           <p className="mb-5 text-[10.5px] font-semibold uppercase tracking-[0.2em] text-white/30">
-            Operação individual
+            {t('login.panel.eyebrow')}
           </p>
           <h1 className="max-w-xs text-[2.6rem] font-semibold leading-[1.08] tracking-[-0.04em] text-white">
-            A tua agenda sem sair do ritmo do dia.
+            {t('login.panel.title')}
           </h1>
           <p className="mt-5 max-w-sm text-[14px] leading-7 text-white/50">
-            Um acesso desenhado para o barbeiro acompanhar horários, clientes e estados dos atendimentos com menos atrito.
+            {t('login.panel.desc')}
           </p>
 
           <div className="mt-10 space-y-3">
@@ -132,32 +135,32 @@ export default function BarberLogin() {
         <div className="w-full max-w-sm">
           <div className="mb-8">
             <Scissors size={28} className="mb-4 text-orange-500" />
-            <h2 className="text-[1.65rem] font-semibold tracking-[-0.03em] text-ink">Entra no teu portal</h2>
+            <h2 className="text-[1.65rem] font-semibold tracking-[-0.03em] text-ink">{t('login.form.title')}</h2>
             <p className="mt-1.5 text-[13.5px] leading-6 text-ink-muted">
-              Acesso à agenda e operação diária do barbeiro.
+              {t('login.form.subtitle')}
             </p>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {!slugParam ? (
               <Input
-                label="Slug da barbearia"
-                placeholder="minha-barbearia"
+                label={t('login.form.slugLabel')}
+                placeholder={t('login.form.slugPlaceholder')}
                 autoComplete="organization"
                 error={errors.slug?.message}
                 {...register('slug')}
               />
             ) : null}
             <Input
-              label="E-mail"
+              label={t('login.form.emailLabel')}
               type="email"
-              placeholder="barbeiro@email.com"
+              placeholder={t('login.form.emailPlaceholder')}
               autoComplete="email"
               error={errors.email?.message}
               {...register('email')}
             />
             <Input
-              label="Password"
+              label={t('login.form.passwordLabel')}
               type="password"
               placeholder="••••••••"
               autoComplete="current-password"
@@ -177,9 +180,12 @@ export default function BarberLogin() {
               size="lg"
               className="mt-1 w-full border-orange-500/90 bg-gradient-to-b from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 hover:border-orange-700 focus-visible:ring-orange-100"
             >
-              Entrar no portal
+              {t('login.form.submitButton')}
               <ArrowRight size={15} />
             </Button>
+            <div className="flex justify-center">
+              <LanguageSelector compact />
+            </div>
           </form>
         </div>
       </div>

@@ -1,0 +1,45 @@
+{
+  "layout": {
+    "nav": { "portal": "Portal", "dashboard": "Dashboard", "schedule": "Zeitplan" },
+    "pageMeta": {
+      "dashboard": { "title": "Dashboard", "subtitle": "Schneller Überblick über Ihren Tag, Zeitplan und Einnahmen." },
+      "schedule": { "title": "Zeitplan", "subtitle": "Verfolgen Sie Ihre Termine und laufenden Buchungen." }
+    },
+    "notifications": { "title": "Benachrichtigungen", "newBadge": "{{count}} neue", "markAllRead": "Alle als gelesen markieren", "noRecent": "Keine aktuellen Benachrichtigungen." },
+    "account": { "logout": "Abmelden" },
+    "sidebar": { "activeSession": "Aktive Sitzung", "portalTitle": "Barbier-Portal", "portalDesc": "Schneller Zugang zu Zeitplan, Status und Servicedetails." },
+    "topbar": { "planLabel": "Plan", "openSchedule": "Zeitplan öffnen" },
+    "pull": { "refreshing": "Aktualisierung...", "releaseToRefresh": "Loslassen zum Aktualisieren", "pullToRefresh": "Ziehen zum Aktualisieren" },
+    "brand": { "name": "Trimio Flow", "defaultSubtitle": "Barbier-Portal" }
+  },
+  "push": { "unavailable": "Push nicht verfügbar", "notConfigured": "Push nicht konfiguriert", "blocked": "Push blockiert", "active": "Push aktiv", "enable": "Push aktivieren", "blockedTooltip": "Erlaubnis im Browser blockiert", "enableTooltip": "Push-Benachrichtigungen aktivieren" },
+  "login": {
+    "brand": { "name": "Trimio Flow", "subtitle": "Barbier-Portal" },
+    "panel": {
+      "eyebrow": "Individuelle Operation",
+      "title": "Ihr Zeitplan ohne den Tagesrhythmus zu unterbrechen.",
+      "desc": "Ein Zugang für Barbiere, um Termine, Kunden und Status mit weniger Reibung zu verfolgen.",
+      "feature1Label": "Tagesplan",
+      "feature1Desc": "Buchungen, Bestätigungen und Umbuchungen auf einem direkten Bildschirm.",
+      "feature2Label": "Kunde im Kontext",
+      "feature2Desc": "Leistungen, Plan, Extras und Kontakt zum richtigen Zeitpunkt.",
+      "feature3Label": "Reibungsloser Betrieb",
+      "feature3Desc": "Leichter Workflow für denjenigen, der bedient, nicht konfiguriert.",
+      "footer": "© {{year}} Trimio · Operatives Barbier-Portal"
+    },
+    "form": {
+      "title": "In Ihr Portal einloggen",
+      "subtitle": "Zugang zum Tagesplan und täglichen Betrieb des Barbiers.",
+      "slugLabel": "Barbershop-Slug",
+      "slugPlaceholder": "mein-barbershop",
+      "emailLabel": "E-Mail",
+      "emailPlaceholder": "barbier@email.com",
+      "passwordLabel": "Passwort",
+      "passwordPlaceholder": "••••••••",
+      "submitButton": "Im Portal einloggen",
+      "errors": { "invalidCredentials": "Slug, E-Mail oder Passwort ungültig." }
+    }
+  },
+  "dashboard": { "title": "Dashboard", "subtitle": "Schneller Überblick über Ihren Tag, Zeitplan und Einnahmen." },
+  "schedule": { "title": "Zeitplan", "subtitle": "Verfolgen Sie Ihre Termine und laufenden Buchungen." }
+}

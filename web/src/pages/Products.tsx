@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { publicApi } from '@/lib/publicApi'
 import { useTenant } from '@/providers/TenantProvider'
 import { formatCurrency, cn } from '@/lib/utils'
@@ -14,6 +15,7 @@ import type { Product } from '@/lib/types'
 export default function Products() {
   const { slug, barbershop } = useTenant()
   const [expandedId, setExpandedId] = useState<string | null>(null)
+  const { t } = useTranslation('public')
 
   const { data: products, isLoading } = useQuery({
     queryKey: ['public', slug, 'products'],
@@ -31,12 +33,10 @@ export default function Products() {
         {unavailable ? (
           <section className="mx-auto max-w-xl px-4 py-24 text-center sm:px-6">
             <div className="ui-card p-10">
-              <h1 className="text-[1.6rem] font-semibold tracking-tight text-ink">Produtos indisponíveis</h1>
-              <p className="mt-3 text-[14px] text-ink-muted">
-                Esta barbearia preferiu não mostrar produtos no site público neste momento.
-              </p>
+              <h1 className="text-[1.6rem] font-semibold tracking-tight text-ink">{t('products.unavailableTitle')}</h1>
+              <p className="mt-3 text-[14px] text-ink-muted">{t('products.unavailableMsg')}</p>
               <Link to={`/${slug}`} className="mt-6 inline-block">
-                <Button>Voltar ao início</Button>
+                <Button>{t('products.backHome')}</Button>
               </Link>
             </div>
           </section>
@@ -45,12 +45,12 @@ export default function Products() {
             {/* ── Page header ──────────────────────────────── */}
             <div className="border-b border-neutral-100 bg-white px-4 py-12 sm:px-6 sm:py-16">
               <div className="mx-auto max-w-6xl">
-                <p className="eyebrow mb-3 tenant-ink">Loja</p>
+                <p className="eyebrow mb-3 tenant-ink">{t('products.eyebrow')}</p>
                 <h1 className="text-[2rem] font-semibold tracking-[-0.03em] text-ink sm:text-[2.4rem]">
-                  Produtos
+                  {t('products.title')}
                 </h1>
                 <p className="mt-2 text-[14px] leading-6 text-ink-muted">
-                  Leve o cuidado profissional para casa — produtos utilizados pelos nossos barbeiros.
+                  {t('products.subtitle')}
                 </p>
               </div>
             </div>
@@ -66,20 +66,14 @@ export default function Products() {
                       key={p.id}
                       className="tenant-card group overflow-hidden rounded-2xl transition-all duration-200 hover:-translate-y-0.5"
                     >
-                      {/* Image */}
                       <div className="flex h-48 items-center justify-center bg-neutral-50">
                         {p.imageUrl ? (
-                          <img
-                            src={p.imageUrl}
-                            alt={p.name}
-                            className="h-full w-full object-cover"
-                          />
+                          <img src={p.imageUrl} alt={p.name} className="h-full w-full object-cover" />
                         ) : (
                           <Package size={36} className="text-neutral-300" />
                         )}
                       </div>
 
-                      {/* Info */}
                       <div className="p-4">
                         <div className="flex items-start justify-between gap-1">
                           <h3 className="text-[14px] font-semibold text-ink">{p.name}</h3>
@@ -108,15 +102,17 @@ export default function Products() {
                             {formatCurrency(p.price)}
                           </span>
                           <Button size="sm" variant="secondary" className="gap-1.5 text-[12px]">
-                            Encomendar
+                            {t('products.orderButton')}
                           </Button>
                         </div>
 
                         {p.stock <= 5 && p.stock > 0 && (
-                          <p className="mt-2 text-[11.5px] text-warning-600">Restam {p.stock} unidades</p>
+                          <p className="mt-2 text-[11.5px] text-warning-600">
+                            {t('products.lowStock', { count: p.stock })}
+                          </p>
                         )}
                         {p.stock === 0 && (
-                          <p className="mt-2 text-[11.5px] text-danger-600">Sem stock</p>
+                          <p className="mt-2 text-[11.5px] text-danger-600">{t('products.outOfStock')}</p>
                         )}
                       </div>
                     </div>

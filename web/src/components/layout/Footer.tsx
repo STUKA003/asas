@@ -1,10 +1,12 @@
 import { Instagram, MessageCircle } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { useTenant } from '@/providers/TenantProvider'
 import clientsLogo from '@/assets/branding/clients-logo.png'
 
 export function Footer() {
   const { slug, barbershop } = useTenant()
+  const { t } = useTranslation('public')
 
   const instagramHref = barbershop?.instagram
     ? `https://instagram.com/${barbershop.instagram.replace(/^@/, '')}`
@@ -30,26 +32,26 @@ export function Footer() {
                 {barbershop?.name ?? 'Trimio Clientes'}
               </p>
               <p className="text-[11.5px] text-ink-muted">
-                Reserva simples, rápida e organizada.
+                {t('footer.tagline')}
               </p>
             </div>
           </Link>
           <p className="mt-5 max-w-sm text-[12.5px] leading-6 text-ink-muted">
-            © {new Date().getFullYear()} {barbershop?.name ?? 'Trimio'}. Todos os direitos reservados.
+            © {new Date().getFullYear()} {barbershop?.name ?? 'Trimio'}. {t('footer.allRightsReserved')}
           </p>
         </div>
 
         {/* Navigation */}
         <div>
           <p className="mb-4 text-[10.5px] font-semibold uppercase tracking-[0.16em] text-ink-muted/70">
-            Navegação
+            {t('footer.nav')}
           </p>
           <div className="flex flex-col gap-2.5 text-[13px]">
-            <Link to={`/${slug}`}           className="text-ink-soft transition-colors hover:text-ink">Início</Link>
-            <Link to={`/${slug}/services`}  className="text-ink-soft transition-colors hover:text-ink">Serviços</Link>
-            <Link to={`/${slug}/booking`}   className="text-ink-soft transition-colors hover:text-ink">Agendar</Link>
-            <Link to={`/${slug}/privacy`}   className="text-ink-soft transition-colors hover:text-ink">Privacidade</Link>
-            <Link to="/admin"               className="text-ink-soft transition-colors hover:text-ink">Área admin</Link>
+            <Link to={`/${slug}`}           className="text-ink-soft transition-colors hover:text-ink">{t('header.home')}</Link>
+            <Link to={`/${slug}/services`}  className="text-ink-soft transition-colors hover:text-ink">{t('header.services')}</Link>
+            <Link to={`/${slug}/booking`}   className="text-ink-soft transition-colors hover:text-ink">{t('footer.book')}</Link>
+            <Link to={`/${slug}/privacy`}   className="text-ink-soft transition-colors hover:text-ink">{t('footer.privacy')}</Link>
+            <Link to="/admin"               className="text-ink-soft transition-colors hover:text-ink">{t('footer.adminArea')}</Link>
           </div>
         </div>
 
@@ -57,7 +59,7 @@ export function Footer() {
         {(whatsappHref || instagramHref) && (
           <div>
             <p className="mb-4 text-[10.5px] font-semibold uppercase tracking-[0.16em] text-ink-muted/70">
-              Contacto
+              {t('footer.contact')}
             </p>
             <div className="flex flex-col gap-2.5 text-[13px]">
               {whatsappHref && (

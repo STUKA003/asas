@@ -1,0 +1,89 @@
+{
+  "register": {
+    "brand": { "name": "Trimio Studio", "subtitle": "Per saloni professionali" },
+    "hero": {
+      "eyebrow": "Inizia oggi",
+      "title": "La tua attività online in pochi minuti.",
+      "desc": "Pagina prenotazioni, pannello gestione, clienti e report — tutto in un unico posto.",
+      "feature1": "Pagina pubblica prenotazioni",
+      "feature2": "Pannello di gestione completo",
+      "feature3": "Gestione barbieri e orari",
+      "feature4": "Clienti e storico",
+      "feature5": "Inizia gratis, senza carta"
+    },
+    "freePlan": { "title": "Piano Gratuito incluso", "desc": "Inizia con 1 barbiere e 30 prenotazioni al mese senza pagare nulla. Aggiorna da 19€/mese quando vuoi crescere." },
+    "form": {
+      "shopNameLabel": "Nome del salone",
+      "shopNamePlaceholder": "Salone di Mario",
+      "slugLabel": "Indirizzo del tuo sito",
+      "slugPrefix": "trimio.app/",
+      "ownerNameLabel": "Il tuo nome",
+      "ownerNamePlaceholder": "Mario Rossi",
+      "emailLabel": "Email",
+      "emailPlaceholder": "mario@email.it",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Minimo 6 caratteri",
+      "submitButton": "Crea salone gratis",
+      "hasAccount": "Hai già un account?",
+      "login": "Accedi",
+      "errors": {
+        "shopNameRequired": "Nome del salone obbligatorio",
+        "shopNameMin": "Minimo 2 caratteri",
+        "slugInvalid": "Solo lettere minuscole, numeri e trattini",
+        "ownerNameRequired": "Il tuo nome è obbligatorio",
+        "emailInvalid": "Email non valida",
+        "passwordMin": "Minimo 6 caratteri",
+        "slugTaken": "Questo indirizzo è già in uso. Scegline un altro."
+      }
+    },
+    "success": {
+      "title": "Conferma la tua email",
+      "message": "Abbiamo inviato un link di conferma a {{email}}. Confermalo prima di accedere al pannello.",
+      "stepsTitle": "Prossimi passi",
+      "step1": "1. Apri la tua posta in arrivo.",
+      "step2": "2. Trova l'email di Trimio.",
+      "step3": "3. Clicca sul link di conferma.",
+      "step4": "4. Accedi con le tue credenziali.",
+      "openInbox": "Apri posta in arrivo",
+      "resendEmail": "Rinvia email di conferma",
+      "goToLogin": "Vai al login",
+      "createAnother": "Crea un altro account"
+    }
+  },
+  "verifyEmail": {
+    "eyebrow": "Conferma",
+    "brand": "Trimio Studio",
+    "subtitle": "Attivazione account admin.",
+    "title": "Conferma email",
+    "missingToken": "Il link di conferma è incompleto. Richiedi una nuova email di conferma.",
+    "loading": "Stiamo confermando la tua email…",
+    "success": "Email confermata. Ora puoi accedere al pannello.",
+    "error": "Impossibile confermare questa email.",
+    "retry": "Riprova",
+    "resendEmail": "Rinvia email",
+    "goToLogin": "Vai al login"
+  },
+  "home": {
+    "nav": { "pricing": "Prezzi", "login": "Accedi", "startFree": "Inizia gratis" },
+    "hero": {
+      "pill": "Sistema di prenotazione per saloni",
+      "line1": "I clienti prenotano.",
+      "line2": "Tu tagli i capelli.",
+      "desc": "Trimio dà al tuo salone una pagina prenotazioni online. Senza WhatsApp, senza telefonate, senza carta.",
+      "cta": "Inizia gratis",
+      "ctaNote": "Gratis per sempre · Senza carta di credito",
+      "stat1Value": "< 5 min", "stat1Label": "per configurare tutto",
+      "stat2Value": "24 / 7", "stat2Label": "disponibile per i clienti",
+      "stat3Value": "0€", "stat3Label": "per iniziare"
+    },
+    "finalCta": {
+      "title": "Il tuo salone online",
+      "titleAccent": "in meno di 5 minuti.",
+      "desc": "Unisciti ai saloni che hanno smesso di gestire prenotazioni via WhatsApp. Inizia gratis, senza carta.",
+      "createAccount": "Crea account gratis",
+      "alreadyHaveAccount": "Ho già un account",
+      "note": "Piano gratuito per sempre · 30 prenotazioni/mese incluse · Senza carta"
+    },
+    "footer": { "createAccount": "Crea account" }
+  }
+}

@@ -1,0 +1,270 @@
+{
+  "header": {
+    "home": "Accueil",
+    "services": "Services",
+    "plans": "Forfaits",
+    "products": "Produits",
+    "bookNow": "Réserver maintenant"
+  },
+  "footer": {
+    "tagline": "Réservations simples, rapides et organisées.",
+    "nav": "Navigation",
+    "contact": "Contact",
+    "book": "Réserver",
+    "privacy": "Confidentialité",
+    "adminArea": "Espace admin",
+    "allRightsReserved": "Tous droits réservés."
+  },
+  "booking": {
+    "title": "Réservation en ligne",
+    "stepLabels": {
+      "service": "Service",
+      "barber": "Barbier",
+      "dateTime": "Date/Heure",
+      "customer": "Coordonnées",
+      "confirmation": "Confirmation"
+    },
+    "progress": "Progression",
+    "stepOf": "Étape {{current}} sur {{total}}",
+    "summary": {
+      "title": "Récapitulatif de la réservation",
+      "professional": "Professionnel",
+      "date": "Date",
+      "time": "Heure",
+      "mainService": "Service principal",
+      "plan": "Forfait",
+      "added": "Ajoutés",
+      "total": "Total estimé"
+    },
+    "steps": {
+      "service": { "title": "Choisissez un service" },
+      "barber": { "title": "Choisissez votre barbier", "professional": "Professionnel" },
+      "dateTime": {
+        "title": "Date et horaire",
+        "selectDate": "Sélectionnez une date",
+        "availableSlots": "Créneaux disponibles",
+        "noSlots": "Aucun créneau disponible ce jour.",
+        "morning": "Matin",
+        "afternoon": "Après-midi",
+        "slotCount_one": "{{count}} créneau",
+        "slotCount_other": "{{count}} créneaux",
+        "noSlotsInPeriod": "Aucun créneau sur cette période."
+      },
+      "extras": {
+        "title": "Extras",
+        "optional": " optionnel",
+        "includedInService": "inclus dans le service",
+        "noExtras": "Aucun extra disponible."
+      },
+      "extrasProducts": {
+        "title": "Extras et Produits",
+        "subtitle": "Ajoutez à votre rendez-vous (optionnel)",
+        "noItems": "Aucun extra ou produit disponible.",
+        "extras": "Extras",
+        "products": "Produits"
+      },
+      "products": {
+        "title": "À emporter",
+        "subtitle": "Produits pour entretenir votre style (optionnel)",
+        "reviewOrder": "Revoir la commande"
+      },
+      "customer": {
+        "title": "Vos coordonnées",
+        "name": "Votre nom",
+        "namePlaceholder": "Jean Dupont",
+        "attendeeName": "Nom de la personne à servir",
+        "attendeeNamePlaceholder": "Michel Dupont",
+        "phone": "Téléphone / WhatsApp",
+        "phonePlaceholder": "+33 6 00 00 00 00",
+        "email": "Email",
+        "emailPlaceholder": "jean@exemple.fr",
+        "notes": "Observations (optionnel)",
+        "planInfo": "Forfait : {{name}}",
+        "responsible": "Responsable : {{name}}",
+        "allowedDays": "Jours autorisés : {{days}}",
+        "includedServices": "Services inclus : {{services}}",
+        "planDiscount": "🎁 {{discount}}% de réduction sur les extras, produits et services hors forfait.",
+        "serviceNotInPlan": "⚠ « {{service}} » n'est pas dans le forfait",
+        "errors": {
+          "emailRequired": "Email obligatoire",
+          "emailInvalid": "Email invalide",
+          "nameRequired": "Nom obligatoire",
+          "phoneRequired": "Téléphone obligatoire",
+          "attendeeRequired": "Nom de la personne à servir obligatoire"
+        },
+        "planActiveBlock": "Ce client a déjà une réservation active dans le forfait et ne peut réserver à nouveau qu'après avoir terminé le rendez-vous en cours.",
+        "planDayBlock": "Ce forfait n'autorise des réservations que les : {{days}}."
+      },
+      "confirmation": {
+        "title": "Confirmer la réservation",
+        "incomplete": "Complétez la réservation avant de confirmer.",
+        "dataTitle": "Données qui seront enregistrées",
+        "dataName": "· Nom : {{name}}",
+        "dataPhone": "· Téléphone : {{phone}}",
+        "dataEmail": "· Email : {{email}}",
+        "dataAttendee": "· Personne à servir : {{attendee}}",
+        "dataBookingInfo": "· Date, heure, service et barbier sélectionnés",
+        "dataUsage": "Utilisés pour gérer la réservation, envoyer le lien de gestion et le contact opérationnel. Vous pouvez exporter ou supprimer vos données à tout moment via le lien de réservation. Conservation : 3 ans.",
+        "privacyLink": "Politique de confidentialité complète.",
+        "consentLabel": "J'autorise le traitement de mes données personnelles pour la gestion de cette réservation, dans les conditions décrites ci-dessus.",
+        "submitButton": "Confirmer la réservation",
+        "success": {
+          "title": "Réservation confirmée",
+          "message": "Réservation pour {{name}} créée avec succès.",
+          "addToCalendar": "Enregistrer dans le Calendrier",
+          "addToGoogleCalendar": "Ajouter à Google Agenda",
+          "downloadIcs": "Télécharger le fichier .ics",
+          "manageBooking": "Gérer la réservation",
+          "backHome": "Retour à l'accueil"
+        }
+      }
+    }
+  },
+  "home": {
+    "features": {
+      "title": "Une expérience de barbier plus solide, dès la première réservation.",
+      "section": "Pourquoi nous choisir",
+      "easyBooking": "Réservation facile",
+      "easyBookingDesc": "Réservez en quelques secondes, sans appels ni messages.",
+      "realTimeSlots": "Disponibilités en temps réel",
+      "realTimeSlotsDesc": "Consultez les créneaux disponibles à la minute.",
+      "bestPros": "Les meilleurs professionnels",
+      "bestProsDesc": "Barbiers expérimentés et dévoués.",
+      "guaranteedConfirmation": "Confirmation immédiate",
+      "guaranteedConfirmationDesc": "Recevez une confirmation instantanée de votre réservation."
+    },
+    "howItWorks": {
+      "title": "Réservation rapide, sensation premium.",
+      "subtitle": "En moins de 2 minutes, tout est réglé.",
+      "section": "Processus simple",
+      "step1Title": "Choisissez un service",
+      "step1Desc": "Sélectionnez parmi coupes, barbe, soins et plus.",
+      "step2Title": "Choisissez votre barbier",
+      "step2Desc": "Voyez qui est disponible et choisissez votre préféré.",
+      "step3Title": "Choisissez date et heure",
+      "step3Desc": "Consultez les créneaux libres et réservez le vôtre.",
+      "step4Title": "Confirmation",
+      "step4Desc": "Recevez la confirmation et présentez-vous à l'heure."
+    },
+    "stats": {
+      "avgBooking": "Réservation moyenne",
+      "avgBookingVal": "< 2 min",
+      "confirmation": "Confirmation",
+      "confirmationVal": "Instantanée",
+      "availability": "Disponibilité",
+      "availabilityVal": "Temps réel"
+    },
+    "gallery": {
+      "section": "Galerie",
+      "title": "L'ambiance et le style de {{name}}",
+      "subtitle": "Chaque barbier peut présenter son espace, ses coupes et son identité visuelle."
+    },
+    "cta": {
+      "title": "Prêt pour un nouveau look ?",
+      "subtitle": "Réservez maintenant et assurez votre créneau chez {{name}} sans attente ni appel."
+    },
+    "social": { "whatsapp": "WhatsApp", "instagram": "Instagram" },
+    "promo": {
+      "label": "À la une cette semaine",
+      "defaultTitle": "Promotion spéciale",
+      "defaultText": "Profitez de la campagne active de ce barbier et réservez votre créneau.",
+      "whyBook": "Pourquoi réserver en ligne",
+      "bullet1": "Évitez l'attente et les appels.",
+      "bullet2": "Voyez le prochain créneau disponible immédiatement.",
+      "bullet3": "Assurez votre professionnel préféré."
+    }
+  },
+  "services": {
+    "eyebrow": "Catalogue",
+    "title": "Services disponibles",
+    "subtitle": "Choisissez le service idéal — consultez les prix, la durée et réservez directement.",
+    "bookButton": "Réserver"
+  },
+  "products": {
+    "eyebrow": "Boutique",
+    "title": "Produits",
+    "subtitle": "Emportez le soin professionnel chez vous — produits utilisés par nos barbiers.",
+    "unavailableTitle": "Produits indisponibles",
+    "unavailableMsg": "Ce barbier a choisi de ne pas afficher de produits sur le site public pour le moment.",
+    "backHome": "Retour à l'accueil",
+    "orderButton": "Commander",
+    "lowStock": "Plus que {{count}} unités",
+    "outOfStock": "En rupture de stock"
+  },
+  "plans": {
+    "eyebrow": "Abonnements",
+    "title": "Forfaits et abonnements",
+    "subtitle": "Abonnez-vous à un forfait et économisez à chaque visite — services inclus, sans surprises.",
+    "unavailableTitle": "Forfaits indisponibles",
+    "unavailableMsg": "Ce barbier a choisi de ne pas afficher de forfaits sur le site public pour le moment.",
+    "popular": "Le plus populaire",
+    "subscribeNow": "S'abonner maintenant",
+    "paymentUnavailable": "Paiement indisponible",
+    "days": "Jours : {{days}}",
+    "services": "Services : {{services}}",
+    "oneActiveBooking": "1 réservation active à la fois",
+    "modal": {
+      "title": "S'abonner au forfait",
+      "subtitle": "{{name}} · {{price}}",
+      "namePlaceholder": "Votre nom",
+      "phonePlaceholder": "+33 6 00 00 00 00",
+      "warning": "Ce forfait ne peut être activé qu'après confirmation de paiement ou directement par le barbier.",
+      "confirmButton": "Confirmer l'abonnement",
+      "successTitle": "Forfait activé !",
+      "successMsg": "La demande pour {{name}} a été enregistrée."
+    }
+  },
+  "manageBooking": {
+    "eyebrow": "Gestion de la réservation",
+    "title": "Confirmez, annulez ou déplacez sans appeler.",
+    "subtitle": "Utilisez cette page pour gérer votre réservation chez {{shopName}}.",
+    "missingToken": "Token de réservation manquant. Ouvrez le lien complet de gestion pour continuer.",
+    "details": {
+      "label": "Détails",
+      "barber": "Barbier :",
+      "customer": "Client :",
+      "responsible": "Responsable :",
+      "contact": "Contact :"
+    },
+    "actions": {
+      "label": "Actions rapides",
+      "copyLink": "Copier le lien de cette réservation",
+      "addPerson": "Ajouter une autre personne",
+      "confirmPresence": "Confirmer la présence",
+      "cancelBooking": "Annuler la réservation",
+      "linkCopied": "Lien de gestion copié.",
+      "presenceConfirmed": "Présence confirmée avec succès.",
+      "bookingCancelled": "Réservation annulée avec succès."
+    },
+    "privacy": {
+      "title": "Confidentialité et données",
+      "subtitle": "Vos droits RGPD — accès, portabilité et suppression",
+      "privacyPolicy": "Politique de confidentialité",
+      "consentGiven": "Consentement donné",
+      "info": "Les données d'identification sont conservées pendant 3 ans à compter de la dernière réservation. Vous pouvez demander l'anonymisation à tout moment.",
+      "exportData": "Exporter mes données",
+      "anonymizeData": "Anonymiser mes données",
+      "exportDone": "Exportation de vos données terminée.",
+      "confirmAnonymize": {
+        "title": "Confirmer l'anonymisation des données",
+        "warning": "Cette action remplacera vos données personnelles d'identification (nom, téléphone, email, notes) par un identifiant anonyme pour {{shopName}}.",
+        "bullet1": "· L'historique opérationnel des réservations (dates, services, durée) est conservé de manière anonyme.",
+        "bullet2": "· Cette action est irréversible.",
+        "bullet3": "· Le lien de cette réservation ne fonctionnera plus après l'anonymisation.",
+        "confirmButton": "Confirmer l'anonymisation"
+      }
+    },
+    "reschedule": {
+      "title": "Reporter",
+      "subtitle": "Choisissez un autre jour et un créneau libre pour le même service.",
+      "noSlots": "Aucun créneau disponible ce jour-là.",
+      "confirmButton": "Confirmer le nouvel horaire",
+      "success": "Réservation déplacée avec succès."
+    }
+  },
+  "privacy": {
+    "eyebrow": "Confidentialité",
+    "title": "Politique de confidentialité",
+    "versionDate": "Version {{version}} · Mise à jour le {{date}}"
+  }
+}

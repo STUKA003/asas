@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { publicApi } from '@/lib/publicApi'
 import { useTenant } from '@/providers/TenantProvider'
 import { useBookingStore } from '@/store/booking'
@@ -11,6 +12,7 @@ import type { Barber } from '@/lib/types'
 export function StepBarber() {
   const { slug } = useTenant()
   const { barber: selected, setBarber, setStep } = useBookingStore()
+  const { t } = useTranslation(['public', 'common'])
 
   const { data: barbers, isLoading } = useQuery({
     queryKey: ['public', slug, 'barbers'],
@@ -23,7 +25,7 @@ export function StepBarber() {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-xl font-bold">Escolhe o barbeiro</h2>
+        <h2 className="text-xl font-bold">{t('booking.steps.barber.title')}</h2>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2">
@@ -41,7 +43,7 @@ export function StepBarber() {
             <Avatar name={b.name} src={b.avatar} size="lg" />
             <div className="text-left">
               <p className="font-semibold">{b.name}</p>
-              <p className="text-sm text-zinc-400">{b.phone ?? 'Profissional'}</p>
+              <p className="text-sm text-zinc-400">{b.phone ?? t('booking.steps.barber.professional')}</p>
             </div>
             {selected?.id === b.id && (
               <div className="tenant-button ml-auto flex h-6 w-6 items-center justify-center rounded-full">
@@ -55,8 +57,8 @@ export function StepBarber() {
       </div>
 
       <div className="flex justify-between pt-2">
-        <Button variant="outline" onClick={() => setStep(0)}>Voltar</Button>
-        <Button disabled={!selected} onClick={() => setStep(2)}>Próximo</Button>
+        <Button variant="outline" onClick={() => setStep(0)}>{t('common:btn.back')}</Button>
+        <Button disabled={!selected} onClick={() => setStep(2)}>{t('common:btn.next')}</Button>
       </div>
     </div>
   )

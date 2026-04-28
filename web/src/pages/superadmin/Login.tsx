@@ -1,17 +1,13 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { ArrowRight, Building2, Shield, TrendingUp, BarChart2 } from 'lucide-react'
 import { superadminApi } from '@/lib/api'
 import { useSuperAuthStore } from '@/store/superauth'
 import { applyPlatformAccent } from '@/lib/theme'
 import { useInstallBrand } from '@/lib/installBrand'
+import { LanguageSelector } from '@/components/ui/LanguageSelector'
 import superadminLogo from '@/assets/branding/superadmin-logo.png'
-
-const STATS = [
-  { icon: Building2,  label: 'Rede de barbearias',    desc: 'Visão centralizada de todas as contas activas.' },
-  { icon: TrendingUp, label: 'Crescimento e planos',   desc: 'MRR, upgrades e ciclo de faturação por conta.' },
-  { icon: BarChart2,  label: 'Controlo da plataforma', desc: 'Suspensões, estados e saúde operacional global.' },
-]
 
 export default function SuperAdminLogin() {
   const navigate = useNavigate()
@@ -20,6 +16,13 @@ export default function SuperAdminLogin() {
   const [password, setPassword] = useState('')
   const [error, setError]       = useState('')
   const [loading, setLoading]   = useState(false)
+  const { t } = useTranslation('superadmin')
+
+  const STATS = [
+    { icon: Building2,  label: t('login.panel.stat1Label'), desc: t('login.panel.stat1Desc') },
+    { icon: TrendingUp, label: t('login.panel.stat2Label'), desc: t('login.panel.stat2Desc') },
+    { icon: BarChart2,  label: t('login.panel.stat3Label'), desc: t('login.panel.stat3Desc') },
+  ]
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -30,7 +33,7 @@ export default function SuperAdminLogin() {
       login(token)
       navigate('/superadmin')
     } catch {
-      setError('Credenciais inválidas.')
+      setError(t('login.form.error'))
     } finally {
       setLoading(false)
     }
@@ -61,8 +64,8 @@ export default function SuperAdminLogin() {
         <div className="relative flex items-center gap-3">
           <img src={superadminLogo} alt="Trimio Command" className="h-10 w-10 rounded-xl object-contain" />
           <div>
-            <p className="text-[13px] font-semibold tracking-tight text-white">Trimio Command</p>
-            <p className="text-[11px] text-white/30">Controlo da plataforma</p>
+            <p className="text-[13px] font-semibold tracking-tight text-white">{t('login.brand.name')}</p>
+            <p className="text-[11px] text-white/30">{t('login.brand.subtitle')}</p>
           </div>
         </div>
 
@@ -121,10 +124,10 @@ export default function SuperAdminLogin() {
               <Shield size={20} className="text-primary-400" />
             </div>
             <h2 className="text-[1.65rem] font-semibold tracking-[-0.03em] text-white">
-              Acesso ao Command
+              {t('login.form.title')}
             </h2>
             <p className="mt-1.5 text-[13.5px] leading-6 text-white/40">
-              Área restrita — supervisão da plataforma Trimio.
+              {t('login.form.subtitle')}
             </p>
           </div>
 
@@ -172,13 +175,14 @@ export default function SuperAdminLogin() {
               className="mt-1 inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-white text-[13.5px] font-semibold text-[#0a0a0e] transition-all duration-150 hover:bg-neutral-100 active:scale-[0.97] active:translate-y-px disabled:opacity-50"
               style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.9)' }}
             >
-              {loading ? 'A entrar…' : <> Entrar no Command <ArrowRight size={15} /> </>}
+              {loading ? t('login.form.loading') : <> {t('login.form.submitButton')} <ArrowRight size={15} /> </>}
             </button>
           </form>
 
-          <p className="mt-8 text-center text-[12px] text-white/20">
-            Acesso reservado a administradores da plataforma Trimio.
-          </p>
+          <div className="mt-8 flex items-center justify-between">
+            <p className="text-[12px] text-white/20">{t('login.form.footer')}</p>
+            <LanguageSelector variant="dark" compact />
+          </div>
         </div>
       </div>
     </div>

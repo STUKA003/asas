@@ -1,0 +1,89 @@
+{
+  "register": {
+    "brand": { "name": "Trimio Studio", "subtitle": "Para barberías profesionales" },
+    "hero": {
+      "eyebrow": "Empieza hoy",
+      "title": "Tu negocio online en minutos.",
+      "desc": "Página de reservas, panel de gestión, clientes e informes — todo en un solo lugar.",
+      "feature1": "Página pública de reservas",
+      "feature2": "Panel de gestión completo",
+      "feature3": "Gestión de barberos y horarios",
+      "feature4": "Clientes e historial",
+      "feature5": "Empieza gratis, sin tarjeta"
+    },
+    "freePlan": { "title": "Plan Gratis incluido", "desc": "Empieza con 1 barbero y 30 reservas al mes sin pagar nada. Actualiza a partir de 19€/mes cuando quieras crecer." },
+    "form": {
+      "shopNameLabel": "Nombre de la barbería",
+      "shopNamePlaceholder": "Barbería de Juan",
+      "slugLabel": "Dirección de tu sitio",
+      "slugPrefix": "trimio.app/",
+      "ownerNameLabel": "Tu nombre",
+      "ownerNamePlaceholder": "Juan García",
+      "emailLabel": "Email",
+      "emailPlaceholder": "juan@email.com",
+      "passwordLabel": "Contraseña",
+      "passwordPlaceholder": "Mínimo 6 caracteres",
+      "submitButton": "Crear barbería gratis",
+      "hasAccount": "¿Ya tienes cuenta?",
+      "login": "Entrar",
+      "errors": {
+        "shopNameRequired": "Nombre de la barbería obligatorio",
+        "shopNameMin": "Mínimo 2 caracteres",
+        "slugInvalid": "Solo letras minúsculas, números y guiones",
+        "ownerNameRequired": "Tu nombre es obligatorio",
+        "emailInvalid": "Email inválido",
+        "passwordMin": "Mínimo 6 caracteres",
+        "slugTaken": "Esta dirección ya está en uso. Elige otra."
+      }
+    },
+    "success": {
+      "title": "Confirma tu email",
+      "message": "Hemos enviado un enlace de confirmación a {{email}}. Confírmalo antes de entrar al panel.",
+      "stepsTitle": "Próximos pasos",
+      "step1": "1. Abre tu bandeja de entrada.",
+      "step2": "2. Busca el email de Trimio.",
+      "step3": "3. Haz clic en el enlace de confirmación.",
+      "step4": "4. Entra al panel con tus credenciales.",
+      "openInbox": "Abrir bandeja de entrada",
+      "resendEmail": "Reenviar email de confirmación",
+      "goToLogin": "Ir al inicio de sesión",
+      "createAnother": "Crear otra cuenta"
+    }
+  },
+  "verifyEmail": {
+    "eyebrow": "Confirmación",
+    "brand": "Trimio Studio",
+    "subtitle": "Activación de cuenta admin.",
+    "title": "Confirmar email",
+    "missingToken": "El enlace de confirmación está incompleto. Solicita un nuevo email de confirmación.",
+    "loading": "Estamos confirmando tu email…",
+    "success": "Email confirmado. Ya puedes entrar al panel.",
+    "error": "No fue posible confirmar este email.",
+    "retry": "Intentar de nuevo",
+    "resendEmail": "Reenviar email",
+    "goToLogin": "Ir al inicio de sesión"
+  },
+  "home": {
+    "nav": { "pricing": "Precios", "login": "Entrar", "startFree": "Empezar gratis" },
+    "hero": {
+      "pill": "Sistema de reservas para barberías",
+      "line1": "Los clientes reservan.",
+      "line2": "Tú cortas el cabello.",
+      "desc": "Trimio da a tu barbería una página de reservas online. Sin WhatsApp, sin llamadas, sin papel.",
+      "cta": "Empezar gratis",
+      "ctaNote": "Gratis para siempre · Sin tarjeta de crédito",
+      "stat1Value": "< 5 min", "stat1Label": "para configurar todo",
+      "stat2Value": "24 / 7", "stat2Label": "disponible para clientes",
+      "stat3Value": "0€", "stat3Label": "para empezar"
+    },
+    "finalCta": {
+      "title": "Tu barbería online",
+      "titleAccent": "en menos de 5 minutos.",
+      "desc": "Únete a las barberías que ya dejaron de gestionar reservas por WhatsApp. Empieza gratis, sin tarjeta.",
+      "createAccount": "Crear cuenta gratis",
+      "alreadyHaveAccount": "Ya tengo cuenta",
+      "note": "Plan gratuito para siempre · 30 reservas/mes incluidas · Sin tarjeta"
+    },
+    "footer": { "createAccount": "Crear cuenta" }
+  }
+}

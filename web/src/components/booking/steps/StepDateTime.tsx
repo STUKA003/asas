@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { format, addDays, isSameDay } from 'date-fns'
-import { pt } from 'date-fns/locale'
 import { publicApi } from '@/lib/publicApi'
 import { useTenant } from '@/providers/TenantProvider'
 import { useBookingStore } from '@/store/booking'
@@ -17,13 +17,17 @@ export function StepDateTime() {
   const { slug } = useTenant()
   const { service, barber, date, slot, setDate, setSlot, setStep } = useBookingStore()
   const [offset, setOffset] = useState(0)
+  const { t, i18n } = useTranslation(['public', 'common'])
 
   const today = new Date()
   const days = Array.from({ length: DAYS_VISIBLE }, (_, i) => addDays(today, i + offset))
   const selectedDate = date ? new Date(date) : null
 
-  // Use only service duration here; extras not yet selected.
-  // Backend re-validates with full duration at booking creation.
+  const dateFnsLocale = (() => {
+    try { return require(`date-fns/locale/${i18n.language}`).default ?? require('date-fns/locale/pt').default }
+    catch { try { return require(`date-fns/locale/${i18n.language.split('-')[0]}`).default } catch { return require('date-fns/locale/pt').default } }
+  })()
+
   const { data, isLoading } = useQuery({
     queryKey: ['public', slug, 'availability', barber?.id, date, service?.duration],
     queryFn:  () => publicApi(slug).availability({
@@ -35,28 +39,31 @@ export function StepDateTime() {
   })
 
   const slots: TimeSlot[] = data?.slots ?? []
-  const morningSlots = slots.filter((slot) => toWallClockDate(slot.startTime).getHours() < 12)
-  const afternoonSlots = slots.filter((slot) => toWallClockDate(slot.startTime).getHours() >= 12)
+  const morningSlots = slots.filter((s) => toWallClockDate(s.startTime).getHours() < 12)
+  const afternoonSlots = slots.filter((s) => toWallClockDate(s.startTime).getHours() >= 12)
 
-  // Pré-carrega extras para decidir se deve saltar o passo 3
   const { data: extras } = useQuery({
     queryKey: ['public', slug, 'extras'],
     queryFn:  () => publicApi(slug).extras(),
     enabled:  !!slug,
   })
-  // undefined = ainda a carregar → vai ao passo de extras por precaução (o useEffect lá dentro faz auto-skip se vier vazio)
   const hasExtras = extras === undefined || (Array.isArray(extras) && extras.length > 0)
+
+  const slotGroups = [
+    { title: t('booking.steps.dateTime.morning'), items: morningSlots },
+    { title: t('booking.steps.dateTime.afternoon'), items: afternoonSlots },
+  ]
 
   return (
     <div className="space-y-5">
       <div>
-        <h2 className="text-xl font-bold">Data e horário</h2>
+        <h2 className="text-xl font-bold">{t('booking.steps.dateTime.title')}</h2>
       </div>
 
       {/* Date picker */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <p className="text-sm font-medium">Selecione a data</p>
+          <p className="text-sm font-medium">{t('booking.steps.dateTime.selectDate')}</p>
           <div className="flex gap-1">
             <button
               disabled={offset === 0}
@@ -88,7 +95,7 @@ export function StepDateTime() {
                 )}
               >
                 <span className={cn('text-[10px] mb-1', isSelected ? 'text-white/70' : 'text-zinc-400')}>
-                  {format(d, 'EEE', { locale: pt })}
+                  {format(d, 'EEE', { locale: dateFnsLocale })}
                 </span>
                 {format(d, 'd')}
               </button>
@@ -100,25 +107,22 @@ export function StepDateTime() {
       {/* Time slots */}
       {date && (
         <div>
-          <p className="text-sm font-medium mb-3">Horários disponíveis</p>
+          <p className="text-sm font-medium mb-3">{t('booking.steps.dateTime.availableSlots')}</p>
           {isLoading ? <PageLoader /> : slots.length === 0 ? (
-            <p className="text-sm text-zinc-400 py-8 text-center">Sem horários disponíveis neste dia.</p>
+            <p className="text-sm text-zinc-400 py-8 text-center">{t('booking.steps.dateTime.noSlots')}</p>
           ) : (
             <div className="grid gap-4 md:grid-cols-2">
-              {[
-                { title: 'Manhã', items: morningSlots },
-                { title: 'Tarde', items: afternoonSlots },
-              ].map((group) => (
+              {slotGroups.map((group) => (
                 <div key={group.title} className="rounded-2xl border border-zinc-100 bg-zinc-50/60 p-4 dark:border-zinc-800 dark:bg-zinc-900/40">
                   <div className="mb-3 flex items-center justify-between gap-3">
                     <p className="text-sm font-semibold">{group.title}</p>
                     <span className="text-xs text-zinc-400">
-                      {group.items.length} horário{group.items.length !== 1 ? 's' : ''}
+                      {t('booking.steps.dateTime.slotCount', { count: group.items.length })}
                     </span>
                   </div>
 
                   {group.items.length === 0 ? (
-                    <p className="py-6 text-center text-sm text-zinc-400">Sem horários neste período.</p>
+                    <p className="py-6 text-center text-sm text-zinc-400">{t('booking.steps.dateTime.noSlotsInPeriod')}</p>
                   ) : (
                     <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                       {group.items.map((s) => {
@@ -149,8 +153,8 @@ export function StepDateTime() {
       )}
 
       <div className="flex justify-between pt-2">
-        <Button variant="outline" onClick={() => setStep(1)}>Voltar</Button>
-        <Button disabled={!slot} onClick={() => setStep(hasExtras ? 3 : 4)}>Próximo</Button>
+        <Button variant="outline" onClick={() => setStep(1)}>{t('common:btn.back')}</Button>
+        <Button disabled={!slot} onClick={() => setStep(hasExtras ? 3 : 4)}>{t('common:btn.next')}</Button>
       </div>
     </div>
   )

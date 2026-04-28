@@ -1,0 +1,189 @@
+{
+  "register": {
+    "brand": {
+      "name": "Trimio Studio",
+      "subtitle": "Para barbearias profissionais"
+    },
+    "hero": {
+      "eyebrow": "Começa hoje",
+      "title": "O teu negócio online em minutos.",
+      "desc": "Página de agendamentos, painel de gestão, clientes e relatórios — tudo num único sítio.",
+      "feature1": "Página pública de agendamentos",
+      "feature2": "Painel de gestão completo",
+      "feature3": "Gestão de barbeiros e horários",
+      "feature4": "Clientes e histórico",
+      "feature5": "Começa grátis, sem cartão"
+    },
+    "freePlan": {
+      "title": "Plano Grátis incluído",
+      "desc": "Começas com 1 barbeiro e 30 agendamentos por mês sem pagar nada. Upgrades a partir de 19€/mês quando quiseres crescer."
+    },
+    "form": {
+      "shopNameLabel": "Nome da barbearia",
+      "shopNamePlaceholder": "Barbearia do João",
+      "slugLabel": "Endereço do teu site",
+      "slugPrefix": "trimio.app/",
+      "ownerNameLabel": "O teu nome",
+      "ownerNamePlaceholder": "João Silva",
+      "emailLabel": "E-mail",
+      "emailPlaceholder": "joao@email.com",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Mínimo 6 caracteres",
+      "submitButton": "Criar barbearia grátis",
+      "hasAccount": "Já tens conta?",
+      "login": "Entrar",
+      "errors": {
+        "shopNameRequired": "Nome da barbearia obrigatório",
+        "shopNameMin": "Mínimo 2 caracteres",
+        "slugInvalid": "Apenas letras minúsculas, números e hífens",
+        "ownerNameRequired": "O teu nome é obrigatório",
+        "emailInvalid": "E-mail inválido",
+        "passwordMin": "Mínimo 6 caracteres",
+        "slugTaken": "Este endereço já está em uso. Escolhe outro."
+      }
+    },
+    "success": {
+      "title": "Confirma o teu email",
+      "message": "Enviámos um link de confirmação para {{email}}. Confirma antes de entrar no painel.",
+      "stepsTitle": "Próximos passos",
+      "step1": "1. Abre a tua caixa de entrada.",
+      "step2": "2. Procura o email da Trimio.",
+      "step3": "3. Clica no link de confirmação.",
+      "step4": "4. Entra no painel com as tuas credenciais.",
+      "openInbox": "Abrir caixa de email",
+      "resendEmail": "Reenviar email de confirmação",
+      "goToLogin": "Ir para login",
+      "createAnother": "Criar outra conta"
+    }
+  },
+  "verifyEmail": {
+    "eyebrow": "Confirmação",
+    "brand": "Trimio Studio",
+    "subtitle": "Activação da conta admin.",
+    "title": "Confirmar email",
+    "missingToken": "O link de confirmação está incompleto. Pede um novo email de confirmação.",
+    "loading": "Estamos a confirmar o teu email…",
+    "success": "Email confirmado. Já podes entrar no painel.",
+    "error": "Não foi possível confirmar este email.",
+    "retry": "Tentar de novo",
+    "resendEmail": "Reenviar email",
+    "goToLogin": "Ir para login"
+  },
+  "home": {
+    "nav": {
+      "pricing": "Preços",
+      "login": "Entrar",
+      "startFree": "Começar grátis"
+    },
+    "hero": {
+      "pill": "Sistema de reservas para barbearias",
+      "line1": "Os clientes marcam.",
+      "line2": "Tu cortas o cabelo.",
+      "desc": "O Trimio dá à tua barbearia uma página de reservas online. Sem WhatsApp, sem chamadas, sem folhas de papel.",
+      "cta": "Começar grátis",
+      "ctaNote": "Grátis para sempre · Sem cartão de crédito",
+      "stat1Value": "< 5 min",
+      "stat1Label": "para configurar tudo",
+      "stat2Value": "24 / 7",
+      "stat2Label": "disponível para clientes",
+      "stat3Value": "0€",
+      "stat3Label": "para começar"
+    },
+    "pain": {
+      "section": "O problema",
+      "title": "Ainda a gerir reservas à mão?",
+      "desc": "A maioria das barbearias perde clientes todos os dias por não ter um sistema. Reconheces isto?",
+      "pain1Title": "WhatsApp a transbordar",
+      "pain1Desc": "Dezenas de mensagens por dia só para marcar e remarcar. E ainda há as que ficam sem resposta.",
+      "pain2Title": "Chamadas na hora errada",
+      "pain2Desc": "O telefone toca quando tens uma tesoura na mão. E às 22h já não atendeste — o cliente foi à concorrência.",
+      "pain3Title": "Sem visibilidade do negócio",
+      "pain3Desc": "Não sabes quanto vais ganhar esta semana, quem está a trabalhar ou se tens agenda para amanhã."
+    },
+    "howItWorks": {
+      "section": "Como funciona",
+      "title": "Pronto a funcionar em 3 passos",
+      "desc": "Não é preciso instalar nada. Não é preciso saber de tecnologia.",
+      "step1Title": "Cria a tua barbearia",
+      "step1Desc": "Nome, serviços, barbeiros e horários. Menos de 5 minutos.",
+      "step2Title": "Recebe o teu link",
+      "step2Desc": "Partilhas no Instagram, WhatsApp ou onde quiseres.",
+      "step3Title": "As reservas chegam",
+      "step3Desc": "Os clientes marcam online — tu só apareças na hora."
+    },
+    "benefits": {
+      "section": "Tudo incluído",
+      "title": "Não é só agendamento.",
+      "desc": "O Trimio é a operação completa da tua barbearia numa só ferramenta.",
+      "b1Title": "Agenda sempre organizada",
+      "b1Desc": "Os clientes escolhem serviço, barbeiro, dia e hora — sem te interromper. Funciona 24h por dia.",
+      "b2Title": "Equipa na mesma página",
+      "b2Desc": "Cada barbeiro vê a sua agenda no telemóvel. Tu vês tudo numa vista de calendário em tempo real.",
+      "b3Title": "Página pública pronta a usar",
+      "b3Desc": "O teu link personalizado com serviços, galeria e botão de reserva. Partilha no Instagram e está feito.",
+      "b4Title": "Dados que fazem sentido",
+      "b4Desc": "Relatórios de faturação, histórico de clientes e taxa de cancelamentos — tudo num só painel."
+    },
+    "testimonials": {
+      "section": "Quem já usa",
+      "title": "O que dizem as barbearias"
+    },
+    "pricing": {
+      "section": "Preços",
+      "title": "Começa grátis. Cresce quando quiseres.",
+      "desc": "Sem contratos. Cancelas quando quiseres. Sem surpresas.",
+      "freeName": "Grátis",
+      "freePeriod": "para sempre",
+      "freeDesc": "Para testar sem risco.",
+      "freeFeature1": "1 barbeiro",
+      "freeFeature2": "30 reservas por mês",
+      "freeFeature3": "Página pública com booking",
+      "freeFeature4": "Painel de gestão completo",
+      "freeFeature5": "Sem cartão de crédito",
+      "basicName": "Básico",
+      "basicPeriod": "por mês",
+      "basicDesc": "Para barbearias a crescer.",
+      "basicFeature1": "Até 3 barbeiros",
+      "basicFeature2": "Reservas ilimitadas",
+      "basicFeature3": "Extras e produtos",
+      "basicFeature4": "Planos de subscrição para clientes",
+      "basicFeature5": "Relatórios de negócio",
+      "basicFeature6": "Suporte prioritário",
+      "basicNote": "Começa com 14 dias de teste",
+      "proName": "Pro",
+      "proPeriod": "por mês",
+      "proDesc": "Para espaços com mais equipa.",
+      "proFeature1": "Barbeiros ilimitados",
+      "proFeature2": "Reservas ilimitadas",
+      "proFeature3": "Tudo do plano Básico",
+      "proFeature4": "Portal dedicado por barbeiro",
+      "proFeature5": "Notificações push",
+      "proFeature6": "Relatórios avançados",
+      "popular": "Mais popular",
+      "startFree": "Começar grátis"
+    },
+    "faq": {
+      "section": "Dúvidas frequentes",
+      "title": "Tens perguntas. Nós temos respostas.",
+      "q1": "Preciso de saber informática ou programação?",
+      "a1": "Não. O Trimio está desenhado para qualquer pessoa. Crias a conta, adicionas os teus serviços e barbeiros, e partilhas o link. O setup típico demora menos de 5 minutos.",
+      "q2": "Como é que os clientes fazem a marcação?",
+      "a2": "Recebes um link personalizado (ex: trimio.pt/o-teu-nome). Partilhas no Instagram, WhatsApp ou onde quiseres. Os clientes abrem, escolhem e marcam — sem app, sem cadastro.",
+      "q3": "Posso cancelar quando quiser?",
+      "a3": "Sim, a qualquer momento e sem penalizações. Não há contratos anuais obrigatórios. Se cancelares, o teu plano mantém-se até ao fim do período pago.",
+      "q4": "O que acontece quando atinjo o limite do plano gratuito?",
+      "a4": "Recebemos avisos antes de atingires o limite. Quando o atinges, os clientes não conseguem fazer novas marcações até ao mês seguinte ou até fazeres upgrade — os dados ficam todos guardados."
+    },
+    "finalCta": {
+      "title": "A tua barbearia online",
+      "titleAccent": "em menos de 5 minutos.",
+      "desc": "Junta-te às barbearias que já pararam de gerir reservas pelo WhatsApp. Começa grátis, sem cartão de crédito.",
+      "createAccount": "Criar conta grátis",
+      "alreadyHaveAccount": "Já tenho conta",
+      "note": "Plano gratuito para sempre · 30 reservas/mês incluídas · Sem cartão"
+    },
+    "footer": {
+      "createAccount": "Criar conta"
+    }
+  }
+}

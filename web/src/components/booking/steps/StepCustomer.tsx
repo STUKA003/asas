@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useSearchParams } from 'react-router-dom'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { useTranslation } from 'react-i18next'
 import { publicApi } from '@/lib/publicApi'
 import { useTenant } from '@/providers/TenantProvider'
 import { useBookingStore } from '@/store/booking'
@@ -12,50 +13,44 @@ import { Button } from '@/components/ui/Button'
 import { PhoneInput } from '@/components/ui/PhoneInput'
 import type { CustomerPlanLookup } from '@/lib/types'
 
-const WEEKDAY_LABELS: Record<number, string> = {
-  0: 'Domingo',
-  1: 'Segunda',
-  2: 'Terca',
-  3: 'Quarta',
-  4: 'Quinta',
-  5: 'Sexta',
-  6: 'Sabado',
-}
-
-function formatAllowedDays(days: number[]) {
+function formatAllowedDays(days: number[], t: (k: string) => string) {
   const normalized = [...new Set(days)].sort((a, b) => {
     const left = a === 0 ? 7 : a
     const right = b === 0 ? 7 : b
     return left - right
   })
-
-  if (normalized.length === 7) return 'Todos os dias'
-  return normalized.map((day) => WEEKDAY_LABELS[day]).join(', ')
+  if (normalized.length === 7) return t('booking.steps.customer.allowedDays').replace('{{days}}', 'all')
+  return normalized.map((day) => {
+    const dayNames: Record<number, string> = {
+      0: 'Sunday', 1: 'Monday', 2: 'Tuesday', 3: 'Wednesday',
+      4: 'Thursday', 5: 'Friday', 6: 'Saturday',
+    }
+    return dayNames[day]
+  }).join(', ')
 }
-
-const baseSchema = {
-  email: z.string().min(1, 'E-mail obrigatório').email('E-mail inválido'),
-  name:  z.string().min(2, 'Nome obrigatório'),
-  notes: z.string().optional(),
-  phone: z.string().min(10, 'Telefone obrigatório'),
-}
-
-const regularSchema = z.object(baseSchema)
-const addAnotherSchema = z.object({
-  ...baseSchema,
-  attendeeName: z.string().min(2, 'Nome da pessoa atendida obrigatório'),
-})
-
-type FormData = z.infer<typeof regularSchema> & { attendeeName?: string }
 
 export function StepCustomer() {
   const { slug, barbershop } = useTenant()
   const { customer, service, date, setCustomer, setCustomerPlan, setStep } = useBookingStore()
   const [searchParams] = useSearchParams()
+  const { t } = useTranslation(['public', 'common'])
   const responsibleToken = searchParams.get('responsibleToken') ?? ''
   const isAddAnother = !!responsibleToken
 
-  const schema = useMemo(() => isAddAnother ? addAnotherSchema : regularSchema, [isAddAnother])
+  const schema = useMemo(() => {
+    const base = {
+      email: z.string().min(1, t('booking.steps.customer.errors.emailRequired')).email(t('booking.steps.customer.errors.emailInvalid')),
+      name:  z.string().min(2, t('booking.steps.customer.errors.nameRequired')),
+      notes: z.string().optional(),
+      phone: z.string().min(10, t('booking.steps.customer.errors.phoneRequired')),
+    }
+    if (isAddAnother) {
+      return z.object({ ...base, attendeeName: z.string().min(2, t('booking.steps.customer.errors.attendeeRequired')) })
+    }
+    return z.object(base)
+  }, [isAddAnother, t])
+
+  type FormData = z.infer<typeof schema> & { attendeeName?: string }
 
   const { register, control, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -73,34 +68,25 @@ export function StepCustomer() {
   useEffect(() => {
     if (responsibleBooking?.booking?.customer && !customer) {
       const c = responsibleBooking.booking.customer
-      reset({
-        name: c.name,
-        phone: c.phone ?? '',
-        email: c.email ?? '',
-        attendeeName: '',
-        notes: '',
-      })
+      reset({ name: c.name, phone: c.phone ?? '', email: c.email ?? '', attendeeName: '', notes: '' })
     }
   }, [responsibleBooking, customer, reset])
 
   const phone = watch('phone') ?? ''
   const name = watch('name') ?? ''
   const attendeeName = watch('attendeeName') ?? ''
-  const lookupName = isAddAnother ? name : name
   const shouldLookupPlan = !isAddAnother && phone.trim().length >= 8 && name.trim().length >= 2
 
   const { data: customerLookup } = useQuery({
-    queryKey: ['public', slug, 'customer-plan', phone, lookupName],
-    queryFn: () => publicApi(slug).customerPlan({ phone: phone.trim(), name: lookupName.trim() }),
+    queryKey: ['public', slug, 'customer-plan', phone, name],
+    queryFn: () => publicApi(slug).customerPlan({ phone: phone.trim(), name: name.trim() }),
     enabled: !!slug && shouldLookupPlan,
   })
 
   const knownCustomer = shouldLookupPlan ? (customerLookup as CustomerPlanLookup | undefined)?.customer : null
   const plan = knownCustomer?.plan ?? null
 
-  useEffect(() => {
-    setCustomerPlan(plan)
-  }, [plan]) // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { setCustomerPlan(plan) }, [plan]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!isAddAnother && !attendeeName.trim()) {
@@ -112,11 +98,12 @@ export function StepCustomer() {
   const hasInvalidDay = !!plan && selectedDay !== null && !plan.allowedDays.includes(selectedDay)
   const serviceNotInPlan = !!plan && !!service && !plan.allowedServices.some((item) => item.id === service.id)
   const hasActiveBooking = !!knownCustomer?.activeBooking
+
   const blockingMessage =
     hasActiveBooking
-      ? 'Este cliente ja tem uma marcacao ativa no plano e so pode voltar a marcar depois de concluir o atendimento atual.'
+      ? t('booking.steps.customer.planActiveBlock')
       : hasInvalidDay
-        ? `Este plano permite marcacoes apenas em: ${formatAllowedDays(plan!.allowedDays)}.`
+        ? t('booking.steps.customer.planDayBlock', { days: formatAllowedDays(plan!.allowedDays, t) })
         : null
 
   const { data: extras } = useQuery({
@@ -134,31 +121,28 @@ export function StepCustomer() {
 
   const onSubmit = (data: FormData) => {
     if (blockingMessage) return
-    setCustomer({
-      ...data,
-      attendeeName: data.attendeeName?.trim() || data.name,
-    })
+    setCustomer({ ...data, attendeeName: data.attendeeName?.trim() || data.name })
     setStep(hasProducts ? 5 : 6)
   }
 
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-xl font-bold">Os teus dados</h2>
+        <h2 className="text-xl font-bold">{t('booking.steps.customer.title')}</h2>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <Input
-          label="O teu nome"
-          placeholder="Joao Silva"
+          label={t('booking.steps.customer.name')}
+          placeholder={t('booking.steps.customer.namePlaceholder')}
           error={errors.name?.message}
           disabled={isAddAnother}
           {...register('name')}
         />
         {isAddAnother && (
           <Input
-            label="Nome da pessoa atendida"
-            placeholder="Miguel Silva"
+            label={t('booking.steps.customer.attendeeName')}
+            placeholder={t('booking.steps.customer.attendeeNamePlaceholder')}
             error={(errors as { attendeeName?: { message?: string } }).attendeeName?.message}
             {...register('attendeeName')}
           />
@@ -168,8 +152,8 @@ export function StepCustomer() {
           control={control}
           render={({ field }) => (
             <PhoneInput
-              label="Telefone / WhatsApp"
-              placeholder="912 345 678"
+              label={t('booking.steps.customer.phone')}
+              placeholder={t('booking.steps.customer.phonePlaceholder')}
               error={errors.phone?.message}
               value={field.value}
               onChange={field.onChange}
@@ -178,34 +162,35 @@ export function StepCustomer() {
           )}
         />
         <Input
-          label="E-mail"
+          label={t('booking.steps.customer.email')}
           type="email"
-          placeholder="joao@example.com"
+          placeholder={t('booking.steps.customer.emailPlaceholder')}
           error={errors.email?.message}
           disabled={isAddAnother}
           {...register('email')}
         />
         <Textarea
-          label="Observações (opcional)"
-          placeholder="Alguma preferência ou informação adicional..."
+          label={t('booking.steps.customer.notes')}
+          placeholder=""
           rows={3}
           {...register('notes')}
         />
 
         {knownCustomer?.plan && (
           <div className="rounded-xl border border-blue-200 bg-blue-50 px-3 py-3 text-sm text-blue-800 dark:border-blue-800 dark:bg-blue-900/20 dark:text-blue-200 space-y-1">
-            <p className="font-medium">Plano: {knownCustomer.plan.name}</p>
-            <p>Responsável: {knownCustomer.name}</p>
-            <p>Dias permitidos: {formatAllowedDays(knownCustomer.plan.allowedDays)}</p>
-            <p>Serviços incluídos: {knownCustomer.plan.allowedServices.map((item) => item.name).join(', ')}</p>
+            <p className="font-medium">{t('booking.steps.customer.planInfo', { name: knownCustomer.plan.name })}</p>
+            <p>{t('booking.steps.customer.responsible', { name: knownCustomer.name })}</p>
+            <p>{t('booking.steps.customer.allowedDays', { days: formatAllowedDays(knownCustomer.plan.allowedDays, t) })}</p>
+            <p>{t('booking.steps.customer.includedServices', { services: knownCustomer.plan.allowedServices.map((item) => item.name).join(', ') })}</p>
             {(barbershop?.planMemberDiscount ?? 0) > 0 && (
               <p className="font-medium text-violet-700 dark:text-violet-400">
-                🎁 {barbershop!.planMemberDiscount}% de desconto em extras, produtos e serviços fora do plano.
+                {t('booking.steps.customer.planDiscount', { discount: barbershop!.planMemberDiscount })}
               </p>
             )}
             {serviceNotInPlan && service && (
               <p className="font-medium text-amber-700 dark:text-amber-400">
-                ⚠ "{service.name}" não está no plano — será cobrado{(barbershop?.planMemberDiscount ?? 0) > 0 ? ` com ${barbershop!.planMemberDiscount}% de desconto` : ' ao preço normal'}.
+                {t('booking.steps.customer.serviceNotInPlan', { service: service.name })}
+                {(barbershop?.planMemberDiscount ?? 0) > 0 ? ` — ${t('booking.steps.customer.planDiscount', { discount: barbershop!.planMemberDiscount })}` : ''}
               </p>
             )}
           </div>
@@ -218,8 +203,8 @@ export function StepCustomer() {
         )}
 
         <div className="flex justify-between pt-2">
-          <Button type="button" variant="outline" onClick={() => setStep(hasExtras ? 3 : 2)}>Voltar</Button>
-          <Button type="submit" disabled={!!blockingMessage}>Próximo</Button>
+          <Button type="button" variant="outline" onClick={() => setStep(hasExtras ? 3 : 2)}>{t('common:btn.back')}</Button>
+          <Button type="submit" disabled={!!blockingMessage}>{t('common:btn.next')}</Button>
         </div>
       </form>
     </div>

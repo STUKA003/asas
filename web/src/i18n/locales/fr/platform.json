@@ -1,0 +1,89 @@
+{
+  "register": {
+    "brand": { "name": "Trimio Studio", "subtitle": "Pour les salons professionnels" },
+    "hero": {
+      "eyebrow": "Commencez aujourd'hui",
+      "title": "Votre activité en ligne en quelques minutes.",
+      "desc": "Page de réservation, tableau de bord, clients et rapports — tout en un seul endroit.",
+      "feature1": "Page publique de réservation",
+      "feature2": "Tableau de bord complet",
+      "feature3": "Gestion des barbiers et des horaires",
+      "feature4": "Clients et historique",
+      "feature5": "Commencez gratuitement, sans carte"
+    },
+    "freePlan": { "title": "Forfait Gratuit inclus", "desc": "Commencez avec 1 barbier et 30 réservations par mois sans rien payer. Améliorez à partir de 19€/mois quand vous voulez grandir." },
+    "form": {
+      "shopNameLabel": "Nom du salon",
+      "shopNamePlaceholder": "Salon de Jean",
+      "slugLabel": "Adresse de votre site",
+      "slugPrefix": "trimio.app/",
+      "ownerNameLabel": "Votre nom",
+      "ownerNamePlaceholder": "Jean Dupont",
+      "emailLabel": "Email",
+      "emailPlaceholder": "jean@email.fr",
+      "passwordLabel": "Mot de passe",
+      "passwordPlaceholder": "Minimum 6 caractères",
+      "submitButton": "Créer le salon gratuitement",
+      "hasAccount": "Vous avez déjà un compte ?",
+      "login": "Se connecter",
+      "errors": {
+        "shopNameRequired": "Nom du salon obligatoire",
+        "shopNameMin": "Minimum 2 caractères",
+        "slugInvalid": "Uniquement des lettres minuscules, chiffres et tirets",
+        "ownerNameRequired": "Votre nom est obligatoire",
+        "emailInvalid": "Email invalide",
+        "passwordMin": "Minimum 6 caractères",
+        "slugTaken": "Cette adresse est déjà utilisée. Choisissez-en une autre."
+      }
+    },
+    "success": {
+      "title": "Confirmez votre email",
+      "message": "Nous avons envoyé un lien de confirmation à {{email}}. Confirmez avant d'accéder au tableau de bord.",
+      "stepsTitle": "Prochaines étapes",
+      "step1": "1. Ouvrez votre boîte de réception.",
+      "step2": "2. Trouvez l'email de Trimio.",
+      "step3": "3. Cliquez sur le lien de confirmation.",
+      "step4": "4. Connectez-vous avec vos identifiants.",
+      "openInbox": "Ouvrir la boîte de réception",
+      "resendEmail": "Renvoyer l'email de confirmation",
+      "goToLogin": "Aller à la connexion",
+      "createAnother": "Créer un autre compte"
+    }
+  },
+  "verifyEmail": {
+    "eyebrow": "Confirmation",
+    "brand": "Trimio Studio",
+    "subtitle": "Activation du compte admin.",
+    "title": "Confirmer l'email",
+    "missingToken": "Le lien de confirmation est incomplet. Demandez un nouvel email de confirmation.",
+    "loading": "Nous confirmons votre email…",
+    "success": "Email confirmé. Vous pouvez maintenant vous connecter au tableau de bord.",
+    "error": "Impossible de confirmer cet email.",
+    "retry": "Réessayer",
+    "resendEmail": "Renvoyer l'email",
+    "goToLogin": "Aller à la connexion"
+  },
+  "home": {
+    "nav": { "pricing": "Tarifs", "login": "Se connecter", "startFree": "Commencer gratuitement" },
+    "hero": {
+      "pill": "Système de réservation pour salons de barbier",
+      "line1": "Les clients réservent.",
+      "line2": "Vous coupez les cheveux.",
+      "desc": "Trimio donne à votre salon une page de réservation en ligne. Sans WhatsApp, sans appels, sans papier.",
+      "cta": "Commencer gratuitement",
+      "ctaNote": "Gratuit pour toujours · Sans carte de crédit",
+      "stat1Value": "< 5 min", "stat1Label": "pour tout configurer",
+      "stat2Value": "24 / 7", "stat2Label": "disponible pour les clients",
+      "stat3Value": "0€", "stat3Label": "pour commencer"
+    },
+    "finalCta": {
+      "title": "Votre salon en ligne",
+      "titleAccent": "en moins de 5 minutes.",
+      "desc": "Rejoignez les salons qui ont arrêté de gérer les réservations par WhatsApp. Commencez gratuitement, sans carte.",
+      "createAccount": "Créer un compte gratuit",
+      "alreadyHaveAccount": "J'ai déjà un compte",
+      "note": "Forfait gratuit pour toujours · 30 réservations/mois incluses · Sans carte"
+    },
+    "footer": { "createAccount": "Créer un compte" }
+  }
+}

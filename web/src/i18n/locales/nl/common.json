@@ -1,0 +1,60 @@
+{
+  "btn": {
+    "save": "Opslaan",
+    "cancel": "Annuleren",
+    "confirm": "Bevestigen",
+    "back": "Terug",
+    "next": "Volgende",
+    "continue": "Doorgaan",
+    "logout": "Afmelden",
+    "edit": "Bewerken",
+    "delete": "Verwijderen",
+    "search": "Zoeken",
+    "clear": "Wissen",
+    "create": "Aanmaken",
+    "close": "Sluiten",
+    "loading": "Laden...",
+    "start": "Starten",
+    "startFree": "Gratis starten",
+    "enter": "Inloggen",
+    "update": "Bijwerken",
+    "remove": "Verwijderen",
+    "add": "Toevoegen",
+    "upgrade": "Upgraden",
+    "refresh": "Pagina vernieuwen",
+    "export": "Exporteren",
+    "import": "Importeren"
+  },
+  "status": {
+    "PENDING": "In afwachting",
+    "CONFIRMED": "Bevestigd",
+    "COMPLETED": "Voltooid",
+    "CANCELLED": "Geannuleerd",
+    "NO_SHOW": "Niet verschenen",
+    "active": "Actief",
+    "inactive": "Inactief"
+  },
+  "plan": {
+    "FREE": "Gratis",
+    "BASIC": "Basis",
+    "PRO": "Pro"
+  },
+  "error": {
+    "generic": "Er is een fout opgetreden. Probeer het opnieuw.",
+    "required": "Verplicht veld",
+    "invalidEmail": "Ongeldig e-mailadres",
+    "invalidCredentials": "Ongeldige inloggegevens",
+    "pageLoad": "Pagina kon niet worden geladen",
+    "pageLoadDesc": "Er is een fout opgetreden bij het laden. Vernieuw de pagina om de app te synchroniseren."
+  },
+  "lang": {
+    "label": "Taal",
+    "pt": "Português",
+    "en": "English",
+    "es": "Español",
+    "fr": "Français",
+    "de": "Deutsch",
+    "it": "Italiano",
+    "nl": "Nederlands"
+  }
+}

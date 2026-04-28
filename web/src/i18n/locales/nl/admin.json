@@ -1,0 +1,134 @@
+{
+  "layout": {
+    "nav": {
+      "operation": "Bedrijfsvoering",
+      "catalog": "Catalogus",
+      "management": "Beheer",
+      "dashboard": "Dashboard",
+      "bookings": "Boekingen",
+      "customers": "Klanten",
+      "barbers": "Kappers",
+      "schedule": "Tijden",
+      "services": "Diensten",
+      "extras": "Extra's",
+      "products": "Producten",
+      "plans": "Abonnementen",
+      "reports": "Rapporten",
+      "brandSite": "Merk en website",
+      "billing": "Facturatie"
+    },
+    "pageMeta": {
+      "dashboard": { "title": "Dashboard", "subtitle": "Overzicht van prestaties, agenda en operationele signalen." },
+      "bookings": { "title": "Boekingen", "subtitle": "Beheer reserveringen, bevestigingen en agendablokkades." },
+      "customers": { "title": "Klanten", "subtitle": "Bekijk geschiedenis, actieve plannen en contactgegevens." },
+      "barbers": { "title": "Kappers", "subtitle": "Beheer team, toegang en beschikbaarheid." },
+      "services": { "title": "Diensten", "subtitle": "Houd de hoofdcatalogus van de kapperswinkel georganiseerd." },
+      "extras": { "title": "Extra's", "subtitle": "Upsells en aanvullingen die de gemiddelde bon verhogen." },
+      "products": { "title": "Producten", "subtitle": "Inventaris en productverkoop op het verkooppunt." },
+      "plans": { "title": "Abonnementen", "subtitle": "Configureer abonnementen en terugkerende voordelen." },
+      "schedule": { "title": "Tijden", "subtitle": "Definieer de basisstructuur van de agenda." },
+      "reports": { "title": "Rapporten", "subtitle": "Commerciële en operationele inzichten ter ondersteuning van beslissingen." },
+      "customization": { "title": "Merk en website", "subtitle": "Pas digitale aanwezigheid, kleuren en publieke inhoud aan." },
+      "billing": { "title": "Facturatie", "subtitle": "Volg uw huidige plan, upgrades en facturatiecyclus." }
+    },
+    "notifications": {
+      "title": "Meldingen",
+      "newBadge": "{{count}} nieuwe",
+      "markAllRead": "Alles als gelezen markeren",
+      "noRecent": "Geen recente meldingen."
+    },
+    "account": {
+      "planBadge": "Plan {{plan}}",
+      "billingLink": "Abonnement en facturatie",
+      "logout": "Afmelden"
+    },
+    "sidebar": {
+      "currentPlan": "Huidig plan",
+      "manageSubscription": "Abonnement beheren"
+    },
+    "pull": {
+      "refreshing": "Vernieuwen...",
+      "releaseToRefresh": "Loslaten om te vernieuwen",
+      "pullToRefresh": "Trek om te vernieuwen"
+    },
+    "suspended": {
+      "title": "Account opgeschort",
+      "defaultMessage": "Uw account is opgeschort. Neem contact op met de support voor meer informatie.",
+      "reason": "Reden: {{reason}}"
+    },
+    "expiredPlan": {
+      "message": "Uw {{plan}}-plan is verlopen. U bevindt zich nu op het Gratis plan met beperkte functies.",
+      "renew": "Vernieuwen"
+    },
+    "topbar": { "renewPlan": "Plan vernieuwen", "viewBilling": "Facturatie bekijken" },
+    "brand": { "name": "Trimio Studio", "defaultSubtitle": "Kapperswinkelpaneel" }
+  },
+  "push": {
+    "unavailable": "Push niet beschikbaar op dit apparaat",
+    "notConfigured": "Push niet geconfigureerd",
+    "blocked": "Push geblokkeerd",
+    "active": "Push actief",
+    "enable": "Push inschakelen",
+    "blockedTooltip": "Meldingsmachtiging geblokkeerd in browser",
+    "enableTooltip": "Pushmeldingen inschakelen"
+  },
+  "login": {
+    "brand": { "name": "Trimio Studio", "subtitle": "Kapperswinkelpaneel" },
+    "panel": {
+      "eyebrow": "Volledig beheer",
+      "title": "Volledige controle over uw kapperswinkel.",
+      "desc": "Agenda, klanten, team, facturatie en rapporten — alles in één paneel ontworpen voor professionele werking.",
+      "feature1Label": "Realtime agenda",
+      "feature1Desc": "Boekingen, bevestigingen en blokkades in één scherm.",
+      "feature2Label": "Team en klanten",
+      "feature2Desc": "Beheer van kappers, plannen en volledige geschiedenis.",
+      "feature3Label": "Rapporten en inkomsten",
+      "feature3Desc": "Operationele inzichten voor snellere beslissingen.",
+      "footer": "© {{year}} Trimio · Beheerplatform voor kapperswinkels"
+    },
+    "form": {
+      "title": "Inloggen op uw paneel",
+      "subtitle": "Toegang tot het beheer van uw kapperswinkel.",
+      "slugLabel": "Kapperswinkel-slug",
+      "slugPlaceholder": "mijn-kapper",
+      "emailLabel": "E-mail",
+      "emailPlaceholder": "admin@email.com",
+      "passwordLabel": "Wachtwoord",
+      "passwordPlaceholder": "••••••••",
+      "forgotPassword": "Wachtwoord vergeten?",
+      "submitButton": "Inloggen op paneel",
+      "noAccount": "Nog geen account?",
+      "createFree": "Kapperswinkel gratis aanmaken",
+      "noVerification": "Bevestigingsmail niet ontvangen?",
+      "resendEmail": "E-mail opnieuw verzenden",
+      "openInbox": "Inbox openen",
+      "errors": {
+        "invalidCredentials": "Slug, e-mail of wachtwoord ongeldig.",
+        "emailNotVerified": "Bevestig uw e-mail voordat u inlogt."
+      }
+    }
+  },
+  "dashboard": { "title": "Dashboard", "subtitle": "Geconsolideerd dagoverzicht, maandelijkse prestaties en snelle actiesignalen.", "viewBookings": "Boekingen bekijken", "occupancy": { "strong": "Drukke dag", "low": "Lage bezetting", "balanced": "Evenwichtige stroom" } },
+  "bookings": {
+    "title": "Boekingen",
+    "newButton": "Nieuw",
+    "blockButton": "Blokkeren",
+    "viewCalendar": "Agenda",
+    "viewList": "Lijst",
+    "today": "Vandaag",
+    "status": { "all": "Alle statussen", "pending": "In afwachting", "confirmed": "Bevestigd", "completed": "Voltooid", "cancelled": "Geannuleerd", "noShow": "Niet verschenen" },
+    "searchPlaceholder": "Zoek klant, kapper of dienst…",
+    "allBarbers": "Alle kappers",
+    "detail": { "title": "Boekingsdetails", "addToBooking": "Toevoegen aan boeking", "selectExtra": "Extra selecteren", "selectProduct": "Product selecteren", "addButton": "Extra/product toevoegen", "changeStatus": "Status wijzigen" }
+  },
+  "customers": { "title": "Klanten", "exportCsv": "CSV exporteren", "importCsv": "CSV importeren", "totalCustomers": "Totale klanten", "withActivePlan": "Met actief abonnement", "detail": { "title": "Klantdetails", "deleteButton": "Klant verwijderen" } },
+  "barbers": { "title": "Kappers", "newButton": "Nieuwe kapper", "modal": { "create": "Nieuwe kapper", "edit": "Kapper bewerken" } },
+  "services": { "title": "Diensten" },
+  "extras": { "title": "Extra's" },
+  "products": { "title": "Producten" },
+  "plans": { "title": "Abonnementen" },
+  "schedule": { "title": "Tijden", "days": { "0": "Zondag", "1": "Maandag", "2": "Dinsdag", "3": "Woensdag", "4": "Donderdag", "5": "Vrijdag", "6": "Zaterdag" } },
+  "reports": { "title": "Rapporten" },
+  "customization": { "title": "Merk en website" },
+  "billing": { "title": "Facturatie" }
+}
