@@ -1,6 +1,9 @@
 {
   "register": {
-    "brand": { "name": "Trimio Studio", "subtitle": "Voor professionele kapperswinkels" },
+    "brand": {
+      "name": "Trimio Studio",
+      "subtitle": "Voor professionele kapperswinkels"
+    },
     "hero": {
       "eyebrow": "Begin vandaag",
       "title": "Uw bedrijf online in minuten.",
@@ -11,7 +14,10 @@
       "feature4": "Klanten en geschiedenis",
       "feature5": "Gratis starten, geen kaart"
     },
-    "freePlan": { "title": "Gratis plan inbegrepen", "desc": "Begin met 1 kapper en 30 boekingen per maand zonder kosten. Upgrade vanaf €19/maand wanneer u wilt groeien." },
+    "freePlan": {
+      "title": "Gratis plan inbegrepen",
+      "desc": "Begin met 1 kapper en 30 boekingen per maand zonder kosten. Upgrade vanaf €19/maand wanneer u wilt groeien."
+    },
     "form": {
       "shopNameLabel": "Naam van de kapperswinkel",
       "shopNamePlaceholder": "Kapperswinkel Jan",
@@ -64,7 +70,11 @@
     "goToLogin": "Naar aanmelden"
   },
   "home": {
-    "nav": { "pricing": "Prijzen", "login": "Inloggen", "startFree": "Gratis starten" },
+    "nav": {
+      "pricing": "Prijzen",
+      "login": "Inloggen",
+      "startFree": "Gratis starten"
+    },
     "hero": {
       "pill": "Boekingssysteem voor kapperswinkels",
       "line1": "Klanten boeken.",
@@ -72,9 +82,12 @@
       "desc": "Trimio geeft uw kapperswinkel een online boekingspagina. Geen WhatsApp, geen oproepen, geen papier.",
       "cta": "Gratis starten",
       "ctaNote": "Voor altijd gratis · Geen creditcard",
-      "stat1Value": "< 5 min", "stat1Label": "om alles in te stellen",
-      "stat2Value": "24 / 7", "stat2Label": "beschikbaar voor klanten",
-      "stat3Value": "€0", "stat3Label": "om te beginnen"
+      "stat1Value": "< 5 min",
+      "stat1Label": "om alles in te stellen",
+      "stat2Value": "24 / 7",
+      "stat2Label": "beschikbaar voor klanten",
+      "stat3Value": "€0",
+      "stat3Label": "om te beginnen"
     },
     "finalCta": {
       "title": "Uw kapperswinkel online",
@@ -84,6 +97,93 @@
       "alreadyHaveAccount": "Ik heb al een account",
       "note": "Gratis plan voor altijd · 30 boekingen/maand inbegrepen · Geen kaart"
     },
-    "footer": { "createAccount": "Account aanmaken" }
+    "footer": {
+      "createAccount": "Account aanmaken"
+    },
+    "pain": {
+      "section": "Het probleem",
+      "title": "Beheert u uw boekingen nog steeds handmatig?",
+      "desc": "De meeste kapperszaken verliezen elke dag klanten omdat ze niet over een systeem beschikken. Herken jij dit?",
+      "pain1Title": "WhatsApp loopt over",
+      "pain1Desc": "Tientallen berichten per dag om te reserveren en een nieuwe afspraak te maken. En sommige blijven onbeantwoord.",
+      "pain2Title": "Bellen op het verkeerde moment",
+      "pain2Desc": "De telefoon gaat als je een schaar in je hand hebt. Om tien uur 's avonds stopte je met antwoorden - de klant ging ergens anders heen.",
+      "pain3Title": "Geen zakelijk zicht",
+      "pain3Desc": "Je weet niet hoeveel je deze week gaat verdienen, wie er werkt en of je morgen nog tijd vrij hebt."
+    },
+    "howItWorks": {
+      "section": "Hoe het werkt",
+      "title": "Klaar voor gebruik in 3 stappen",
+      "desc": "Geen installatie nodig. Geen technische kennis vereist.",
+      "step1Title": "Creëer uw kapperszaak",
+      "step1Desc": "Naam, diensten, kappers en openingstijden. Minder dan 5 minuten.",
+      "step2Title": "Ontvang uw link",
+      "step2Desc": "Deel het op Instagram, WhatsApp of waar je maar wilt.",
+      "step3Title": "Boekingen komen binnen",
+      "step3Desc": "Klanten boeken online, u komt gewoon op tijd opdagen."
+    },
+    "benefits": {
+      "section": "Alles inclusief",
+      "title": "Het is niet alleen maar plannen.",
+      "desc": "Trimio is de complete werking van uw kapperszaak in één tool.",
+      "b1Title": "Schema altijd georganiseerd",
+      "b1Desc": "Klanten kiezen service, kapper, dag en tijd – zonder u te onderbreken. Werkt 24 uur per dag.",
+      "b2Title": "Team op dezelfde pagina",
+      "b2Desc": "Elke kapper ziet zijn schema op zijn telefoon. Je ziet alles in een realtime kalenderweergave.",
+      "b3Title": "Openbare pagina klaar voor gebruik",
+      "b3Desc": "Uw aangepaste link met diensten, galerij en boekingsknop. Deel op Instagram en je bent klaar.",
+      "b4Title": "Gegevens die zinvol zijn",
+      "b4Desc": "Factureringsrapporten, klantgeschiedenis en annuleringspercentages – allemaal in één paneel."
+    },
+    "testimonials": {
+      "section": "Wie gebruikt het al",
+      "title": "Wat kapperszaken zeggen"
+    },
+    "pricing": {
+      "section": "Prijzen",
+      "title": "Begin gratis. Groei wanneer jij wilt.",
+      "desc": "Geen contracten. Annuleer wanneer dan ook. Geen verrassingen.",
+      "freeName": "Vrij",
+      "freePeriod": "voor altijd",
+      "freeDesc": "Om te proberen zonder risico.",
+      "freeFeature1": "1 kapper",
+      "freeFeature2": "30 boekingen per maand",
+      "freeFeature3": "Openbare pagina met boeking",
+      "freeFeature4": "Volledig beheerpaneel",
+      "freeFeature5": "Geen creditcard",
+      "basicName": "Basis",
+      "basicPeriod": "per maand",
+      "basicDesc": "Voor groeiende kapperszaken.",
+      "basicFeature1": "Maximaal 3 kappers",
+      "basicFeature2": "Onbeperkte boekingen",
+      "basicFeature3": "Extra's en producten",
+      "basicFeature4": "Abonnementen voor klanten",
+      "basicFeature5": "Zakelijke rapporten",
+      "basicFeature6": "Prioritaire ondersteuning",
+      "basicNote": "Begint met een proefperiode van 14 dagen",
+      "proName": "Pro",
+      "proPeriod": "per maand",
+      "proDesc": "Voor grotere teams.",
+      "proFeature1": "Onbeperkt kappers",
+      "proFeature2": "Onbeperkte boekingen",
+      "proFeature3": "Alles in Basis",
+      "proFeature4": "Speciaal portaal per kapper",
+      "proFeature5": "Pushmeldingen",
+      "proFeature6": "Geavanceerde rapporten",
+      "popular": "Meest populair",
+      "startFree": "Begin gratis"
+    },
+    "faq": {
+      "section": "Veelgestelde vragen",
+      "title": "Je hebt vragen. Wij hebben antwoorden.",
+      "q1": "Moet ik IT of programmeren kennen?",
+      "a1": "Nee. Trimio is ontworpen voor iedereen. Maak uw account aan, voeg uw diensten en kappers toe en deel de link. Een normale installatie duurt minder dan 5 minuten.",
+      "q2": "Hoe maken klanten een boeking?",
+      "a2": "U krijgt een aangepaste link (bijvoorbeeld trimio.app/uw-naam). Deel het op Instagram, WhatsApp of waar dan ook. Klanten openen het, kiezen en boeken – geen app, geen aanmelding.",
+      "q3": "Kan ik opzeggen wanneer ik wil?",
+      "a3": "Ja, op elk moment en zonder boetes. Er zijn geen verplichte jaarcontracten. Als u opzegt, loopt uw ​​abonnement door tot het einde van de betaalde periode.",
+      "q4": "Wat gebeurt er als ik de limiet voor het gratis abonnement bereik?",
+      "a4": "We waarschuwen u voordat u de limiet bereikt. Eenmaal bereikt, kunnen klanten pas volgende maand nieuwe boekingen maken of totdat u upgradet. Alle gegevens worden bewaard."
+    }
   }
 }

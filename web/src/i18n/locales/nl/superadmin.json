@@ -1,25 +1,58 @@
 {
   "layout": {
-    "nav": { "platform": "Platform", "dashboard": "Dashboard", "barbershops": "Kapperswinkels" },
-    "pageMeta": {
-      "dashboard": { "title": "Dashboard", "subtitle": "Geconsolideerde lezing van de commerciële en operationele gezondheid van het platform." },
-      "barbershops": { "title": "Kapperswinkels", "subtitle": "Gecentraliseerd beheer van accounts, plannen en operationele status." }
+    "nav": {
+      "platform": "Systeem",
+      "dashboard": "Dashboard",
+      "barbershops": "Kapperswinkels"
     },
-    "account": { "name": "Super Admin", "platform": "Trimio Platform", "logout": "Afmelden" },
-    "sidebar": { "scopeLabel": "Bereik", "scopeTitle": "Centrale operatie", "scopeDesc": "Dwarsliggende blik op groei, accounts en monetisatie." },
-    "topbar": { "viewBarbershops": "Kapperswinkels bekijken" },
-    "pull": { "refreshing": "Vernieuwen...", "releaseToRefresh": "Loslaten om te vernieuwen", "pullToRefresh": "Trek om te vernieuwen" },
-    "brand": { "name": "Trimio Command", "subtitle": "Platformbeheer" }
+    "pageMeta": {
+      "dashboard": {
+        "title": "Dashboard",
+        "subtitle": "Geconsolideerde lezing van de commerciële en operationele gezondheid van het platform."
+      },
+      "barbershops": {
+        "title": "Kapperswinkels",
+        "subtitle": "Gecentraliseerd beheer van accounts, plannen en operationele status."
+      }
+    },
+    "account": {
+      "name": "Super beheerder",
+      "platform": "Trimio-platform",
+      "logout": "Afmelden"
+    },
+    "sidebar": {
+      "scopeLabel": "Bereik",
+      "scopeTitle": "Centrale operatie",
+      "scopeDesc": "Dwarsliggende blik op groei, accounts en monetisatie."
+    },
+    "topbar": {
+      "viewBarbershops": "Kapperswinkels bekijken"
+    },
+    "pull": {
+      "refreshing": "Vernieuwen...",
+      "releaseToRefresh": "Loslaten om te vernieuwen",
+      "pullToRefresh": "Trek om te vernieuwen"
+    },
+    "brand": {
+      "name": "Trimio-commando",
+      "subtitle": "Platformbeheer"
+    }
   },
   "login": {
-    "brand": { "name": "Trimio Command", "subtitle": "Platformbeheer" },
+    "brand": {
+      "name": "Trimio-commando",
+      "subtitle": "Platformbeheer"
+    },
     "panel": {
-      "eyebrow": "Platform control",
+      "eyebrow": "Platformcontrole",
       "title": "Globaal overzicht van de gehele operatie.",
       "desc": "Gecentraliseerd beheer van kapperswinkels, plannen, facturatie en platformgezondheid — vanuit één controlepunt.",
-      "stat1Label": "Netwerk kapperswinkels", "stat1Desc": "Gecentraliseerd overzicht van alle actieve accounts.",
-      "stat2Label": "Groei en plannen", "stat2Desc": "MRR, upgrades en facturatiecyclus per account.",
-      "stat3Label": "Platformbeheer", "stat3Desc": "Opschortingen, statussen en globale operationele gezondheid.",
+      "stat1Label": "Netwerk kapperswinkels",
+      "stat1Desc": "Gecentraliseerd overzicht van alle actieve accounts.",
+      "stat2Label": "Groei en plannen",
+      "stat2Desc": "MRR, upgrades en facturatiecyclus per account.",
+      "stat3Label": "Platformbeheer",
+      "stat3Desc": "Opschortingen, statussen en globale operationele gezondheid.",
       "footer": "© {{year}} Trimio · Beperkte toegang"
     },
     "form": {
@@ -35,6 +68,26 @@
       "error": "Ongeldige inloggegevens."
     }
   },
-  "dashboard": { "title": "Dashboard", "subtitle": "Geconsolideerde lezing van de platformgezondheid." },
-  "barbershops": { "title": "Kapperswinkels", "subtitle": "Gecentraliseerd beheer van accounts en operaties." }
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Geconsolideerd overzicht van de platformgezondheid.",
+    "stats": {
+      "paidShops": "{{count}} betalende zaken",
+      "thisMonth": "{{count}} deze maand",
+      "avgPerShop": "{{value}} / zaak",
+      "adoption": "Adoptie",
+      "proShops": "{{count}} Premium"
+    },
+    "metrics": {
+      "title": "Statistieken",
+      "bookingsThisMonth": "Boekingen deze maand",
+      "avgPerShop": "Gemiddeld / zaak",
+      "proShops": "Pro-zaken",
+      "paidAdoption": "Betaalde adoptie"
+    }
+  },
+  "barbershops": {
+    "title": "Kapperswinkels",
+    "subtitle": "Gecentraliseerd beheer van accounts en operaties."
+  }
 }

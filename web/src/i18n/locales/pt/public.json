@@ -62,8 +62,8 @@
         "noExtras": "Sem extras disponíveis."
       },
       "extrasProducts": {
-        "title": "Extras & Produtos",
-        "subtitle": "Adicione ao seu atendimento (opcional)",
+        "title": "Extras e produtos",
+        "subtitle": "Adiciona ao teu atendimento (opcional)",
         "noItems": "Sem extras ou produtos disponíveis.",
         "extras": "Extras",
         "products": "Produtos"
@@ -106,7 +106,7 @@
         "dataTitle": "Dados que vão ser guardados",
         "dataName": "· Nome: {{name}}",
         "dataPhone": "· Telefone: {{phone}}",
-        "dataEmail": "· Email: {{email}}",
+        "dataEmail": "· E-mail: {{email}}",
         "dataAttendee": "· Pessoa atendida: {{attendee}}",
         "dataBookingInfo": "· Data, hora, serviço e barbeiro escolhidos",
         "dataUsage": "Usados para gerir a reserva, enviar o link de gestão e contacto operacional. Podes exportar ou apagar os teus dados a qualquer momento através do link da reserva. Conservação: 3 anos.",
@@ -117,7 +117,7 @@
           "title": "Reserva confirmada",
           "message": "Reserva para {{name}} criada com sucesso.",
           "addToCalendar": "Guardar no Calendário",
-          "addToGoogleCalendar": "Adicionar ao Google Calendar",
+          "addToGoogleCalendar": "Adicionar ao Calendário Google",
           "downloadIcs": "Descarregar ficheiro .ics",
           "manageBooking": "Gerir reserva",
           "backHome": "Voltar ao início"
@@ -213,7 +213,7 @@
     "oneActiveBooking": "1 marcação activa por vez",
     "modal": {
       "title": "Assinar plano",
-      "subtitle": "{{name}} · {{price}}",
+      "subtitle": "Plano {{name}} · {{price}}",
       "namePlaceholder": "O teu nome",
       "phonePlaceholder": "900 000 000",
       "warning": "Este plano só pode ser activado após confirmação de pagamento ou directamente pela barbearia.",
@@ -242,7 +242,8 @@
       "cancelBooking": "Cancelar marcação",
       "linkCopied": "Link de gestão copiado.",
       "presenceConfirmed": "Presença confirmada com sucesso.",
-      "bookingCancelled": "Marcação cancelada com sucesso."
+      "bookingCancelled": "Marcação cancelada com sucesso.",
+      "bookingRescheduled": "Marcação remarcada com sucesso."
     },
     "privacy": {
       "title": "Privacidade e dados",
@@ -274,5 +275,8 @@
     "eyebrow": "Privacidade",
     "title": "Política de Privacidade",
     "versionDate": "Versão {{version}} · Actualizada em {{date}}"
+  },
+  "brand": {
+    "clients": "Trimio Clientes"
   }
 }

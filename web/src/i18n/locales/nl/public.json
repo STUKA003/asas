@@ -1,6 +1,6 @@
 {
   "header": {
-    "home": "Home",
+    "home": "Thuis",
     "services": "Diensten",
     "plans": "Abonnementen",
     "products": "Producten",
@@ -9,9 +9,9 @@
   "footer": {
     "tagline": "Eenvoudige, snelle en georganiseerde boekingen.",
     "nav": "Navigatie",
-    "contact": "Contact",
+    "contact": "Contactgegevens",
     "book": "Boeken",
-    "privacy": "Privacy",
+    "privacy": "Gegevensbescherming",
     "adminArea": "Beheerdersgebied",
     "allRightsReserved": "Alle rechten voorbehouden."
   },
@@ -28,7 +28,7 @@
     "stepOf": "Stap {{current}} van {{total}}",
     "summary": {
       "title": "Boekingsoverzicht",
-      "professional": "Professional",
+      "professional": "Professioneel",
       "date": "Datum",
       "time": "Tijd",
       "mainService": "Hoofddienst",
@@ -37,8 +37,13 @@
       "total": "Geschat totaal"
     },
     "steps": {
-      "service": { "title": "Kies een dienst" },
-      "barber": { "title": "Kies uw kapper", "professional": "Professional" },
+      "service": {
+        "title": "Kies een dienst"
+      },
+      "barber": {
+        "title": "Kies uw kapper",
+        "professional": "Professioneel"
+      },
       "dateTime": {
         "title": "Datum en tijd",
         "selectDate": "Selecteer een datum",
@@ -163,7 +168,10 @@
       "title": "Klaar voor een nieuwe look?",
       "subtitle": "Boek nu en zeker uw plek bij {{name}} zonder wachten of bellen."
     },
-    "social": { "whatsapp": "WhatsApp", "instagram": "Instagram" },
+    "social": {
+      "whatsapp": "WhatsApp",
+      "instagram": "Instagram"
+    },
     "promo": {
       "label": "Uitgelicht deze week",
       "defaultTitle": "Speciale aanbieding",
@@ -205,7 +213,7 @@
     "oneActiveBooking": "1 actieve boeking tegelijk",
     "modal": {
       "title": "Abonneren op plan",
-      "subtitle": "{{name}} · {{price}}",
+      "subtitle": "Abonnement {{name}} · {{price}}",
       "namePlaceholder": "Uw naam",
       "phonePlaceholder": "+31 6 00000000",
       "warning": "Dit plan kan alleen worden geactiveerd na betalingsbevestiging of rechtstreeks door de kapperswinkel.",
@@ -220,11 +228,11 @@
     "subtitle": "Gebruik deze pagina om uw boeking bij {{shopName}} te beheren.",
     "missingToken": "Boekingstoken ontbreekt. Open de volledige beheerlink om door te gaan.",
     "details": {
-      "label": "Details",
+      "label": "Gegevens",
       "barber": "Kapper:",
       "customer": "Klant:",
       "responsible": "Verantwoordelijke:",
-      "contact": "Contact:"
+      "contact": "Contactgegevens:"
     },
     "actions": {
       "label": "Snelle acties",
@@ -234,7 +242,8 @@
       "cancelBooking": "Boeking annuleren",
       "linkCopied": "Beheerlink gekopieerd.",
       "presenceConfirmed": "Aanwezigheid succesvol bevestigd.",
-      "bookingCancelled": "Boeking succesvol geannuleerd."
+      "bookingCancelled": "Boeking succesvol geannuleerd.",
+      "bookingRescheduled": "Boeking succesvol verplaatst."
     },
     "privacy": {
       "title": "Privacy en gegevens",
@@ -263,8 +272,11 @@
     }
   },
   "privacy": {
-    "eyebrow": "Privacy",
+    "eyebrow": "Gegevensbescherming",
     "title": "Privacybeleid",
     "versionDate": "Versie {{version}} · Bijgewerkt op {{date}}"
+  },
+  "brand": {
+    "clients": "Trimio Clientes"
   }
 }

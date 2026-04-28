@@ -1,20 +1,62 @@
 {
   "layout": {
-    "nav": { "portal": "Portale", "dashboard": "Dashboard", "schedule": "Agenda" },
-    "pageMeta": {
-      "dashboard": { "title": "Dashboard", "subtitle": "Vista rapida della tua giornata, agenda e fatturato." },
-      "schedule": { "title": "Agenda", "subtitle": "Segui i tuoi orari e le prenotazioni in corso." }
+    "nav": {
+      "portal": "Portale",
+      "dashboard": "Pannello di controllo",
+      "schedule": "Agenda"
     },
-    "notifications": { "title": "Notifiche", "newBadge": "{{count}} nuove", "markAllRead": "Segna tutto come letto", "noRecent": "Nessuna notifica recente." },
-    "account": { "logout": "Esci" },
-    "sidebar": { "activeSession": "Sessione attiva", "portalTitle": "Portale barbiere", "portalDesc": "Accesso rapido all'agenda, agli stati e ai dettagli del servizio." },
-    "topbar": { "planLabel": "Piano", "openSchedule": "Apri agenda" },
-    "pull": { "refreshing": "Aggiornamento...", "releaseToRefresh": "Rilascia per aggiornare", "pullToRefresh": "Trascina per aggiornare" },
-    "brand": { "name": "Trimio Flow", "defaultSubtitle": "Portale barbiere" }
+    "pageMeta": {
+      "dashboard": {
+        "title": "Pannello di controllo",
+        "subtitle": "Vista rapida della tua giornata, agenda e fatturato."
+      },
+      "schedule": {
+        "title": "Agenda",
+        "subtitle": "Segui i tuoi orari e le prenotazioni in corso."
+      }
+    },
+    "notifications": {
+      "title": "Notifiche",
+      "newBadge": "{{count}} nuove",
+      "markAllRead": "Segna tutto come letto",
+      "noRecent": "Nessuna notifica recente."
+    },
+    "account": {
+      "logout": "Esci"
+    },
+    "sidebar": {
+      "activeSession": "Sessione attiva",
+      "portalTitle": "Portale barbiere",
+      "portalDesc": "Accesso rapido all'agenda, agli stati e ai dettagli del servizio."
+    },
+    "topbar": {
+      "planLabel": "Piano",
+      "openSchedule": "Apri agenda"
+    },
+    "pull": {
+      "refreshing": "Aggiornamento...",
+      "releaseToRefresh": "Rilascia per aggiornare",
+      "pullToRefresh": "Trascina per aggiornare"
+    },
+    "brand": {
+      "name": "Trimio Flow",
+      "defaultSubtitle": "Portale barbiere"
+    }
   },
-  "push": { "unavailable": "Push non disponibile", "notConfigured": "Push non configurato", "blocked": "Push bloccato", "active": "Push attivo", "enable": "Attiva push", "blockedTooltip": "Autorizzazione bloccata nel browser", "enableTooltip": "Attiva notifiche push" },
+  "push": {
+    "unavailable": "Push non disponibile",
+    "notConfigured": "Push non configurato",
+    "blocked": "Push bloccato",
+    "active": "Push attivo",
+    "enable": "Attiva push",
+    "blockedTooltip": "Autorizzazione bloccata nel browser",
+    "enableTooltip": "Attiva notifiche push"
+  },
   "login": {
-    "brand": { "name": "Trimio Flow", "subtitle": "Portale barbiere" },
+    "brand": {
+      "name": "Trimio Flow",
+      "subtitle": "Portale barbiere"
+    },
     "panel": {
       "eyebrow": "Operazione individuale",
       "title": "La tua agenda senza uscire dal ritmo della giornata.",
@@ -32,14 +74,71 @@
       "subtitle": "Accesso all'agenda e all'operazione quotidiana del barbiere.",
       "slugLabel": "Slug del salone",
       "slugPlaceholder": "il-mio-salone",
-      "emailLabel": "Email",
+      "emailLabel": "E-mail",
       "emailPlaceholder": "barbiere@email.com",
-      "passwordLabel": "Password",
+      "passwordLabel": "Parola d’ordine",
       "passwordPlaceholder": "••••••••",
       "submitButton": "Accedi al portale",
-      "errors": { "invalidCredentials": "Slug, email o password non validi." }
+      "errors": {
+        "invalidCredentials": "Slug, email o password non validi."
+      }
     }
   },
-  "dashboard": { "title": "Dashboard", "subtitle": "Vista rapida della tua giornata, agenda e fatturato." },
-  "schedule": { "title": "Agenda", "subtitle": "Segui i tuoi orari e le prenotazioni in corso." }
+  "dashboard": {
+    "title": "Pannello di controllo",
+    "subtitle": "Vista rapida della tua giornata, agenda e fatturato.",
+    "heroSubtitle": "Visualizzazione consolidata del tuo programma, delle entrate e dei prossimi appuntamenti della giornata.",
+    "dailyFlow": "Flusso quotidiano",
+    "heroDescription": "Apri il portale e vedi subito quanti servizi hai, i ricavi attuali e cosa verrà dopo.",
+    "todaySchedule": "Il programma di oggi",
+    "noPendingToday": "Nessuna prenotazione in sospeso per oggi.",
+    "metrics": {
+      "today": "Oggi",
+      "dayBookings": "Prenotazioni oggi",
+      "todayRevenue": "Le entrate di oggi",
+      "completedToday": "Completato oggi",
+      "week": "Settimana",
+      "accumulatedRevenue": "Entrate accumulate",
+      "bookings": "prenotazioni",
+      "completed": "completato",
+      "thisWeek": "Questa settimana",
+      "thisMonth": "Questo mese",
+      "revenue": "reddito"
+    },
+    "focus": {
+      "title": "Messa a fuoco immediata",
+      "nextServices": "I prossimi servizi",
+      "pendingOrConfirmed": "In sospeso o confermato per oggi.",
+      "monthRevenue": "Entrate mensili",
+      "monthPerformance": "Lettura rapida della performance mensile."
+    }
+  },
+  "schedule": {
+    "title": "Agenda",
+    "subtitle": "Segui i tuoi orari e le prenotazioni in corso.",
+    "pageSubtitle": "Tieni traccia dei tempi, delle riprogrammazioni e dei dettagli dei servizi in corso.",
+    "today": "Oggi",
+    "view": {
+      "oneDay": "1 giorno",
+      "threeDays": "3 giorni",
+      "sevenDays": "7 giorni"
+    },
+    "summary": {
+      "title": "Riepilogo",
+      "baseSlot": "Scanalatura della base",
+      "activeInterval": "Intervallo attivo",
+      "days": "{{count}} giorno",
+      "days_plural": "{{count}} giorni"
+    },
+    "feedback": {
+      "statusUpdated": "Prenotazione contrassegnata come {{status}}.",
+      "statusError": "Impossibile modificare lo stato della prenotazione.",
+      "rescheduled": "Prenotazione spostata a {{date}}.",
+      "rescheduleError": "Impossibile riprogrammare la prenotazione.",
+      "itemAdded": "Extra/prodotto aggiunto alla prenotazione.",
+      "addItemError": "Impossibile aggiungere l'articolo alla prenotazione",
+      "itemRemoved": "Articolo rimosso dalla prenotazione.",
+      "removeItemError": "Impossibile rimuovere l'articolo dalla prenotazione"
+    }
+  }
 }

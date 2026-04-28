@@ -1,20 +1,62 @@
 {
   "layout": {
-    "nav": { "portal": "Portal", "dashboard": "Dashboard", "schedule": "Zeitplan" },
-    "pageMeta": {
-      "dashboard": { "title": "Dashboard", "subtitle": "Schneller Überblick über Ihren Tag, Zeitplan und Einnahmen." },
-      "schedule": { "title": "Zeitplan", "subtitle": "Verfolgen Sie Ihre Termine und laufenden Buchungen." }
+    "nav": {
+      "portal": "Portal",
+      "dashboard": "Armaturenbrett",
+      "schedule": "Zeitplan"
     },
-    "notifications": { "title": "Benachrichtigungen", "newBadge": "{{count}} neue", "markAllRead": "Alle als gelesen markieren", "noRecent": "Keine aktuellen Benachrichtigungen." },
-    "account": { "logout": "Abmelden" },
-    "sidebar": { "activeSession": "Aktive Sitzung", "portalTitle": "Barbier-Portal", "portalDesc": "Schneller Zugang zu Zeitplan, Status und Servicedetails." },
-    "topbar": { "planLabel": "Plan", "openSchedule": "Zeitplan öffnen" },
-    "pull": { "refreshing": "Aktualisierung...", "releaseToRefresh": "Loslassen zum Aktualisieren", "pullToRefresh": "Ziehen zum Aktualisieren" },
-    "brand": { "name": "Trimio Flow", "defaultSubtitle": "Barbier-Portal" }
+    "pageMeta": {
+      "dashboard": {
+        "title": "Armaturenbrett",
+        "subtitle": "Schneller Überblick über Ihren Tag, Zeitplan und Einnahmen."
+      },
+      "schedule": {
+        "title": "Zeitplan",
+        "subtitle": "Verfolgen Sie Ihre Termine und laufenden Buchungen."
+      }
+    },
+    "notifications": {
+      "title": "Benachrichtigungen",
+      "newBadge": "{{count}} neue",
+      "markAllRead": "Alle als gelesen markieren",
+      "noRecent": "Keine aktuellen Benachrichtigungen."
+    },
+    "account": {
+      "logout": "Abmelden"
+    },
+    "sidebar": {
+      "activeSession": "Aktive Sitzung",
+      "portalTitle": "Barbier-Portal",
+      "portalDesc": "Schneller Zugang zu Zeitplan, Status und Servicedetails."
+    },
+    "topbar": {
+      "planLabel": "Planen",
+      "openSchedule": "Zeitplan öffnen"
+    },
+    "pull": {
+      "refreshing": "Aktualisierung...",
+      "releaseToRefresh": "Loslassen zum Aktualisieren",
+      "pullToRefresh": "Ziehen zum Aktualisieren"
+    },
+    "brand": {
+      "name": "Trimio Flow",
+      "defaultSubtitle": "Barbier-Portal"
+    }
   },
-  "push": { "unavailable": "Push nicht verfügbar", "notConfigured": "Push nicht konfiguriert", "blocked": "Push blockiert", "active": "Push aktiv", "enable": "Push aktivieren", "blockedTooltip": "Erlaubnis im Browser blockiert", "enableTooltip": "Push-Benachrichtigungen aktivieren" },
+  "push": {
+    "unavailable": "Push nicht verfügbar",
+    "notConfigured": "Push nicht konfiguriert",
+    "blocked": "Push blockiert",
+    "active": "Push aktiv",
+    "enable": "Push aktivieren",
+    "blockedTooltip": "Erlaubnis im Browser blockiert",
+    "enableTooltip": "Push-Benachrichtigungen aktivieren"
+  },
   "login": {
-    "brand": { "name": "Trimio Flow", "subtitle": "Barbier-Portal" },
+    "brand": {
+      "name": "Trimio Flow",
+      "subtitle": "Barbier-Portal"
+    },
     "panel": {
       "eyebrow": "Individuelle Operation",
       "title": "Ihr Zeitplan ohne den Tagesrhythmus zu unterbrechen.",
@@ -37,9 +79,66 @@
       "passwordLabel": "Passwort",
       "passwordPlaceholder": "••••••••",
       "submitButton": "Im Portal einloggen",
-      "errors": { "invalidCredentials": "Slug, E-Mail oder Passwort ungültig." }
+      "errors": {
+        "invalidCredentials": "Slug, E-Mail oder Passwort ungültig."
+      }
     }
   },
-  "dashboard": { "title": "Dashboard", "subtitle": "Schneller Überblick über Ihren Tag, Zeitplan und Einnahmen." },
-  "schedule": { "title": "Zeitplan", "subtitle": "Verfolgen Sie Ihre Termine und laufenden Buchungen." }
+  "dashboard": {
+    "title": "Armaturenbrett",
+    "subtitle": "Schneller Überblick über Ihren Tag, Zeitplan und Einnahmen.",
+    "heroSubtitle": "Konsolidierte Ansicht Ihres Terminplans, Ihrer Einnahmen und der nächsten Termine des Tages.",
+    "dailyFlow": "Täglicher Fluss",
+    "heroDescription": "Öffnen Sie das Portal und sehen Sie sofort, wie viele Dienste Sie haben, welche Einnahmen Sie aktuell erzielen und was als nächstes kommt.",
+    "todaySchedule": "Der heutige Zeitplan",
+    "noPendingToday": "Für heute sind keine Buchungen ausstehend.",
+    "metrics": {
+      "today": "Heute",
+      "dayBookings": "Buchungen heute",
+      "todayRevenue": "Der heutige Umsatz",
+      "completedToday": "Heute abgeschlossen",
+      "week": "Woche",
+      "accumulatedRevenue": "Kumulierter Umsatz",
+      "bookings": "Buchungen",
+      "completed": "vollendet",
+      "thisWeek": "Diese Woche",
+      "thisMonth": "Diesen Monat",
+      "revenue": "Einnahmen"
+    },
+    "focus": {
+      "title": "Sofortiger Fokus",
+      "nextServices": "Nächste Dienste",
+      "pendingOrConfirmed": "Ausstehend oder für heute bestätigt.",
+      "monthRevenue": "Monatlicher Umsatz",
+      "monthPerformance": "Schnelles Ablesen der monatlichen Leistung."
+    }
+  },
+  "schedule": {
+    "title": "Zeitplan",
+    "subtitle": "Verfolgen Sie Ihre Termine und laufenden Buchungen.",
+    "pageSubtitle": "Verfolgen Sie Zeiten, Verschiebungen und Details laufender Dienste.",
+    "today": "Heute",
+    "view": {
+      "oneDay": "1 Tag",
+      "threeDays": "3 Tage",
+      "sevenDays": "7 Tage"
+    },
+    "summary": {
+      "title": "Zusammenfassung",
+      "baseSlot": "Basissteckplatz",
+      "activeInterval": "Aktives Intervall",
+      "days": "{{count}} Tag",
+      "days_plural": "{{count}} Tage"
+    },
+    "feedback": {
+      "statusUpdated": "Buchung als {{status}} markiert.",
+      "statusError": "Der Buchungsstatus konnte nicht geändert werden.",
+      "rescheduled": "Die Buchung wurde auf {{date}} verschoben.",
+      "rescheduleError": "Die Buchung konnte nicht verschoben werden.",
+      "itemAdded": "Extra/Produkt zur Buchung hinzugefügt.",
+      "addItemError": "Artikel konnte nicht zur Buchung hinzugefügt werden",
+      "itemRemoved": "Artikel aus der Buchung entfernt.",
+      "removeItemError": "Der Artikel konnte nicht aus der Buchung entfernt werden"
+    }
+  }
 }

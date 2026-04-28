@@ -20,7 +20,7 @@
     "update": "Actualizar",
     "remove": "Remover",
     "add": "Adicionar",
-    "upgrade": "Fazer upgrade",
+    "upgrade": "Mudar para plano superior",
     "refresh": "Actualizar página",
     "export": "Exportar",
     "import": "Importar"
@@ -37,7 +37,7 @@
   "plan": {
     "FREE": "Grátis",
     "BASIC": "Básico",
-    "PRO": "Pro"
+    "PRO": "Pró"
   },
   "error": {
     "generic": "Ocorreu um erro. Tenta novamente.",
@@ -49,12 +49,19 @@
   },
   "lang": {
     "label": "Idioma",
+    "settingsTitle": "Idioma da aplicação",
+    "settingsDescription": "Define a língua usada neste dispositivo. A escolha fica guardada no browser.",
+    "current": "Atual",
     "pt": "Português",
-    "en": "English",
-    "es": "Español",
-    "fr": "Français",
-    "de": "Deutsch",
+    "en": "Inglês",
+    "es": "Espanhol",
+    "fr": "Francês",
+    "de": "Alemão",
     "it": "Italiano",
-    "nl": "Nederlands"
+    "nl": "Holanda"
+  },
+  "table": {
+    "noResults": "Sem resultados",
+    "actions": "Ações"
   }
 }

@@ -42,6 +42,23 @@
       "error": "Invalid credentials."
     }
   },
-  "dashboard": { "title": "Dashboard", "subtitle": "Consolidated read of the platform's commercial and operational health." },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Consolidated read of the platform's commercial and operational health.",
+    "stats": {
+      "paidShops": "{{count}} paid shops",
+      "thisMonth": "{{count}} this month",
+      "avgPerShop": "{{value}} / shop",
+      "adoption": "Adoption",
+      "proShops": "{{count}} Pro"
+    },
+    "metrics": {
+      "title": "Metrics",
+      "bookingsThisMonth": "Bookings this month",
+      "avgPerShop": "Avg / shop",
+      "proShops": "Pro shops",
+      "paidAdoption": "Paid adoption"
+    }
+  },
   "barbershops": { "title": "Barbershops", "subtitle": "Centralised management of accounts, plans and operational status." }
 }

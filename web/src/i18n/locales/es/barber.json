@@ -1,20 +1,62 @@
 {
   "layout": {
-    "nav": { "portal": "Portal", "dashboard": "Dashboard", "schedule": "Horarios" },
-    "pageMeta": {
-      "dashboard": { "title": "Dashboard", "subtitle": "Vista rápida de tu día, agenda e ingresos." },
-      "schedule": { "title": "Horarios", "subtitle": "Sigue tus horarios y reservas en curso." }
+    "nav": {
+      "portal": "Portal",
+      "dashboard": "Panel",
+      "schedule": "Horarios"
     },
-    "notifications": { "title": "Notificaciones", "newBadge": "{{count}} nuevas", "markAllRead": "Marcar todo como leído", "noRecent": "Sin notificaciones recientes." },
-    "account": { "logout": "Cerrar sesión" },
-    "sidebar": { "activeSession": "Sesión activa", "portalTitle": "Portal del barbero", "portalDesc": "Acceso rápido a la agenda, estados y detalles del servicio." },
-    "topbar": { "planLabel": "Plan", "openSchedule": "Abrir agenda" },
-    "pull": { "refreshing": "Actualizando...", "releaseToRefresh": "Suelta para actualizar", "pullToRefresh": "Tira para actualizar" },
-    "brand": { "name": "Trimio Flow", "defaultSubtitle": "Portal del barbero" }
+    "pageMeta": {
+      "dashboard": {
+        "title": "Panel",
+        "subtitle": "Vista rápida de tu día, agenda e ingresos."
+      },
+      "schedule": {
+        "title": "Horarios",
+        "subtitle": "Sigue tus horarios y reservas en curso."
+      }
+    },
+    "notifications": {
+      "title": "Notificaciones",
+      "newBadge": "{{count}} nuevas",
+      "markAllRead": "Marcar todo como leído",
+      "noRecent": "Sin notificaciones recientes."
+    },
+    "account": {
+      "logout": "Cerrar sesión"
+    },
+    "sidebar": {
+      "activeSession": "Sesión activa",
+      "portalTitle": "Portal del barbero",
+      "portalDesc": "Acceso rápido a la agenda, estados y detalles del servicio."
+    },
+    "topbar": {
+      "planLabel": "Abono",
+      "openSchedule": "Abrir agenda"
+    },
+    "pull": {
+      "refreshing": "Actualizando...",
+      "releaseToRefresh": "Suelta para actualizar",
+      "pullToRefresh": "Tira para actualizar"
+    },
+    "brand": {
+      "name": "Trimio Flow",
+      "defaultSubtitle": "Portal del barbero"
+    }
   },
-  "push": { "unavailable": "Push no disponible", "notConfigured": "Push no configurado", "blocked": "Push bloqueado", "active": "Push activo", "enable": "Activar push", "blockedTooltip": "Permiso bloqueado en el navegador", "enableTooltip": "Activar notificaciones push" },
+  "push": {
+    "unavailable": "Push no disponible",
+    "notConfigured": "Push no configurado",
+    "blocked": "Push bloqueado",
+    "active": "Push activo",
+    "enable": "Activar push",
+    "blockedTooltip": "Permiso bloqueado en el navegador",
+    "enableTooltip": "Activar notificaciones push"
+  },
   "login": {
-    "brand": { "name": "Trimio Flow", "subtitle": "Portal del barbero" },
+    "brand": {
+      "name": "Trimio Flow",
+      "subtitle": "Portal del barbero"
+    },
     "panel": {
       "eyebrow": "Operación individual",
       "title": "Tu agenda sin salir del ritmo del día.",
@@ -32,14 +74,71 @@
       "subtitle": "Acceso a la agenda y operación diaria del barbero.",
       "slugLabel": "Slug de la barbería",
       "slugPlaceholder": "mi-barberia",
-      "emailLabel": "Email",
+      "emailLabel": "Correo electrónico",
       "emailPlaceholder": "barbero@email.com",
       "passwordLabel": "Contraseña",
       "passwordPlaceholder": "••••••••",
       "submitButton": "Entrar al portal",
-      "errors": { "invalidCredentials": "Slug, email o contraseña inválidos." }
+      "errors": {
+        "invalidCredentials": "Slug, email o contraseña inválidos."
+      }
     }
   },
-  "dashboard": { "title": "Dashboard", "subtitle": "Vista rápida de tu día, agenda e ingresos." },
-  "schedule": { "title": "Horarios", "subtitle": "Sigue tus horarios y reservas en curso." }
+  "dashboard": {
+    "title": "Panel",
+    "subtitle": "Vista rápida de tu día, agenda e ingresos.",
+    "heroSubtitle": "Vista consolidada de su agenda, ingresos y próximas citas del día.",
+    "dailyFlow": "Flujo diario",
+    "heroDescription": "Abra el portal y vea inmediatamente cuántos servicios tiene, los ingresos actuales y lo que viene después.",
+    "todaySchedule": "El horario de hoy",
+    "noPendingToday": "No hay reservas pendientes para hoy.",
+    "metrics": {
+      "today": "Hoy",
+      "dayBookings": "Reservas hoy",
+      "todayRevenue": "Los ingresos de hoy",
+      "completedToday": "Completado hoy",
+      "week": "Semana",
+      "accumulatedRevenue": "Ingresos acumulados",
+      "bookings": "reservas",
+      "completed": "terminado",
+      "thisWeek": "Esta semana",
+      "thisMonth": "este mes",
+      "revenue": "ganancia"
+    },
+    "focus": {
+      "title": "Enfoque inmediato",
+      "nextServices": "Próximos servicios",
+      "pendingOrConfirmed": "Pendiente o confirmado para hoy.",
+      "monthRevenue": "Ingresos mensuales",
+      "monthPerformance": "Lectura rápida del rendimiento mensual."
+    }
+  },
+  "schedule": {
+    "title": "Horarios",
+    "subtitle": "Sigue tus horarios y reservas en curso.",
+    "pageSubtitle": "Realice un seguimiento de los tiempos, reprogramaciones y detalles de los servicios en curso.",
+    "today": "Hoy",
+    "view": {
+      "oneDay": "1 dia",
+      "threeDays": "3 dias",
+      "sevenDays": "7 dias"
+    },
+    "summary": {
+      "title": "Resumen",
+      "baseSlot": "Ranura básica",
+      "activeInterval": "Intervalo activo",
+      "days": "{{count}} día",
+      "days_plural": "{{count}} días"
+    },
+    "feedback": {
+      "statusUpdated": "Reserva marcada como {{status}}.",
+      "statusError": "No se pudo cambiar el estado de la reserva.",
+      "rescheduled": "La reserva se movió a {{date}}.",
+      "rescheduleError": "No se pudo reprogramar la reserva.",
+      "itemAdded": "Extra/producto añadido a la reserva.",
+      "addItemError": "No se pudo agregar el artículo a la reserva",
+      "itemRemoved": "Artículo eliminado de la reserva.",
+      "removeItemError": "No se pudo eliminar el artículo de la reserva"
+    }
+  }
 }

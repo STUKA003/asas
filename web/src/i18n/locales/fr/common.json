@@ -49,12 +49,19 @@
   },
   "lang": {
     "label": "Langue",
-    "pt": "Português",
-    "en": "English",
-    "es": "Español",
+    "settingsTitle": "Langue de l'application",
+    "settingsDescription": "Définit la langue utilisée sur cet appareil. Le choix est enregistré dans le navigateur.",
+    "current": "Actuelle",
+    "pt": "Portugais",
+    "en": "Anglais",
+    "es": "espagnol",
     "fr": "Français",
-    "de": "Deutsch",
-    "it": "Italiano",
-    "nl": "Nederlands"
+    "de": "Allemand",
+    "it": "Italien",
+    "nl": "Pays-Bas"
+  },
+  "table": {
+    "noResults": "Aucun résultat",
+    "actions": "Actes"
   }
 }

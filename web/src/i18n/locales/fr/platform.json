@@ -1,6 +1,9 @@
 {
   "register": {
-    "brand": { "name": "Trimio Studio", "subtitle": "Pour les salons professionnels" },
+    "brand": {
+      "name": "Trimio Studio",
+      "subtitle": "Pour les salons professionnels"
+    },
     "hero": {
       "eyebrow": "Commencez aujourd'hui",
       "title": "Votre activité en ligne en quelques minutes.",
@@ -11,7 +14,10 @@
       "feature4": "Clients et historique",
       "feature5": "Commencez gratuitement, sans carte"
     },
-    "freePlan": { "title": "Forfait Gratuit inclus", "desc": "Commencez avec 1 barbier et 30 réservations par mois sans rien payer. Améliorez à partir de 19€/mois quand vous voulez grandir." },
+    "freePlan": {
+      "title": "Forfait Gratuit inclus",
+      "desc": "Commencez avec 1 barbier et 30 réservations par mois sans rien payer. Améliorez à partir de 19€/mois quand vous voulez grandir."
+    },
     "form": {
       "shopNameLabel": "Nom du salon",
       "shopNamePlaceholder": "Salon de Jean",
@@ -19,7 +25,7 @@
       "slugPrefix": "trimio.app/",
       "ownerNameLabel": "Votre nom",
       "ownerNamePlaceholder": "Jean Dupont",
-      "emailLabel": "Email",
+      "emailLabel": "E-mail",
       "emailPlaceholder": "jean@email.fr",
       "passwordLabel": "Mot de passe",
       "passwordPlaceholder": "Minimum 6 caractères",
@@ -51,7 +57,7 @@
     }
   },
   "verifyEmail": {
-    "eyebrow": "Confirmation",
+    "eyebrow": "Validation",
     "brand": "Trimio Studio",
     "subtitle": "Activation du compte admin.",
     "title": "Confirmer l'email",
@@ -64,7 +70,11 @@
     "goToLogin": "Aller à la connexion"
   },
   "home": {
-    "nav": { "pricing": "Tarifs", "login": "Se connecter", "startFree": "Commencer gratuitement" },
+    "nav": {
+      "pricing": "Tarifs",
+      "login": "Se connecter",
+      "startFree": "Commencer gratuitement"
+    },
     "hero": {
       "pill": "Système de réservation pour salons de barbier",
       "line1": "Les clients réservent.",
@@ -72,9 +82,12 @@
       "desc": "Trimio donne à votre salon une page de réservation en ligne. Sans WhatsApp, sans appels, sans papier.",
       "cta": "Commencer gratuitement",
       "ctaNote": "Gratuit pour toujours · Sans carte de crédit",
-      "stat1Value": "< 5 min", "stat1Label": "pour tout configurer",
-      "stat2Value": "24 / 7", "stat2Label": "disponible pour les clients",
-      "stat3Value": "0€", "stat3Label": "pour commencer"
+      "stat1Value": "< 5 min",
+      "stat1Label": "pour tout configurer",
+      "stat2Value": "24 / 7",
+      "stat2Label": "disponible pour les clients",
+      "stat3Value": "0€",
+      "stat3Label": "pour commencer"
     },
     "finalCta": {
       "title": "Votre salon en ligne",
@@ -84,6 +97,93 @@
       "alreadyHaveAccount": "J'ai déjà un compte",
       "note": "Forfait gratuit pour toujours · 30 réservations/mois incluses · Sans carte"
     },
-    "footer": { "createAccount": "Créer un compte" }
+    "footer": {
+      "createAccount": "Créer un compte"
+    },
+    "pain": {
+      "section": "Le problème",
+      "title": "Vous gérez toujours les réservations à la main ?",
+      "desc": "La plupart des salons de coiffure perdent chaque jour des clients faute de système. Reconnaissez-vous cela ?",
+      "pain1Title": "WhatsApp déborde",
+      "pain1Desc": "Des dizaines de messages par jour juste pour réserver et reprogrammer. Et certains restent sans réponse.",
+      "pain2Title": "Appels au mauvais moment",
+      "pain2Desc": "Le téléphone sonne lorsque vous avez des ciseaux à la main. À 22 heures, vous avez cessé de répondre : le client est parti ailleurs.",
+      "pain3Title": "Aucune visibilité commerciale",
+      "pain3Desc": "Vous ne savez pas combien vous gagnerez cette semaine, qui travaille ou si vous avez de la place demain."
+    },
+    "howItWorks": {
+      "section": "Comment ça marche",
+      "title": "Prêt à fonctionner en 3 étapes",
+      "desc": "Aucune installation nécessaire. Aucune connaissance technique requise.",
+      "step1Title": "Créez votre salon de coiffure",
+      "step1Desc": "Nom, services, barbiers et horaires. Moins de 5 minutes.",
+      "step2Title": "Obtenez votre lien",
+      "step2Desc": "Partagez-le sur Instagram, WhatsApp ou partout où vous le souhaitez.",
+      "step3Title": "Les réservations arrivent",
+      "step3Desc": "Les clients réservent en ligne : vous arrivez simplement à l'heure."
+    },
+    "benefits": {
+      "section": "Tout compris",
+      "title": "Il ne s'agit pas seulement de planification.",
+      "desc": "Trimio est l'opération complète de votre salon de coiffure en un seul outil.",
+      "b1Title": "Planning toujours organisé",
+      "b1Desc": "Les clients choisissent le service, le coiffeur, le jour et l'heure, sans vous interrompre. Fonctionne 24 heures sur 24.",
+      "b2Title": "L'équipe sur la même longueur d'onde",
+      "b2Desc": "Chaque coiffeur voit son emploi du temps sur son téléphone. Vous voyez tout dans une vue de calendrier en temps réel.",
+      "b3Title": "Page publique prête à l'emploi",
+      "b3Desc": "Votre lien personnalisé avec les services, la galerie et le bouton de réservation. Partagez sur Instagram et le tour est joué.",
+      "b4Title": "Des données qui ont du sens",
+      "b4Desc": "Rapports de facturation, historique des clients et taux d'annulation, le tout dans un seul panneau."
+    },
+    "testimonials": {
+      "section": "Qui l'utilise déjà",
+      "title": "Ce que disent les salons de coiffure"
+    },
+    "pricing": {
+      "section": "Tarifs",
+      "title": "Commencez gratuitement. Grandissez quand vous le souhaitez.",
+      "desc": "Aucun contrat. Annulez à tout moment. Aucune surprise.",
+      "freeName": "Gratuit",
+      "freePeriod": "pour toujours",
+      "freeDesc": "A essayer sans risque.",
+      "freeFeature1": "1 barbier",
+      "freeFeature2": "30 réservations par mois",
+      "freeFeature3": "Page publique avec réservation",
+      "freeFeature4": "Panneau de gestion complet",
+      "freeFeature5": "Pas de carte de crédit",
+      "basicName": "Basique",
+      "basicPeriod": "par mois",
+      "basicDesc": "Pour les salons de coiffure en pleine croissance.",
+      "basicFeature1": "Jusqu'à 3 barbiers",
+      "basicFeature2": "Réservations illimitées",
+      "basicFeature3": "Extras et produits",
+      "basicFeature4": "Plans d'abonnement client",
+      "basicFeature5": "Rapports d'activité",
+      "basicFeature6": "Assistance prioritaire",
+      "basicNote": "Commence par un essai de 14 jours",
+      "proName": "Pro",
+      "proPeriod": "par mois",
+      "proDesc": "Pour les grandes équipes.",
+      "proFeature1": "Barbiers illimités",
+      "proFeature2": "Réservations illimitées",
+      "proFeature3": "Tout en Basic",
+      "proFeature4": "Portail dédié par barbier",
+      "proFeature5": "Notifications poussées",
+      "proFeature6": "Rapports avancés",
+      "popular": "Le plus populaire",
+      "startFree": "Commencez gratuitement"
+    },
+    "faq": {
+      "section": "Aide",
+      "title": "Vous avez des questions. Nous avons des réponses.",
+      "q1": "Dois-je connaître l’informatique ou la programmation ?",
+      "a1": "Non, Trimio est conçu pour tout le monde. Créez votre compte, ajoutez vos services et barbiers et partagez le lien. La configuration typique prend moins de 5 minutes.",
+      "q2": "Comment les clients effectuent-ils une réservation ?",
+      "a2": "Vous obtenez un lien personnalisé (par exemple trimio.app/your-name). Partagez-le sur Instagram, WhatsApp ou ailleurs. Les clients l'ouvrent, choisissent et réservent – ​​pas d'application, pas d'inscription.",
+      "q3": "Puis-je annuler quand je veux ?",
+      "a3": "Oui, à tout moment et sans pénalité. Il n'y a pas de contrat annuel obligatoire. Si vous annulez, votre forfait continue jusqu'à la fin de la période payée.",
+      "q4": "Que se passe-t-il lorsque j'atteins la limite du forfait gratuit ?",
+      "a4": "Nous vous avertirons avant que vous atteigniez la limite. Une fois contactés, les clients ne peuvent pas effectuer de nouvelles réservations avant le mois prochain ou jusqu'à ce que vous effectuiez une mise à niveau : toutes les données sont conservées."
+    }
   }
 }

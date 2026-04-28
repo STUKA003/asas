@@ -18,18 +18,54 @@
       "billing": "Facturatie"
     },
     "pageMeta": {
-      "dashboard": { "title": "Dashboard", "subtitle": "Overzicht van prestaties, agenda en operationele signalen." },
-      "bookings": { "title": "Boekingen", "subtitle": "Beheer reserveringen, bevestigingen en agendablokkades." },
-      "customers": { "title": "Klanten", "subtitle": "Bekijk geschiedenis, actieve plannen en contactgegevens." },
-      "barbers": { "title": "Kappers", "subtitle": "Beheer team, toegang en beschikbaarheid." },
-      "services": { "title": "Diensten", "subtitle": "Houd de hoofdcatalogus van de kapperswinkel georganiseerd." },
-      "extras": { "title": "Extra's", "subtitle": "Upsells en aanvullingen die de gemiddelde bon verhogen." },
-      "products": { "title": "Producten", "subtitle": "Inventaris en productverkoop op het verkooppunt." },
-      "plans": { "title": "Abonnementen", "subtitle": "Configureer abonnementen en terugkerende voordelen." },
-      "schedule": { "title": "Tijden", "subtitle": "Definieer de basisstructuur van de agenda." },
-      "reports": { "title": "Rapporten", "subtitle": "Commerciële en operationele inzichten ter ondersteuning van beslissingen." },
-      "customization": { "title": "Merk en website", "subtitle": "Pas digitale aanwezigheid, kleuren en publieke inhoud aan." },
-      "billing": { "title": "Facturatie", "subtitle": "Volg uw huidige plan, upgrades en facturatiecyclus." }
+      "dashboard": {
+        "title": "Dashboard",
+        "subtitle": "Overzicht van prestaties, agenda en operationele signalen."
+      },
+      "bookings": {
+        "title": "Boekingen",
+        "subtitle": "Beheer reserveringen, bevestigingen en agendablokkades."
+      },
+      "customers": {
+        "title": "Klanten",
+        "subtitle": "Bekijk geschiedenis, actieve plannen en contactgegevens."
+      },
+      "barbers": {
+        "title": "Kappers",
+        "subtitle": "Beheer team, toegang en beschikbaarheid."
+      },
+      "services": {
+        "title": "Diensten",
+        "subtitle": "Houd de hoofdcatalogus van de kapperswinkel georganiseerd."
+      },
+      "extras": {
+        "title": "Extra's",
+        "subtitle": "Upsells en aanvullingen die de gemiddelde bon verhogen."
+      },
+      "products": {
+        "title": "Producten",
+        "subtitle": "Inventaris en productverkoop op het verkooppunt."
+      },
+      "plans": {
+        "title": "Abonnementen",
+        "subtitle": "Configureer abonnementen en terugkerende voordelen."
+      },
+      "schedule": {
+        "title": "Tijden",
+        "subtitle": "Definieer de basisstructuur van de agenda."
+      },
+      "reports": {
+        "title": "Rapporten",
+        "subtitle": "Commerciële en operationele inzichten ter ondersteuning van beslissingen."
+      },
+      "customization": {
+        "title": "Merk en website",
+        "subtitle": "Pas digitale aanwezigheid, kleuren en publieke inhoud aan."
+      },
+      "billing": {
+        "title": "Facturatie",
+        "subtitle": "Volg uw huidige plan, upgrades en facturatiecyclus."
+      }
     },
     "notifications": {
       "title": "Meldingen",
@@ -38,7 +74,7 @@
       "noRecent": "Geen recente meldingen."
     },
     "account": {
-      "planBadge": "Plan {{plan}}",
+      "planBadge": "Tarief {{plan}}",
       "billingLink": "Abonnement en facturatie",
       "logout": "Afmelden"
     },
@@ -60,8 +96,14 @@
       "message": "Uw {{plan}}-plan is verlopen. U bevindt zich nu op het Gratis plan met beperkte functies.",
       "renew": "Vernieuwen"
     },
-    "topbar": { "renewPlan": "Plan vernieuwen", "viewBilling": "Facturatie bekijken" },
-    "brand": { "name": "Trimio Studio", "defaultSubtitle": "Kapperswinkelpaneel" }
+    "topbar": {
+      "renewPlan": "Plan vernieuwen",
+      "viewBilling": "Facturatie bekijken"
+    },
+    "brand": {
+      "name": "Trimio Studio",
+      "defaultSubtitle": "Kapperswinkelpaneel"
+    }
   },
   "push": {
     "unavailable": "Push niet beschikbaar op dit apparaat",
@@ -73,7 +115,10 @@
     "enableTooltip": "Pushmeldingen inschakelen"
   },
   "login": {
-    "brand": { "name": "Trimio Studio", "subtitle": "Kapperswinkelpaneel" },
+    "brand": {
+      "name": "Trimio Studio",
+      "subtitle": "Kapperswinkelpaneel"
+    },
     "panel": {
       "eyebrow": "Volledig beheer",
       "title": "Volledige controle over uw kapperswinkel.",
@@ -108,7 +153,97 @@
       }
     }
   },
-  "dashboard": { "title": "Dashboard", "subtitle": "Geconsolideerd dagoverzicht, maandelijkse prestaties en snelle actiesignalen.", "viewBookings": "Boekingen bekijken", "occupancy": { "strong": "Drukke dag", "low": "Lage bezetting", "balanced": "Evenwichtige stroom" } },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Geconsolideerd dagoverzicht, maandelijkse prestaties en snelle actiesignalen.",
+    "viewBookings": "Boekingen bekijken",
+    "occupancy": {
+      "strong": "Drukke dag",
+      "low": "Lage bezetting",
+      "balanced": "Evenwichtige stroom"
+    },
+    "hero": {
+      "eyebrow": "Controlecentrum",
+      "strong": "sterk",
+      "calm": "stiller",
+      "stable": "stabiel",
+      "todayIs": "Vandaag is de operatie {{signal}}."
+    },
+    "stats": {
+      "accumulated": "Gecumuleerde inkomsten",
+      "todaySchedule": "Het schema van vandaag",
+      "toConfirm": "{{count}} om te bevestigen",
+      "todayCustomers": "De klanten van vandaag",
+      "activeInMonth": "{{count}} actief deze maand · {{total}} in database",
+      "revenueVsPrevious": "{{pct}}% versus vorige maand"
+    },
+    "insights": {
+      "pulseTitle": "Dag polsslag",
+      "alertTitle": "Aandachtsvenster",
+      "strongDay": "Drukke agenda. Houd de focus op de gemiddelde tijd tussen diensten.",
+      "lowDay": "Vandaag is het beneden ideaal. De moeite waard om gratis slots op sociale media onder de aandacht te brengen.",
+      "balancedDay": "Evenwichtige werking. Goed moment om extra’s en producten in te passen.",
+      "noShowHigh": "No-shows boven gezond niveau. Versterk herinneringen en handmatige bevestiging.",
+      "noShowOk": "Afwezigheden onder controle. Voorspelbare bediening mogelijk."
+    },
+    "focus": {
+      "title": "Onmiddellijke focus",
+      "toConfirmTitle": "Om te bevestigen",
+      "toConfirmDesc": "Openstaande of bevestigde boekingen voor vandaag.",
+      "dayStateTitle": "Dagstatus",
+      "prioritizePunctuality": "Geef prioriteit aan stiptheid en korte inpassingen.",
+      "promoteSlots": "Goed moment om gratis slots te promoten.",
+      "stableFlow": "Stabiele doorstroming met ruimte voor extra's."
+    },
+    "monthStats": {
+      "revenue": "Maandelijkse omzet",
+      "bookings": "Actieve boekingen",
+      "avgTicket": "Gemiddeld kaartje",
+      "noShowRate": "No-show-percentage",
+      "revenueAbove": "{{pct}}% hoger dan vorige maand",
+      "revenueBelow": "{{pct}}% lager dan vorige maand",
+      "bookingsChange": "{{pct}}% versus vorige maand",
+      "ticketChange": "{{pct}}% per bezoek",
+      "noShowNoChange": "Geen verandering ten opzichte van vorige maand",
+      "noShowBetter": "{{pct}}% beter dan vorige maand",
+      "noShowWorse": "{{pct}}% slechter dan vorige maand",
+      "healthyBilling": "Gezond factureringstempo",
+      "reviewSchedules": "De moeite waard om schema's en campagnes te herzien",
+      "bestDay": "Beste dag: {{day}}",
+      "noHistory": "Niet genoeg geschiedenis",
+      "goodValue": "Goede waarde per klant",
+      "upsellMargin": "Ruimte voor upselling",
+      "noShowHealthy": "Gezond niveau voor operaties",
+      "noShowAttention": "Let op herinneringen en bevestigingen"
+    },
+    "chart": {
+      "eyebrow": "Momentum",
+      "title": "De trend van deze week",
+      "subtitle": "Snel lezen van de boekingsstroom aan het begin van de week.",
+      "bestDay": "Beste dag",
+      "noData": "Geen gegevens"
+    },
+    "today": {
+      "eyebrow": "Aankomend",
+      "title": "Het schema van vandaag",
+      "noPending": "Geen openstaande boekingen voor vandaag.",
+      "cleanSchedule": "Het schema is nu duidelijk.",
+      "timeLabel": "tijd"
+    },
+    "topBarbers": {
+      "eyebrow": "Prestatie",
+      "title": "Top kappers",
+      "noData": "Geen gesloten data deze maand.",
+      "servicesCompleted": "{{count}} services voltooid deze maand"
+    },
+    "topServices": {
+      "eyebrow": "Vraag",
+      "title": "Meest gevraagde diensten",
+      "noData": "Er zijn deze maand geen gegevens om te tonen.",
+      "leader": "Toonaangevende service deze maand",
+      "pullsOccupancy": "Blijft de bezettingsgraad verhogen"
+    }
+  },
   "bookings": {
     "title": "Boekingen",
     "newButton": "Nieuw",
@@ -116,19 +251,672 @@
     "viewCalendar": "Agenda",
     "viewList": "Lijst",
     "today": "Vandaag",
-    "status": { "all": "Alle statussen", "pending": "In afwachting", "confirmed": "Bevestigd", "completed": "Voltooid", "cancelled": "Geannuleerd", "noShow": "Niet verschenen" },
+    "status": {
+      "all": "Alle statussen",
+      "pending": "In afwachting",
+      "confirmed": "Bevestigd",
+      "completed": "Voltooid",
+      "cancelled": "Geannuleerd",
+      "noShow": "Niet verschenen"
+    },
     "searchPlaceholder": "Zoek klant, kapper of dienst…",
     "allBarbers": "Alle kappers",
-    "detail": { "title": "Boekingsdetails", "addToBooking": "Toevoegen aan boeking", "selectExtra": "Extra selecteren", "selectProduct": "Product selecteren", "addButton": "Extra/product toevoegen", "changeStatus": "Status wijzigen" }
+    "detail": {
+      "title": "Boekingsdetails",
+      "addToBooking": "Toevoegen aan boeking",
+      "selectExtra": "Extra selecteren",
+      "selectProduct": "Product selecteren",
+      "addButton": "Extra/product toevoegen",
+      "changeStatus": "Status wijzigen",
+      "stock": "voorraad {{count}}",
+      "customerLabel": "Klant",
+      "barberLabel": "Kapper",
+      "dateTimeLabel": "Datum / tijd",
+      "totalLabel": "Totaal",
+      "toPay": "Om vandaag te betalen",
+      "coveredByPlan": "Gedekt door plan",
+      "responsible": "Verantwoordelijk: {{name}}",
+      "planBadge": "abonnement"
+    },
+    "results": "{{count}} resultaat",
+    "results_plural": "{{count}} resultaten",
+    "blockedTimes": {
+      "removeBlock": "Blokkering verwijderen",
+      "title": "Geblokkeerde slots",
+      "subtitle": "Eenmalige blokken voor deze dag – afwezigheden, incidenten of lunches buiten de reguliere uren.",
+      "blockButton": "Blok",
+      "noBlocks": "Geen blokken voor deze dag.",
+      "everyone": "Alle"
+    },
+    "errors": {
+      "move": "De afspraak kon niet worden verplaatst",
+      "addItem": "Het item kon niet aan de afspraak worden toegevoegd",
+      "removeItem": "Het item kon niet uit de afspraak worden verwijderd"
+    },
+    "newBooking": {
+      "title": "Nieuwe afspraak",
+      "selectBarber": "Kapper selecteren",
+      "selectService": "Service selecteren",
+      "barberLabel": "Kapper",
+      "serviceLabel": "Dienst",
+      "dateLabel": "Datum",
+      "timeLabel": "Tijd",
+      "customerPhoneLabel": "Telefoon klant",
+      "customerFound": "Klant gevonden: {{name}}",
+      "planLabel": "Tarief: {{plan}}",
+      "discountLabel": "{{discount}}% korting op extra’s/producten",
+      "newCustomer": "Nieuwe klant — wordt automatisch aangemaakt",
+      "fullNamePlaceholder": "Volledige naam",
+      "notesLabel": "Opmerkingen (optioneel)",
+      "notesPlaceholder": "Een opmerking over de afspraak...",
+      "includedInPlan": "inbegrepen in plan",
+      "createButton": "Afspraak maken",
+      "errors": {
+        "create": "Fout bij het maken van de afspraak",
+        "selectBarber": "Selecteer een kapper.",
+        "selectService": "Selecteer een service.",
+        "selectDate": "Selecteer een datum.",
+        "selectTime": "Selecteer een tijd.",
+        "customerPhone": "Voer de telefoon van de klant in.",
+        "customerName": "Voer de naam van de klant in."
+      }
+    },
+    "legend": {
+      "pending": "In behandeling",
+      "confirmed": "Bevestigd",
+      "completed": "Voltooid",
+      "cancelled": "Geannuleerd",
+      "noShow": "Geen show"
+    },
+    "columns": {
+      "dateTime": "Datum / tijd",
+      "customer": "Klant",
+      "barber": "Kapper",
+      "service": "Dienst",
+      "status": "Toestand",
+      "total": "Totaal"
+    },
+    "slotModal": {
+      "title": "Wat zou jij met dit slot willen doen?",
+      "createBooking": "Boeking maken",
+      "blockSlot": "Blok gleuf"
+    },
+    "newBlockedModal": {
+      "title": "Nieuw geblokkeerd slot",
+      "dateLabel": "Datum",
+      "barberLabel": "Kapper",
+      "startLabel": "Begin",
+      "endLabel": "Einde",
+      "reasonLabel": "Reden",
+      "reasonPlaceholder": "Bijvoorbeeld lunch, noodgeval, externe reis",
+      "saveButton": "Blok opslaan"
+    },
+    "loading": "Laden…"
   },
-  "customers": { "title": "Klanten", "exportCsv": "CSV exporteren", "importCsv": "CSV importeren", "totalCustomers": "Totale klanten", "withActivePlan": "Met actief abonnement", "detail": { "title": "Klantdetails", "deleteButton": "Klant verwijderen" } },
-  "barbers": { "title": "Kappers", "newButton": "Nieuwe kapper", "modal": { "create": "Nieuwe kapper", "edit": "Kapper bewerken" } },
-  "services": { "title": "Diensten" },
-  "extras": { "title": "Extra's" },
-  "products": { "title": "Producten" },
-  "plans": { "title": "Abonnementen" },
-  "schedule": { "title": "Tijden", "days": { "0": "Zondag", "1": "Maandag", "2": "Dinsdag", "3": "Woensdag", "4": "Donderdag", "5": "Vrijdag", "6": "Zaterdag" } },
-  "reports": { "title": "Rapporten" },
-  "customization": { "title": "Merk en website" },
-  "billing": { "title": "Facturatie" }
+  "customers": {
+    "title": "Klanten",
+    "exportCsv": "CSV exporteren",
+    "importCsv": "CSV importeren",
+    "totalCustomers": "Totale klanten",
+    "withActivePlan": "Met actief abonnement",
+    "detail": {
+      "title": "Klantdetails",
+      "deleteButton": "Klant verwijderen",
+      "notesPlaceholder": "Interne notitie toevoegen",
+      "loading": "Laden...",
+      "customerLabel": "Klant",
+      "totalSpent": "Totaal uitgegeven",
+      "reliability": "Betrouwbaarheid",
+      "lastVisit": "Laatste bezoek",
+      "completedVisits": "{{count}} voltooide bezoeken",
+      "activeBookings": "{{count}} actieve boekingen",
+      "noShowBookings": "{{ns}} no-shows · {{cb}} geannuleerd",
+      "noVisit": "Geen afgerond bezoek",
+      "historyTotal": "Totale geschiedenis",
+      "bookingsRegistered": "boekingen geregistreerd",
+      "noShow": "Geen show",
+      "missedBookings": "gemiste boekingen",
+      "cancelled": "Geannuleerd",
+      "cancelledBookings": "geannuleerde boekingen",
+      "customerData": "Klantgegevens",
+      "editButton": "Bewerking",
+      "nameLabel": "Naam",
+      "phoneLabel": "Telefoon",
+      "emailLabel": "E-mail",
+      "notesLabel": "Opmerkingen",
+      "saveButton": "Redden",
+      "planLabel": "Abonnement",
+      "noPlan": "Geen plan",
+      "changeButton": "Wijziging",
+      "noEmail": "Geen e-mail",
+      "recentBookings": "Recente boekingen",
+      "noBookings": "Geen boekingsgeschiedenis.",
+      "irreversible": "Weet je het zeker? Deze actie is onomkeerbaar."
+    },
+    "subtitle": "{{count}} klant geregistreerd. Zoek, filter en open details zonder visuele ruis.",
+    "subtitle_plural": "{{count}} klanten geregistreerd. Zoek, filter en open details zonder visuele ruis.",
+    "errors": {
+      "saveCustomer": "De klant kon niet worden opgeslagen.",
+      "importCustomers": "Klanten konden niet worden geïmporteerd.",
+      "noValidRows": "Het bestand bevat geen geldige rijen om te importeren.",
+      "readCsv": "Het CSV-bestand kon niet worden gelezen.",
+      "csvNameColumn": "De CSV heeft een kolom \"name\" of \"nome\" nodig."
+    },
+    "importing": "Importeren…",
+    "searchLabel": "Zoekopdracht",
+    "searchPlaceholder": "Naam, telefoon of e-mail",
+    "planLabel": "Abonnement",
+    "planStatus": "Planstatus",
+    "allPlans": "Alle plannen",
+    "withPlan": "Met planning",
+    "withoutPlan": "Zonder planning",
+    "withAndWithoutPlan": "Met en zonder planning",
+    "csvFormat": "Verwacht CSV-formaat: `naam`, `telefoon`, `e-mail`, `notities`. Als de telefoon al bestaat, wordt de klant bijgewerkt; anders gecreëerd.",
+    "columns": {
+      "customer": "Klant",
+      "phone": "Telefoon",
+      "email": "E-mail",
+      "plan": "Abonnement",
+      "totalSpent": "Totaal uitgegeven",
+      "lastVisit": "Laatste bezoek",
+      "reliability": "Betrouwbaarheid"
+    },
+    "noContact": "Geen hoofdcontact",
+    "noPhone": "Geen telefoon",
+    "reliability": {
+      "new": "Nieuw",
+      "trusted": "Vertrouwd",
+      "attention": "Aandacht",
+      "risk": "Risico"
+    },
+    "importResult": "Import voltooid: {{created}} gemaakt, {{updated}} bijgewerkt, {{skipped}} overgeslagen.",
+    "emptyMessage": "Er zijn nog geen klanten geregistreerd."
+  },
+  "barbers": {
+    "title": "Kappers",
+    "newButton": "Nieuwe kapper",
+    "modal": {
+      "create": "Nieuwe kapper",
+      "edit": "Kapper bewerken",
+      "nameLabel": "Naam",
+      "namePlaceholder": "Johannes Smit",
+      "emailLabel": "E-mail",
+      "emailPlaceholder": "john@voorbeeld.com",
+      "photoLabel": "Kapper foto",
+      "photoDesc": "Deze foto verschijnt in het paneel en in de kappersselectie op de boekingssite.",
+      "uploadPhoto": "Foto uploaden",
+      "removePhoto": "Verwijderen",
+      "phoneLabel": "Telefoon",
+      "phonePlaceholder": "+44 7911 123456",
+      "isActive": "Actieve kapper",
+      "save": "Redden"
+    },
+    "ofMax": "van {{max}}",
+    "errors": {
+      "photoUpload": "De foto kon niet worden geüpload"
+    },
+    "subtitle": "{{active}} actief{{maxStr}} · {{total}} geregistreerd",
+    "atLimit": "Je hebt de limiet van {{max}} actieve kapper(s) voor je abonnement bereikt.",
+    "doUpgrade": "Upgraden",
+    "columns": {
+      "barber": "Kapper",
+      "phone": "Telefoon",
+      "status": "Toestand",
+      "portalAccess": "Portaaltoegang"
+    },
+    "active": "Actief",
+    "inactive": "Inactief",
+    "hasAccess": "Actief",
+    "noAccess": "Geen toegang",
+    "accessModal": {
+      "title": "Portaaltoegang",
+      "noEmail": "Geen e-mailadres ingesteld",
+      "noEmailWarning": "Deze kapper heeft geen e-mailadres ingesteld. Voeg een e-mailadres toe voordat u de toegang activeert.",
+      "desc": "Stel een wachtwoord in waarmee de kapper toegang krijgt tot het portaal",
+      "newPasswordLabel": "Nieuw wachtwoord",
+      "newPasswordPlaceholder": "Minimaal 6 tekens",
+      "confirmPasswordLabel": "Bevestig wachtwoord",
+      "confirmPasswordPlaceholder": "Herhaal wachtwoord",
+      "revokeButton": "Toegang intrekken",
+      "activateButton": "Toegang activeren"
+    },
+    "removeConfirm": "Kapper verwijderen?"
+  },
+  "services": {
+    "title": "Diensten",
+    "columns": {
+      "service": "Dienst",
+      "price": "Prijs",
+      "duration": "Duur",
+      "status": "Toestand"
+    },
+    "form": {
+      "nameLabel": "Naam",
+      "namePlaceholder": "Kapsel",
+      "descLabel": "Beschrijving (optioneel)",
+      "descPlaceholder": "Dienstbeschrijving",
+      "priceLabel": "Prijs (€)",
+      "pricePlaceholder": "18.00",
+      "durationLabel": "Duur (min)",
+      "durationPlaceholder": "30"
+    }
+  },
+  "extras": {
+    "title": "Extra's",
+    "columns": {
+      "extra": "Aanvulling",
+      "price": "Prijs",
+      "duration": "Duur",
+      "status": "Toestand"
+    }
+  },
+  "products": {
+    "title": "Producten",
+    "columns": {
+      "product": "Artikel",
+      "price": "Prijs",
+      "stock": "Voorraad",
+      "status": "Toestand"
+    }
+  },
+  "plans": {
+    "title": "Abonnementen",
+    "columns": {
+      "plan": "Abonnement",
+      "price": "Prijs",
+      "status": "Toestand"
+    }
+  },
+  "schedule": {
+    "title": "Tijden",
+    "days": {
+      "0": "Zondag",
+      "1": "Maandag",
+      "2": "Dinsdag",
+      "3": "Woensdag",
+      "4": "Donderdag",
+      "5": "Vrijdag",
+      "6": "Zaterdag"
+    },
+    "addSlot": "Voeg slot toe"
+  },
+  "reports": {
+    "title": "Rapporten",
+    "planReport": {
+      "periods": {
+        "thisMonth": "Deze maand",
+        "lastMonth": "Vorige maand",
+        "last30Days": "Laatste 30 dagen",
+        "thisYear": "Dit jaar"
+      },
+      "loadError": "Fout bij laden van planrapport",
+      "unknownError": "Onbekende fout",
+      "noData": "Geen plangegevens in deze periode.",
+      "title": "Planrapport",
+      "metrics": {
+        "activeSubscribers": "Actieve abonnees",
+        "inactiveSubscribers": "{{count}} zonder gebruik in de periode",
+        "estimatedRevenue": "Geschatte terugkerende omzet",
+        "registeredPlans": "{{count}} geregistreerde plannen",
+        "periodUsage": "Gebruik in periode",
+        "usagePerSubscriber": "{{count}} gebruik(en) per abonnee",
+        "activePlans": "Actieve plannen",
+        "enabledPlansOnly": "Alleen ingeschakelde plannen"
+      },
+      "performanceByPlan": "Prestaties per plan",
+      "table": {
+        "plan": "Abonnement",
+        "subscribers": "Abonnees",
+        "usage": "Gebruik",
+        "recurring": "Terugkerend",
+        "planMeta": "{{services}} service(s) · {{days}} dagen"
+      },
+      "insights": "Inzichten",
+      "noInsights": "Geen insights in de periode.",
+      "opportunities": "Kansen",
+      "usagePerCustomer": "{{count}} gebruik(en)/klant",
+      "inactiveSubscribersPeriod": "{{count}} abonnee(s) zonder gebruik in de periode"
+    },
+    "general": {
+      "subtitle": "Analyseer de prestaties van de kapperszaak per periode.",
+      "tabs": {
+        "general": "Algemeen rapport",
+        "plans": "Planrapport"
+      },
+      "downloadPdf": "PDF downloaden",
+      "loadError": "Fout bij laden van rapport",
+      "title": "Algemeen rapport",
+      "monthYear": "{{month}} van {{year}}",
+      "periods": {
+        "thisMonth": "Deze maand",
+        "lastMonth": "Vorige maand",
+        "last7Days": "Laatste 7 dagen",
+        "last30Days": "Laatste 30 dagen",
+        "thisYear": "Dit jaar"
+      },
+      "filter": {
+        "quickPeriods": "Snelle periodes",
+        "monthYear": "Maand / jaar"
+      },
+      "sections": {
+        "billing": "1. Facturering",
+        "barberPerformance": "2. Kappersprestaties",
+        "occupancy": "3. Bezetting plannen",
+        "customers": "4. Klanten",
+        "servicesProducts": "5. Diensten en producten",
+        "cancellations": "6. Annuleringen en no-shows",
+        "insights": "7. Automatische inzichten"
+      },
+      "metrics": {
+        "totalRevenue": "Totale omzet",
+        "avgTicket": "Gemiddeld kaartje",
+        "scheduleLoss": "Schema verlies",
+        "fromPlans": "{{value}} uit plannen",
+        "completed": "{{count}} voltooid",
+        "cancelled": "{{count}} geannuleerd",
+        "noShows": "{{count}} niet verschenen",
+        "daily": "Dagelijks",
+        "weekly": "Wekelijks",
+        "monthly": "Maandelijks",
+        "revenue": "Winst",
+        "ticket": "Bon",
+        "occupancy": "Bezetting",
+        "billed": "{{value}} gefactureerd"
+      },
+      "billing": {
+        "evolution": "Evolutie in periode",
+        "evolutionDesc": "Toont de meest gedetailleerde beschikbare reeksen voor het geselecteerde interval.",
+        "points": "{{count}} punten",
+        "noRevenue": "Geen voltooide omzet in deze periode."
+      },
+      "barbers": {
+        "noData": "Geen kappersgegevens in deze periode.",
+        "completedCuts": "{{count}} voltooide bezuinigingen",
+        "occupiedTime": "Bezette tijd"
+      },
+      "occupancy": {
+        "occupiedHours": "Bezette uren",
+        "deadHours": "Dode uren",
+        "capacity": "Capaciteit",
+        "busiestDays": "Drukste dagen",
+        "noScheduleData": "Geen schemagegevens.",
+        "bookings": "{{count}} boekingen",
+        "dailyRead": "Dagelijks lezen"
+      },
+      "customers": {
+        "new": "Nieuw",
+        "recurring": "Terugkerend",
+        "top": "Meest frequente klanten",
+        "noFrequency": "Geen relevante frequentie in deze periode.",
+        "visits": "{{count}} bezoeken",
+        "inactive": "Inactieve klanten",
+        "noInactive": "Geen inactieve klanten gedetecteerd.",
+        "withPlan": "Klanten met abonnement",
+        "activeInPeriod": "Actieve klanten in de periode"
+      },
+      "sales": {
+        "topServices": "Best verkopende diensten",
+        "noServices": "Geen diensten verkocht.",
+        "sales": "verkoop",
+        "soldWithRevenue": "{{count}} verkocht · {{revenue}}",
+        "servicesRevenue": "Omzet uit diensten",
+        "productsSold": "Producten verkocht",
+        "mix": "Verkoopmix",
+        "noProducts": "Geen producten verkocht.",
+        "noExtras": "Geen extra's verkocht."
+      },
+      "cancellations": {
+        "cancelled": "Annuleringen",
+        "noShows": "Niet verschenen",
+        "loss": "Verlies",
+        "cancellationRate": "Annuleringspercentage",
+        "noShowRate": "No-show-percentage"
+      },
+      "insights": {
+        "noInsights": "Er zijn nog niet voldoende inzichten voor deze periode."
+      }
+    },
+    "revenue": "Winst",
+    "bookings": "Boekingen",
+    "customers": "Klanten",
+    "noData": "Geen gegevens voor de geselecteerde periode."
+  },
+  "customization": {
+    "title": "Merk en website",
+    "subtitle": "Bewerk de basisinformatie van uw kapperszaak en pas de site aan volgens uw plan.",
+    "appSettings": "App-instellingen",
+    "baseInfo": "Basisinformatie",
+    "chooseFromComputer": "Keuze uit computer",
+    "fields": {
+      "shopName": "Naam kapperszaak",
+      "phone": "Telefoon",
+      "address": "Adres"
+    },
+    "slotInterval": {
+      "title": "Interval voor boekingsslot",
+      "description": "Bepaalt hoe vaak beschikbare tijden op de site en in het paneel verschijnen."
+    },
+    "planBenefit": {
+      "title": "Voordeel voor planklanten",
+      "description": "Automatische korting op diensten buiten het abonnement, extra's en producten voor klanten met een actief abonnement.",
+      "helper": "0% = geen korting · 100% = alles gratis voor abonnementsklanten"
+    },
+    "saveBase": "Basisinformatie opslaan",
+    "accountPhoto": {
+      "title": "Accountfoto",
+      "fallbackName": "Rekening",
+      "remove": "Foto verwijderen",
+      "save": "Foto opslaan",
+      "description": "Deze foto verschijnt in het kapperszaakbeheerdersaccount in het paneel."
+    },
+    "logo": {
+      "title": "Logo",
+      "alt": "Kapperszaak-logo",
+      "remove": "Logo verwijderen",
+      "save": "Logo opslaan",
+      "description": "PNG of JPG. Kies de afbeelding op uw computer en klik vervolgens op opslaan."
+    },
+    "advanced": {
+      "title": "Geavanceerde aanpassing van de site",
+      "proOnlyTitle": "Beschikbaar op Pro-abonnement",
+      "proOnlyDescription": "Met het gratis abonnement kunt u nog steeds de naam, contacten, logo en basisinformatie bewerken. Geavanceerde visuele aanpassing van de site is gereserveerd voor Pro.",
+      "heroFeature": "Thuis held",
+      "galleryFeature": "Afbeeldingengalerij",
+      "promoFeature": "Promotiebanner",
+      "colorFeature": "Belangrijkste kapperskleur en geavanceerde inhoud",
+      "unlockPro": "Ontgrendel Pro-aanpassing"
+    },
+    "siteContent": {
+      "heroTitleLabel": "Hoofdtitel thuis",
+      "heroTitlePlaceholder": "Mijn kapperszaak, op jouw tijd.",
+      "heroSubtitleLabel": "Ondertiteling thuis",
+      "heroSubtitlePlaceholder": "Boek zonder bellen, zonder te wachten.",
+      "heroButtonLabel": "Tekst hoofdknop",
+      "heroButtonPlaceholder": "Boek nu",
+      "aboutLabel": "Over de kapperstekst",
+      "aboutPlaceholder": "Praat over jouw team, sfeer en stijl...",
+      "showPlans": "Toon plannen ter plaatse",
+      "showPlansDesc": "Verbergt de plannenpagina en links.",
+      "showProducts": "Toon producten ter plaatse",
+      "showProductsDesc": "Verbergt de productpagina en links.",
+      "save": "Site-inhoud opslaan"
+    },
+    "heroImage": {
+      "title": "Hoofdafbeelding thuis",
+      "alt": "Hoofdafbeelding",
+      "remove": "Afbeelding verwijderen",
+      "save": "Afbeelding opslaan"
+    },
+    "gallery": {
+      "title": "Fotogalerij",
+      "imageAlt": "Galerij {{index}}",
+      "empty": "Er zijn nog geen galerijfoto's.",
+      "add": "Voeg foto's toe",
+      "saving": "Galerij opslaan...",
+      "helper": "Maximaal {{count}} afbeeldingen. De galerij wordt automatisch opgeslagen bij het toevoegen of verwijderen van foto's."
+    },
+    "promo": {
+      "title": "Promotiebanner",
+      "show": "Promotiebanner tonen",
+      "showDesc": "Markeert een campagne op de openbare site.",
+      "titleLabel": "Bannertitel",
+      "titlePlaceholder": "Knipbeurt + baardweek",
+      "textLabel": "Bannertekst",
+      "textPlaceholder": "Gebruik deze ruimte voor een campagne, highlight of voordeel.",
+      "buttonLabel": "Tekst van de bannerknop",
+      "buttonPlaceholder": "Boek promotie",
+      "save": "Banier opslaan"
+    },
+    "accent": {
+      "title": "Hoofdkleur kapperszaak",
+      "description": "Deze kleur vertegenwoordigt de identiteit van uw kapperszaak op de openbare site en in delen van het bedieningspaneel."
+    },
+    "preview": {
+      "title": "Voorbeeld",
+      "defaultHeroTitle": "{{name}} — op jouw tijd.",
+      "defaultHeroSubtitle": "Boek zonder bellen, zonder te wachten.",
+      "defaultPromoTitle": "Actieve promotie",
+      "defaultPromoText": "Campagne beschikbaar voor uw klanten.",
+      "aboutTitle": "Over",
+      "defaultAbout": "Presenteer hier uw kappersstijl en identiteit.",
+      "visible": "zichtbaar",
+      "hidden": "verborgen",
+      "plansVisibility": "Plannen {{state}}",
+      "productsVisibility": "Producten {{state}}",
+      "imageAlt": "Voorbeeld {{index}}"
+    },
+    "save": "Wijzigingen opslaan",
+    "saved": "Wijzigingen opgeslagen."
+  },
+  "billing": {
+    "title": "Facturatie",
+    "subscriptionTitle": "Abonnement",
+    "subscriptionSubtitle": "Beheer uw abonnement en platformlimieten.",
+    "checkoutSuccess": "Afrekenen voltooid. Het abonnement wordt automatisch gesynchroniseerd zodra Stripe het abonnement bevestigt.",
+    "checkoutCancelled": "Het afrekenen is geannuleerd. Er zijn geen wijzigingen toegepast.",
+    "pricePerMonth": "€{{price}}/maand",
+    "validUntil": "Geldig tot",
+    "openingPortal": "Portaal openen...",
+    "manageStripeBilling": "Beheer de facturering in Stripe",
+    "usage": {
+      "bookingsThisMonth": "Boekingen deze maand",
+      "used": "{{count}} gebruikt",
+      "activeBarbers": "Actieve kappers"
+    },
+    "recommended": "Meest aanbevolen",
+    "freePrice": "Vrij",
+    "monthSuffix": "/maand",
+    "activePlan": "Actief abonnement",
+    "manageInPortal": "Beheer in portaal",
+    "openingCheckout": "Kassa openen...",
+    "upgrade": "Upgraden",
+    "stripeNote": "Upgrades en abonnementsbeheer worden afgehandeld in Stripe. Annuleringen en wijzigingen in de betalingsmethode zijn beschikbaar in het factureringsportaal.",
+    "plans": {
+      "FREE": {
+        "label": "Vrij",
+        "description": "Begin vrijblijvend.",
+        "limits": {
+          "barbers": "1 actieve kapper",
+          "bookings": "30 boekingen/maand"
+        },
+        "features": [
+          "1 active barber",
+          "30 bookings per month",
+          "Public booking page",
+          "Customer management",
+          "Working hours and blocks"
+        ]
+      },
+      "BASIC": {
+        "label": "Basis",
+        "description": "Voor groeiende kapperszaken.",
+        "limits": {
+          "barbers": "Maximaal 3 kappers",
+          "bookings": "Onbeperkte boekingen"
+        },
+        "features": [
+          "Up to 3 active barbers",
+          "Unlimited bookings",
+          "Public booking page",
+          "Customer management",
+          "Customer subscription plans",
+          "Extras and products",
+          "Basic reports"
+        ]
+      },
+      "PRO": {
+        "label": "Pro",
+        "description": "Voor professionele operaties.",
+        "limits": {
+          "barbers": "Onbeperkt kappers",
+          "bookings": "Onbeperkte boekingen"
+        },
+        "features": [
+          "Unlimited barbers",
+          "Unlimited bookings",
+          "Custom public page",
+          "Advanced customer management",
+          "Customer subscription plans",
+          "Extras and products",
+          "Full stats and reports",
+          "Priority support"
+        ]
+      }
+    },
+    "currentPlan": "Huidig ​​abonnement",
+    "manage": "Beheer abonnement"
+  },
+  "crud": {
+    "created": "{{item}} succesvol aangemaakt.",
+    "createError": "{{item}} kon niet worden aangemaakt.",
+    "saved": "Wijzigingen opgeslagen.",
+    "saveError": "Wijzigingen konden niet worden opgeslagen.",
+    "removed": "{{item}} verwijderd.",
+    "removeError": "{{item}} kon niet worden verwijderd.",
+    "registeredCount": "{{count}} {{item}} geregistreerd",
+    "registeredCount_plural": "{{count}} {{item}} geregistreerd",
+    "emptyMessage": "Nog geen {{item}}",
+    "emptyDescription": "Klik op \"Nieuwe {{item}}\" om de eerste toe te voegen.",
+    "confirmDeleteTitle": "Verwijderen bevestigen",
+    "confirmDeleteQuestion": "{{item}} verwijderen?",
+    "irreversible": "Deze actie kan niet ongedaan worden gemaakt."
+  },
+  "forgotPassword": {
+    "title": "Wachtwoord herstellen",
+    "subtitle": "Voer uw e-mailadres in om een ​​herstellink te ontvangen.",
+    "emailLabel": "E-mail",
+    "submitButton": "Stuur link",
+    "backToLogin": "Terug naar inloggen",
+    "successTitle": "E-mail verzonden",
+    "successMsg": "Controleer uw inbox en volg de instructies."
+  },
+  "resetPassword": {
+    "title": "Nieuw wachtwoord",
+    "subtitle": "Stel een nieuw wachtwoord in voor uw account.",
+    "newPasswordLabel": "Nieuw wachtwoord",
+    "confirmLabel": "Bevestig wachtwoord",
+    "submitButton": "Wachtwoord opslaan",
+    "successTitle": "Wachtwoord bijgewerkt",
+    "successMsg": "U kunt nu inloggen met uw nieuwe wachtwoord."
+  },
+  "resendVerification": {
+    "title": "Bevestiging opnieuw verzenden",
+    "subtitle": "Voer uw e-mailadres in om een ​​nieuwe bevestigingslink te ontvangen.",
+    "emailLabel": "E-mail",
+    "submitButton": "E-mail opnieuw verzenden",
+    "successTitle": "E-mail verzonden",
+    "successMsg": "Controleer je inbox."
+  },
+  "validation": {
+    "slugRequired": "Slug verplicht",
+    "emailInvalid": "Ongeldig e-mailadres",
+    "imageInvalid": "Ongeldige afbeelding"
+  },
+  "planGate": {
+    "title": "Functie vergrendeld",
+    "descriptionPrefix": "Deze functie vereist het",
+    "descriptionMiddle": "abonnement of hoger.",
+    "currentPlan": "Je huidige abonnement is",
+    "viewPlans": "Bekijk abonnementen en upgrade"
+  }
 }

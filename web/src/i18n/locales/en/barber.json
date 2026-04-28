@@ -1,20 +1,47 @@
 {
   "layout": {
-    "nav": { "portal": "Portal", "dashboard": "Dashboard", "schedule": "Schedule" },
-    "pageMeta": {
-      "dashboard": { "title": "Dashboard", "subtitle": "Quick view of your day, schedule and revenue." },
-      "schedule": { "title": "Schedule", "subtitle": "Track your timetable and ongoing bookings." }
+    "nav": {
+      "portal": "Portal",
+      "dashboard": "Dashboard",
+      "schedule": "Schedule"
     },
-    "notifications": { "title": "Notifications", "newBadge": "{{count}} new", "markAllRead": "Mark all as read", "noRecent": "No recent notifications." },
-    "account": { "logout": "Log out" },
+    "pageMeta": {
+      "dashboard": {
+        "title": "Dashboard",
+        "subtitle": "Quick view of your day, schedule and revenue."
+      },
+      "schedule": {
+        "title": "Schedule",
+        "subtitle": "Track your timetable and ongoing bookings."
+      }
+    },
+    "notifications": {
+      "title": "Notifications",
+      "newBadge": "{{count}} new",
+      "markAllRead": "Mark all as read",
+      "noRecent": "No recent notifications."
+    },
+    "account": {
+      "logout": "Log out"
+    },
     "sidebar": {
       "activeSession": "Active session",
       "portalTitle": "Barber portal",
       "portalDesc": "Quick access to schedule, statuses and service details."
     },
-    "topbar": { "planLabel": "Plan", "openSchedule": "Open schedule" },
-    "pull": { "refreshing": "Refreshing...", "releaseToRefresh": "Release to refresh", "pullToRefresh": "Pull to refresh" },
-    "brand": { "name": "Trimio Flow", "defaultSubtitle": "Barber portal" }
+    "topbar": {
+      "planLabel": "Plan",
+      "openSchedule": "Open schedule"
+    },
+    "pull": {
+      "refreshing": "Refreshing...",
+      "releaseToRefresh": "Release to refresh",
+      "pullToRefresh": "Pull to refresh"
+    },
+    "brand": {
+      "name": "Trimio Flow",
+      "defaultSubtitle": "Barber portal"
+    }
   },
   "push": {
     "unavailable": "Push unavailable on this device",
@@ -26,7 +53,10 @@
     "enableTooltip": "Enable push notifications"
   },
   "login": {
-    "brand": { "name": "Trimio Flow", "subtitle": "Barber portal" },
+    "brand": {
+      "name": "Trimio Flow",
+      "subtitle": "Barber portal"
+    },
     "panel": {
       "eyebrow": "Individual operation",
       "title": "Your schedule without breaking your rhythm.",
@@ -49,9 +79,66 @@
       "passwordLabel": "Password",
       "passwordPlaceholder": "••••••••",
       "submitButton": "Sign in to portal",
-      "errors": { "invalidCredentials": "Slug, email or password invalid." }
+      "errors": {
+        "invalidCredentials": "Slug, email or password invalid."
+      }
     }
   },
-  "dashboard": { "title": "Dashboard", "subtitle": "Quick view of your day, schedule and revenue." },
-  "schedule": { "title": "Schedule", "subtitle": "Track your timetable and ongoing bookings." }
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Quick view of your day, schedule and revenue.",
+    "heroSubtitle": "Consolidated view of your schedule, revenue and next appointments for the day.",
+    "dailyFlow": "Daily flow",
+    "heroDescription": "Open the portal and immediately see how many services you have, current revenue and what comes next.",
+    "todaySchedule": "Today's schedule",
+    "noPendingToday": "No pending bookings for today.",
+    "metrics": {
+      "today": "Today",
+      "dayBookings": "Bookings today",
+      "todayRevenue": "Today's revenue",
+      "completedToday": "Completed today",
+      "week": "Week",
+      "accumulatedRevenue": "Accumulated revenue",
+      "bookings": "bookings",
+      "completed": "completed",
+      "thisWeek": "This week",
+      "thisMonth": "This month",
+      "revenue": "revenue"
+    },
+    "focus": {
+      "title": "Immediate focus",
+      "nextServices": "Next services",
+      "pendingOrConfirmed": "Pending or confirmed for today.",
+      "monthRevenue": "Monthly revenue",
+      "monthPerformance": "Quick read of monthly performance."
+    }
+  },
+  "schedule": {
+    "title": "Schedule",
+    "subtitle": "Track your timetable and ongoing bookings.",
+    "pageSubtitle": "Track times, reschedules and details of ongoing services.",
+    "today": "Today",
+    "view": {
+      "oneDay": "1 day",
+      "threeDays": "3 days",
+      "sevenDays": "7 days"
+    },
+    "summary": {
+      "title": "Summary",
+      "baseSlot": "Base slot",
+      "activeInterval": "Active interval",
+      "days": "{{count}} day",
+      "days_plural": "{{count}} days"
+    },
+    "feedback": {
+      "statusUpdated": "Booking marked as {{status}}.",
+      "statusError": "Could not change booking status.",
+      "rescheduled": "Booking moved to {{date}}.",
+      "rescheduleError": "Could not reschedule booking.",
+      "itemAdded": "Extra/product added to booking.",
+      "addItemError": "Could not add item to booking",
+      "itemRemoved": "Item removed from booking.",
+      "removeItemError": "Could not remove item from booking"
+    }
+  }
 }

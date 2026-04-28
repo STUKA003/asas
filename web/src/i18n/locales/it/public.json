@@ -1,6 +1,6 @@
 {
   "header": {
-    "home": "Home",
+    "home": "Casa",
     "services": "Servizi",
     "plans": "Abbonamenti",
     "products": "Prodotti",
@@ -11,7 +11,7 @@
     "nav": "Navigazione",
     "contact": "Contatto",
     "book": "Prenota",
-    "privacy": "Privacy",
+    "privacy": "Riservatezza",
     "adminArea": "Area admin",
     "allRightsReserved": "Tutti i diritti riservati."
   },
@@ -37,8 +37,13 @@
       "total": "Totale stimato"
     },
     "steps": {
-      "service": { "title": "Scegli un servizio" },
-      "barber": { "title": "Scegli il tuo barbiere", "professional": "Professionista" },
+      "service": {
+        "title": "Scegli un servizio"
+      },
+      "barber": {
+        "title": "Scegli il tuo barbiere",
+        "professional": "Professionista"
+      },
       "dateTime": {
         "title": "Data e orario",
         "selectDate": "Seleziona una data",
@@ -76,7 +81,7 @@
         "attendeeNamePlaceholder": "Luigi Rossi",
         "phone": "Telefono / WhatsApp",
         "phonePlaceholder": "+39 320 000 0000",
-        "email": "Email",
+        "email": "E-mail",
         "emailPlaceholder": "mario@esempio.it",
         "notes": "Note (opzionale)",
         "planInfo": "Abbonamento: {{name}}",
@@ -101,7 +106,7 @@
         "dataTitle": "Dati che verranno salvati",
         "dataName": "· Nome: {{name}}",
         "dataPhone": "· Telefono: {{phone}}",
-        "dataEmail": "· Email: {{email}}",
+        "dataEmail": "· E-mail: {{email}}",
         "dataAttendee": "· Persona da servire: {{attendee}}",
         "dataBookingInfo": "· Data, ora, servizio e barbiere selezionati",
         "dataUsage": "Utilizzati per gestire la prenotazione, inviare il link di gestione e il contatto operativo. Puoi esportare o eliminare i tuoi dati in qualsiasi momento tramite il link della prenotazione. Conservazione: 3 anni.",
@@ -163,7 +168,10 @@
       "title": "Pronto per un nuovo look?",
       "subtitle": "Prenota ora e assicurati il tuo appuntamento da {{name}} senza attese o chiamate."
     },
-    "social": { "whatsapp": "WhatsApp", "instagram": "Instagram" },
+    "social": {
+      "whatsapp": "WhatsApp",
+      "instagram": "Instagram"
+    },
     "promo": {
       "label": "In evidenza questa settimana",
       "defaultTitle": "Promozione speciale",
@@ -205,7 +213,7 @@
     "oneActiveBooking": "1 prenotazione attiva alla volta",
     "modal": {
       "title": "Abbonati al piano",
-      "subtitle": "{{name}} · {{price}}",
+      "subtitle": "Piano {{name}} · {{price}}",
       "namePlaceholder": "Il tuo nome",
       "phonePlaceholder": "+39 320 000 0000",
       "warning": "Questo piano può essere attivato solo dopo la conferma del pagamento o direttamente dal barbiere.",
@@ -234,7 +242,8 @@
       "cancelBooking": "Cancella prenotazione",
       "linkCopied": "Link di gestione copiato.",
       "presenceConfirmed": "Presenza confermata con successo.",
-      "bookingCancelled": "Prenotazione cancellata con successo."
+      "bookingCancelled": "Prenotazione cancellata con successo.",
+      "bookingRescheduled": "Prenotazione riprogrammata con successo."
     },
     "privacy": {
       "title": "Privacy e dati",
@@ -263,8 +272,11 @@
     }
   },
   "privacy": {
-    "eyebrow": "Privacy",
+    "eyebrow": "Riservatezza",
     "title": "Informativa sulla privacy",
     "versionDate": "Versione {{version}} · Aggiornata il {{date}}"
+  },
+  "brand": {
+    "clients": "Trimio Clientes"
   }
 }

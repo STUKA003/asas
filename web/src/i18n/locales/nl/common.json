@@ -49,12 +49,19 @@
   },
   "lang": {
     "label": "Taal",
-    "pt": "Português",
-    "en": "English",
-    "es": "Español",
-    "fr": "Français",
-    "de": "Deutsch",
-    "it": "Italiano",
+    "settingsTitle": "App-taal",
+    "settingsDescription": "Stel de taal in die op dit apparaat wordt gebruikt. Je keuze wordt opgeslagen in de browser.",
+    "current": "Huidig",
+    "pt": "Portugees",
+    "en": "Engels",
+    "es": "Spaans",
+    "fr": "Frans",
+    "de": "Duits",
+    "it": "Italiaans",
     "nl": "Nederlands"
+  },
+  "table": {
+    "noResults": "Geen resultaten",
+    "actions": "Acties"
   }
 }

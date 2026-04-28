@@ -1,6 +1,9 @@
 {
   "register": {
-    "brand": { "name": "Trimio Studio", "subtitle": "Für professionelle Barbershops" },
+    "brand": {
+      "name": "Trimio Studio",
+      "subtitle": "Für professionelle Barbershops"
+    },
     "hero": {
       "eyebrow": "Heute starten",
       "title": "Ihr Unternehmen in wenigen Minuten online.",
@@ -11,7 +14,10 @@
       "feature4": "Kunden und Verlauf",
       "feature5": "Kostenlos starten, keine Karte"
     },
-    "freePlan": { "title": "Kostenloser Plan enthalten", "desc": "Starten Sie mit 1 Barbier und 30 Buchungen pro Monat ohne Kosten. Upgrade ab 19€/Monat, wenn Sie wachsen möchten." },
+    "freePlan": {
+      "title": "Kostenloser Plan enthalten",
+      "desc": "Starten Sie mit 1 Barbier und 30 Buchungen pro Monat ohne Kosten. Upgrade ab 19€/Monat, wenn Sie wachsen möchten."
+    },
     "form": {
       "shopNameLabel": "Name des Barbershops",
       "shopNamePlaceholder": "Hans' Barbershop",
@@ -64,7 +70,11 @@
     "goToLogin": "Zur Anmeldung gehen"
   },
   "home": {
-    "nav": { "pricing": "Preise", "login": "Anmelden", "startFree": "Kostenlos starten" },
+    "nav": {
+      "pricing": "Preise",
+      "login": "Anmelden",
+      "startFree": "Kostenlos starten"
+    },
     "hero": {
       "pill": "Buchungssystem für Barbershops",
       "line1": "Kunden buchen.",
@@ -72,9 +82,12 @@
       "desc": "Trimio gibt Ihrem Barbershop eine Online-Buchungsseite. Kein WhatsApp, keine Anrufe, kein Papier.",
       "cta": "Kostenlos starten",
       "ctaNote": "Für immer kostenlos · Keine Kreditkarte",
-      "stat1Value": "< 5 Min.", "stat1Label": "um alles einzurichten",
-      "stat2Value": "24 / 7", "stat2Label": "für Kunden verfügbar",
-      "stat3Value": "0€", "stat3Label": "um zu beginnen"
+      "stat1Value": "< 5 Min.",
+      "stat1Label": "um alles einzurichten",
+      "stat2Value": "24 / 7",
+      "stat2Label": "für Kunden verfügbar",
+      "stat3Value": "0€",
+      "stat3Label": "um zu beginnen"
     },
     "finalCta": {
       "title": "Ihr Barbershop online",
@@ -84,6 +97,93 @@
       "alreadyHaveAccount": "Ich habe bereits ein Konto",
       "note": "Kostenloser Plan für immer · 30 Buchungen/Monat inklusive · Keine Karte"
     },
-    "footer": { "createAccount": "Konto erstellen" }
+    "footer": {
+      "createAccount": "Konto erstellen"
+    },
+    "pain": {
+      "section": "Das Problem",
+      "title": "Verwalten Sie Buchungen immer noch manuell?",
+      "desc": "Die meisten Friseurläden verlieren täglich Kunden, weil sie kein System haben. Erkennen Sie das?",
+      "pain1Title": "WhatsApp läuft über",
+      "pain1Desc": "Dutzende Nachrichten pro Tag, nur um zu buchen und einen neuen Termin zu vereinbaren. Und einige bleiben unbeantwortet.",
+      "pain2Title": "Anrufe zur falschen Zeit",
+      "pain2Desc": "Das Telefon klingelt, wenn Sie eine Schere in der Hand haben. Um 22 Uhr antworteten Sie nicht mehr – der Kunde ging woanders hin.",
+      "pain3Title": "Keine geschäftliche Sichtbarkeit",
+      "pain3Desc": "Sie wissen nicht, wie viel Sie diese Woche verdienen werden, wer arbeitet oder ob Sie morgen noch freie Plätze haben."
+    },
+    "howItWorks": {
+      "section": "Wie es funktioniert",
+      "title": "In 3 Schritten betriebsbereit",
+      "desc": "Keine Installation erforderlich. Keine technischen Kenntnisse erforderlich.",
+      "step1Title": "Erstellen Sie Ihren Friseursalon",
+      "step1Desc": "Name, Dienstleistungen, Friseure und Öffnungszeiten. Weniger als 5 Minuten.",
+      "step2Title": "Holen Sie sich Ihren Link",
+      "step2Desc": "Teilen Sie es auf Instagram, WhatsApp oder wo immer Sie möchten.",
+      "step3Title": "Buchungen kommen",
+      "step3Desc": "Kunden buchen online – Sie erscheinen einfach pünktlich."
+    },
+    "benefits": {
+      "section": "Alles inklusive",
+      "title": "Es geht nicht nur um die Planung.",
+      "desc": "Trimio ist die komplette Bedienung Ihres Friseursalons in einem Tool.",
+      "b1Title": "Terminplan immer organisiert",
+      "b1Desc": "Kunden wählen Service, Friseur, Tag und Uhrzeit – ohne Sie zu unterbrechen. Arbeitet 24 Stunden am Tag.",
+      "b2Title": "Team auf der gleichen Seite",
+      "b2Desc": "Jeder Friseur sieht seinen Zeitplan auf seinem Telefon. Sie sehen alles in einer Echtzeit-Kalenderansicht.",
+      "b3Title": "Öffentliche Seite sofort einsatzbereit",
+      "b3Desc": "Ihr individueller Link mit Services, Galerie und Buchungsschaltfläche. Auf Instagram teilen und fertig.",
+      "b4Title": "Daten, die Sinn machen",
+      "b4Desc": "Abrechnungsberichte, Kundenhistorie und Stornierungsraten – alles in einem Panel."
+    },
+    "testimonials": {
+      "section": "Wer nutzt es bereits?",
+      "title": "Was Friseurläden sagen"
+    },
+    "pricing": {
+      "section": "Preise",
+      "title": "Kostenlos starten. Wachsen Sie, wann Sie wollen.",
+      "desc": "Keine Verträge. Abbrechen jederzeit möglich. Keine Überraschungen.",
+      "freeName": "Frei",
+      "freePeriod": "für immer",
+      "freeDesc": "Ohne Risiko ausprobieren.",
+      "freeFeature1": "1 Friseur",
+      "freeFeature2": "30 Buchungen pro Monat",
+      "freeFeature3": "Öffentliche Seite mit Buchung",
+      "freeFeature4": "Vollständiges Management-Panel",
+      "freeFeature5": "Keine Kreditkarte",
+      "basicName": "Basis",
+      "basicPeriod": "pro Monat",
+      "basicDesc": "Für wachsende Friseurläden.",
+      "basicFeature1": "Bis zu 3 Friseure",
+      "basicFeature2": "Unbegrenzte Buchungen",
+      "basicFeature3": "Extras und Produkte",
+      "basicFeature4": "Kundenabonnements",
+      "basicFeature5": "Geschäftsberichte",
+      "basicFeature6": "Vorrangiger Support",
+      "basicNote": "Beginnt mit einer 14-tägigen Testversion",
+      "proName": "Profi",
+      "proPeriod": "pro Monat",
+      "proDesc": "Für größere Teams.",
+      "proFeature1": "Unbegrenzte Friseure",
+      "proFeature2": "Unbegrenzte Buchungen",
+      "proFeature3": "Alles in Basic",
+      "proFeature4": "Eigenes Portal pro Friseur",
+      "proFeature5": "Push-Benachrichtigungen",
+      "proFeature6": "Erweiterte Berichte",
+      "popular": "Am beliebtesten",
+      "startFree": "Starten Sie kostenlos"
+    },
+    "faq": {
+      "section": "Hilfe",
+      "title": "Sie haben Fragen. Wir haben Antworten.",
+      "q1": "Muss ich mich mit IT oder Programmierung auskennen?",
+      "a1": "Nein. Trimio ist für jedermann konzipiert. Erstellen Sie Ihr Konto, fügen Sie Ihre Dienste und Friseure hinzu und teilen Sie den Link. Die typische Einrichtung dauert weniger als 5 Minuten.",
+      "q2": "Wie nehmen Kunden eine Buchung vor?",
+      "a2": "Sie erhalten einen benutzerdefinierten Link (z. B. trimio.app/Ihr-Name). Teilen Sie es auf Instagram, WhatsApp oder wo auch immer. Kunden öffnen es, wählen und buchen – keine App, keine Anmeldung.",
+      "q3": "Kann ich jederzeit kündigen?",
+      "a3": "Ja, jederzeit und ohne Strafen. Es gibt keine verpflichtenden Jahresverträge. Wenn Sie kündigen, bleibt Ihr Plan bis zum Ende des bezahlten Zeitraums bestehen.",
+      "q4": "Was passiert, wenn ich das Limit für den kostenlosen Plan erreiche?",
+      "a4": "Wir warnen Sie, bevor Sie das Limit erreichen. Sobald dies erreicht ist, können Kunden erst im nächsten Monat oder bis zu Ihrem Upgrade neue Buchungen vornehmen – alle Daten bleiben erhalten."
+    }
   }
 }

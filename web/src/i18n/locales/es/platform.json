@@ -1,6 +1,9 @@
 {
   "register": {
-    "brand": { "name": "Trimio Studio", "subtitle": "Para barberías profesionales" },
+    "brand": {
+      "name": "Trimio Studio",
+      "subtitle": "Para barberías profesionales"
+    },
     "hero": {
       "eyebrow": "Empieza hoy",
       "title": "Tu negocio online en minutos.",
@@ -11,7 +14,10 @@
       "feature4": "Clientes e historial",
       "feature5": "Empieza gratis, sin tarjeta"
     },
-    "freePlan": { "title": "Plan Gratis incluido", "desc": "Empieza con 1 barbero y 30 reservas al mes sin pagar nada. Actualiza a partir de 19€/mes cuando quieras crecer." },
+    "freePlan": {
+      "title": "Plan Gratis incluido",
+      "desc": "Empieza con 1 barbero y 30 reservas al mes sin pagar nada. Actualiza a partir de 19€/mes cuando quieras crecer."
+    },
     "form": {
       "shopNameLabel": "Nombre de la barbería",
       "shopNamePlaceholder": "Barbería de Juan",
@@ -19,7 +25,7 @@
       "slugPrefix": "trimio.app/",
       "ownerNameLabel": "Tu nombre",
       "ownerNamePlaceholder": "Juan García",
-      "emailLabel": "Email",
+      "emailLabel": "Correo electrónico",
       "emailPlaceholder": "juan@email.com",
       "passwordLabel": "Contraseña",
       "passwordPlaceholder": "Mínimo 6 caracteres",
@@ -64,7 +70,11 @@
     "goToLogin": "Ir al inicio de sesión"
   },
   "home": {
-    "nav": { "pricing": "Precios", "login": "Entrar", "startFree": "Empezar gratis" },
+    "nav": {
+      "pricing": "Precios",
+      "login": "Entrar",
+      "startFree": "Empezar gratis"
+    },
     "hero": {
       "pill": "Sistema de reservas para barberías",
       "line1": "Los clientes reservan.",
@@ -72,9 +82,12 @@
       "desc": "Trimio da a tu barbería una página de reservas online. Sin WhatsApp, sin llamadas, sin papel.",
       "cta": "Empezar gratis",
       "ctaNote": "Gratis para siempre · Sin tarjeta de crédito",
-      "stat1Value": "< 5 min", "stat1Label": "para configurar todo",
-      "stat2Value": "24 / 7", "stat2Label": "disponible para clientes",
-      "stat3Value": "0€", "stat3Label": "para empezar"
+      "stat1Value": "< 5 min",
+      "stat1Label": "para configurar todo",
+      "stat2Value": "24 / 7",
+      "stat2Label": "disponible para clientes",
+      "stat3Value": "0€",
+      "stat3Label": "para empezar"
     },
     "finalCta": {
       "title": "Tu barbería online",
@@ -84,6 +97,93 @@
       "alreadyHaveAccount": "Ya tengo cuenta",
       "note": "Plan gratuito para siempre · 30 reservas/mes incluidas · Sin tarjeta"
     },
-    "footer": { "createAccount": "Crear cuenta" }
+    "footer": {
+      "createAccount": "Crear cuenta"
+    },
+    "pain": {
+      "section": "el problema",
+      "title": "¿Sigues gestionando reservas a mano?",
+      "desc": "La mayoría de barberías pierden clientes cada día por no tener un sistema. ¿Reconoces esto?",
+      "pain1Title": "WhatsApp desbordado",
+      "pain1Desc": "Decenas de mensajes al día sólo para reservar y reprogramar. Y algunos quedan sin respuesta.",
+      "pain2Title": "Llama en el momento equivocado",
+      "pain2Desc": "El teléfono suena cuando tienes unas tijeras en la mano. A las 10 de la noche dejaste de contestar: el cliente se fue a otra parte.",
+      "pain3Title": "Sin visibilidad empresarial",
+      "pain3Desc": "No sabes cuánto ganarás esta semana, quién está trabajando o si tienes espacio en tu agenda mañana."
+    },
+    "howItWorks": {
+      "section": "como funciona",
+      "title": "Listo para funcionar en 3 pasos",
+      "desc": "No se necesita instalación. No se requieren conocimientos técnicos.",
+      "step1Title": "Crea tu barbería",
+      "step1Desc": "Nombre, servicios, barberos y horarios. Menos de 5 minutos.",
+      "step2Title": "Obtenga su enlace",
+      "step2Desc": "Compártelo en Instagram, WhatsApp o donde quieras.",
+      "step3Title": "Llegan las reservas",
+      "step3Desc": "Los clientes reservan en línea: usted llega a tiempo."
+    },
+    "benefits": {
+      "section": "Todo incluido",
+      "title": "No se trata sólo de programar.",
+      "desc": "Trimio es la operación completa de tu barbería en una sola herramienta.",
+      "b1Title": "Agenda siempre organizada",
+      "b1Desc": "Los clientes eligen servicio, peluquero, día y hora, sin interrumpirte. Trabaja las 24 horas del día.",
+      "b2Title": "Equipo en la misma página",
+      "b2Desc": "Cada barbero ve su horario en su teléfono. Ves todo en una vista de calendario en tiempo real.",
+      "b3Title": "Página pública lista para usar",
+      "b3Desc": "Tu enlace personalizado con servicios, galería y botón de reserva. Comparte en Instagram y listo.",
+      "b4Title": "Datos que tienen sentido",
+      "b4Desc": "Informes de facturación, historial de clientes y tasas de cancelación, todo en un solo panel."
+    },
+    "testimonials": {
+      "section": "¿Quién ya lo está usando?",
+      "title": "Lo que dicen las barberías"
+    },
+    "pricing": {
+      "section": "Precios",
+      "title": "Empieza gratis. Crece cuando quieras.",
+      "desc": "Sin contratos. Cancelar cuando sea. Sin sorpresas.",
+      "freeName": "Gratis",
+      "freePeriod": "para siempre",
+      "freeDesc": "Para intentarlo sin riesgo.",
+      "freeFeature1": "1 barbero",
+      "freeFeature2": "30 reservas por mes",
+      "freeFeature3": "Página pública con reserva",
+      "freeFeature4": "Panel de gestión completo",
+      "freeFeature5": "Sin tarjeta de crédito",
+      "basicName": "Básico",
+      "basicPeriod": "por mes",
+      "basicDesc": "Para barberías en crecimiento.",
+      "basicFeature1": "Hasta 3 barberos",
+      "basicFeature2": "Reservas ilimitadas",
+      "basicFeature3": "Extras y productos",
+      "basicFeature4": "Planes de suscripción de clientes",
+      "basicFeature5": "Informes comerciales",
+      "basicFeature6": "Apoyo prioritario",
+      "basicNote": "Comienza con una prueba de 14 días",
+      "proName": "Pro",
+      "proPeriod": "por mes",
+      "proDesc": "Para equipos más grandes.",
+      "proFeature1": "barberos ilimitados",
+      "proFeature2": "Reservas ilimitadas",
+      "proFeature3": "Todo en Básico",
+      "proFeature4": "Portal dedicado por barbero",
+      "proFeature5": "Notificaciones push",
+      "proFeature6": "Informes avanzados",
+      "popular": "mas popular",
+      "startFree": "Empieza gratis"
+    },
+    "faq": {
+      "section": "Preguntas frecuentes",
+      "title": "Tienes preguntas. Tenemos respuestas.",
+      "q1": "¿Necesito saber TI o programación?",
+      "a1": "No. Trimio está diseñado para cualquier persona. Crea tu cuenta, agrega tus servicios y barberos, y comparte el enlace. La configuración típica tarda menos de 5 minutos.",
+      "q2": "¿Cómo hacen los clientes una reserva?",
+      "a2": "Obtienes un enlace personalizado (por ejemplo, trimio.app/tu-nombre). Compártelo en Instagram, WhatsApp o donde sea. Los clientes lo abren, eligen y reservan: sin aplicación, sin registro.",
+      "q3": "¿Puedo cancelar cuando quiera?",
+      "a3": "Sí, en cualquier momento y sin penalizaciones. No existen contratos anuales obligatorios. Si cancelas, tu plan continúa hasta el final del período pagado.",
+      "q4": "¿Qué sucede cuando llego al límite del plan gratuito?",
+      "a4": "Te avisaremos antes de que llegues al límite. Una vez alcanzado, los clientes no pueden hacer nuevas reservas hasta el próximo mes o hasta que actualices; todos los datos se conservan."
+    }
   }
 }

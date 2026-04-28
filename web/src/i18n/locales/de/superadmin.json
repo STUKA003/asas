@@ -1,25 +1,58 @@
 {
   "layout": {
-    "nav": { "platform": "Plattform", "dashboard": "Dashboard", "barbershops": "Barbershops" },
-    "pageMeta": {
-      "dashboard": { "title": "Dashboard", "subtitle": "Konsolidierte Lektüre der kommerziellen und operativen Gesundheit der Plattform." },
-      "barbershops": { "title": "Barbershops", "subtitle": "Zentrale Verwaltung von Konten, Plänen und Betriebsstatus." }
+    "nav": {
+      "platform": "Plattform",
+      "dashboard": "Armaturenbrett",
+      "barbershops": "Friseursalons"
     },
-    "account": { "name": "Super Admin", "platform": "Trimio Platform", "logout": "Abmelden" },
-    "sidebar": { "scopeLabel": "Umfang", "scopeTitle": "Zentraler Betrieb", "scopeDesc": "Übergreifende Sicht auf Wachstum, Konten und Monetarisierung." },
-    "topbar": { "viewBarbershops": "Barbershops anzeigen" },
-    "pull": { "refreshing": "Aktualisierung...", "releaseToRefresh": "Loslassen zum Aktualisieren", "pullToRefresh": "Ziehen zum Aktualisieren" },
-    "brand": { "name": "Trimio Command", "subtitle": "Plattformkontrolle" }
+    "pageMeta": {
+      "dashboard": {
+        "title": "Armaturenbrett",
+        "subtitle": "Konsolidierte Lektüre der kommerziellen und operativen Gesundheit der Plattform."
+      },
+      "barbershops": {
+        "title": "Friseursalons",
+        "subtitle": "Zentrale Verwaltung von Konten, Plänen und Betriebsstatus."
+      }
+    },
+    "account": {
+      "name": "Superadministrator",
+      "platform": "Trimio-Plattform",
+      "logout": "Abmelden"
+    },
+    "sidebar": {
+      "scopeLabel": "Umfang",
+      "scopeTitle": "Zentraler Betrieb",
+      "scopeDesc": "Übergreifende Sicht auf Wachstum, Konten und Monetarisierung."
+    },
+    "topbar": {
+      "viewBarbershops": "Barbershops anzeigen"
+    },
+    "pull": {
+      "refreshing": "Aktualisierung...",
+      "releaseToRefresh": "Loslassen zum Aktualisieren",
+      "pullToRefresh": "Ziehen zum Aktualisieren"
+    },
+    "brand": {
+      "name": "Trimio-Befehl",
+      "subtitle": "Plattformkontrolle"
+    }
   },
   "login": {
-    "brand": { "name": "Trimio Command", "subtitle": "Plattformkontrolle" },
+    "brand": {
+      "name": "Trimio-Befehl",
+      "subtitle": "Plattformkontrolle"
+    },
     "panel": {
-      "eyebrow": "Platform control",
+      "eyebrow": "Plattformsteuerung",
       "title": "Globale Sicht auf den gesamten Betrieb.",
       "desc": "Zentrale Verwaltung von Barbershops, Plänen, Abrechnung und Plattformgesundheit — von einem einzigen Kontrollpunkt.",
-      "stat1Label": "Barbershop-Netzwerk", "stat1Desc": "Zentralisierte Sicht auf alle aktiven Konten.",
-      "stat2Label": "Wachstum und Pläne", "stat2Desc": "MRR, Upgrades und Abrechnungszyklus pro Konto.",
-      "stat3Label": "Plattformkontrolle", "stat3Desc": "Sperrungen, Status und globale operative Gesundheit.",
+      "stat1Label": "Barbershop-Netzwerk",
+      "stat1Desc": "Zentralisierte Sicht auf alle aktiven Konten.",
+      "stat2Label": "Wachstum und Pläne",
+      "stat2Desc": "MRR, Upgrades und Abrechnungszyklus pro Konto.",
+      "stat3Label": "Plattformkontrolle",
+      "stat3Desc": "Sperrungen, Status und globale operative Gesundheit.",
       "footer": "© {{year}} Trimio · Eingeschränkter Zugang"
     },
     "form": {
@@ -35,6 +68,26 @@
       "error": "Ungültige Anmeldedaten."
     }
   },
-  "dashboard": { "title": "Dashboard", "subtitle": "Konsolidierte Lektüre der Plattformgesundheit." },
-  "barbershops": { "title": "Barbershops", "subtitle": "Zentrale Verwaltung von Konten und Betrieb." }
+  "dashboard": {
+    "title": "Armaturenbrett",
+    "subtitle": "Konsolidierte Lektüre der Plattformgesundheit.",
+    "stats": {
+      "paidShops": "{{count}} zahlende Shops",
+      "thisMonth": "{{count}} diesen Monat",
+      "avgPerShop": "{{value}} / Shop",
+      "adoption": "Akzeptanz",
+      "proShops": "{{count}} Premium"
+    },
+    "metrics": {
+      "title": "Kennzahlen",
+      "bookingsThisMonth": "Buchungen diesen Monat",
+      "avgPerShop": "Durchschnitt / Shop",
+      "proShops": "Pro-Shops",
+      "paidAdoption": "Bezahlte Akzeptanz"
+    }
+  },
+  "barbershops": {
+    "title": "Friseursalons",
+    "subtitle": "Zentrale Verwaltung von Konten und Betrieb."
+  }
 }

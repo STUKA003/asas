@@ -242,7 +242,8 @@
       "cancelBooking": "Cancel booking",
       "linkCopied": "Management link copied.",
       "presenceConfirmed": "Attendance confirmed successfully.",
-      "bookingCancelled": "Booking cancelled successfully."
+      "bookingCancelled": "Booking cancelled successfully.",
+      "bookingRescheduled": "Booking rescheduled successfully."
     },
     "privacy": {
       "title": "Privacy & data",
@@ -274,5 +275,8 @@
     "eyebrow": "Privacy",
     "title": "Privacy Policy",
     "versionDate": "Version {{version}} · Updated on {{date}}"
+  },
+  "brand": {
+    "clients": "Trimio Clientes"
   }
 }

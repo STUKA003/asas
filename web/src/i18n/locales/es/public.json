@@ -32,13 +32,18 @@
       "date": "Fecha",
       "time": "Hora",
       "mainService": "Servicio principal",
-      "plan": "Plan",
+      "plan": "Abono",
       "added": "Añadidos",
       "total": "Total estimado"
     },
     "steps": {
-      "service": { "title": "Elige el servicio" },
-      "barber": { "title": "Elige tu barbero", "professional": "Profesional" },
+      "service": {
+        "title": "Elige el servicio"
+      },
+      "barber": {
+        "title": "Elige tu barbero",
+        "professional": "Profesional"
+      },
       "dateTime": {
         "title": "Fecha y horario",
         "selectDate": "Selecciona una fecha",
@@ -76,10 +81,10 @@
         "attendeeNamePlaceholder": "Miguel García",
         "phone": "Teléfono / WhatsApp",
         "phonePlaceholder": "+34 600 000 000",
-        "email": "Email",
+        "email": "Correo electrónico",
         "emailPlaceholder": "juan@ejemplo.com",
         "notes": "Observaciones (opcional)",
-        "planInfo": "Plan: {{name}}",
+        "planInfo": "Plano: {{name}}",
         "responsible": "Responsable: {{name}}",
         "allowedDays": "Días permitidos: {{days}}",
         "includedServices": "Servicios incluidos: {{services}}",
@@ -101,7 +106,7 @@
         "dataTitle": "Datos que se guardarán",
         "dataName": "· Nombre: {{name}}",
         "dataPhone": "· Teléfono: {{phone}}",
-        "dataEmail": "· Email: {{email}}",
+        "dataEmail": "· Correo electrónico: {{email}}",
         "dataAttendee": "· Persona atendida: {{attendee}}",
         "dataBookingInfo": "· Fecha, hora, servicio y barbero seleccionados",
         "dataUsage": "Usados para gestionar la reserva, enviar el enlace de gestión y contacto operacional. Puedes exportar o eliminar tus datos en cualquier momento a través del enlace de la reserva. Conservación: 3 años.",
@@ -163,7 +168,10 @@
       "title": "¿Listo para un nuevo look?",
       "subtitle": "Reserva ahora y asegura tu cita en {{name}} sin esperas ni llamadas."
     },
-    "social": { "whatsapp": "WhatsApp", "instagram": "Instagram" },
+    "social": {
+      "whatsapp": "WhatsApp",
+      "instagram": "Instagram"
+    },
     "promo": {
       "label": "Destacado de la semana",
       "defaultTitle": "Oferta especial",
@@ -205,7 +213,7 @@
     "oneActiveBooking": "1 reserva activa a la vez",
     "modal": {
       "title": "Suscribirse al plan",
-      "subtitle": "{{name}} · {{price}}",
+      "subtitle": "Abono {{name}} · {{price}}",
       "namePlaceholder": "Tu nombre",
       "phonePlaceholder": "+34 600 000 000",
       "warning": "Este plan solo puede activarse tras confirmación de pago o directamente por la barbería.",
@@ -234,7 +242,8 @@
       "cancelBooking": "Cancelar reserva",
       "linkCopied": "Enlace de gestión copiado.",
       "presenceConfirmed": "Asistencia confirmada con éxito.",
-      "bookingCancelled": "Reserva cancelada con éxito."
+      "bookingCancelled": "Reserva cancelada con éxito.",
+      "bookingRescheduled": "Reserva reprogramada correctamente."
     },
     "privacy": {
       "title": "Privacidad y datos",
@@ -266,5 +275,8 @@
     "eyebrow": "Privacidad",
     "title": "Política de Privacidad",
     "versionDate": "Versión {{version}} · Actualizada el {{date}}"
+  },
+  "brand": {
+    "clients": "Trimio Clientes"
   }
 }

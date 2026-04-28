@@ -1,31 +1,64 @@
 {
   "layout": {
-    "nav": { "platform": "Plateforme", "dashboard": "Tableau de bord", "barbershops": "Salons" },
-    "pageMeta": {
-      "dashboard": { "title": "Tableau de bord", "subtitle": "Lecture consolidée de la santé commerciale et opérationnelle de la plateforme." },
-      "barbershops": { "title": "Salons", "subtitle": "Gestion centralisée des comptes, forfaits et état des opérations." }
+    "nav": {
+      "platform": "Plateforme",
+      "dashboard": "Tableau de bord",
+      "barbershops": "Salons"
     },
-    "account": { "name": "Super Admin", "platform": "Trimio Platform", "logout": "Se déconnecter" },
-    "sidebar": { "scopeLabel": "Portée", "scopeTitle": "Opération centrale", "scopeDesc": "Vue transversale sur la croissance, les comptes et la monétisation." },
-    "topbar": { "viewBarbershops": "Voir les salons" },
-    "pull": { "refreshing": "Actualisation...", "releaseToRefresh": "Relâchez pour actualiser", "pullToRefresh": "Tirez pour actualiser" },
-    "brand": { "name": "Trimio Command", "subtitle": "Contrôle de la plateforme" }
+    "pageMeta": {
+      "dashboard": {
+        "title": "Tableau de bord",
+        "subtitle": "Lecture consolidée de la santé commerciale et opérationnelle de la plateforme."
+      },
+      "barbershops": {
+        "title": "Salons",
+        "subtitle": "Gestion centralisée des comptes, forfaits et état des opérations."
+      }
+    },
+    "account": {
+      "name": "Super administrateur",
+      "platform": "Plateforme Trimio",
+      "logout": "Se déconnecter"
+    },
+    "sidebar": {
+      "scopeLabel": "Portée",
+      "scopeTitle": "Opération centrale",
+      "scopeDesc": "Vue transversale sur la croissance, les comptes et la monétisation."
+    },
+    "topbar": {
+      "viewBarbershops": "Voir les salons"
+    },
+    "pull": {
+      "refreshing": "Actualisation...",
+      "releaseToRefresh": "Relâchez pour actualiser",
+      "pullToRefresh": "Tirez pour actualiser"
+    },
+    "brand": {
+      "name": "Commande Trimio",
+      "subtitle": "Contrôle de la plateforme"
+    }
   },
   "login": {
-    "brand": { "name": "Trimio Command", "subtitle": "Contrôle de la plateforme" },
+    "brand": {
+      "name": "Commande Trimio",
+      "subtitle": "Contrôle de la plateforme"
+    },
     "panel": {
-      "eyebrow": "Platform control",
+      "eyebrow": "Contrôle de la plateforme",
       "title": "Vue globale de toute l'opération.",
       "desc": "Gestion centralisée des salons, forfaits, facturation et santé de la plateforme — en un seul point de contrôle.",
-      "stat1Label": "Réseau de salons", "stat1Desc": "Vue centralisée de tous les comptes actifs.",
-      "stat2Label": "Croissance et forfaits", "stat2Desc": "MRR, mises à niveau et cycle de facturation par compte.",
-      "stat3Label": "Contrôle de la plateforme", "stat3Desc": "Suspensions, états et santé opérationnelle globale.",
+      "stat1Label": "Réseau de salons",
+      "stat1Desc": "Vue centralisée de tous les comptes actifs.",
+      "stat2Label": "Croissance et forfaits",
+      "stat2Desc": "MRR, mises à niveau et cycle de facturation par compte.",
+      "stat3Label": "Contrôle de la plateforme",
+      "stat3Desc": "Suspensions, états et santé opérationnelle globale.",
       "footer": "© {{year}} Trimio · Accès restreint"
     },
     "form": {
       "title": "Accès au Command",
       "subtitle": "Zone restreinte — supervision de la plateforme Trimio.",
-      "emailLabel": "Email",
+      "emailLabel": "E-mail",
       "emailPlaceholder": "admin@trimio.app",
       "passwordLabel": "Mot de passe",
       "passwordPlaceholder": "••••••••",
@@ -35,6 +68,26 @@
       "error": "Identifiants invalides."
     }
   },
-  "dashboard": { "title": "Tableau de bord", "subtitle": "Lecture consolidée de la santé de la plateforme." },
-  "barbershops": { "title": "Salons", "subtitle": "Gestion centralisée des comptes et opérations." }
+  "dashboard": {
+    "title": "Tableau de bord",
+    "subtitle": "Lecture consolidée de la santé de la plateforme.",
+    "stats": {
+      "paidShops": "{{count}} salons payants",
+      "thisMonth": "{{count}} ce mois-ci",
+      "avgPerShop": "{{value}} / salon",
+      "adoption": "Adhésion",
+      "proShops": "{{count}} Professionnel"
+    },
+    "metrics": {
+      "title": "Métriques",
+      "bookingsThisMonth": "Réservations ce mois-ci",
+      "avgPerShop": "Moyenne / salon",
+      "proShops": "Salons Pro",
+      "paidAdoption": "Adoption payante"
+    }
+  },
+  "barbershops": {
+    "title": "Salons",
+    "subtitle": "Gestion centralisée des comptes et opérations."
+  }
 }

@@ -1,15 +1,15 @@
 {
   "header": {
     "home": "Accueil",
-    "services": "Services",
+    "services": "Prestations",
     "plans": "Forfaits",
     "products": "Produits",
     "bookNow": "Réserver maintenant"
   },
   "footer": {
     "tagline": "Réservations simples, rapides et organisées.",
-    "nav": "Navigation",
-    "contact": "Contact",
+    "nav": "Menu",
+    "contact": "Coordonnées",
     "book": "Réserver",
     "privacy": "Confidentialité",
     "adminArea": "Espace admin",
@@ -18,18 +18,18 @@
   "booking": {
     "title": "Réservation en ligne",
     "stepLabels": {
-      "service": "Service",
+      "service": "Prestation",
       "barber": "Barbier",
       "dateTime": "Date/Heure",
       "customer": "Coordonnées",
-      "confirmation": "Confirmation"
+      "confirmation": "Validation"
     },
     "progress": "Progression",
     "stepOf": "Étape {{current}} sur {{total}}",
     "summary": {
       "title": "Récapitulatif de la réservation",
       "professional": "Professionnel",
-      "date": "Date",
+      "date": "Jour",
       "time": "Heure",
       "mainService": "Service principal",
       "plan": "Forfait",
@@ -37,8 +37,13 @@
       "total": "Total estimé"
     },
     "steps": {
-      "service": { "title": "Choisissez un service" },
-      "barber": { "title": "Choisissez votre barbier", "professional": "Professionnel" },
+      "service": {
+        "title": "Choisissez un service"
+      },
+      "barber": {
+        "title": "Choisissez votre barbier",
+        "professional": "Professionnel"
+      },
       "dateTime": {
         "title": "Date et horaire",
         "selectDate": "Sélectionnez une date",
@@ -51,7 +56,7 @@
         "noSlotsInPeriod": "Aucun créneau sur cette période."
       },
       "extras": {
-        "title": "Extras",
+        "title": "Suppléments",
         "optional": " optionnel",
         "includedInService": "inclus dans le service",
         "noExtras": "Aucun extra disponible."
@@ -60,7 +65,7 @@
         "title": "Extras et Produits",
         "subtitle": "Ajoutez à votre rendez-vous (optionnel)",
         "noItems": "Aucun extra ou produit disponible.",
-        "extras": "Extras",
+        "extras": "Suppléments",
         "products": "Produits"
       },
       "products": {
@@ -76,7 +81,7 @@
         "attendeeNamePlaceholder": "Michel Dupont",
         "phone": "Téléphone / WhatsApp",
         "phonePlaceholder": "+33 6 00 00 00 00",
-        "email": "Email",
+        "email": "E-mail",
         "emailPlaceholder": "jean@exemple.fr",
         "notes": "Observations (optionnel)",
         "planInfo": "Forfait : {{name}}",
@@ -143,13 +148,13 @@
       "step2Desc": "Voyez qui est disponible et choisissez votre préféré.",
       "step3Title": "Choisissez date et heure",
       "step3Desc": "Consultez les créneaux libres et réservez le vôtre.",
-      "step4Title": "Confirmation",
+      "step4Title": "Validation",
       "step4Desc": "Recevez la confirmation et présentez-vous à l'heure."
     },
     "stats": {
       "avgBooking": "Réservation moyenne",
       "avgBookingVal": "< 2 min",
-      "confirmation": "Confirmation",
+      "confirmation": "Validation",
       "confirmationVal": "Instantanée",
       "availability": "Disponibilité",
       "availabilityVal": "Temps réel"
@@ -163,7 +168,10 @@
       "title": "Prêt pour un nouveau look ?",
       "subtitle": "Réservez maintenant et assurez votre créneau chez {{name}} sans attente ni appel."
     },
-    "social": { "whatsapp": "WhatsApp", "instagram": "Instagram" },
+    "social": {
+      "whatsapp": "WhatsApp",
+      "instagram": "Instagram"
+    },
     "promo": {
       "label": "À la une cette semaine",
       "defaultTitle": "Promotion spéciale",
@@ -175,7 +183,7 @@
     }
   },
   "services": {
-    "eyebrow": "Catalogue",
+    "eyebrow": "Répertoire",
     "title": "Services disponibles",
     "subtitle": "Choisissez le service idéal — consultez les prix, la durée et réservez directement.",
     "bookButton": "Réserver"
@@ -205,7 +213,7 @@
     "oneActiveBooking": "1 réservation active à la fois",
     "modal": {
       "title": "S'abonner au forfait",
-      "subtitle": "{{name}} · {{price}}",
+      "subtitle": "Forfait {{name}} · {{price}}",
       "namePlaceholder": "Votre nom",
       "phonePlaceholder": "+33 6 00 00 00 00",
       "warning": "Ce forfait ne peut être activé qu'après confirmation de paiement ou directement par le barbier.",
@@ -234,7 +242,8 @@
       "cancelBooking": "Annuler la réservation",
       "linkCopied": "Lien de gestion copié.",
       "presenceConfirmed": "Présence confirmée avec succès.",
-      "bookingCancelled": "Réservation annulée avec succès."
+      "bookingCancelled": "Réservation annulée avec succès.",
+      "bookingRescheduled": "Réservation reprogrammée avec succès."
     },
     "privacy": {
       "title": "Confidentialité et données",
@@ -266,5 +275,8 @@
     "eyebrow": "Confidentialité",
     "title": "Politique de confidentialité",
     "versionDate": "Version {{version}} · Mise à jour le {{date}}"
+  },
+  "brand": {
+    "clients": "Trimio Clientes"
   }
 }

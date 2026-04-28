@@ -16,7 +16,7 @@
     },
     "freePlan": {
       "title": "Plano Grátis incluído",
-      "desc": "Começas com 1 barbeiro e 30 agendamentos por mês sem pagar nada. Upgrades a partir de 19€/mês quando quiseres crescer."
+      "desc": "Começas com 1 barbeiro e 30 agendamentos por mês sem pagar nada. Planos superiores a partir de 19€/mês quando quiseres crescer."
     },
     "form": {
       "shopNameLabel": "Nome da barbearia",
@@ -27,7 +27,7 @@
       "ownerNamePlaceholder": "João Silva",
       "emailLabel": "E-mail",
       "emailPlaceholder": "joao@email.com",
-      "passwordLabel": "Password",
+      "passwordLabel": "Palavra-passe",
       "passwordPlaceholder": "Mínimo 6 caracteres",
       "submitButton": "Criar barbearia grátis",
       "hasAccount": "Já tens conta?",
@@ -43,31 +43,31 @@
       }
     },
     "success": {
-      "title": "Confirma o teu email",
+      "title": "Confirma o teu e-mail",
       "message": "Enviámos um link de confirmação para {{email}}. Confirma antes de entrar no painel.",
       "stepsTitle": "Próximos passos",
       "step1": "1. Abre a tua caixa de entrada.",
-      "step2": "2. Procura o email da Trimio.",
+      "step2": "2. Procura o e-mail da Trimio.",
       "step3": "3. Clica no link de confirmação.",
       "step4": "4. Entra no painel com as tuas credenciais.",
-      "openInbox": "Abrir caixa de email",
-      "resendEmail": "Reenviar email de confirmação",
-      "goToLogin": "Ir para login",
+      "openInbox": "Abrir caixa de e-mail",
+      "resendEmail": "Reenviar e-mail de confirmação",
+      "goToLogin": "Ir para início de sessão",
       "createAnother": "Criar outra conta"
     }
   },
   "verifyEmail": {
     "eyebrow": "Confirmação",
     "brand": "Trimio Studio",
-    "subtitle": "Activação da conta admin.",
-    "title": "Confirmar email",
-    "missingToken": "O link de confirmação está incompleto. Pede um novo email de confirmação.",
-    "loading": "Estamos a confirmar o teu email…",
-    "success": "Email confirmado. Já podes entrar no painel.",
-    "error": "Não foi possível confirmar este email.",
+    "subtitle": "Activação da conta de administrador.",
+    "title": "Confirmar e-mail",
+    "missingToken": "O link de confirmação está incompleto. Pede um novo e-mail de confirmação.",
+    "loading": "Estamos a confirmar o teu e-mail…",
+    "success": "E-mail confirmado. Já podes entrar no painel.",
+    "error": "Não foi possível confirmar este e-mail.",
     "retry": "Tentar de novo",
-    "resendEmail": "Reenviar email",
-    "goToLogin": "Ir para login"
+    "resendEmail": "Reenviar e-mail",
+    "goToLogin": "Ir para início de sessão"
   },
   "home": {
     "nav": {
@@ -137,7 +137,7 @@
       "freeDesc": "Para testar sem risco.",
       "freeFeature1": "1 barbeiro",
       "freeFeature2": "30 reservas por mês",
-      "freeFeature3": "Página pública com booking",
+      "freeFeature3": "Página pública com reservas",
       "freeFeature4": "Painel de gestão completo",
       "freeFeature5": "Sem cartão de crédito",
       "basicName": "Básico",
@@ -150,7 +150,7 @@
       "basicFeature5": "Relatórios de negócio",
       "basicFeature6": "Suporte prioritário",
       "basicNote": "Começa com 14 dias de teste",
-      "proName": "Pro",
+      "proName": "Pró",
       "proPeriod": "por mês",
       "proDesc": "Para espaços com mais equipa.",
       "proFeature1": "Barbeiros ilimitados",
@@ -172,7 +172,7 @@
       "q3": "Posso cancelar quando quiser?",
       "a3": "Sim, a qualquer momento e sem penalizações. Não há contratos anuais obrigatórios. Se cancelares, o teu plano mantém-se até ao fim do período pago.",
       "q4": "O que acontece quando atinjo o limite do plano gratuito?",
-      "a4": "Recebemos avisos antes de atingires o limite. Quando o atinges, os clientes não conseguem fazer novas marcações até ao mês seguinte ou até fazeres upgrade — os dados ficam todos guardados."
+      "a4": "Recebemos avisos antes de atingires o limite. Quando o atinges, os clientes não conseguem fazer novas marcações até ao mês seguinte ou até mudares para um plano superior — os dados ficam todos guardados."
     },
     "finalCta": {
       "title": "A tua barbearia online",

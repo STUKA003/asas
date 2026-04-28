@@ -20,7 +20,7 @@
     "update": "Aktualisieren",
     "remove": "Entfernen",
     "add": "Hinzufügen",
-    "upgrade": "Upgrade",
+    "upgrade": "Hochstufen",
     "refresh": "Seite aktualisieren",
     "export": "Exportieren",
     "import": "Importieren"
@@ -36,8 +36,8 @@
   },
   "plan": {
     "FREE": "Kostenlos",
-    "BASIC": "Basic",
-    "PRO": "Pro"
+    "BASIC": "Basis",
+    "PRO": "Profi"
   },
   "error": {
     "generic": "Ein Fehler ist aufgetreten. Bitte versuche es erneut.",
@@ -49,12 +49,19 @@
   },
   "lang": {
     "label": "Sprache",
-    "pt": "Português",
-    "en": "English",
-    "es": "Español",
-    "fr": "Français",
+    "settingsTitle": "App-Sprache",
+    "settingsDescription": "Legt die Sprache auf diesem Gerät fest. Die Auswahl wird im Browser gespeichert.",
+    "current": "Aktuell",
+    "pt": "Portugiesisch",
+    "en": "Englisch",
+    "es": "Spanisch",
+    "fr": "Französisch",
     "de": "Deutsch",
-    "it": "Italiano",
-    "nl": "Nederlands"
+    "it": "Italienisch",
+    "nl": "Niederlande"
+  },
+  "table": {
+    "noResults": "Keine Ergebnisse",
+    "actions": "Aktionen"
   }
 }

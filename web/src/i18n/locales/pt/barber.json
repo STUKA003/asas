@@ -2,12 +2,18 @@
   "layout": {
     "nav": {
       "portal": "Portal",
-      "dashboard": "Dashboard",
+      "dashboard": "Painel",
       "schedule": "Agenda"
     },
     "pageMeta": {
-      "dashboard": { "title": "Dashboard", "subtitle": "Visão rápida do teu dia, agenda e receita." },
-      "schedule": { "title": "Agenda", "subtitle": "Acompanha os teus horários e reservas em curso." }
+      "dashboard": {
+        "title": "Painel",
+        "subtitle": "Visão rápida do teu dia, agenda e receita."
+      },
+      "schedule": {
+        "title": "Agenda",
+        "subtitle": "Acompanha os teus horários e reservas em curso."
+      }
     },
     "notifications": {
       "title": "Notificações",
@@ -70,20 +76,69 @@
       "slugPlaceholder": "minha-barbearia",
       "emailLabel": "E-mail",
       "emailPlaceholder": "barbeiro@email.com",
-      "passwordLabel": "Password",
+      "passwordLabel": "Palavra-passe",
       "passwordPlaceholder": "••••••••",
       "submitButton": "Entrar no portal",
       "errors": {
-        "invalidCredentials": "Slug, e-mail ou password inválidos."
+        "invalidCredentials": "Slug, e-mail ou palavra-passe inválidos."
       }
     }
   },
   "dashboard": {
-    "title": "Dashboard",
-    "subtitle": "Visão rápida do teu dia, agenda e receita."
+    "title": "Painel",
+    "subtitle": "Visão rápida do teu dia, agenda e receita.",
+    "heroSubtitle": "Visão consolidada da agenda, receita e próximas marcações do teu dia.",
+    "dailyFlow": "Fluxo diário",
+    "heroDescription": "Abre o portal e percebe logo quantos atendimentos tens, a receita em curso e o que vem a seguir.",
+    "todaySchedule": "Agenda de hoje",
+    "noPendingToday": "Sem agendamentos pendentes para hoje.",
+    "metrics": {
+      "today": "Hoje",
+      "dayBookings": "Marcações do dia",
+      "todayRevenue": "Receita hoje",
+      "completedToday": "Concluídos no dia",
+      "week": "Semana",
+      "accumulatedRevenue": "Receita acumulada",
+      "bookings": "agendamentos",
+      "completed": "concluídos",
+      "thisWeek": "Esta semana",
+      "thisMonth": "Este mês",
+      "revenue": "receita"
+    },
+    "focus": {
+      "title": "Foco imediato",
+      "nextServices": "Próximos atendimentos",
+      "pendingOrConfirmed": "Pendentes ou confirmados para hoje.",
+      "monthRevenue": "Receita do mês",
+      "monthPerformance": "Leitura rápida de performance mensal."
+    }
   },
   "schedule": {
     "title": "Agenda",
-    "subtitle": "Acompanha os teus horários e reservas em curso."
+    "subtitle": "Acompanha os teus horários e reservas em curso.",
+    "pageSubtitle": "Acompanha horários, remarcações e detalhe dos atendimentos em curso.",
+    "today": "Hoje",
+    "view": {
+      "oneDay": "1 dia",
+      "threeDays": "3 dias",
+      "sevenDays": "7 dias"
+    },
+    "summary": {
+      "title": "Resumo",
+      "baseSlot": "Slot base",
+      "activeInterval": "Intervalo ativo",
+      "days": "{{count}} dia",
+      "days_plural": "{{count}} dias"
+    },
+    "feedback": {
+      "statusUpdated": "Agendamento marcado como {{status}}.",
+      "statusError": "Não foi possível alterar o estado do agendamento.",
+      "rescheduled": "Agendamento movido para {{date}}.",
+      "rescheduleError": "Não foi possível remarcar o agendamento.",
+      "itemAdded": "Extra/produto adicionado ao agendamento.",
+      "addItemError": "Não foi possível adicionar o item ao agendamento",
+      "itemRemoved": "Item removido do agendamento.",
+      "removeItemError": "Não foi possível remover o item do agendamento"
+    }
   }
 }

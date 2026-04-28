@@ -2,15 +2,15 @@
   "layout": {
     "nav": {
       "operation": "Opérations",
-      "catalog": "Catalogue",
+      "catalog": "Répertoire",
       "management": "Gestion",
       "dashboard": "Tableau de bord",
       "bookings": "Réservations",
       "customers": "Clients",
       "barbers": "Barbiers",
       "schedule": "Horaires",
-      "services": "Services",
-      "extras": "Extras",
+      "services": "Prestations",
+      "extras": "Suppléments",
       "products": "Produits",
       "plans": "Forfaits",
       "reports": "Rapports",
@@ -18,21 +18,57 @@
       "billing": "Facturation"
     },
     "pageMeta": {
-      "dashboard": { "title": "Tableau de bord", "subtitle": "Vue d'ensemble des performances, agenda et signaux opérationnels." },
-      "bookings": { "title": "Réservations", "subtitle": "Gérez les réservations, confirmations et blocages d'agenda." },
-      "customers": { "title": "Clients", "subtitle": "Consultez l'historique, les forfaits actifs et les coordonnées." },
-      "barbers": { "title": "Barbiers", "subtitle": "Gérez l'équipe, les accès et la disponibilité." },
-      "services": { "title": "Services", "subtitle": "Maintenez le catalogue principal du salon organisé." },
-      "extras": { "title": "Extras", "subtitle": "Upsells et compléments qui augmentent le ticket moyen." },
-      "products": { "title": "Produits", "subtitle": "Inventaire et vente de produits au point de service." },
-      "plans": { "title": "Forfaits", "subtitle": "Configurez les abonnements et avantages récurrents." },
-      "schedule": { "title": "Horaires", "subtitle": "Définissez la structure de base de fonctionnement de l'agenda." },
-      "reports": { "title": "Rapports", "subtitle": "Lecture commerciale et opérationnelle pour soutenir les décisions." },
-      "customization": { "title": "Marque et Site", "subtitle": "Personnalisez la présence digitale, les couleurs et le contenu public." },
-      "billing": { "title": "Facturation", "subtitle": "Suivez votre forfait actuel, les mises à niveau et le cycle de facturation." }
+      "dashboard": {
+        "title": "Tableau de bord",
+        "subtitle": "Vue d'ensemble des performances, agenda et signaux opérationnels."
+      },
+      "bookings": {
+        "title": "Réservations",
+        "subtitle": "Gérez les réservations, confirmations et blocages d'agenda."
+      },
+      "customers": {
+        "title": "Clients",
+        "subtitle": "Consultez l'historique, les forfaits actifs et les coordonnées."
+      },
+      "barbers": {
+        "title": "Barbiers",
+        "subtitle": "Gérez l'équipe, les accès et la disponibilité."
+      },
+      "services": {
+        "title": "Prestations",
+        "subtitle": "Maintenez le catalogue principal du salon organisé."
+      },
+      "extras": {
+        "title": "Suppléments",
+        "subtitle": "Upsells et compléments qui augmentent le ticket moyen."
+      },
+      "products": {
+        "title": "Produits",
+        "subtitle": "Inventaire et vente de produits au point de service."
+      },
+      "plans": {
+        "title": "Forfaits",
+        "subtitle": "Configurez les abonnements et avantages récurrents."
+      },
+      "schedule": {
+        "title": "Horaires",
+        "subtitle": "Définissez la structure de base de fonctionnement de l'agenda."
+      },
+      "reports": {
+        "title": "Rapports",
+        "subtitle": "Lecture commerciale et opérationnelle pour soutenir les décisions."
+      },
+      "customization": {
+        "title": "Marque et Site",
+        "subtitle": "Personnalisez la présence digitale, les couleurs et le contenu public."
+      },
+      "billing": {
+        "title": "Facturation",
+        "subtitle": "Suivez votre forfait actuel, les mises à niveau et le cycle de facturation."
+      }
     },
     "notifications": {
-      "title": "Notifications",
+      "title": "Alertes",
       "newBadge": "{{count}} nouvelles",
       "markAllRead": "Tout marquer comme lu",
       "noRecent": "Aucune notification récente."
@@ -60,8 +96,14 @@
       "message": "Votre forfait {{plan}} a expiré. Vous êtes maintenant sur le forfait Gratuit avec des fonctionnalités limitées.",
       "renew": "Renouveler"
     },
-    "topbar": { "renewPlan": "Renouveler le forfait", "viewBilling": "Voir la facturation" },
-    "brand": { "name": "Trimio Studio", "defaultSubtitle": "Panneau de gestion" }
+    "topbar": {
+      "renewPlan": "Renouveler le forfait",
+      "viewBilling": "Voir la facturation"
+    },
+    "brand": {
+      "name": "Trimio Studio",
+      "defaultSubtitle": "Panneau de gestion"
+    }
   },
   "push": {
     "unavailable": "Push indisponible sur cet appareil",
@@ -73,7 +115,10 @@
     "enableTooltip": "Activer les notifications push"
   },
   "login": {
-    "brand": { "name": "Trimio Studio", "subtitle": "Panneau de gestion" },
+    "brand": {
+      "name": "Trimio Studio",
+      "subtitle": "Panneau de gestion"
+    },
     "panel": {
       "eyebrow": "Gestion complète",
       "title": "Contrôle total de votre salon.",
@@ -91,7 +136,7 @@
       "subtitle": "Accès à la gestion de votre salon.",
       "slugLabel": "Slug du salon",
       "slugPlaceholder": "mon-salon",
-      "emailLabel": "Email",
+      "emailLabel": "E-mail",
       "emailPlaceholder": "admin@email.com",
       "passwordLabel": "Mot de passe",
       "passwordPlaceholder": "••••••••",
@@ -108,7 +153,97 @@
       }
     }
   },
-  "dashboard": { "title": "Tableau de bord", "subtitle": "Vue consolidée de la journée, performance mensuelle et signaux rapides.", "viewBookings": "Voir les réservations", "occupancy": { "strong": "Journée chargée", "low": "Faible occupation", "balanced": "Flux équilibré" } },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "subtitle": "Vue consolidée de la journée, performance mensuelle et signaux rapides.",
+    "viewBookings": "Voir les réservations",
+    "occupancy": {
+      "strong": "Journée chargée",
+      "low": "Faible occupation",
+      "balanced": "Flux équilibré"
+    },
+    "hero": {
+      "eyebrow": "Centre de contrôle",
+      "strong": "fort",
+      "calm": "plus silencieux",
+      "stable": "écurie",
+      "todayIs": "Aujourd'hui, l'opération est {{signal}}."
+    },
+    "stats": {
+      "accumulated": "Revenus accumulés",
+      "todaySchedule": "Le programme d'aujourd'hui",
+      "toConfirm": "{{count}} pour confirmer",
+      "todayCustomers": "Les clients d'aujourd'hui",
+      "activeInMonth": "{{count}} actif ce mois-ci · {{total}} dans la base de données",
+      "revenueVsPrevious": "{{pct}} % par rapport au mois précédent"
+    },
+    "insights": {
+      "pulseTitle": "Pouls diurne",
+      "alertTitle": "Fenêtre d'attention",
+      "strongDay": "Emploi du temps chargé. Restez concentré sur le temps moyen entre les services.",
+      "lowDay": "Aujourd’hui, la situation est en dessous de l’idéal. Il convient de souligner les machines à sous gratuites sur les réseaux sociaux.",
+      "balancedDay": "Fonctionnement équilibré. Bon moment pour intégrer des extras et des produits.",
+      "noShowHigh": "Non-présentation au-dessus du niveau sain. Renforcez les rappels et la confirmation manuelle.",
+      "noShowOk": "Absences sous contrôle. Fonctionnement prévisible possible."
+    },
+    "focus": {
+      "title": "Mise au point immédiate",
+      "toConfirmTitle": "Pour confirmer",
+      "toConfirmDesc": "Réservations en attente ou confirmées pour aujourd'hui.",
+      "dayStateTitle": "Statut du jour",
+      "prioritizePunctuality": "Privilégiez la ponctualité et les ajustements courts.",
+      "promoteSlots": "Bon moment pour promouvoir les machines à sous gratuites.",
+      "stableFlow": "Flux stable avec place pour les extras."
+    },
+    "monthStats": {
+      "revenue": "Revenu mensuel",
+      "bookings": "Réservations actives",
+      "avgTicket": "Billet moyen",
+      "noShowRate": "Tarif de non-présentation",
+      "revenueAbove": "{{pct}} % au-dessus du mois dernier",
+      "revenueBelow": "{{pct}} % en dessous du mois dernier",
+      "bookingsChange": "{{pct}}% par rapport au mois dernier",
+      "ticketChange": "{{pct}} % par visite",
+      "noShowNoChange": "Aucun changement par rapport au mois dernier",
+      "noShowBetter": "{{pct}} % de mieux que le mois dernier",
+      "noShowWorse": "{{pct}} % pire que le mois dernier",
+      "healthyBilling": "Rythme de facturation sain",
+      "reviewSchedules": "Il vaut la peine de revoir les calendriers et les campagnes",
+      "bestDay": "Meilleur jour : {{day}}",
+      "noHistory": "Pas assez d'histoire",
+      "goodValue": "Bon rapport qualité-prix par client",
+      "upsellMargin": "Possibilité de vente incitative",
+      "noShowHealthy": "Niveau sain pour les opérations",
+      "noShowAttention": "Faites attention aux rappels et aux confirmations"
+    },
+    "chart": {
+      "eyebrow": "Élan",
+      "title": "La tendance de la semaine",
+      "subtitle": "Lecture rapide du flux de réservation en début de semaine.",
+      "bestDay": "Meilleur jour",
+      "noData": "Aucune donnée"
+    },
+    "today": {
+      "eyebrow": "Prochain",
+      "title": "Le programme d'aujourd'hui",
+      "noPending": "Aucune réservation en attente pour aujourd'hui.",
+      "cleanSchedule": "Le calendrier est clair pour le moment.",
+      "timeLabel": "temps"
+    },
+    "topBarbers": {
+      "eyebrow": "Performance",
+      "title": "Les meilleurs barbiers",
+      "noData": "Aucune donnée fermée ce mois-ci.",
+      "servicesCompleted": "{{count}} services terminés ce mois-ci"
+    },
+    "topServices": {
+      "eyebrow": "Demande",
+      "title": "Services les plus demandés",
+      "noData": "Aucune donnée à afficher ce mois-ci.",
+      "leader": "Service leader ce mois-ci",
+      "pullsOccupancy": "Continue de stimuler le taux d'occupation"
+    }
+  },
   "bookings": {
     "title": "Réservations",
     "newButton": "Nouveau",
@@ -116,19 +251,672 @@
     "viewCalendar": "Agenda",
     "viewList": "Liste",
     "today": "Aujourd'hui",
-    "status": { "all": "Tous les statuts", "pending": "En attente", "confirmed": "Confirmé", "completed": "Terminé", "cancelled": "Annulé", "noShow": "Absent" },
+    "status": {
+      "all": "Tous les statuts",
+      "pending": "En attente",
+      "confirmed": "Confirmé",
+      "completed": "Terminé",
+      "cancelled": "Annulé",
+      "noShow": "Absent"
+    },
     "searchPlaceholder": "Rechercher client, barbier ou service…",
     "allBarbers": "Tous les barbiers",
-    "detail": { "title": "Détails de la réservation", "addToBooking": "Ajouter à la réservation", "selectExtra": "Sélectionner un extra", "selectProduct": "Sélectionner un produit", "addButton": "Ajouter extra/produit", "changeStatus": "Changer le statut" }
+    "detail": {
+      "title": "Détails de la réservation",
+      "addToBooking": "Ajouter à la réservation",
+      "selectExtra": "Sélectionner un extra",
+      "selectProduct": "Sélectionner un produit",
+      "addButton": "Ajouter extra/produit",
+      "changeStatus": "Changer le statut",
+      "stock": "stock restant {{count}}",
+      "customerLabel": "Client",
+      "barberLabel": "Coiffeur",
+      "dateTimeLabel": "Date/Heure",
+      "totalLabel": "Total",
+      "toPay": "Payer aujourd'hui",
+      "coveredByPlan": "Couvert par le régime",
+      "responsible": "Responsable : {{name}}",
+      "planBadge": "forfait"
+    },
+    "results": "{{count}} résultat",
+    "results_plural": "{{count}} résultats",
+    "blockedTimes": {
+      "removeBlock": "Supprimer le blocage",
+      "title": "Emplacements bloqués",
+      "subtitle": "Blocages ponctuels pour cette journée — absences, incidents ou déjeuners en dehors des horaires habituels.",
+      "blockButton": "Bloc",
+      "noBlocks": "Aucun blocage pour cette journée.",
+      "everyone": "Tous"
+    },
+    "errors": {
+      "move": "Impossible de déplacer le rendez-vous",
+      "addItem": "Impossible d’ajouter l’élément au rendez-vous",
+      "removeItem": "Impossible de supprimer l’élément du rendez-vous"
+    },
+    "newBooking": {
+      "title": "Nouveau rendez-vous",
+      "selectBarber": "Sélectionner un barbier",
+      "selectService": "Sélectionner un service",
+      "barberLabel": "Barbier",
+      "serviceLabel": "Prestation",
+      "dateLabel": "Jour",
+      "timeLabel": "Heure",
+      "customerPhoneLabel": "Téléphone du client",
+      "customerFound": "Client trouvé : {{name}}",
+      "planLabel": "Plan : {{plan}}",
+      "discountLabel": "{{discount}}% de remise sur extras/produits",
+      "newCustomer": "Nouveau client — il sera créé automatiquement",
+      "fullNamePlaceholder": "Nom complet",
+      "notesLabel": "Observations (facultatif)",
+      "notesPlaceholder": "Une note sur le rendez-vous...",
+      "includedInPlan": "inclus dans le plan",
+      "createButton": "Créer le rendez-vous",
+      "errors": {
+        "create": "Erreur lors de la création du rendez-vous",
+        "selectBarber": "Sélectionnez un barbier.",
+        "selectService": "Sélectionnez un service.",
+        "selectDate": "Sélectionnez une date.",
+        "selectTime": "Sélectionnez une heure.",
+        "customerPhone": "Saisissez le téléphone du client.",
+        "customerName": "Saisissez le nom du client."
+      }
+    },
+    "legend": {
+      "pending": "En attente",
+      "confirmed": "Confirmé",
+      "completed": "Complété",
+      "cancelled": "Annulé",
+      "noShow": "Pas de présentation"
+    },
+    "columns": {
+      "dateTime": "Date/Heure",
+      "customer": "Client",
+      "barber": "Coiffeur",
+      "service": "Prestation",
+      "status": "Statut",
+      "total": "Total"
+    },
+    "slotModal": {
+      "title": "Qu'aimeriez-vous faire avec cette machine à sous ?",
+      "createBooking": "Créer une réservation",
+      "blockSlot": "Emplacement de bloc"
+    },
+    "newBlockedModal": {
+      "title": "Nouvel emplacement bloqué",
+      "dateLabel": "Jour",
+      "barberLabel": "Coiffeur",
+      "startLabel": "Commencer",
+      "endLabel": "Fin",
+      "reasonLabel": "Raison",
+      "reasonPlaceholder": "Par ex. déjeuner, urgence, déplacement externe",
+      "saveButton": "Enregistrer le bloc"
+    },
+    "loading": "Chargement…"
   },
-  "customers": { "title": "Clients", "exportCsv": "Exporter CSV", "importCsv": "Importer CSV", "totalCustomers": "Total clients", "withActivePlan": "Avec forfait actif", "detail": { "title": "Détail client", "deleteButton": "Supprimer le client" } },
-  "barbers": { "title": "Barbiers", "newButton": "Nouveau barbier", "modal": { "create": "Nouveau barbier", "edit": "Modifier barbier" } },
-  "services": { "title": "Services" },
-  "extras": { "title": "Extras" },
-  "products": { "title": "Produits" },
-  "plans": { "title": "Forfaits" },
-  "schedule": { "title": "Horaires", "days": { "0": "Dimanche", "1": "Lundi", "2": "Mardi", "3": "Mercredi", "4": "Jeudi", "5": "Vendredi", "6": "Samedi" } },
-  "reports": { "title": "Rapports" },
-  "customization": { "title": "Marque et Site" },
-  "billing": { "title": "Facturation" }
+  "customers": {
+    "title": "Clients",
+    "exportCsv": "Exporter CSV",
+    "importCsv": "Importer CSV",
+    "totalCustomers": "Total clients",
+    "withActivePlan": "Avec forfait actif",
+    "detail": {
+      "title": "Détail client",
+      "deleteButton": "Supprimer le client",
+      "notesPlaceholder": "Ajouter une note interne",
+      "loading": "Chargement...",
+      "customerLabel": "Client",
+      "totalSpent": "Total dépensé",
+      "reliability": "Fiabilité",
+      "lastVisit": "Dernière visite",
+      "completedVisits": "{{count}} visites terminées",
+      "activeBookings": "{{count}} réservations actives",
+      "noShowBookings": "{{ns}} non-présentation · {{cb}} annulé",
+      "noVisit": "Aucune visite terminée",
+      "historyTotal": "Historique total",
+      "bookingsRegistered": "réservations enregistrées",
+      "noShow": "Pas de présentation",
+      "missedBookings": "réservations manquées",
+      "cancelled": "Annulé",
+      "cancelledBookings": "réservations annulées",
+      "customerData": "Données client",
+      "editButton": "Modifier",
+      "nameLabel": "Nom",
+      "phoneLabel": "Téléphone",
+      "emailLabel": "E-mail",
+      "notesLabel": "Remarques",
+      "saveButton": "Sauvegarder",
+      "planLabel": "Forfait",
+      "noPlan": "Aucun plan",
+      "changeButton": "Changement",
+      "noEmail": "Pas d'e-mail",
+      "recentBookings": "Réservations récentes",
+      "noBookings": "Aucun historique de réservation.",
+      "irreversible": "Es-tu sûr? Cette action est irréversible."
+    },
+    "subtitle": "{{count}} client enregistré. Recherchez, filtrez et ouvrez le détail sans bruit visuel.",
+    "subtitle_plural": "{{count}} clients enregistrés. Recherchez, filtrez et ouvrez le détail sans bruit visuel.",
+    "errors": {
+      "saveCustomer": "Impossible d’enregistrer le client.",
+      "importCustomers": "Impossible d’importer les clients.",
+      "noValidRows": "Le fichier ne contient aucune ligne valide à importer.",
+      "readCsv": "Impossible de lire le fichier CSV.",
+      "csvNameColumn": "Le CSV doit contenir une colonne \"name\" ou \"nome\"."
+    },
+    "importing": "Importation…",
+    "searchLabel": "Recherche",
+    "searchPlaceholder": "Nom, téléphone ou email",
+    "planLabel": "Forfait",
+    "planStatus": "Statut du régime",
+    "allPlans": "Tous les forfaits",
+    "withPlan": "Avec plan",
+    "withoutPlan": "Sans plan",
+    "withAndWithoutPlan": "Avec et sans forfait",
+    "csvFormat": "Format CSV attendu : `nom`, `téléphone`, `email`, `notes`. Si le téléphone existe déjà, le client est mis à jour ; autrement créé.",
+    "columns": {
+      "customer": "Client",
+      "phone": "Téléphone",
+      "email": "E-mail",
+      "plan": "Forfait",
+      "totalSpent": "Total dépensé",
+      "lastVisit": "Dernière visite",
+      "reliability": "Fiabilité"
+    },
+    "noContact": "Pas de contact principal",
+    "noPhone": "Pas de téléphone",
+    "reliability": {
+      "new": "Nouveau",
+      "trusted": "Confiance",
+      "attention": "Vigilance",
+      "risk": "Risque"
+    },
+    "importResult": "Importation terminée : {{created}} créé, {{updated}} mis à jour, {{skipped}} ignoré.",
+    "emptyMessage": "Aucun client enregistré pour l'instant."
+  },
+  "barbers": {
+    "title": "Barbiers",
+    "newButton": "Nouveau barbier",
+    "modal": {
+      "create": "Nouveau barbier",
+      "edit": "Modifier barbier",
+      "nameLabel": "Nom",
+      "namePlaceholder": "John Smith",
+      "emailLabel": "E-mail",
+      "emailPlaceholder": "john@exemple.com",
+      "photoLabel": "Photo de barbier",
+      "photoDesc": "Cette photo apparaît dans le panel et dans la sélection barbier sur le site de réservation.",
+      "uploadPhoto": "Télécharger une photo",
+      "removePhoto": "Retirer",
+      "phoneLabel": "Téléphone",
+      "phonePlaceholder": "+44 7911 123456",
+      "isActive": "Barbier actif",
+      "save": "Sauvegarder"
+    },
+    "ofMax": "sur {{max}}",
+    "errors": {
+      "photoUpload": "Impossible de téléverser la photo"
+    },
+    "subtitle": "{{active}} actif{{maxStr}} · {{total}} enregistré",
+    "atLimit": "Vous avez atteint la limite de {{max}} barbier(s) actif(s) sur votre forfait.",
+    "doUpgrade": "Mise à niveau",
+    "columns": {
+      "barber": "Coiffeur",
+      "phone": "Téléphone",
+      "status": "Statut",
+      "portalAccess": "Accès au portail"
+    },
+    "active": "Actif",
+    "inactive": "Inactif",
+    "hasAccess": "Actif",
+    "noAccess": "Pas d'accès",
+    "accessModal": {
+      "title": "Accès au portail",
+      "noEmail": "Aucune adresse e-mail définie",
+      "noEmailWarning": "Ce coiffeur n'a pas de messagerie électronique. Ajoutez un e-mail avant d'activer l'accès.",
+      "desc": "Définissez un mot de passe pour que le coiffeur puisse accéder au portail à",
+      "newPasswordLabel": "Nouveau mot de passe",
+      "newPasswordPlaceholder": "Minimum 6 caractères",
+      "confirmPasswordLabel": "Confirmez le mot de passe",
+      "confirmPasswordPlaceholder": "Répéter le mot de passe",
+      "revokeButton": "Révoquer l'accès",
+      "activateButton": "Activer l'accès"
+    },
+    "removeConfirm": "Supprimer le coiffeur ?"
+  },
+  "services": {
+    "title": "Prestations",
+    "columns": {
+      "service": "Prestation",
+      "price": "Prix",
+      "duration": "Durée",
+      "status": "Statut"
+    },
+    "form": {
+      "nameLabel": "Nom",
+      "namePlaceholder": "Coupe de cheveux",
+      "descLabel": "Description (facultatif)",
+      "descPlaceholder": "Descriptif des prestations",
+      "priceLabel": "Prix ​​(€)",
+      "pricePlaceholder": "18.00",
+      "durationLabel": "Durée (min)",
+      "durationPlaceholder": "30"
+    }
+  },
+  "extras": {
+    "title": "Suppléments",
+    "columns": {
+      "extra": "Supplémentaire",
+      "price": "Prix",
+      "duration": "Durée",
+      "status": "Statut"
+    }
+  },
+  "products": {
+    "title": "Produits",
+    "columns": {
+      "product": "Produit",
+      "price": "Prix",
+      "stock": "Action",
+      "status": "Statut"
+    }
+  },
+  "plans": {
+    "title": "Forfaits",
+    "columns": {
+      "plan": "Forfait",
+      "price": "Prix",
+      "status": "Statut"
+    }
+  },
+  "schedule": {
+    "title": "Horaires",
+    "days": {
+      "0": "Dimanche",
+      "1": "Lundi",
+      "2": "Mardi",
+      "3": "Mercredi",
+      "4": "Jeudi",
+      "5": "Vendredi",
+      "6": "Samedi"
+    },
+    "addSlot": "Ajouter un emplacement"
+  },
+  "reports": {
+    "title": "Rapports",
+    "planReport": {
+      "periods": {
+        "thisMonth": "Ce mois-ci",
+        "lastMonth": "Mois dernier",
+        "last30Days": "30 derniers jours",
+        "thisYear": "Cette année"
+      },
+      "loadError": "Erreur lors du chargement du rapport des plans",
+      "unknownError": "Erreur inconnue",
+      "noData": "Aucune donnée de plans sur cette période.",
+      "title": "Rapport des plans",
+      "metrics": {
+        "activeSubscribers": "Abonnés actifs",
+        "inactiveSubscribers": "{{count}} sans utilisation sur la période",
+        "estimatedRevenue": "Revenu récurrent estimé",
+        "registeredPlans": "{{count}} plans enregistrés",
+        "periodUsage": "Utilisations sur la période",
+        "usagePerSubscriber": "{{count}} utilisation(s) par abonné",
+        "activePlans": "Plans actifs",
+        "enabledPlansOnly": "Plans activés uniquement"
+      },
+      "performanceByPlan": "Performance par plan",
+      "table": {
+        "plan": "Forfait",
+        "subscribers": "Abonnés",
+        "usage": "Utilisations",
+        "recurring": "Récurrence",
+        "planMeta": "{{services}} service(s) · {{days}} jours"
+      },
+      "insights": "Connaissances",
+      "noInsights": "Aucun insight sur la période.",
+      "opportunities": "Opportunités",
+      "usagePerCustomer": "{{count}} utilisation(s)/client",
+      "inactiveSubscribersPeriod": "{{count}} abonné(s) sans utilisation sur la période"
+    },
+    "general": {
+      "subtitle": "Analysez les performances du salon de coiffure par période.",
+      "tabs": {
+        "general": "Rapport général",
+        "plans": "Rapport de planification"
+      },
+      "downloadPdf": "Télécharger le PDF",
+      "loadError": "Rapport d'erreur lors du chargement",
+      "title": "Rapport général",
+      "monthYear": "{{month}} de {{year}}",
+      "periods": {
+        "thisMonth": "Ce mois-ci",
+        "lastMonth": "Mois dernier",
+        "last7Days": "7 derniers jours",
+        "last30Days": "30 derniers jours",
+        "thisYear": "Cette année"
+      },
+      "filter": {
+        "quickPeriods": "Règles rapides",
+        "monthYear": "Mois/année"
+      },
+      "sections": {
+        "billing": "1. Facturation",
+        "barberPerformance": "2. Performance du barbier",
+        "occupancy": "3. Planifier l'occupation",
+        "customers": "4. Clients",
+        "servicesProducts": "5. Services et produits",
+        "cancellations": "6. Annulations et non-présentations",
+        "insights": "7. Informations automatiques"
+      },
+      "metrics": {
+        "totalRevenue": "Revenu total",
+        "avgTicket": "Billet moyen",
+        "scheduleLoss": "Planifier la perte",
+        "fromPlans": "{{value}} des plans",
+        "completed": "{{count}} terminé",
+        "cancelled": "{{count}} annulé",
+        "noShows": "{{count}} non-présentation",
+        "daily": "Tous les jours",
+        "weekly": "Hebdomadaire",
+        "monthly": "Mensuel",
+        "revenue": "Revenu",
+        "ticket": "Billet",
+        "occupancy": "Occupation",
+        "billed": "{{value}} facturé"
+      },
+      "billing": {
+        "evolution": "Evolution en période",
+        "evolutionDesc": "Affiche la série disponible la plus granulaire pour l'intervalle sélectionné.",
+        "points": "{{count}} pts",
+        "noRevenue": "Aucun revenu réalisé au cours de cette période."
+      },
+      "barbers": {
+        "noData": "Aucune donnée sur le coiffeur sur cette période.",
+        "completedCuts": "{{count}} coupes terminées",
+        "occupiedTime": "Temps occupé"
+      },
+      "occupancy": {
+        "occupiedHours": "Heures occupées",
+        "deadHours": "Heures mortes",
+        "capacity": "Capacité",
+        "busiestDays": "Les jours les plus chargés",
+        "noScheduleData": "Aucune donnée de planification.",
+        "bookings": "{{count}} réservations",
+        "dailyRead": "Lecture quotidienne"
+      },
+      "customers": {
+        "new": "Nouveau",
+        "recurring": "Récurrent",
+        "top": "Clients les plus fréquents",
+        "noFrequency": "Aucune fréquence pertinente sur cette période.",
+        "visits": "{{count}} visites",
+        "inactive": "Clients inactifs",
+        "noInactive": "Aucun client inactif détecté.",
+        "withPlan": "Clients avec forfait",
+        "activeInPeriod": "Clients actifs en période"
+      },
+      "sales": {
+        "topServices": "Services les plus vendus",
+        "noServices": "Aucun service vendu.",
+        "sales": "ventes",
+        "soldWithRevenue": "{{count}} vendu · {{revenue}}",
+        "servicesRevenue": "Revenus des services",
+        "productsSold": "Produits vendus",
+        "mix": "Composition des ventes",
+        "noProducts": "Aucun produit vendu.",
+        "noExtras": "Aucun extra vendu."
+      },
+      "cancellations": {
+        "cancelled": "Annulations",
+        "noShows": "Non-présentation",
+        "loss": "Perte",
+        "cancellationRate": "Taux d'annulation",
+        "noShowRate": "Tarif de non-présentation"
+      },
+      "insights": {
+        "noInsights": "Il n’y a pas encore suffisamment d’informations pour cette période."
+      }
+    },
+    "revenue": "Revenu",
+    "bookings": "Réservations",
+    "customers": "Clients",
+    "noData": "Aucune donnée pour la période sélectionnée."
+  },
+  "customization": {
+    "title": "Marque et Site",
+    "subtitle": "Modifiez les informations de base de votre salon de coiffure et personnalisez le site en fonction de votre plan.",
+    "appSettings": "Paramètres de l'application",
+    "baseInfo": "Informations de base",
+    "chooseFromComputer": "Choisissez parmi l'ordinateur",
+    "fields": {
+      "shopName": "Nom du salon de coiffure",
+      "phone": "Téléphone",
+      "address": "Adresse"
+    },
+    "slotInterval": {
+      "title": "Intervalle de créneau de réservation",
+      "description": "Définit la fréquence à laquelle les temps disponibles apparaissent sur le site et dans le panneau."
+    },
+    "planBenefit": {
+      "title": "Avantage pour les clients du forfait",
+      "description": "Remise automatique sur les services hors forfait, les extras et les produits pour les clients ayant un forfait actif.",
+      "helper": "0 % = aucune remise · 100 % = tout est gratuit pour les clients du forfait"
+    },
+    "saveBase": "Enregistrer les informations de base",
+    "accountPhoto": {
+      "title": "Photo du compte",
+      "fallbackName": "Compte",
+      "remove": "Supprimer la photo",
+      "save": "Enregistrer la photo",
+      "description": "Cette photo apparaît dans le compte administrateur du salon de coiffure à l'intérieur du panneau."
+    },
+    "logo": {
+      "title": "Logo",
+      "alt": "Logo du salon de coiffure",
+      "remove": "Supprimer le logo",
+      "save": "Enregistrer le logo",
+      "description": "PNG ou JPG. Choisissez l'image sur votre ordinateur, puis cliquez sur Enregistrer."
+    },
+    "advanced": {
+      "title": "Personnalisation avancée du site",
+      "proOnlyTitle": "Disponible sur le forfait Pro",
+      "proOnlyDescription": "Avec le forfait gratuit, vous pouvez toujours modifier le nom, les contacts, le logo et les informations de base. La personnalisation visuelle avancée du site est réservée aux Pro.",
+      "heroFeature": "Héros à la maison",
+      "galleryFeature": "Galerie d'images",
+      "promoFeature": "Bannière promotionnelle",
+      "colorFeature": "Couleur principale du salon de coiffure et contenu avancé",
+      "unlockPro": "Débloquez la personnalisation Pro"
+    },
+    "siteContent": {
+      "heroTitleLabel": "Titre principal de la maison",
+      "heroTitlePlaceholder": "Mon salon de coiffure, à votre heure.",
+      "heroSubtitleLabel": "Sous-titre maison",
+      "heroSubtitlePlaceholder": "Réservez sans appels, sans attendre.",
+      "heroButtonLabel": "Texte du bouton principal",
+      "heroButtonPlaceholder": "Réservez maintenant",
+      "aboutLabel": "À propos du texte du salon de coiffure",
+      "aboutPlaceholder": "Parlez de votre équipe, de votre ambiance et de votre style...",
+      "showPlans": "Afficher les plans sur place",
+      "showPlansDesc": "Masque la page des plans et les liens.",
+      "showProducts": "Afficher les produits sur place",
+      "showProductsDesc": "Masque la page des produits et les liens.",
+      "save": "Enregistrer le contenu du site"
+    },
+    "heroImage": {
+      "title": "Image principale de la maison",
+      "alt": "Image principale",
+      "remove": "Supprimer l'image",
+      "save": "Enregistrer l'image"
+    },
+    "gallery": {
+      "title": "Galerie de photos",
+      "imageAlt": "Galerie {{index}}",
+      "empty": "Il n'y a pas encore de photos dans la galerie.",
+      "add": "Ajouter des photos",
+      "saving": "Sauvegarde de la galerie...",
+      "helper": "Jusqu'à {{count}} images. La galerie enregistre automatiquement lors de l'ajout ou de la suppression de photos."
+    },
+    "promo": {
+      "title": "Bannière promotionnelle",
+      "show": "Afficher la bannière promotionnelle",
+      "showDesc": "Met en avant une campagne sur le site public.",
+      "titleLabel": "Titre de la bannière",
+      "titlePlaceholder": "Semaine coupe de cheveux + barbe",
+      "textLabel": "Texte de la bannière",
+      "textPlaceholder": "Utilisez cet espace pour une campagne, un moment fort ou un avantage.",
+      "buttonLabel": "Texte du bouton de bannière",
+      "buttonPlaceholder": "Promotion du livre",
+      "save": "Enregistrer la bannière"
+    },
+    "accent": {
+      "title": "Couleur principale du salon de coiffure",
+      "description": "Cette couleur représente l'identité de votre salon de coiffure sur le site public et dans certaines parties du panneau de commande."
+    },
+    "preview": {
+      "title": "Aperçu",
+      "defaultHeroTitle": "{{name}} — à votre temps.",
+      "defaultHeroSubtitle": "Réservez sans appels, sans attendre.",
+      "defaultPromoTitle": "Promotion active",
+      "defaultPromoText": "Campagne disponible pour vos clients.",
+      "aboutTitle": "À propos",
+      "defaultAbout": "Présentez ici votre style et votre identité de salon de coiffure.",
+      "visible": "affiché",
+      "hidden": "caché",
+      "plansVisibility": "Forfaits {{state}}",
+      "productsVisibility": "Produits {{state}}",
+      "imageAlt": "Aperçu {{index}}"
+    },
+    "save": "Enregistrer les modifications",
+    "saved": "Modifications enregistrées."
+  },
+  "billing": {
+    "title": "Facturation",
+    "subscriptionTitle": "Abonnement",
+    "subscriptionSubtitle": "Gérez les limites de votre forfait et de votre plateforme.",
+    "checkoutSuccess": "Paiement terminé. Le forfait se synchronisera automatiquement une fois que Stripe aura confirmé l'abonnement.",
+    "checkoutCancelled": "Le paiement a été annulé. Aucune modification n'a été appliquée.",
+    "pricePerMonth": "€{{price}}/mois",
+    "validUntil": "Valable jusqu'au",
+    "openingPortal": "Ouverture du portail...",
+    "manageStripeBilling": "Gérer la facturation dans Stripe",
+    "usage": {
+      "bookingsThisMonth": "Réservations ce mois-ci",
+      "used": "{{count}} utilisé",
+      "activeBarbers": "Barbiers actifs"
+    },
+    "recommended": "Le plus recommandé",
+    "freePrice": "Gratuit",
+    "monthSuffix": "/mois",
+    "activePlan": "Forfait actif",
+    "manageInPortal": "Gérer dans le portail",
+    "openingCheckout": "Ouverture de la caisse...",
+    "upgrade": "Mise à niveau",
+    "stripeNote": "Les mises à niveau et la gestion des abonnements sont gérées dans Stripe. Les annulations et les changements de mode de paiement sont disponibles sur le portail de facturation.",
+    "plans": {
+      "FREE": {
+        "label": "Gratuit",
+        "description": "Commencez sans engagement.",
+        "limits": {
+          "barbers": "1 barbier actif",
+          "bookings": "30 réservations/mois"
+        },
+        "features": [
+          "1 active barber",
+          "30 bookings per month",
+          "Public booking page",
+          "Customer management",
+          "Working hours and blocks"
+        ]
+      },
+      "BASIC": {
+        "label": "Basique",
+        "description": "Pour les salons de coiffure en pleine croissance.",
+        "limits": {
+          "barbers": "Jusqu'à 3 barbiers",
+          "bookings": "Réservations illimitées"
+        },
+        "features": [
+          "Up to 3 active barbers",
+          "Unlimited bookings",
+          "Public booking page",
+          "Customer management",
+          "Customer subscription plans",
+          "Extras and products",
+          "Basic reports"
+        ]
+      },
+      "PRO": {
+        "label": "Pro",
+        "description": "Pour les opérations professionnelles.",
+        "limits": {
+          "barbers": "Barbiers illimités",
+          "bookings": "Réservations illimitées"
+        },
+        "features": [
+          "Unlimited barbers",
+          "Unlimited bookings",
+          "Custom public page",
+          "Advanced customer management",
+          "Customer subscription plans",
+          "Extras and products",
+          "Full stats and reports",
+          "Priority support"
+        ]
+      }
+    },
+    "currentPlan": "Forfait actuel",
+    "manage": "Gérer l'abonnement"
+  },
+  "crud": {
+    "created": "{{item}} créé avec succès.",
+    "createError": "Impossible de créer {{item}}.",
+    "saved": "Modifications enregistrées.",
+    "saveError": "Impossible d’enregistrer les modifications.",
+    "removed": "{{item}} supprimé.",
+    "removeError": "Impossible de supprimer {{item}}.",
+    "registeredCount": "{{count}} {{item}} enregistré",
+    "registeredCount_plural": "{{count}} {{item}} enregistrés",
+    "emptyMessage": "Aucun {{item}} pour le moment",
+    "emptyDescription": "Cliquez sur \"Nouveau {{item}}\" pour ajouter le premier.",
+    "confirmDeleteTitle": "Confirmer la suppression",
+    "confirmDeleteQuestion": "Supprimer {{item}} ?",
+    "irreversible": "Cette action est irréversible."
+  },
+  "forgotPassword": {
+    "title": "Récupérer le mot de passe",
+    "subtitle": "Entrez votre e-mail pour recevoir un lien de récupération.",
+    "emailLabel": "E-mail",
+    "submitButton": "Envoyer le lien",
+    "backToLogin": "Retour à la connexion",
+    "successTitle": "E-mail envoyé",
+    "successMsg": "Vérifiez votre boîte de réception et suivez les instructions."
+  },
+  "resetPassword": {
+    "title": "Nouveau mot de passe",
+    "subtitle": "Définissez un nouveau mot de passe pour votre compte.",
+    "newPasswordLabel": "Nouveau mot de passe",
+    "confirmLabel": "Confirmez le mot de passe",
+    "submitButton": "Enregistrer le mot de passe",
+    "successTitle": "Mot de passe mis à jour",
+    "successMsg": "Vous pouvez maintenant vous connecter avec votre nouveau mot de passe."
+  },
+  "resendVerification": {
+    "title": "Renvoyer la confirmation",
+    "subtitle": "Entrez votre email pour recevoir un nouveau lien de confirmation.",
+    "emailLabel": "E-mail",
+    "submitButton": "Renvoyer l'e-mail",
+    "successTitle": "E-mail envoyé",
+    "successMsg": "Vérifiez votre boîte de réception."
+  },
+  "validation": {
+    "slugRequired": "Slug obligatoire",
+    "emailInvalid": "Email invalide",
+    "imageInvalid": "Image invalide"
+  },
+  "planGate": {
+    "title": "Fonctionnalité verrouillée",
+    "descriptionPrefix": "Cette fonctionnalité nécessite le forfait",
+    "descriptionMiddle": "ou supérieur.",
+    "currentPlan": "Votre forfait actuel est",
+    "viewPlans": "Voir les forfaits et mettre à niveau"
+  }
 }

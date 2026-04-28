@@ -8,7 +8,7 @@
   },
   "footer": {
     "tagline": "Einfache, schnelle und organisierte Buchungen.",
-    "nav": "Navigation",
+    "nav": "Menü",
     "contact": "Kontakt",
     "book": "Buchen",
     "privacy": "Datenschutz",
@@ -37,8 +37,13 @@
       "total": "Geschätzter Gesamtbetrag"
     },
     "steps": {
-      "service": { "title": "Leistung auswählen" },
-      "barber": { "title": "Barbier auswählen", "professional": "Fachmann" },
+      "service": {
+        "title": "Leistung auswählen"
+      },
+      "barber": {
+        "title": "Barbier auswählen",
+        "professional": "Fachmann"
+      },
       "dateTime": {
         "title": "Datum und Uhrzeit",
         "selectDate": "Datum auswählen",
@@ -52,7 +57,7 @@
       },
       "extras": {
         "title": "Extras",
-        "optional": " optional",
+        "optional": "optional",
         "includedInService": "in der Leistung enthalten",
         "noExtras": "Keine Extras verfügbar."
       },
@@ -99,7 +104,7 @@
         "title": "Buchung bestätigen",
         "incomplete": "Buchung vor der Bestätigung vervollständigen.",
         "dataTitle": "Daten, die gespeichert werden",
-        "dataName": "· Name: {{name}}",
+        "dataName": "· Kundenname: {{name}}",
         "dataPhone": "· Telefon: {{phone}}",
         "dataEmail": "· E-Mail: {{email}}",
         "dataAttendee": "· Zu bedienende Person: {{attendee}}",
@@ -163,7 +168,10 @@
       "title": "Bereit für einen neuen Look?",
       "subtitle": "Buchen Sie jetzt und sichern Sie Ihren Termin bei {{name}} ohne Wartezeit oder Anruf."
     },
-    "social": { "whatsapp": "WhatsApp", "instagram": "Instagram" },
+    "social": {
+      "whatsapp": "WhatsApp",
+      "instagram": "Instagram"
+    },
     "promo": {
       "label": "Highlight der Woche",
       "defaultTitle": "Sonderangebot",
@@ -181,7 +189,7 @@
     "bookButton": "Buchen"
   },
   "products": {
-    "eyebrow": "Shop",
+    "eyebrow": "Geschäft",
     "title": "Produkte",
     "subtitle": "Nehmen Sie professionelle Pflege mit nach Hause — Produkte unserer Barbiere.",
     "unavailableTitle": "Produkte nicht verfügbar",
@@ -205,7 +213,7 @@
     "oneActiveBooking": "1 aktive Buchung gleichzeitig",
     "modal": {
       "title": "Plan abonnieren",
-      "subtitle": "{{name}} · {{price}}",
+      "subtitle": "Tarif {{name}} · {{price}}",
       "namePlaceholder": "Ihr Name",
       "phonePlaceholder": "+49 151 00000000",
       "warning": "Dieser Plan kann erst nach Zahlungsbestätigung oder direkt durch den Barbershop aktiviert werden.",
@@ -220,7 +228,7 @@
     "subtitle": "Verwenden Sie diese Seite, um Ihre Buchung bei {{shopName}} zu verwalten.",
     "missingToken": "Buchungstoken fehlt. Öffnen Sie den vollständigen Verwaltungslink, um fortzufahren.",
     "details": {
-      "label": "Details",
+      "label": "Einzelheiten",
       "barber": "Barbier:",
       "customer": "Kunde:",
       "responsible": "Verantwortlich:",
@@ -234,7 +242,8 @@
       "cancelBooking": "Buchung stornieren",
       "linkCopied": "Verwaltungslink kopiert.",
       "presenceConfirmed": "Anwesenheit erfolgreich bestätigt.",
-      "bookingCancelled": "Buchung erfolgreich storniert."
+      "bookingCancelled": "Buchung erfolgreich storniert.",
+      "bookingRescheduled": "Buchung erfolgreich verschoben."
     },
     "privacy": {
       "title": "Datenschutz und Daten",
@@ -266,5 +275,8 @@
     "eyebrow": "Datenschutz",
     "title": "Datenschutzrichtlinie",
     "versionDate": "Version {{version}} · Aktualisiert am {{date}}"
+  },
+  "brand": {
+    "clients": "Trimio Clientes"
   }
 }

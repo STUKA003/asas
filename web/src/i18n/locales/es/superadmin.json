@@ -1,32 +1,65 @@
 {
   "layout": {
-    "nav": { "platform": "Plataforma", "dashboard": "Dashboard", "barbershops": "Barberías" },
-    "pageMeta": {
-      "dashboard": { "title": "Dashboard", "subtitle": "Lectura consolidada de la salud comercial y operacional de la plataforma." },
-      "barbershops": { "title": "Barberías", "subtitle": "Gestión centralizada de cuentas, planes y estado de operaciones." }
+    "nav": {
+      "platform": "Plataforma",
+      "dashboard": "Panel",
+      "barbershops": "Barberías"
     },
-    "account": { "name": "Super Admin", "platform": "Trimio Platform", "logout": "Cerrar sesión" },
-    "sidebar": { "scopeLabel": "Ámbito", "scopeTitle": "Operación central", "scopeDesc": "Visión transversal sobre crecimiento, cuentas y monetización." },
-    "topbar": { "viewBarbershops": "Ver barberías" },
-    "pull": { "refreshing": "Actualizando...", "releaseToRefresh": "Suelta para actualizar", "pullToRefresh": "Tira para actualizar" },
-    "brand": { "name": "Trimio Command", "subtitle": "Control de la plataforma" }
+    "pageMeta": {
+      "dashboard": {
+        "title": "Panel",
+        "subtitle": "Lectura consolidada de la salud comercial y operacional de la plataforma."
+      },
+      "barbershops": {
+        "title": "Barberías",
+        "subtitle": "Gestión centralizada de cuentas, planes y estado de operaciones."
+      }
+    },
+    "account": {
+      "name": "Súper administrador",
+      "platform": "Plataforma Trimio",
+      "logout": "Cerrar sesión"
+    },
+    "sidebar": {
+      "scopeLabel": "Ámbito",
+      "scopeTitle": "Operación central",
+      "scopeDesc": "Visión transversal sobre crecimiento, cuentas y monetización."
+    },
+    "topbar": {
+      "viewBarbershops": "Ver barberías"
+    },
+    "pull": {
+      "refreshing": "Actualizando...",
+      "releaseToRefresh": "Suelta para actualizar",
+      "pullToRefresh": "Tira para actualizar"
+    },
+    "brand": {
+      "name": "Comando Trimio",
+      "subtitle": "Control de la plataforma"
+    }
   },
   "login": {
-    "brand": { "name": "Trimio Command", "subtitle": "Control de la plataforma" },
+    "brand": {
+      "name": "Comando Trimio",
+      "subtitle": "Control de la plataforma"
+    },
     "panel": {
-      "eyebrow": "Platform control",
+      "eyebrow": "Control de plataforma",
       "title": "Visión global de toda la operación.",
       "desc": "Gestión centralizada de barberías, planes, facturación y salud de la plataforma — en un único punto de control.",
-      "stat1Label": "Red de barberías", "stat1Desc": "Visión centralizada de todas las cuentas activas.",
-      "stat2Label": "Crecimiento y planes", "stat2Desc": "MRR, actualizaciones y ciclo de facturación por cuenta.",
-      "stat3Label": "Control de la plataforma", "stat3Desc": "Suspensiones, estados y salud operacional global.",
+      "stat1Label": "Red de barberías",
+      "stat1Desc": "Visión centralizada de todas las cuentas activas.",
+      "stat2Label": "Crecimiento y planes",
+      "stat2Desc": "MRR, actualizaciones y ciclo de facturación por cuenta.",
+      "stat3Label": "Control de la plataforma",
+      "stat3Desc": "Suspensiones, estados y salud operacional global.",
       "footer": "© {{year}} Trimio · Acceso restringido"
     },
     "form": {
       "title": "Acceso al Command",
       "subtitle": "Área restringida — supervisión de la plataforma Trimio.",
-      "emailLabel": "Email",
-      "emailPlaceholder": "admin@trimio.app",
+      "emailLabel": "Correo electrónico",
+      "emailPlaceholder": "administrador@trimio.app",
       "passwordLabel": "Contraseña",
       "passwordPlaceholder": "••••••••",
       "submitButton": "Entrar al Command",
@@ -35,6 +68,26 @@
       "error": "Credenciales inválidas."
     }
   },
-  "dashboard": { "title": "Dashboard", "subtitle": "Lectura consolidada de la salud de la plataforma." },
-  "barbershops": { "title": "Barberías", "subtitle": "Gestión centralizada de cuentas y operaciones." }
+  "dashboard": {
+    "title": "Panel",
+    "subtitle": "Lectura consolidada de la salud de la plataforma.",
+    "stats": {
+      "paidShops": "{{count}} barberías de pago",
+      "thisMonth": "{{count}} este mes",
+      "avgPerShop": "{{value}} / barbería",
+      "adoption": "Adopción",
+      "proShops": "{{count}} Profesional"
+    },
+    "metrics": {
+      "title": "Métricas",
+      "bookingsThisMonth": "Reservas este mes",
+      "avgPerShop": "Media / barbería",
+      "proShops": "Barberías Pro",
+      "paidAdoption": "Adopción de pago"
+    }
+  },
+  "barbershops": {
+    "title": "Barberías",
+    "subtitle": "Gestión centralizada de cuentas y operaciones."
+  }
 }

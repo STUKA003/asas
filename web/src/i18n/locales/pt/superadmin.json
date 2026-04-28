@@ -2,12 +2,12 @@
   "layout": {
     "nav": {
       "platform": "Plataforma",
-      "dashboard": "Dashboard",
+      "dashboard": "Painel",
       "barbershops": "Barbearias"
     },
     "pageMeta": {
       "dashboard": {
-        "title": "Dashboard",
+        "title": "Painel",
         "subtitle": "Leitura consolidada da saúde comercial e operacional da plataforma."
       },
       "barbershops": {
@@ -16,8 +16,8 @@
       }
     },
     "account": {
-      "name": "Super Admin",
-      "platform": "Trimio Platform",
+      "name": "Superadministrador",
+      "platform": "Plataforma Trimio",
       "logout": "Sair"
     },
     "sidebar": {
@@ -34,17 +34,17 @@
       "pullToRefresh": "Puxa para actualizar"
     },
     "brand": {
-      "name": "Trimio Command",
+      "name": "Comando Trímio",
       "subtitle": "Controlo da plataforma"
     }
   },
   "login": {
     "brand": {
-      "name": "Trimio Command",
+      "name": "Comando Trímio",
       "subtitle": "Controlo da plataforma"
     },
     "panel": {
-      "eyebrow": "Platform control",
+      "eyebrow": "Controlo da plataforma",
       "title": "Visão global sobre toda a operação.",
       "desc": "Gestão centralizada de barbearias, planos, faturação e saúde da plataforma — num único ponto de comando.",
       "stat1Label": "Rede de barbearias",
@@ -60,7 +60,7 @@
       "subtitle": "Área restrita — supervisão da plataforma Trimio.",
       "emailLabel": "E-mail",
       "emailPlaceholder": "admin@trimio.app",
-      "passwordLabel": "Password",
+      "passwordLabel": "Palavra-passe",
       "passwordPlaceholder": "••••••••",
       "submitButton": "Entrar no Command",
       "loading": "A entrar…",
@@ -69,8 +69,22 @@
     }
   },
   "dashboard": {
-    "title": "Dashboard",
-    "subtitle": "Leitura consolidada da saúde comercial e operacional da plataforma."
+    "title": "Painel",
+    "subtitle": "Leitura consolidada da saúde comercial e operacional da plataforma.",
+    "stats": {
+      "paidShops": "{{count}} barbearias pagas",
+      "thisMonth": "{{count}} este mês",
+      "avgPerShop": "{{value}} / barbearia",
+      "adoption": "Adesão",
+      "proShops": "{{count}} Pró"
+    },
+    "metrics": {
+      "title": "Métricas",
+      "bookingsThisMonth": "Reservas este mês",
+      "avgPerShop": "Média / barbearia",
+      "proShops": "Barbearias Pro",
+      "paidAdoption": "Adesão paga"
+    }
   },
   "barbershops": {
     "title": "Barbearias",

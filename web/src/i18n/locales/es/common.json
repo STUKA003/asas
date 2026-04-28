@@ -49,12 +49,19 @@
   },
   "lang": {
     "label": "Idioma",
-    "pt": "Português",
-    "en": "English",
+    "settingsTitle": "Idioma de la aplicación",
+    "settingsDescription": "Define el idioma usado en este dispositivo. La elección se guarda en el navegador.",
+    "current": "Actual",
+    "pt": "portugués",
+    "en": "Inglés",
     "es": "Español",
-    "fr": "Français",
-    "de": "Deutsch",
-    "it": "Italiano",
-    "nl": "Nederlands"
+    "fr": "francés",
+    "de": "alemán",
+    "it": "italiano",
+    "nl": "Países Bajos"
+  },
+  "table": {
+    "noResults": "Sin resultados",
+    "actions": "Acciones"
   }
 }

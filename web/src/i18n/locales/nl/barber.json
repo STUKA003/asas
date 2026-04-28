@@ -1,20 +1,62 @@
 {
   "layout": {
-    "nav": { "portal": "Portaal", "dashboard": "Dashboard", "schedule": "Agenda" },
-    "pageMeta": {
-      "dashboard": { "title": "Dashboard", "subtitle": "Snel overzicht van uw dag, agenda en inkomsten." },
-      "schedule": { "title": "Agenda", "subtitle": "Volg uw tijdschema en lopende boekingen." }
+    "nav": {
+      "portal": "Portaal",
+      "dashboard": "Dashboard",
+      "schedule": "Agenda"
     },
-    "notifications": { "title": "Meldingen", "newBadge": "{{count}} nieuwe", "markAllRead": "Alles als gelezen markeren", "noRecent": "Geen recente meldingen." },
-    "account": { "logout": "Afmelden" },
-    "sidebar": { "activeSession": "Actieve sessie", "portalTitle": "Kappersportaal", "portalDesc": "Snelle toegang tot agenda, statussen en servicedetails." },
-    "topbar": { "planLabel": "Plan", "openSchedule": "Agenda openen" },
-    "pull": { "refreshing": "Vernieuwen...", "releaseToRefresh": "Loslaten om te vernieuwen", "pullToRefresh": "Trek om te vernieuwen" },
-    "brand": { "name": "Trimio Flow", "defaultSubtitle": "Kappersportaal" }
+    "pageMeta": {
+      "dashboard": {
+        "title": "Dashboard",
+        "subtitle": "Snel overzicht van uw dag, agenda en inkomsten."
+      },
+      "schedule": {
+        "title": "Agenda",
+        "subtitle": "Volg uw tijdschema en lopende boekingen."
+      }
+    },
+    "notifications": {
+      "title": "Meldingen",
+      "newBadge": "{{count}} nieuwe",
+      "markAllRead": "Alles als gelezen markeren",
+      "noRecent": "Geen recente meldingen."
+    },
+    "account": {
+      "logout": "Afmelden"
+    },
+    "sidebar": {
+      "activeSession": "Actieve sessie",
+      "portalTitle": "Kappersportaal",
+      "portalDesc": "Snelle toegang tot agenda, statussen en servicedetails."
+    },
+    "topbar": {
+      "planLabel": "Abonnement",
+      "openSchedule": "Agenda openen"
+    },
+    "pull": {
+      "refreshing": "Vernieuwen...",
+      "releaseToRefresh": "Loslaten om te vernieuwen",
+      "pullToRefresh": "Trek om te vernieuwen"
+    },
+    "brand": {
+      "name": "Trimio Flow",
+      "defaultSubtitle": "Kappersportaal"
+    }
   },
-  "push": { "unavailable": "Push niet beschikbaar", "notConfigured": "Push niet geconfigureerd", "blocked": "Push geblokkeerd", "active": "Push actief", "enable": "Push inschakelen", "blockedTooltip": "Machtiging geblokkeerd in browser", "enableTooltip": "Pushmeldingen inschakelen" },
+  "push": {
+    "unavailable": "Push niet beschikbaar",
+    "notConfigured": "Push niet geconfigureerd",
+    "blocked": "Push geblokkeerd",
+    "active": "Push actief",
+    "enable": "Push inschakelen",
+    "blockedTooltip": "Machtiging geblokkeerd in browser",
+    "enableTooltip": "Pushmeldingen inschakelen"
+  },
   "login": {
-    "brand": { "name": "Trimio Flow", "subtitle": "Kappersportaal" },
+    "brand": {
+      "name": "Trimio Flow",
+      "subtitle": "Kappersportaal"
+    },
     "panel": {
       "eyebrow": "Individuele operatie",
       "title": "Uw agenda zonder het dagritme te onderbreken.",
@@ -37,9 +79,66 @@
       "passwordLabel": "Wachtwoord",
       "passwordPlaceholder": "••••••••",
       "submitButton": "Inloggen op portaal",
-      "errors": { "invalidCredentials": "Slug, e-mail of wachtwoord ongeldig." }
+      "errors": {
+        "invalidCredentials": "Slug, e-mail of wachtwoord ongeldig."
+      }
     }
   },
-  "dashboard": { "title": "Dashboard", "subtitle": "Snel overzicht van uw dag, agenda en inkomsten." },
-  "schedule": { "title": "Agenda", "subtitle": "Volg uw tijdschema en lopende boekingen." }
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Snel overzicht van uw dag, agenda en inkomsten.",
+    "heroSubtitle": "Geconsolideerd overzicht van uw planning, omzet en volgende afspraken voor de dag.",
+    "dailyFlow": "Dagelijkse stroom",
+    "heroDescription": "Open het portaal en zie direct hoeveel diensten je hebt, huidige omzet en wat er daarna komt.",
+    "todaySchedule": "Het schema van vandaag",
+    "noPendingToday": "Geen openstaande boekingen voor vandaag.",
+    "metrics": {
+      "today": "Vandaag",
+      "dayBookings": "Boekingen vandaag",
+      "todayRevenue": "De inkomsten van vandaag",
+      "completedToday": "Vandaag voltooid",
+      "week": "Deze week",
+      "accumulatedRevenue": "Gecumuleerde inkomsten",
+      "bookings": "boekingen",
+      "completed": "voltooid",
+      "thisWeek": "Deze week",
+      "thisMonth": "Deze maand",
+      "revenue": "winst"
+    },
+    "focus": {
+      "title": "Onmiddellijke focus",
+      "nextServices": "Volgende diensten",
+      "pendingOrConfirmed": "In behandeling of bevestigd voor vandaag.",
+      "monthRevenue": "Maandelijkse omzet",
+      "monthPerformance": "Snel lezen van de maandelijkse prestaties."
+    }
+  },
+  "schedule": {
+    "title": "Agenda",
+    "subtitle": "Volg uw tijdschema en lopende boekingen.",
+    "pageSubtitle": "Houd tijden, nieuwe planningen en details van lopende services bij.",
+    "today": "Vandaag",
+    "view": {
+      "oneDay": "1 dag",
+      "threeDays": "3 dagen",
+      "sevenDays": "7 dagen"
+    },
+    "summary": {
+      "title": "Samenvatting",
+      "baseSlot": "Basissleuf",
+      "activeInterval": "Actief interval",
+      "days": "{{count}} dag",
+      "days_plural": "{{count}} dagen"
+    },
+    "feedback": {
+      "statusUpdated": "Boeking gemarkeerd als {{status}}.",
+      "statusError": "Kon de boekingsstatus niet wijzigen.",
+      "rescheduled": "Boeking verplaatst naar {{date}}.",
+      "rescheduleError": "Kon de boeking niet opnieuw plannen.",
+      "itemAdded": "Extra/product toegevoegd aan boeking.",
+      "addItemError": "Kon item niet toevoegen aan boeking",
+      "itemRemoved": "Artikel verwijderd uit de boeking.",
+      "removeItemError": "Kan het item niet uit de boeking verwijderen"
+    }
+  }
 }

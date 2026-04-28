@@ -49,6 +49,9 @@
   },
   "lang": {
     "label": "Language",
+    "settingsTitle": "App language",
+    "settingsDescription": "Set the language used on this device. Your choice is saved in the browser.",
+    "current": "Current",
     "pt": "Português",
     "en": "English",
     "es": "Español",
@@ -56,5 +59,9 @@
     "de": "Deutsch",
     "it": "Italiano",
     "nl": "Nederlands"
+  },
+  "table": {
+    "noResults": "No results",
+    "actions": "Actions"
   }
 }

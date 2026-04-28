@@ -49,12 +49,19 @@
   },
   "lang": {
     "label": "Lingua",
+    "settingsTitle": "Lingua dell'app",
+    "settingsDescription": "Imposta la lingua usata su questo dispositivo. La scelta viene salvata nel browser.",
+    "current": "Attuale",
     "pt": "Português",
-    "en": "English",
+    "en": "Inglese",
     "es": "Español",
-    "fr": "Français",
-    "de": "Deutsch",
+    "fr": "Francese",
+    "de": "Tedesco",
     "it": "Italiano",
-    "nl": "Nederlands"
+    "nl": "Paesi Bassi"
+  },
+  "table": {
+    "noResults": "Nessun risultato",
+    "actions": "Azioni"
   }
 }
