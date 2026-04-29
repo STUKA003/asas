@@ -112,7 +112,7 @@
       "errorSave": "Fout bij opslaan"
     },
     "plan": {
-      "plan": "Plan",
+      "plan": "Abonnement",
       "expiration": "Vervaldatum",
       "expiresOn": "Verloopt op {{date}}"
     },
@@ -230,7 +230,7 @@
     },
     "security": {
       "title": "Beveiliging",
-      "loginsOk": "Logins OK",
+      "loginsOk": "Aanmeldingen OK",
       "failures": "Mislukt",
       "resets": "Resets",
       "lastLogin": "Laatste login",

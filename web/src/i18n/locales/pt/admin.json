@@ -558,6 +558,13 @@
       "price": "Preço",
       "stock": "Estoque",
       "status": "Estado"
+    },
+    "errors": {
+      "IMAGE_READ_ERROR": "Não foi possível ler a imagem",
+      "IMAGE_PREPARE_ERROR": "Não foi possível preparar a imagem",
+      "IMAGE_TOO_LARGE": "A imagem é demasiado grande",
+      "IMAGE_PROCESS_ERROR": "Não foi possível processar a imagem",
+      "generic": "Erro"
     }
   },
   "plans": {
@@ -839,6 +846,8 @@
     "instagramPlaceholder": "@minha_barbearia",
     "errors": {
       "imagesTooLargeBatch": "As imagens são demasiado pesadas para guardar de uma vez. Tente menos fotos de cada vez ou imagens mais leves.",
+      "galleryFull": "A galeria suporta até {{max}} imagens.",
+      "galleryPartial": "Só foram adicionadas {{added}} imagens. O limite é {{max}}.",
       "saveGallery": "Não foi possível guardar a galeria",
       "uploadLogo": "Não foi possível carregar o logo",
       "uploadAccountPhoto": "Não foi possível carregar a foto da conta",

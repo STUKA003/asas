@@ -448,19 +448,19 @@
       "uploadPhoto": "Foto uploaden",
       "removePhoto": "Verwijderen",
       "phoneLabel": "Telefoon",
-      "phonePlaceholder": "+44 7911 123456",
+      "phonePlaceholder": "+31 6 12345678",
       "isActive": "Actieve kapper",
       "save": "Redden"
     },
     "ofMax": "van {{max}}",
     "errors": {
       "photoUpload": "De foto kon niet worden geüpload",
-      "passwordMin": "Minimum 6 characters",
-      "passwordMismatch": "Passwords do not match",
-      "accessSave": "Could not save. Check that the server is up to date.",
-      "IMAGE_READ_ERROR": "Could not read the image",
-      "IMAGE_PREPARE_ERROR": "Could not prepare the image",
-      "IMAGE_PROCESS_ERROR": "Could not process the image"
+      "passwordMin": "Minimaal 6 tekens",
+      "passwordMismatch": "Wachtwoorden komen niet overeen",
+      "accessSave": "Kon niet opslaan. Controleer of de server bijgewerkt is.",
+      "IMAGE_READ_ERROR": "Kan de afbeelding niet lezen",
+      "IMAGE_PREPARE_ERROR": "Kan de afbeelding niet voorbereiden",
+      "IMAGE_PROCESS_ERROR": "Kan de afbeelding niet verwerken"
     },
     "subtitle": "{{active}} actief{{maxStr}} · {{total}} geregistreerd",
     "atLimit": "Je hebt de limiet van {{max}} actieve kapper(s) voor je abonnement bereikt.",
@@ -525,6 +525,13 @@
       "price": "Prijs",
       "stock": "Voorraad",
       "status": "Toestand"
+    },
+    "errors": {
+      "IMAGE_READ_ERROR": "Kan de afbeelding niet lezen",
+      "IMAGE_PREPARE_ERROR": "Kan de afbeelding niet voorbereiden",
+      "IMAGE_TOO_LARGE": "De afbeelding is te groot",
+      "IMAGE_PROCESS_ERROR": "Kan de afbeelding niet verwerken",
+      "generic": "Fout"
     }
   },
   "plans": {
@@ -534,7 +541,7 @@
       "price": "Prijs",
       "status": "Toestand"
     },
-    "placeholder": "Monthly Plan"
+    "placeholder": "Maandelijks plan"
   },
   "schedule": {
     "title": "Openingstijden",
@@ -805,12 +812,14 @@
     "saved": "Wijzigingen opgeslagen.",
     "instagramPlaceholder": "@mijn_kapperszaak",
     "errors": {
-      "imagesTooLargeBatch": "The images are too large to save at once. Try fewer photos at a time or lighter images.",
-      "saveGallery": "Could not save the gallery",
-      "uploadLogo": "Could not upload the logo",
-      "uploadAccountPhoto": "Could not upload the account photo",
-      "uploadHeroImage": "Could not upload the main image",
-      "uploadGallery": "Could not upload the gallery images"
+      "imagesTooLargeBatch": "De afbeeldingen zijn te groot om in één keer op te slaan. Probeer minder foto's tegelijk of lichtere afbeeldingen.",
+      "galleryFull": "De galerij ondersteunt maximaal {{max}} afbeeldingen.",
+      "galleryPartial": "Er zijn slechts {{added}} afbeeldingen toegevoegd. De limiet is {{max}}.",
+      "saveGallery": "Kan de galerij niet opslaan",
+      "uploadLogo": "Kan het logo niet uploaden",
+      "uploadAccountPhoto": "Kan de accountfoto niet uploaden",
+      "uploadHeroImage": "Kan de hoofdafbeelding niet uploaden",
+      "uploadGallery": "Kan de galerij-afbeeldingen niet uploaden"
     }
   },
   "billing": {
@@ -924,11 +933,11 @@
     "successTitle": "Wachtwoord bijgewerkt",
     "successMsg": "U kunt nu inloggen met uw nieuwe wachtwoord.",
     "errors": {
-      "passwordMin": "Minimum 6 characters",
-      "confirmRequired": "Confirm the password",
-      "passwordMismatch": "Passwords must match",
-      "missingToken": "The recovery link is incomplete.",
-      "updateFailed": "Could not update the password."
+      "passwordMin": "Minimaal 6 tekens",
+      "confirmRequired": "Bevestig het wachtwoord",
+      "passwordMismatch": "Wachtwoorden moeten overeenkomen",
+      "missingToken": "De herstellink is onvolledig.",
+      "updateFailed": "Kan het wachtwoord niet bijwerken."
     }
   },
   "resendVerification": {

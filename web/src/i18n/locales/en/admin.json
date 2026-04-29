@@ -558,6 +558,13 @@
       "price": "Price",
       "stock": "Stock",
       "status": "Status"
+    },
+    "errors": {
+      "IMAGE_READ_ERROR": "Could not read the image",
+      "IMAGE_PREPARE_ERROR": "Could not prepare the image",
+      "IMAGE_TOO_LARGE": "The image is too large",
+      "IMAGE_PROCESS_ERROR": "Could not process the image",
+      "generic": "Error"
     }
   },
   "plans": {
@@ -839,6 +846,8 @@
     "instagramPlaceholder": "@my_barbershop",
     "errors": {
       "imagesTooLargeBatch": "The images are too large to save at once. Try fewer photos at a time or lighter images.",
+      "galleryFull": "The gallery supports up to {{max}} images.",
+      "galleryPartial": "Only {{added}} images were added. The limit is {{max}}.",
       "saveGallery": "Could not save the gallery",
       "uploadLogo": "Could not upload the logo",
       "uploadAccountPhoto": "Could not upload the account photo",

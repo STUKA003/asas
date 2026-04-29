@@ -112,7 +112,7 @@
       "errorSave": "Erreur lors de l'enregistrement"
     },
     "plan": {
-      "plan": "Plan",
+      "plan": "Forfait",
       "expiration": "Expiration",
       "expiresOn": "Expire le {{date}}"
     },

@@ -122,12 +122,12 @@
           "manageBooking": "Boeking beheren",
           "backHome": "Terug naar home"
         },
-        "defaultLocation": "Barbershop",
+        "defaultLocation": "Kapperszaak",
         "calendar": {
-          "with": "with",
-          "bookingAt": "Booking at",
-          "customer": "Customer",
-          "responsible": "Responsible person",
+          "with": "met",
+          "bookingAt": "Boeking om",
+          "customer": "Klant",
+          "responsible": "Verantwoordelijke",
           "contact": "Contact"
         }
       }
@@ -231,7 +231,7 @@
     },
     "period": {
       "month": "/mo",
-      "year": "/year"
+      "year": "/jaar"
     }
   },
   "manageBooking": {
@@ -289,190 +289,190 @@
     "eyebrow": "Gegevensbescherming",
     "title": "Privacybeleid",
     "versionDate": "Versie {{version}} · Bijgewerkt op {{date}}",
-    "shopFallback": "the barbershop",
-    "policyDate": "April 27, 2026",
-    "intro": "This policy explains how your personal data is processed when you use the booking system for {{shopName}}, supported by the Trimio platform. Read it before making a booking.",
+    "shopFallback": "de kapperszaak",
+    "policyDate": "27 april 2026",
+    "intro": "Dit beleid legt uit hoe je persoonsgegevens worden verwerkt wanneer je het reserveringssysteem van {{shopName}} gebruikt, ondersteund door het Trimio-platform. Lees het voordat je een reservering maakt.",
     "controller": {
-      "title": "Controller and processor",
-      "p1": "The controller of your personal data is {{shopName}}, the entity that defines the purposes and means of processing data collected for bookings.",
-      "p2": "Trimio acts as processor and provides the technology platform, processing data only under instructions from {{shopName}} and without editorial access to booking content for its own purposes.",
-      "shopContact": "For questions about your booking or personal data, contact {{shopName}} through the channels available on this site.",
-      "platformContact": "For questions about the Trimio platform, write to"
+      "title": "Verwerkingsverantwoordelijke en verwerker",
+      "p1": "De verwerkingsverantwoordelijke voor je persoonsgegevens is {{shopName}}, de entiteit die de doeleinden en middelen voor de verwerking van de voor reserveringen verzamelde gegevens bepaalt.",
+      "p2": "Trimio treedt op als verwerker en biedt het technologieplatform aan, waarbij gegevens uitsluitend worden verwerkt op instructie van {{shopName}} en zonder redactionele toegang tot reserveringsinhoud voor eigen doeleinden.",
+      "shopContact": "Voor vragen over je reservering of persoonsgegevens neem je contact op met {{shopName}} via de op deze site beschikbare kanalen.",
+      "platformContact": "Voor vragen over het Trimio-platform schrijf je naar"
     },
     "data": {
-      "title": "Processed data, purposes and legal bases",
-      "intro": "We process only the data strictly necessary to provide the booking service.",
+      "title": "Verwerkte gegevens, doeleinden en rechtsgronden",
+      "intro": "Wij verwerken alleen de gegevens die strikt noodzakelijk zijn om de reserveringsdienst te leveren.",
       "headers": [
-        "Data",
-        "Purpose",
-        "Legal basis",
-        "Retention"
+        "Gegeven",
+        "Doel",
+        "Rechtsgrond",
+        "Bewaring"
       ],
       "rows": [
         [
-          "Name",
-          "Identify the customer and attendee",
-          "Contract performance - GDPR Art. 6(1)(b)",
-          "3 years after the last booking"
+          "Naam",
+          "De klant en de bediende persoon identificeren",
+          "Uitvoering van overeenkomst - Art. 6 lid 1 onder b AVG",
+          "3 jaar na de laatste reservering"
         ],
         [
-          "Phone",
-          "Operational contact for confirmations, cancellations and rescheduling",
-          "Contract performance - GDPR Art. 6(1)(b)",
-          "3 years after the last booking"
+          "Telefoon",
+          "Operationeel contact voor bevestigingen, annuleringen en herplanningen",
+          "Uitvoering van overeenkomst - Art. 6 lid 1 onder b AVG",
+          "3 jaar na de laatste reservering"
         ],
         [
-          "Optional email",
-          "Send the secure booking management link and confirmations",
-          "Contract performance - GDPR Art. 6(1)(b)",
-          "3 years after the last booking"
+          "Optionele e-mail",
+          "Versturen van de beveiligde reserveringslink en bevestigingen",
+          "Uitvoering van overeenkomst - Art. 6 lid 1 onder b AVG",
+          "3 jaar na de laatste reservering"
         ],
         [
-          "Optional notes",
-          "Service-specific information shared by the customer",
-          "Contract performance - GDPR Art. 6(1)(b)",
-          "3 years after the last booking"
+          "Optionele opmerkingen",
+          "Servicespecifieke informatie meegedeeld door de klant",
+          "Uitvoering van overeenkomst - Art. 6 lid 1 onder b AVG",
+          "3 jaar na de laatste reservering"
         ],
         [
-          "Date, time, service and barber",
-          "Schedule organization and service delivery",
-          "Contract performance - GDPR Art. 6(1)(b)",
-          "3 years after the last booking"
+          "Datum, tijd, dienst en kapper",
+          "Agendaplanning en dienstverlening",
+          "Uitvoering van overeenkomst - Art. 6 lid 1 onder b AVG",
+          "3 jaar na de laatste reservering"
         ],
         [
-          "IP address at consent",
-          "Audit record of the consent given",
-          "Legal obligation / legitimate interest - GDPR Art. 6(1)(c)(f)",
-          "3 years after the booking"
+          "IP-adres bij toestemming",
+          "Audit-registratie van de gegeven toestemming",
+          "Wettelijke verplichting / gerechtvaardigd belang - Art. 6 lid 1 c, f",
+          "3 jaar na de reservering"
         ],
         [
-          "Consent date and version",
-          "Proof that valid consent was obtained",
-          "Legal obligation - GDPR Art. 6(1)(c)",
-          "5 years"
+          "Datum en versie van toestemming",
+          "Bewijs van geldige toestemming",
+          "Wettelijke verplichting - Art. 6 lid 1 onder c AVG",
+          "5 jaar"
         ]
       ],
-      "noMarketing": "We do not use your data for marketing, profiling or automated decisions with legal effects."
+      "noMarketing": "Wij gebruiken je gegevens niet voor marketing, profilering of geautomatiseerde besluiten met juridische gevolgen."
     },
     "retention": {
-      "title": "Retention period and automatic anonymization",
-      "intro": "Identifying personal data is retained for the period required to manage the service, defend rights and comply with legal obligations.",
+      "title": "Bewaartermijn en automatische anonimisering",
+      "intro": "Identificerende persoonsgegevens worden bewaard gedurende de periode die nodig is voor het beheer van de dienst, de verdediging van rechten en het voldoen aan wettelijke verplichtingen.",
       "items": [
-        "Active operational data - while pending or confirmed bookings exist.",
-        "Historical data - up to 3 years after the last booking.",
-        "Consent record - up to 5 years for audit and compliance.",
-        "After the period or an anonymization request, identifying data is replaced by an anonymous identifier."
+        "Actieve operationele gegevens - zolang er openstaande of bevestigde reserveringen zijn.",
+        "Historische gegevens - tot 3 jaar na de laatste uitgevoerde reservering.",
+        "Toestemmingsregistratie - tot 5 jaar voor audit en compliance.",
+        "Na de termijn of een verzoek tot anonimisering worden identificerende gegevens vervangen door een anonieme identificatie."
       ],
-      "footer": "The system automatically anonymizes customer data after more than 3 years of inactivity. You can exercise erasure rights through the secure link for your booking."
+      "footer": "Het systeem anonimiseert klantgegevens automatisch na meer dan 3 jaar inactiviteit. Je kunt het recht op verwijdering uitoefenen via de beveiligde link van je reservering."
     },
     "processors": {
-      "title": "Processors and recipients",
-      "intro": "To provide the service, {{shopName}} and Trimio use technical processors that process data under documented instructions and GDPR safeguards.",
+      "title": "Verwerkers en ontvangers",
+      "intro": "Om de dienst te leveren maken {{shopName}} en Trimio gebruik van technische verwerkers die gegevens verwerken volgens gedocumenteerde instructies en met AVG-waarborgen.",
       "headers": [
-        "Processor",
-        "Function",
-        "Location",
-        "Safeguards"
+        "Verwerker",
+        "Functie",
+        "Locatie",
+        "Waarborgen"
       ],
       "rows": [
         [
           "OVH SAS",
-          "Hosting and infrastructure",
-          "France (EU)",
-          "GDPR / standard clauses"
+          "Hosting en infrastructuur",
+          "Frankrijk (EU)",
+          "AVG / standaardclausules"
         ],
         [
           "Cloudflare, Inc.",
-          "CDN, firewall and security",
-          "USA / global edge",
-          "EU-US DPF / standard clauses"
+          "CDN, firewall en beveiliging",
+          "VS / wereldwijde edge",
+          "EU-US DPF / standaardclausules"
         ],
         [
           "Stripe, Inc.",
-          "Payment processing",
-          "USA / global edge",
-          "EU-US DPF / standard clauses"
+          "Betalingsverwerking",
+          "VS / wereldwijde edge",
+          "EU-US DPF / standaardclausules"
         ],
         [
           "Resend, Inc.",
-          "Transactional email delivery",
-          "USA",
-          "EU-US DPF / standard clauses"
+          "Versturen van transactionele e-mail",
+          "VS",
+          "EU-US DPF / standaardclausules"
         ]
       ],
-      "noSale": "We do not sell or share personal data with third parties for marketing, advertising or profiling."
+      "noSale": "Wij verkopen of delen geen persoonsgegevens met derden voor marketing, reclame of profilering."
     },
     "transfers": {
-      "title": "International transfers",
-      "body": "Some processors operate outside the European Union. Those transfers are made through appropriate legal mechanisms, including the EU-US Data Privacy Framework where applicable and standard contractual clauses approved by the European Commission."
+      "title": "Internationale doorgiften",
+      "body": "Sommige verwerkers opereren buiten de Europese Unie. Deze doorgiften vinden plaats via passende juridische mechanismen, waaronder het EU-US Data Privacy Framework waar van toepassing en standaardcontractbepalingen die door de Europese Commissie zijn goedgekeurd."
     },
     "rights": {
-      "title": "Your rights",
-      "intro": "As a data subject, you have the following rights and can exercise them at any time:",
+      "title": "Jouw rechten",
+      "intro": "Als betrokkene heb je de volgende rechten en kun je deze op elk moment uitoefenen:",
       "items": [
         {
-          "title": "Access",
-          "desc": "Know what data we hold about you and obtain a copy through your booking link."
+          "title": "Inzage",
+          "desc": "Weten welke gegevens wij over je hebben en een kopie verkrijgen via je reserveringslink."
         },
         {
-          "title": "Portability",
-          "desc": "Receive your data in a structured, machine-readable format."
+          "title": "Overdraagbaarheid",
+          "desc": "Je gegevens ontvangen in een gestructureerd, machineleesbaar formaat."
         },
         {
-          "title": "Rectification",
-          "desc": "Correct inaccurate data by contacting the barbershop or rescheduling with updated data."
+          "title": "Rectificatie",
+          "desc": "Onjuiste gegevens corrigeren door contact op te nemen met de kapperszaak of opnieuw te plannen met bijgewerkte gegevens."
         },
         {
-          "title": "Erasure / Anonymization",
-          "desc": "Request removal of identifying data; anonymous operational records may be retained."
+          "title": "Verwijdering / Anonimisering",
+          "desc": "Verwijdering van identificerende gegevens vragen; anonieme operationele records kunnen worden bewaard."
         },
         {
-          "title": "Restriction",
-          "desc": "Request that data be stored but not actively processed."
+          "title": "Beperking",
+          "desc": "Vragen dat gegevens worden bewaard maar niet actief verwerkt."
         },
         {
-          "title": "Objection",
-          "desc": "Object to processing based on legitimate interest."
+          "title": "Bezwaar",
+          "desc": "Bezwaar maken tegen verwerking op basis van gerechtvaardigd belang."
         },
         {
-          "title": "No automated decisions",
-          "desc": "We do not make solely automated decisions with significant legal effects."
+          "title": "Geen geautomatiseerde besluiten",
+          "desc": "Wij nemen geen uitsluitend geautomatiseerde besluiten met aanzienlijke juridische gevolgen."
         },
         {
-          "title": "Withdraw consent",
-          "desc": "Where applicable, you can withdraw consent without affecting prior lawful processing."
+          "title": "Toestemming intrekken",
+          "desc": "Waar van toepassing kun je je toestemming intrekken zonder dat dit eerdere rechtmatige verwerking aantast."
         }
       ],
-      "contact": "To exercise rights that cannot be fulfilled through the booking link, contact {{shopName}} through the public channels on this site or Trimio at",
-      "responseTime": "We respond within 30 days, extendable by another 60 days in complex cases."
+      "contact": "Om rechten uit te oefenen die niet via de reserveringslink kunnen worden afgehandeld, neem je contact op met {{shopName}} via de openbare kanalen op deze site of met Trimio op",
+      "responseTime": "Wij reageren binnen 30 dagen, met een verlenging van nog eens 60 dagen in complexe gevallen."
     },
     "cookies": {
-      "title": "Cookies and local storage",
-      "intro": "This site does not use tracking, advertising or third-party analytics cookies. It only uses:",
+      "title": "Cookies en lokale opslag",
+      "intro": "Deze site gebruikt geen tracking-, advertentie- of analytische cookies van derden. Er wordt alleen gebruik gemaakt van:",
       "items": [
-        "Local storage (localStorage) to keep the admin/barber session token while you are authenticated.",
-        "Cloudflare may set technical security and performance cookies required for the infrastructure to work."
+        "Lokale opslag (localStorage) om het sessietoken voor admin/kapper te bewaren terwijl je bent aangemeld.",
+        "Cloudflare kan technische beveiligings- en prestatiecookies plaatsen die nodig zijn voor de werking van de infrastructuur."
       ],
-      "footer": "Because we do not use analytics or marketing cookies, no cookie consent banner is shown."
+      "footer": "Omdat wij geen analytische of marketingcookies gebruiken, wordt er geen cookie-toestemmingsbanner getoond."
     },
     "security": {
-      "title": "Security",
-      "body": "We adopt appropriate technical and organizational measures, including encrypted transmission via TLS, restricted database access, firewall, expiring access tokens and cryptographic key authentication."
+      "title": "Beveiliging",
+      "body": "Wij nemen passende technische en organisatorische maatregelen, waaronder versleutelde overdracht via TLS, beperkte databasetoegang, firewall, vervaltokens voor toegang en authenticatie via cryptografische sleutels."
     },
     "authority": {
-      "title": "Supervisory authority",
-      "body": "You have the right to lodge a complaint with the competent supervisory authority. In Portugal, the competent authority is:",
-      "name": "CNPD - Portuguese Data Protection Authority",
-      "address": "Rua de São Bento 148-3.º, 1200-821 Lisbon · geral@cnpd.pt · cnpd.pt"
+      "title": "Toezichthoudende autoriteit",
+      "body": "Je hebt het recht een klacht in te dienen bij de bevoegde toezichthoudende autoriteit. In Portugal is de bevoegde autoriteit:",
+      "name": "CNPD - Portugese gegevensbeschermingsautoriteit",
+      "address": "Rua de São Bento 148-3.º, 1200-821 Lissabon · geral@cnpd.pt · cnpd.pt"
     },
     "changes": {
-      "title": "Changes to this policy",
-      "body": "This policy may be updated to reflect legal, technical or service changes. The version and date at the top of this page always identify the version in force."
+      "title": "Wijzigingen in dit beleid",
+      "body": "Dit beleid kan worden bijgewerkt om wettelijke, technische of dienstgerelateerde wijzigingen weer te geven. De versie en datum bovenaan deze pagina geven altijd de geldende versie aan."
     },
     "contact": {
-      "title": "Privacy contact",
-      "shop": "For questions related to your data in a specific booking, use the public contacts for {{shopName}} available on this site.",
-      "platform": "For questions about the Trimio platform as processor:"
+      "title": "Contact voor privacy",
+      "shop": "Voor vragen over je gegevens in een specifieke reservering gebruik je de openbare contacten van {{shopName}} op deze site.",
+      "platform": "Voor vragen over het Trimio-platform als verwerker:"
     }
   },
   "brand": {

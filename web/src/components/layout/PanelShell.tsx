@@ -374,10 +374,10 @@ export function PanelShell({
                   className={cn(isPullRefreshing && 'animate-spin', refreshReady && !isPullRefreshing && 'text-primary-600')}
                 />
                 <span>{isPullRefreshing
-                  ? (pullRefreshLabels?.refreshing ?? 'A atualizar...')
+                  ? (pullRefreshLabels?.refreshing ?? 'Refreshing...')
                   : refreshReady
-                    ? (pullRefreshLabels?.release ?? 'Larga para atualizar')
-                    : (pullRefreshLabels?.pull ?? 'Puxa para atualizar')
+                    ? (pullRefreshLabels?.release ?? 'Release to refresh')
+                    : (pullRefreshLabels?.pull ?? 'Pull to refresh')
                 }</span>
               </div>
             </div>

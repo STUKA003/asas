@@ -112,7 +112,7 @@
       "errorSave": "Fehler beim Speichern"
     },
     "plan": {
-      "plan": "Plan",
+      "plan": "Tarif",
       "expiration": "Ablauf",
       "expiresOn": "Läuft ab am {{date}}"
     },
@@ -230,9 +230,9 @@
     },
     "security": {
       "title": "Sicherheit",
-      "loginsOk": "Logins OK",
+      "loginsOk": "Anmeldungen OK",
       "failures": "Fehler",
-      "resets": "Resets",
+      "resets": "Zurücksetzungen",
       "lastLogin": "Letzter Login",
       "lastFailure": "Letzter Fehler",
       "lastReset": "Letzter Reset",

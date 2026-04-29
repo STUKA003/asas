@@ -426,7 +426,7 @@ export default function Customization() {
       const availableSlots = MAX_GALLERY_IMAGES - currentImages.length
 
       if (availableSlots <= 0) {
-        setGalleryError(`A galeria suporta até ${MAX_GALLERY_IMAGES} imagens.`)
+        setGalleryError(t('customization.errors.galleryFull', { max: MAX_GALLERY_IMAGES }))
         return
       }
 
@@ -444,7 +444,7 @@ export default function Customization() {
       }
 
       if (files.length > availableSlots) {
-        setGalleryError(`Só foram adicionadas ${availableSlots} imagens. O limite é ${MAX_GALLERY_IMAGES}.`)
+        setGalleryError(t('customization.errors.galleryPartial', { added: availableSlots, max: MAX_GALLERY_IMAGES }))
       }
     } catch (error) {
       setGalleryError(getRequestErrorMessage(error, t('customization.errors.uploadGallery'), t('customization.errors.imagesTooLargeBatch')))

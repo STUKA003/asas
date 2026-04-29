@@ -440,7 +440,7 @@
       "create": "Neuer Barbier",
       "edit": "Barbier bearbeiten",
       "nameLabel": "Vollständiger Name",
-      "namePlaceholder": "John Smith",
+      "namePlaceholder": "Max Mustermann",
       "emailLabel": "E-Mail",
       "emailPlaceholder": "john@example.com",
       "photoLabel": "Friseurfoto",
@@ -448,19 +448,19 @@
       "uploadPhoto": "Foto hochladen",
       "removePhoto": "Entfernen",
       "phoneLabel": "Telefon",
-      "phonePlaceholder": "+44 7911 123456",
+      "phonePlaceholder": "+49 151 12345678",
       "isActive": "Aktiver Friseur",
       "save": "Speichern"
     },
     "ofMax": "von {{max}}",
     "errors": {
       "photoUpload": "Das Foto konnte nicht hochgeladen werden",
-      "passwordMin": "Minimum 6 characters",
-      "passwordMismatch": "Passwords do not match",
-      "accessSave": "Could not save. Check that the server is up to date.",
-      "IMAGE_READ_ERROR": "Could not read the image",
-      "IMAGE_PREPARE_ERROR": "Could not prepare the image",
-      "IMAGE_PROCESS_ERROR": "Could not process the image"
+      "passwordMin": "Mindestens 6 Zeichen",
+      "passwordMismatch": "Passwörter stimmen nicht überein",
+      "accessSave": "Konnte nicht gespeichert werden. Prüfen Sie, ob der Server aktuell ist.",
+      "IMAGE_READ_ERROR": "Bild konnte nicht gelesen werden",
+      "IMAGE_PREPARE_ERROR": "Bild konnte nicht vorbereitet werden",
+      "IMAGE_PROCESS_ERROR": "Bild konnte nicht verarbeitet werden"
     },
     "subtitle": "{{active}} aktiv{{maxStr}} · {{total}} registriert",
     "atLimit": "Sie haben das Limit von {{max}} aktiven Friseuren in Ihrem Plan erreicht.",
@@ -525,6 +525,13 @@
       "price": "Preis",
       "stock": "Aktie",
       "status": "Zustand"
+    },
+    "errors": {
+      "IMAGE_READ_ERROR": "Bild konnte nicht gelesen werden",
+      "IMAGE_PREPARE_ERROR": "Bild konnte nicht vorbereitet werden",
+      "IMAGE_TOO_LARGE": "Das Bild ist zu groß",
+      "IMAGE_PROCESS_ERROR": "Bild konnte nicht verarbeitet werden",
+      "generic": "Fehler"
     }
   },
   "plans": {
@@ -534,7 +541,7 @@
       "price": "Preis",
       "status": "Zustand"
     },
-    "placeholder": "Monthly Plan"
+    "placeholder": "Monatsplan"
   },
   "schedule": {
     "title": "Öffnungszeiten",
@@ -805,12 +812,14 @@
     "saved": "Änderungen gespeichert.",
     "instagramPlaceholder": "@mein_friseursalon",
     "errors": {
-      "imagesTooLargeBatch": "The images are too large to save at once. Try fewer photos at a time or lighter images.",
-      "saveGallery": "Could not save the gallery",
-      "uploadLogo": "Could not upload the logo",
-      "uploadAccountPhoto": "Could not upload the account photo",
-      "uploadHeroImage": "Could not upload the main image",
-      "uploadGallery": "Could not upload the gallery images"
+      "imagesTooLargeBatch": "Die Bilder sind zu groß, um sie auf einmal zu speichern. Versuchen Sie es mit weniger oder kleineren Bildern.",
+      "galleryFull": "Die Galerie unterstützt bis zu {{max}} Bilder.",
+      "galleryPartial": "Es wurden nur {{added}} Bilder hinzugefügt. Das Limit liegt bei {{max}}.",
+      "saveGallery": "Die Galerie konnte nicht gespeichert werden",
+      "uploadLogo": "Das Logo konnte nicht hochgeladen werden",
+      "uploadAccountPhoto": "Das Kontofoto konnte nicht hochgeladen werden",
+      "uploadHeroImage": "Das Hauptbild konnte nicht hochgeladen werden",
+      "uploadGallery": "Die Galeriebilder konnten nicht hochgeladen werden"
     }
   },
   "billing": {
@@ -924,11 +933,11 @@
     "successTitle": "Passwort aktualisiert",
     "successMsg": "Sie können sich nun mit Ihrem neuen Passwort anmelden.",
     "errors": {
-      "passwordMin": "Minimum 6 characters",
-      "confirmRequired": "Confirm the password",
-      "passwordMismatch": "Passwords must match",
-      "missingToken": "The recovery link is incomplete.",
-      "updateFailed": "Could not update the password."
+      "passwordMin": "Mindestens 6 Zeichen",
+      "confirmRequired": "Passwort bestätigen",
+      "passwordMismatch": "Passwörter müssen übereinstimmen",
+      "missingToken": "Der Wiederherstellungslink ist unvollständig.",
+      "updateFailed": "Passwort konnte nicht aktualisiert werden."
     }
   },
   "resendVerification": {

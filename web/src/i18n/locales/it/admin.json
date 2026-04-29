@@ -448,19 +448,19 @@
       "uploadPhoto": "Carica foto",
       "removePhoto": "Rimuovere",
       "phoneLabel": "Telefono",
-      "phonePlaceholder": "+44 7911 123456",
+      "phonePlaceholder": "+39 333 123 4567",
       "isActive": "Barbiere attivo",
       "save": "Salva"
     },
     "ofMax": "di {{max}}",
     "errors": {
       "photoUpload": "Impossibile caricare la foto",
-      "passwordMin": "Minimum 6 characters",
-      "passwordMismatch": "Passwords do not match",
-      "accessSave": "Could not save. Check that the server is up to date.",
-      "IMAGE_READ_ERROR": "Could not read the image",
-      "IMAGE_PREPARE_ERROR": "Could not prepare the image",
-      "IMAGE_PROCESS_ERROR": "Could not process the image"
+      "passwordMin": "Minimo 6 caratteri",
+      "passwordMismatch": "Le password non coincidono",
+      "accessSave": "Impossibile salvare. Verifica che il server sia aggiornato.",
+      "IMAGE_READ_ERROR": "Impossibile leggere l'immagine",
+      "IMAGE_PREPARE_ERROR": "Impossibile preparare l'immagine",
+      "IMAGE_PROCESS_ERROR": "Impossibile elaborare l'immagine"
     },
     "subtitle": "{{active}} attivo{{maxStr}} · {{total}} registrato",
     "atLimit": "Hai raggiunto il limite di {{max}} barbieri attivi nel tuo piano.",
@@ -525,6 +525,13 @@
       "price": "Prezzo",
       "stock": "Azione",
       "status": "Stato"
+    },
+    "errors": {
+      "IMAGE_READ_ERROR": "Impossibile leggere l'immagine",
+      "IMAGE_PREPARE_ERROR": "Impossibile preparare l'immagine",
+      "IMAGE_TOO_LARGE": "L'immagine è troppo grande",
+      "IMAGE_PROCESS_ERROR": "Impossibile elaborare l'immagine",
+      "generic": "Errore"
     }
   },
   "plans": {
@@ -534,7 +541,7 @@
       "price": "Prezzo",
       "status": "Stato"
     },
-    "placeholder": "Monthly Plan"
+    "placeholder": "Piano mensile"
   },
   "schedule": {
     "title": "Orari di apertura",
@@ -805,12 +812,14 @@
     "saved": "Modifiche salvate.",
     "instagramPlaceholder": "@mio_salone",
     "errors": {
-      "imagesTooLargeBatch": "The images are too large to save at once. Try fewer photos at a time or lighter images.",
-      "saveGallery": "Could not save the gallery",
-      "uploadLogo": "Could not upload the logo",
-      "uploadAccountPhoto": "Could not upload the account photo",
-      "uploadHeroImage": "Could not upload the main image",
-      "uploadGallery": "Could not upload the gallery images"
+      "imagesTooLargeBatch": "Le immagini sono troppo pesanti per essere salvate in una volta. Prova con meno foto o immagini più leggere.",
+      "galleryFull": "La galleria supporta fino a {{max}} immagini.",
+      "galleryPartial": "Sono state aggiunte solo {{added}} immagini. Il limite è {{max}}.",
+      "saveGallery": "Impossibile salvare la galleria",
+      "uploadLogo": "Impossibile caricare il logo",
+      "uploadAccountPhoto": "Impossibile caricare la foto dell'account",
+      "uploadHeroImage": "Impossibile caricare l'immagine principale",
+      "uploadGallery": "Impossibile caricare le immagini della galleria"
     }
   },
   "billing": {
@@ -924,11 +933,11 @@
     "successTitle": "Password aggiornata",
     "successMsg": "Ora puoi accedere con la tua nuova password.",
     "errors": {
-      "passwordMin": "Minimum 6 characters",
-      "confirmRequired": "Confirm the password",
-      "passwordMismatch": "Passwords must match",
-      "missingToken": "The recovery link is incomplete.",
-      "updateFailed": "Could not update the password."
+      "passwordMin": "Minimo 6 caratteri",
+      "confirmRequired": "Conferma la password",
+      "passwordMismatch": "Le password devono coincidere",
+      "missingToken": "Il link di recupero è incompleto.",
+      "updateFailed": "Impossibile aggiornare la password."
     }
   },
   "resendVerification": {

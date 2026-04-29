@@ -52,9 +52,9 @@
     "settingsTitle": "Lingua dell'app",
     "settingsDescription": "Imposta la lingua usata su questo dispositivo. La scelta viene salvata nel browser.",
     "current": "Attuale",
-    "pt": "Português",
+    "pt": "Portoghese",
     "en": "Inglese",
-    "es": "Español",
+    "es": "Spagnolo",
     "fr": "Francese",
     "de": "Tedesco",
     "it": "Italiano",
@@ -65,7 +65,7 @@
     "actions": "Azioni"
   },
   "phone": {
-    "country": "Country",
-    "countryFor": "{{label}} country"
+    "country": "Paese",
+    "countryFor": "{{label}} paese"
   }
 }

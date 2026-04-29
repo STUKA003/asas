@@ -230,7 +230,7 @@
     },
     "security": {
       "title": "Seguridad",
-      "loginsOk": "Logins OK",
+      "loginsOk": "Inicios OK",
       "failures": "Fallos",
       "resets": "Reinicios",
       "lastLogin": "Último login",

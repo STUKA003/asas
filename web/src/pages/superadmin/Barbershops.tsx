@@ -763,13 +763,13 @@ export default function SuperAdminBarbershops() {
                               <div className="space-y-1.5">
                                 {b.security.recentEvents.length === 0 ? (
                                   <div className="rounded-xl border border-white/[0.05] bg-white/[0.03] px-3 py-3 text-[12.5px] text-white/30">
-                                    Sem atividade registada.
+                                    {t('superadmin:barbershops.security.noActivity')}
                                   </div>
                                 ) : b.security.recentEvents.map((ev) => (
                                   <div key={ev.id} className="flex items-center justify-between gap-3 rounded-xl border border-white/[0.05] bg-white/[0.03] px-3 py-2.5">
                                     <div className="min-w-0">
                                       <p className={cn('text-[12.5px]', ev.type === 'LOGIN_SUCCESS' ? 'text-emerald-300' : ev.type === 'LOGIN_FAILURE' ? 'text-red-300' : 'text-amber-300')}>
-                                        {ev.type === 'LOGIN_SUCCESS' ? 'Login com sucesso' : ev.type === 'LOGIN_FAILURE' ? 'Falha de login' : 'Pedido de reset password'}
+                                        {ev.type === 'LOGIN_SUCCESS' ? t('superadmin:barbershops.security.eventLoginSuccess') : ev.type === 'LOGIN_FAILURE' ? t('superadmin:barbershops.security.eventLoginFailure') : t('superadmin:barbershops.security.eventPasswordReset')}
                                       </p>
                                       <p className="truncate text-[11px] text-white/30">
                                         {ev.email || b.owner?.email || '—'}{ev.reason ? ` · ${ev.reason}` : ''}

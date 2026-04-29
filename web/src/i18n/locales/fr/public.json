@@ -122,12 +122,12 @@
           "manageBooking": "Gérer la réservation",
           "backHome": "Retour à l'accueil"
         },
-        "defaultLocation": "Barbershop",
+        "defaultLocation": "Salon de coiffure",
         "calendar": {
-          "with": "with",
-          "bookingAt": "Booking at",
-          "customer": "Customer",
-          "responsible": "Responsible person",
+          "with": "avec",
+          "bookingAt": "Réservation à",
+          "customer": "Client",
+          "responsible": "Personne responsable",
           "contact": "Contact"
         }
       }
@@ -231,7 +231,7 @@
     },
     "period": {
       "month": "/mo",
-      "year": "/year"
+      "year": "/an"
     }
   },
   "manageBooking": {
@@ -289,190 +289,190 @@
     "eyebrow": "Confidentialité",
     "title": "Politique de confidentialité",
     "versionDate": "Version {{version}} · Mise à jour le {{date}}",
-    "shopFallback": "the barbershop",
-    "policyDate": "April 27, 2026",
-    "intro": "This policy explains how your personal data is processed when you use the booking system for {{shopName}}, supported by the Trimio platform. Read it before making a booking.",
+    "shopFallback": "le salon",
+    "policyDate": "27 avril 2026",
+    "intro": "Cette politique explique comment vos données personnelles sont traitées lorsque vous utilisez le système de réservation de {{shopName}}, soutenu par la plateforme Trimio. Lisez-la avant de réserver.",
     "controller": {
-      "title": "Controller and processor",
-      "p1": "The controller of your personal data is {{shopName}}, the entity that defines the purposes and means of processing data collected for bookings.",
-      "p2": "Trimio acts as processor and provides the technology platform, processing data only under instructions from {{shopName}} and without editorial access to booking content for its own purposes.",
-      "shopContact": "For questions about your booking or personal data, contact {{shopName}} through the channels available on this site.",
-      "platformContact": "For questions about the Trimio platform, write to"
+      "title": "Responsable du traitement et sous-traitant",
+      "p1": "Le responsable du traitement de vos données personnelles est {{shopName}}, l'entité qui définit les finalités et les moyens du traitement des données collectées dans le cadre des réservations.",
+      "p2": "Trimio agit comme sous-traitant et fournit la plateforme technologique, traitant les données uniquement sur instructions de {{shopName}} et sans accès éditorial au contenu des réservations à des fins propres.",
+      "shopContact": "Pour toute question concernant votre réservation ou vos données personnelles, contactez {{shopName}} via les canaux disponibles sur ce site.",
+      "platformContact": "Pour toute question concernant la plateforme Trimio, écrivez à"
     },
     "data": {
-      "title": "Processed data, purposes and legal bases",
-      "intro": "We process only the data strictly necessary to provide the booking service.",
+      "title": "Données traitées, finalités et bases légales",
+      "intro": "Nous traitons uniquement les données strictement nécessaires à la prestation du service de réservation.",
       "headers": [
-        "Data",
-        "Purpose",
-        "Legal basis",
-        "Retention"
+        "Donnée",
+        "Finalité",
+        "Base légale",
+        "Conservation"
       ],
       "rows": [
         [
-          "Name",
-          "Identify the customer and attendee",
-          "Contract performance - GDPR Art. 6(1)(b)",
-          "3 years after the last booking"
+          "Nom",
+          "Identifier le client et la personne accueillie",
+          "Exécution du contrat - Art. 6(1)(b) RGPD",
+          "3 ans après la dernière réservation"
         ],
         [
-          "Phone",
-          "Operational contact for confirmations, cancellations and rescheduling",
-          "Contract performance - GDPR Art. 6(1)(b)",
-          "3 years after the last booking"
+          "Téléphone",
+          "Contact opérationnel pour confirmations, annulations et reports",
+          "Exécution du contrat - Art. 6(1)(b) RGPD",
+          "3 ans après la dernière réservation"
         ],
         [
-          "Optional email",
-          "Send the secure booking management link and confirmations",
-          "Contract performance - GDPR Art. 6(1)(b)",
-          "3 years after the last booking"
+          "E-mail facultatif",
+          "Envoi du lien sécurisé de gestion de la réservation et confirmations",
+          "Exécution du contrat - Art. 6(1)(b) RGPD",
+          "3 ans après la dernière réservation"
         ],
         [
-          "Optional notes",
-          "Service-specific information shared by the customer",
-          "Contract performance - GDPR Art. 6(1)(b)",
-          "3 years after the last booking"
+          "Notes facultatives",
+          "Informations spécifiques au service communiquées par le client",
+          "Exécution du contrat - Art. 6(1)(b) RGPD",
+          "3 ans après la dernière réservation"
         ],
         [
-          "Date, time, service and barber",
-          "Schedule organization and service delivery",
-          "Contract performance - GDPR Art. 6(1)(b)",
-          "3 years after the last booking"
+          "Date, heure, service et barbier",
+          "Organisation de l'agenda et prestation du service",
+          "Exécution du contrat - Art. 6(1)(b) RGPD",
+          "3 ans après la dernière réservation"
         ],
         [
-          "IP address at consent",
-          "Audit record of the consent given",
-          "Legal obligation / legitimate interest - GDPR Art. 6(1)(c)(f)",
-          "3 years after the booking"
+          "Adresse IP au consentement",
+          "Trace d'audit du consentement donné",
+          "Obligation légale / intérêt légitime - Art. 6(1)(c)(f)",
+          "3 ans après la réservation"
         ],
         [
-          "Consent date and version",
-          "Proof that valid consent was obtained",
-          "Legal obligation - GDPR Art. 6(1)(c)",
-          "5 years"
+          "Date et version du consentement",
+          "Preuve de consentement valide",
+          "Obligation légale - Art. 6(1)(c) RGPD",
+          "5 ans"
         ]
       ],
-      "noMarketing": "We do not use your data for marketing, profiling or automated decisions with legal effects."
+      "noMarketing": "Nous n'utilisons pas vos données à des fins de marketing, de profilage ou de décisions automatisées produisant des effets juridiques."
     },
     "retention": {
-      "title": "Retention period and automatic anonymization",
-      "intro": "Identifying personal data is retained for the period required to manage the service, defend rights and comply with legal obligations.",
+      "title": "Durée de conservation et anonymisation automatique",
+      "intro": "Les données personnelles identifiantes sont conservées pendant la durée nécessaire à la gestion du service, à la défense de droits et au respect des obligations légales.",
       "items": [
-        "Active operational data - while pending or confirmed bookings exist.",
-        "Historical data - up to 3 years after the last booking.",
-        "Consent record - up to 5 years for audit and compliance.",
-        "After the period or an anonymization request, identifying data is replaced by an anonymous identifier."
+        "Données opérationnelles actives - tant qu'il existe des réservations en attente ou confirmées.",
+        "Données historiques - jusqu'à 3 ans après la dernière réservation effectuée.",
+        "Trace de consentement - jusqu'à 5 ans pour audit et conformité.",
+        "Passé ce délai ou sur demande d'anonymisation, les données identifiantes sont remplacées par un identifiant anonyme."
       ],
-      "footer": "The system automatically anonymizes customer data after more than 3 years of inactivity. You can exercise erasure rights through the secure link for your booking."
+      "footer": "Le système anonymise automatiquement les données des clients inactifs depuis plus de 3 ans. Vous pouvez exercer le droit d'effacement via le lien sécurisé de votre réservation."
     },
     "processors": {
-      "title": "Processors and recipients",
-      "intro": "To provide the service, {{shopName}} and Trimio use technical processors that process data under documented instructions and GDPR safeguards.",
+      "title": "Sous-traitants et destinataires",
+      "intro": "Pour fournir le service, {{shopName}} et Trimio recourent à des sous-traitants techniques qui traitent les données selon des instructions documentées et avec les garanties du RGPD.",
       "headers": [
-        "Processor",
-        "Function",
-        "Location",
-        "Safeguards"
+        "Sous-traitant",
+        "Fonction",
+        "Localisation",
+        "Garanties"
       ],
       "rows": [
         [
           "OVH SAS",
-          "Hosting and infrastructure",
-          "France (EU)",
-          "GDPR / standard clauses"
+          "Hébergement et infrastructure",
+          "France (UE)",
+          "RGPD / clauses types"
         ],
         [
           "Cloudflare, Inc.",
-          "CDN, firewall and security",
-          "USA / global edge",
-          "EU-US DPF / standard clauses"
+          "CDN, pare-feu et sécurité",
+          "USA / edge mondial",
+          "EU-US DPF / clauses types"
         ],
         [
           "Stripe, Inc.",
-          "Payment processing",
-          "USA / global edge",
-          "EU-US DPF / standard clauses"
+          "Traitement des paiements",
+          "USA / edge mondial",
+          "EU-US DPF / clauses types"
         ],
         [
           "Resend, Inc.",
-          "Transactional email delivery",
+          "Envoi d'e-mails transactionnels",
           "USA",
-          "EU-US DPF / standard clauses"
+          "EU-US DPF / clauses types"
         ]
       ],
-      "noSale": "We do not sell or share personal data with third parties for marketing, advertising or profiling."
+      "noSale": "Nous ne vendons ni ne partageons les données personnelles avec des tiers à des fins de marketing, de publicité ou de profilage."
     },
     "transfers": {
-      "title": "International transfers",
-      "body": "Some processors operate outside the European Union. Those transfers are made through appropriate legal mechanisms, including the EU-US Data Privacy Framework where applicable and standard contractual clauses approved by the European Commission."
+      "title": "Transferts internationaux",
+      "body": "Certains sous-traitants opèrent en dehors de l'Union européenne. Ces transferts sont effectués via des mécanismes juridiques appropriés, notamment le cadre EU-US Data Privacy Framework lorsqu'il s'applique et les clauses contractuelles types approuvées par la Commission européenne."
     },
     "rights": {
-      "title": "Your rights",
-      "intro": "As a data subject, you have the following rights and can exercise them at any time:",
+      "title": "Vos droits",
+      "intro": "En tant que personne concernée, vous disposez des droits suivants et pouvez les exercer à tout moment :",
       "items": [
         {
-          "title": "Access",
-          "desc": "Know what data we hold about you and obtain a copy through your booking link."
+          "title": "Accès",
+          "desc": "Savoir quelles données nous détenons sur vous et en obtenir une copie via le lien de votre réservation."
         },
         {
-          "title": "Portability",
-          "desc": "Receive your data in a structured, machine-readable format."
+          "title": "Portabilité",
+          "desc": "Recevoir vos données dans un format structuré et lisible par machine."
         },
         {
           "title": "Rectification",
-          "desc": "Correct inaccurate data by contacting the barbershop or rescheduling with updated data."
+          "desc": "Corriger des données inexactes en contactant le salon ou en reprogrammant avec des données mises à jour."
         },
         {
-          "title": "Erasure / Anonymization",
-          "desc": "Request removal of identifying data; anonymous operational records may be retained."
+          "title": "Effacement / Anonymisation",
+          "desc": "Demander la suppression des données identifiantes ; des registres opérationnels anonymes peuvent être conservés."
         },
         {
-          "title": "Restriction",
-          "desc": "Request that data be stored but not actively processed."
+          "title": "Limitation",
+          "desc": "Demander que les données soient stockées mais non traitées activement."
         },
         {
-          "title": "Objection",
-          "desc": "Object to processing based on legitimate interest."
+          "title": "Opposition",
+          "desc": "Vous opposer au traitement fondé sur l'intérêt légitime."
         },
         {
-          "title": "No automated decisions",
-          "desc": "We do not make solely automated decisions with significant legal effects."
+          "title": "Pas de décisions automatisées",
+          "desc": "Nous ne prenons pas de décisions uniquement automatisées avec des effets juridiques significatifs."
         },
         {
-          "title": "Withdraw consent",
-          "desc": "Where applicable, you can withdraw consent without affecting prior lawful processing."
+          "title": "Retrait du consentement",
+          "desc": "Le cas échéant, vous pouvez retirer votre consentement sans affecter la licéité du traitement antérieur."
         }
       ],
-      "contact": "To exercise rights that cannot be fulfilled through the booking link, contact {{shopName}} through the public channels on this site or Trimio at",
-      "responseTime": "We respond within 30 days, extendable by another 60 days in complex cases."
+      "contact": "Pour exercer des droits qui ne peuvent être satisfaits via le lien de la réservation, contactez {{shopName}} via les canaux publics de ce site ou Trimio à",
+      "responseTime": "Nous répondons sous 30 jours, prolongeable de 60 jours supplémentaires dans les cas complexes."
     },
     "cookies": {
-      "title": "Cookies and local storage",
-      "intro": "This site does not use tracking, advertising or third-party analytics cookies. It only uses:",
+      "title": "Cookies et stockage local",
+      "intro": "Ce site n'utilise pas de cookies de suivi, publicitaires ou d'analyse tiers. Il utilise uniquement :",
       "items": [
-        "Local storage (localStorage) to keep the admin/barber session token while you are authenticated.",
-        "Cloudflare may set technical security and performance cookies required for the infrastructure to work."
+        "Stockage local (localStorage) pour conserver le jeton de session admin/barbier pendant votre authentification.",
+        "Cloudflare peut déposer des cookies techniques de sécurité et de performance nécessaires au fonctionnement de l'infrastructure."
       ],
-      "footer": "Because we do not use analytics or marketing cookies, no cookie consent banner is shown."
+      "footer": "Comme nous n'utilisons pas de cookies analytiques ou marketing, aucune bannière de consentement n'est affichée."
     },
     "security": {
-      "title": "Security",
-      "body": "We adopt appropriate technical and organizational measures, including encrypted transmission via TLS, restricted database access, firewall, expiring access tokens and cryptographic key authentication."
+      "title": "Sécurité",
+      "body": "Nous adoptons des mesures techniques et organisationnelles appropriées, notamment la transmission chiffrée via TLS, l'accès restreint à la base de données, un pare-feu, des jetons d'accès expirants et l'authentification par clés cryptographiques."
     },
     "authority": {
-      "title": "Supervisory authority",
-      "body": "You have the right to lodge a complaint with the competent supervisory authority. In Portugal, the competent authority is:",
-      "name": "CNPD - Portuguese Data Protection Authority",
-      "address": "Rua de São Bento 148-3.º, 1200-821 Lisbon · geral@cnpd.pt · cnpd.pt"
+      "title": "Autorité de contrôle",
+      "body": "Vous avez le droit d'introduire une réclamation auprès de l'autorité de contrôle compétente. Au Portugal, l'autorité compétente est :",
+      "name": "CNPD - Autorité portugaise de protection des données",
+      "address": "Rua de São Bento 148-3.º, 1200-821 Lisbonne · geral@cnpd.pt · cnpd.pt"
     },
     "changes": {
-      "title": "Changes to this policy",
-      "body": "This policy may be updated to reflect legal, technical or service changes. The version and date at the top of this page always identify the version in force."
+      "title": "Modifications de cette politique",
+      "body": "Cette politique peut être mise à jour pour refléter des évolutions légales, techniques ou du service. La version et la date en haut de cette page indiquent toujours la version en vigueur."
     },
     "contact": {
-      "title": "Privacy contact",
-      "shop": "For questions related to your data in a specific booking, use the public contacts for {{shopName}} available on this site.",
-      "platform": "For questions about the Trimio platform as processor:"
+      "title": "Contact pour la confidentialité",
+      "shop": "Pour les questions liées à vos données dans une réservation spécifique, utilisez les contacts publics de {{shopName}} disponibles sur ce site.",
+      "platform": "Pour les questions concernant la plateforme Trimio en tant que sous-traitant :"
     }
   },
   "brand": {

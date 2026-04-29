@@ -65,7 +65,7 @@
     "actions": "Actes"
   },
   "phone": {
-    "country": "Country",
-    "countryFor": "{{label}} country"
+    "country": "Pays",
+    "countryFor": "{{label}} pays"
   }
 }

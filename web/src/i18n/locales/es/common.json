@@ -65,7 +65,7 @@
     "actions": "Acciones"
   },
   "phone": {
-    "country": "Country",
-    "countryFor": "{{label}} country"
+    "country": "País",
+    "countryFor": "{{label}} país"
   }
 }

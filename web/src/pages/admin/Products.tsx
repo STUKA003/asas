@@ -21,7 +21,7 @@ function readFileAsDataUrl(file: File) {
   return new Promise<string>((resolve, reject) => {
     const reader = new FileReader()
     reader.onload = () => resolve(String(reader.result ?? ''))
-    reader.onerror = () => reject(new Error('Cannot read image'))
+    reader.onerror = () => reject(new Error('IMAGE_READ_ERROR'))
     reader.readAsDataURL(file)
   })
 }
@@ -39,13 +39,13 @@ async function compressImage(file: File) {
       canvas.width = width
       canvas.height = height
       const ctx = canvas.getContext('2d')
-      if (!ctx) { reject(new Error('Cannot prepare image')); return }
+      if (!ctx) { reject(new Error('IMAGE_PREPARE_ERROR')); return }
       ctx.drawImage(image, 0, 0, width, height)
       const result = canvas.toDataURL('image/jpeg', 0.72)
-      if (result.length > 1_500_000) { reject(new Error('Image too large')); return }
+      if (result.length > 1_500_000) { reject(new Error('IMAGE_TOO_LARGE')); return }
       resolve(result)
     }
-    image.onerror = () => reject(new Error('Cannot process image'))
+    image.onerror = () => reject(new Error('IMAGE_PROCESS_ERROR'))
     image.src = source
   })
 }
@@ -107,7 +107,9 @@ export default function Products() {
             const dataUrl = await compressImage(file)
             form.setValue('imageUrl', dataUrl as FormData['imageUrl'], { shouldDirty: true, shouldValidate: true })
           } catch (error) {
-            setFileError(error instanceof Error ? error.message : 'Error')
+            const code = error instanceof Error ? error.message : ''
+            const knownCodes = ['IMAGE_READ_ERROR', 'IMAGE_PREPARE_ERROR', 'IMAGE_TOO_LARGE', 'IMAGE_PROCESS_ERROR']
+            setFileError(knownCodes.includes(code) ? t(`admin:products.errors.${code}`) : t('admin:products.errors.generic'))
           }
           event.target.value = ''
         }

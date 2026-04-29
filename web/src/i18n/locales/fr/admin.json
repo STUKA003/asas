@@ -440,7 +440,7 @@
       "create": "Nouveau barbier",
       "edit": "Modifier barbier",
       "nameLabel": "Nom",
-      "namePlaceholder": "John Smith",
+      "namePlaceholder": "Jean Dupont",
       "emailLabel": "E-mail",
       "emailPlaceholder": "john@exemple.com",
       "photoLabel": "Photo de barbier",
@@ -448,19 +448,19 @@
       "uploadPhoto": "Télécharger une photo",
       "removePhoto": "Retirer",
       "phoneLabel": "Téléphone",
-      "phonePlaceholder": "+44 7911 123456",
+      "phonePlaceholder": "+33 6 12 34 56 78",
       "isActive": "Barbier actif",
       "save": "Sauvegarder"
     },
     "ofMax": "sur {{max}}",
     "errors": {
       "photoUpload": "Impossible de téléverser la photo",
-      "passwordMin": "Minimum 6 characters",
-      "passwordMismatch": "Passwords do not match",
-      "accessSave": "Could not save. Check that the server is up to date.",
-      "IMAGE_READ_ERROR": "Could not read the image",
-      "IMAGE_PREPARE_ERROR": "Could not prepare the image",
-      "IMAGE_PROCESS_ERROR": "Could not process the image"
+      "passwordMin": "Minimum 6 caractères",
+      "passwordMismatch": "Les mots de passe ne correspondent pas",
+      "accessSave": "Impossible d'enregistrer. Vérifiez que le serveur est à jour.",
+      "IMAGE_READ_ERROR": "Impossible de lire l'image",
+      "IMAGE_PREPARE_ERROR": "Impossible de préparer l'image",
+      "IMAGE_PROCESS_ERROR": "Impossible de traiter l'image"
     },
     "subtitle": "{{active}} actif{{maxStr}} · {{total}} enregistré",
     "atLimit": "Vous avez atteint la limite de {{max}} barbier(s) actif(s) sur votre forfait.",
@@ -525,6 +525,13 @@
       "price": "Prix",
       "stock": "Action",
       "status": "Statut"
+    },
+    "errors": {
+      "IMAGE_READ_ERROR": "Impossible de lire l'image",
+      "IMAGE_PREPARE_ERROR": "Impossible de préparer l'image",
+      "IMAGE_TOO_LARGE": "L'image est trop volumineuse",
+      "IMAGE_PROCESS_ERROR": "Impossible de traiter l'image",
+      "generic": "Erreur"
     }
   },
   "plans": {
@@ -534,7 +541,7 @@
       "price": "Prix",
       "status": "Statut"
     },
-    "placeholder": "Monthly Plan"
+    "placeholder": "Plan mensuel"
   },
   "schedule": {
     "title": "Horaires d'ouverture",
@@ -805,12 +812,14 @@
     "saved": "Modifications enregistrées.",
     "instagramPlaceholder": "@mon_salon",
     "errors": {
-      "imagesTooLargeBatch": "The images are too large to save at once. Try fewer photos at a time or lighter images.",
-      "saveGallery": "Could not save the gallery",
-      "uploadLogo": "Could not upload the logo",
-      "uploadAccountPhoto": "Could not upload the account photo",
-      "uploadHeroImage": "Could not upload the main image",
-      "uploadGallery": "Could not upload the gallery images"
+      "imagesTooLargeBatch": "Les images sont trop lourdes pour être enregistrées en une seule fois. Essayez avec moins de photos ou des images plus légères.",
+      "galleryFull": "La galerie accepte jusqu'à {{max}} images.",
+      "galleryPartial": "Seulement {{added}} images ont été ajoutées. La limite est de {{max}}.",
+      "saveGallery": "Impossible d'enregistrer la galerie",
+      "uploadLogo": "Impossible de téléverser le logo",
+      "uploadAccountPhoto": "Impossible de téléverser la photo du compte",
+      "uploadHeroImage": "Impossible de téléverser l'image principale",
+      "uploadGallery": "Impossible de téléverser les images de la galerie"
     }
   },
   "billing": {
@@ -924,11 +933,11 @@
     "successTitle": "Mot de passe mis à jour",
     "successMsg": "Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.",
     "errors": {
-      "passwordMin": "Minimum 6 characters",
-      "confirmRequired": "Confirm the password",
-      "passwordMismatch": "Passwords must match",
-      "missingToken": "The recovery link is incomplete.",
-      "updateFailed": "Could not update the password."
+      "passwordMin": "Minimum 6 caractères",
+      "confirmRequired": "Confirmez le mot de passe",
+      "passwordMismatch": "Les mots de passe doivent correspondre",
+      "missingToken": "Le lien de récupération est incomplet.",
+      "updateFailed": "Impossible de mettre à jour le mot de passe."
     }
   },
   "resendVerification": {
